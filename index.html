@@ -362,7 +362,13 @@ const db   = firebase.firestore();
 let eu = null, grupoId = null, dadosOCR = null, matchesAtual = [], stream = null;
 
 // ── Auth guard ───────────────────────────────────────────────────────
+// Timeout: se em 6s o Firebase não responder, vai pro login
+const authTimeout = setTimeout(() => {
+  window.location.href = 'login.html';
+}, 6000);
+
 auth.onAuthStateChanged(async user => {
+  clearTimeout(authTimeout); // Firebase respondeu, cancela o timeout
   if (!user) { window.location.href = 'login.html'; return; }
   try {
     const snap = await db.collection('usuarios').doc(user.uid).get();
@@ -381,8 +387,10 @@ auth.onAuthStateChanged(async user => {
     }
   } catch(err) {
     console.error(err);
-    document.getElementById('header-user').textContent = '⚠️ Erro ao carregar. Verifique as regras do Firestore.';
-    document.getElementById('lista-eventos').innerHTML = '<p style="color:#ef4444;font-size:13px;padding:16px;background:white;border-radius:12px;">Erro de permissão no banco de dados.</p>';
+    // Se der erro de rede/permissão, tenta novamente em 3s antes de desistir
+    setTimeout(() => { window.location.href = 'login.html'; }, 3000);
+    document.getElementById('header-user').textContent = '⚠️ Erro de conexão. Redirecionando...';
+    document.getElementById('lista-eventos').innerHTML = '<p style="color:#ef4444;font-size:13px;padding:16px;background:white;border-radius:12px;">Erro ao carregar. Redirecionando para o login...</p>';
   }
 });
 
