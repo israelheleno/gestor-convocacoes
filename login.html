@@ -1,299 +1,207 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Gestor de Convocações — Entrar</title>
-  <link rel="manifest" href="manifest.json"/>
-  <!-- iOS PWA -->
   <meta name="apple-mobile-web-app-capable" content="yes"/>
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
   <meta name="apple-mobile-web-app-title" content="Convocações"/>
   <meta name="theme-color" content="#1E3A8A"/>
-  <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'%3E%3Crect width='192' height='192' rx='40' fill='%231E3A8A'/%3E%3Cpath d='M130 40H62c-11 0-20 9-20 20v112l54-23 54 23V60c0-11-9-20-20-20zm0 108l-34-14.5L62 148V60h68v88z' fill='white'/%3E%3C/svg%3E"/>
-  <link rel="preconnect" href="https://fonts.googleapis.com"/>
-  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;600;700&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet"/>
   <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    :root {
-      --blue: #1E3A8A; --blue-light: #2d4fad;
-      --green: #10B981; --gray-bg: #F0F4FF;
-      --gray-text: #334155; --gray-light: #94a3b8;
-      --white: #ffffff;
-    }
-    body {
-      font-family: 'DM Sans', sans-serif;
-      background: var(--gray-bg);
-      min-height: 100dvh;
-      display: flex; flex-direction: column;
-      align-items: center; justify-content: center;
-      padding: 24px 16px;
-      position: relative; overflow: hidden;
-    }
-    body::before {
-      content: ''; position: fixed; top: -30%; left: -20%;
-      width: 70vw; height: 70vw;
-      background: radial-gradient(circle, rgba(30,58,138,0.12) 0%, transparent 70%);
-      pointer-events: none;
-    }
-    body::after {
-      content: ''; position: fixed; bottom: -20%; right: -15%;
-      width: 50vw; height: 50vw;
-      background: radial-gradient(circle, rgba(16,185,129,0.10) 0%, transparent 70%);
-      pointer-events: none;
-    }
-    .card {
-      background: var(--white); border-radius: 24px;
-      box-shadow: 0 8px 40px rgba(30,58,138,0.10);
-      padding: 40px 32px; width: 100%; max-width: 420px;
-      position: relative; z-index: 1;
-      animation: fadeUp 0.5s ease both;
-    }
-    @keyframes fadeUp {
-      from { opacity: 0; transform: translateY(24px); }
-      to   { opacity: 1; transform: translateY(0); }
-    }
-    .logo { display: flex; align-items: center; gap: 12px; margin-bottom: 28px; }
-    .logo-icon { width: 48px; height: 48px; background: var(--blue); border-radius: 14px; display: flex; align-items: center; justify-content: center; }
-    .logo-icon svg { width: 26px; height: 26px; fill: white; }
-    .logo-text h1 { font-family: 'Sora', sans-serif; font-size: 17px; font-weight: 700; color: var(--blue); line-height: 1.2; }
-    .logo-text p { font-size: 12px; color: var(--gray-light); }
-    .tabs { display: flex; background: var(--gray-bg); border-radius: 12px; padding: 4px; margin-bottom: 28px; }
-    .tab-btn { flex: 1; padding: 10px; border: none; background: transparent; border-radius: 9px; font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 500; color: var(--gray-light); cursor: pointer; transition: all 0.2s; }
-    .tab-btn.active { background: var(--white); color: var(--blue); font-weight: 600; box-shadow: 0 2px 8px rgba(30,58,138,0.10); }
-    .form-panel { display: none; }
-    .form-panel.active { display: block; animation: fadeUp 0.3s ease both; }
-    .field { margin-bottom: 16px; }
-    .field label { display: block; font-size: 13px; font-weight: 500; color: var(--gray-text); margin-bottom: 6px; }
-    .field input { width: 100%; padding: 12px 14px; border: 1.5px solid #e2e8f0; border-radius: 12px; font-family: 'DM Sans', sans-serif; font-size: 15px; color: var(--gray-text); outline: none; transition: border-color 0.2s; }
-    .field input:focus { border-color: var(--blue); }
-    .field input::placeholder { color: #cbd5e1; }
-    .onboarding-note { font-size: 12px; color: var(--gray-light); margin-bottom: 12px; border-top: 1.5px dashed #e2e8f0; padding-top: 14px; margin-top: 4px; }
-    .btn-primary { width: 100%; padding: 14px; background: var(--blue); color: white; border: none; border-radius: 12px; font-family: 'Sora', sans-serif; font-size: 15px; font-weight: 600; cursor: pointer; transition: background 0.2s, transform 0.1s; margin-top: 8px; display: flex; align-items: center; justify-content: center; gap: 8px; }
-    .btn-primary:hover { background: var(--blue-light); }
-    .btn-primary:active { transform: scale(0.98); }
-    .btn-primary:disabled { background: #94a3b8; cursor: not-allowed; }
-    .divider { display: flex; align-items: center; gap: 12px; margin: 20px 0; color: var(--gray-light); font-size: 13px; }
-    .divider::before, .divider::after { content: ''; flex: 1; height: 1px; background: #e2e8f0; }
-    .btn-google { width: 100%; padding: 13px; background: white; color: var(--gray-text); border: 1.5px solid #e2e8f0; border-radius: 12px; font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 500; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; transition: border-color 0.2s; }
-    .btn-google:hover { border-color: var(--blue); }
-    .msg { padding: 12px 14px; border-radius: 10px; font-size: 13px; margin-bottom: 16px; display: none; }
-    .msg.error { background: #fee2e2; color: #b91c1c; display: block; }
-    .msg.success { background: #d1fae5; color: #065f46; display: block; }
-    .spinner { width: 18px; height: 18px; border: 2px solid rgba(255,255,255,0.4); border-top-color: white; border-radius: 50%; animation: spin 0.6s linear infinite; display: none; }
-    @keyframes spin { to { transform: rotate(360deg); } }
-    .footer-note { text-align: center; font-size: 12px; color: var(--gray-light); margin-top: 24px; line-height: 1.6; position: relative; z-index: 1; }
-    .btn-instalar { margin-top: 14px; background: transparent; border: 1.5px solid #cbd5e1; color: #64748b; padding: 10px 20px; border-radius: 10px; font-size: 13px; cursor: pointer; font-family: 'DM Sans', sans-serif; display: flex; align-items: center; gap: 6px; position: relative; z-index: 1; }
-    .modal-bg { position: fixed; inset: 0; background: rgba(0,0,0,0.55); z-index: 900; display: none; align-items: center; justify-content: center; padding: 20px; }
-    .modal-bg.show { display: flex; }
-    .modal-box { background: white; border-radius: 24px; padding: 28px 24px; width: 100%; max-width: 340px; position: relative; animation: fadeUp 0.3s ease; }
-    .modal-close { position: absolute; top: 14px; right: 16px; background: none; border: none; font-size: 22px; color: #94a3b8; cursor: pointer; }
-    .os-grid { display: flex; gap: 12px; }
-    .os-card { flex: 1; background: #F8FAFC; border: 1.5px solid #e2e8f0; border-radius: 14px; padding: 18px 8px; text-align: center; cursor: pointer; }
-    .os-card:active { border-color: var(--blue); }
-    .guide { display: none; }
-    .guide.show { display: block; }
-    .guide-step { background: #F8FAFC; border: 1px solid #e2e8f0; border-radius: 12px; padding: 12px 14px; margin-bottom: 8px; display: flex; gap: 10px; align-items: center; font-size: 13px; color: var(--gray-text); }
-    .step-num { background: var(--blue); color: white; width: 28px; height: 28px; border-radius: 7px; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 12px; flex-shrink: 0; }
-    .step-done { background: var(--green); color: white; width: 28px; height: 28px; border-radius: 7px; display: flex; align-items: center; justify-content: center; font-size: 14px; flex-shrink: 0; }
-    .btn-back { width: 100%; padding: 10px; background: transparent; border: 1.5px solid #e2e8f0; border-radius: 10px; font-size: 13px; cursor: pointer; color: var(--gray-text); margin-top: 4px; }
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:'DM Sans',sans-serif;background:#F0F4FF;min-height:100dvh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px 16px}
+    .card{background:#fff;border-radius:24px;box-shadow:0 8px 40px rgba(30,58,138,.1);padding:36px 28px;width:100%;max-width:400px}
+    .logo{display:flex;align-items:center;gap:12px;margin-bottom:28px}
+    .logo-icon{width:46px;height:46px;background:#1E3A8A;border-radius:13px;display:flex;align-items:center;justify-content:center}
+    .logo-icon svg{width:24px;height:24px;fill:#fff}
+    .logo h1{font-family:'Sora',sans-serif;font-size:16px;color:#1E3A8A;line-height:1.2}
+    .logo p{font-size:12px;color:#94a3b8}
+    .tabs{display:flex;background:#F0F4FF;border-radius:12px;padding:4px;margin-bottom:24px}
+    .tab{flex:1;padding:10px;border:none;background:transparent;border-radius:9px;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:500;color:#94a3b8;cursor:pointer;transition:.2s}
+    .tab.on{background:#fff;color:#1E3A8A;font-weight:600;box-shadow:0 2px 8px rgba(30,58,138,.1)}
+    .panel{display:none}.panel.on{display:block}
+    .field{margin-bottom:14px}
+    .field label{display:block;font-size:13px;font-weight:500;color:#334155;margin-bottom:5px}
+    .field input{width:100%;padding:12px 14px;border:1.5px solid #e2e8f0;border-radius:12px;font-family:'DM Sans',sans-serif;font-size:15px;color:#334155;outline:none}
+    .field input:focus{border-color:#1E3A8A}
+    .sep{font-size:12px;color:#94a3b8;margin:4px 0 10px;border-top:1.5px dashed #e2e8f0;padding-top:12px}
+    .btn{width:100%;padding:14px;border:none;border-radius:12px;font-family:'Sora',sans-serif;font-size:15px;font-weight:600;cursor:pointer;margin-top:6px;display:flex;align-items:center;justify-content:center;gap:8px}
+    .btn-blue{background:#1E3A8A;color:#fff}.btn-blue:hover{background:#2d4fad}
+    .btn-blue:disabled{background:#94a3b8;cursor:not-allowed}
+    .btn-google{background:#fff;color:#334155;border:1.5px solid #e2e8f0;margin-top:12px}
+    .divider{display:flex;align-items:center;gap:10px;margin:14px 0;color:#94a3b8;font-size:13px}
+    .divider::before,.divider::after{content:'';flex:1;height:1px;background:#e2e8f0}
+    .msg{padding:11px 13px;border-radius:10px;font-size:13px;margin-bottom:14px;display:none}
+    .msg.err{background:#fee2e2;color:#b91c1c;display:block}
+    .spin{width:17px;height:17px;border:2px solid rgba(255,255,255,.4);border-top-color:#fff;border-radius:50%;animation:sp .6s linear infinite;display:none}
+    @keyframes sp{to{transform:rotate(360deg)}}
   </style>
 </head>
 <body>
-
 <div class="card">
   <div class="logo">
-    <div class="logo-icon">
-      <svg viewBox="0 0 24 24"><path d="M17 3H7C5.9 3 5 3.9 5 5v16l7-3 7 3V5c0-1.1-.9-2-2-2zm0 15l-5-2.18L7 18V5h10v13z"/></svg>
-    </div>
-    <div class="logo-text">
-      <h1>Gestor de Convocações</h1>
-      <p>Câmara Municipal · TV Câmara</p>
-    </div>
+    <div class="logo-icon"><svg viewBox="0 0 24 24"><path d="M17 3H7C5.9 3 5 3.9 5 5v16l7-3 7 3V5c0-1.1-.9-2-2-2zm0 15l-5-2.18L7 18V5h10v13z"/></svg></div>
+    <div><h1>Gestor de Convocações</h1><p>Câmara Municipal · TV Câmara</p></div>
   </div>
 
   <div class="tabs">
-    <button class="tab-btn active" id="tab-login" onclick="switchTab('login')">Entrar</button>
-    <button class="tab-btn" id="tab-cadastro" onclick="switchTab('cadastro')">Criar conta</button>
+    <button class="tab on" id="t-entrar" onclick="aba('entrar')">Entrar</button>
+    <button class="tab" id="t-criar" onclick="aba('criar')">Criar conta</button>
   </div>
 
   <div id="msg" class="msg"></div>
 
-  <!-- LOGIN -->
-  <div id="panel-login" class="form-panel active">
-    <div class="field"><label>E-mail</label><input type="email" id="login-email" placeholder="seu@email.com"/></div>
-    <div class="field"><label>Senha</label><input type="password" id="login-senha" placeholder="••••••••"/></div>
-    <button class="btn-primary" id="btn-login" onclick="fazerLogin()">
-      <span id="login-txt">Entrar</span><div class="spinner" id="login-spinner"></div>
+  <!-- ENTRAR -->
+  <div class="panel on" id="p-entrar">
+    <div class="field"><label>E-mail</label><input type="email" id="e-email" placeholder="seu@email.com"/></div>
+    <div class="field"><label>Senha</label><input type="password" id="e-senha" placeholder="••••••••"/></div>
+    <button class="btn btn-blue" id="b-entrar" onclick="entrar()">
+      <span id="b-entrar-txt">Entrar</span><div class="spin" id="b-entrar-sp"></div>
     </button>
     <div class="divider">ou</div>
-    <button class="btn-google" onclick="loginGoogle()">
-      <svg width="18" height="18" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.18 1.48-4.97 2.31-8.16 2.31-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
+    <button class="btn btn-google" onclick="google()">
+      <svg width="17" height="17" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.18 1.48-4.97 2.31-8.16 2.31-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
       Continuar com Google
     </button>
   </div>
 
-  <!-- CADASTRO -->
-  <div id="panel-cadastro" class="form-panel">
-    <div class="field"><label>E-mail</label><input type="email" id="cad-email" placeholder="seu@email.com"/></div>
-    <div class="field"><label>Senha</label><input type="password" id="cad-senha" placeholder="Mínimo 6 caracteres"/></div>
-    <p class="onboarding-note">📋 Complete seu perfil (feito uma única vez)</p>
-    <div class="field"><label>Nome completo</label><input type="text" id="cad-nome" placeholder="Como aparece nos documentos"/></div>
-    <div class="field"><label>Cargo</label><input type="text" id="cad-cargo" placeholder="Ex: Operador de Câmera"/></div>
-    <button class="btn-primary" id="btn-cadastro" onclick="fazerCadastro()">
-      <span id="cad-txt">Criar conta</span><div class="spinner" id="cad-spinner"></div>
+  <!-- CRIAR CONTA -->
+  <div class="panel" id="p-criar">
+    <div class="field"><label>E-mail</label><input type="email" id="c-email" placeholder="seu@email.com"/></div>
+    <div class="field"><label>Senha</label><input type="password" id="c-senha" placeholder="Mínimo 6 caracteres"/></div>
+    <p class="sep">📋 Perfil — preenchido uma única vez</p>
+    <div class="field"><label>Nome completo</label><input type="text" id="c-nome" placeholder="Como aparece nos documentos"/></div>
+    <div class="field"><label>Cargo</label><input type="text" id="c-cargo" placeholder="Ex: Operador de Câmera"/></div>
+    <button class="btn btn-blue" id="b-criar" onclick="criar()">
+      <span id="b-criar-txt">Criar conta</span><div class="spin" id="b-criar-sp"></div>
     </button>
     <div class="divider">ou</div>
-    <button class="btn-google" onclick="loginGoogle()">
-      <svg width="18" height="18" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.18 1.48-4.97 2.31-8.16 2.31-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
+    <button class="btn btn-google" onclick="google()">
+      <svg width="17" height="17" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.18 1.48-4.97 2.31-8.16 2.31-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
       Continuar com Google
     </button>
   </div>
 </div>
 
-<p class="footer-note">Ao entrar, você concorda com o uso interno<br/>dos seus dados para gestão de convocações.</p>
-<button class="btn-instalar" onclick="abrirInstalar()">
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:15px;height:15px;"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-  Instalar App
-</button>
-
-<!-- MODAL INSTALAR -->
-<div class="modal-bg" id="modal-instalar">
-  <div class="modal-box">
-    <button class="modal-close" onclick="fecharInstalar()">✕</button>
-    <h3 style="font-family:'Sora',sans-serif;font-size:17px;font-weight:700;color:var(--blue);margin-bottom:6px;">Instalar o App</h3>
-    <p style="font-size:13px;color:var(--gray-light);margin-bottom:18px;">Escolha seu sistema:</p>
-    <div class="os-grid" id="os-grid">
-      <div class="os-card" onclick="verGuia('android')">
-        <div style="font-size:38px;margin-bottom:6px;">🤖</div>
-        <div style="font-weight:700;font-size:13px;">Android</div>
-      </div>
-      <div class="os-card" onclick="verGuia('ios')">
-        <div style="font-size:38px;margin-bottom:6px;">🍎</div>
-        <div style="font-weight:700;font-size:13px;">iPhone</div>
-      </div>
-    </div>
-    <div class="guide" id="guide-android">
-      <div class="guide-step"><div class="step-num">1</div>Abra este site no <strong>&nbsp;Chrome</strong></div>
-      <div class="guide-step"><div class="step-num">2</div>Toque nos <strong>&nbsp;⋮ três pontinhos</strong> (canto superior direito)</div>
-      <div class="guide-step"><div class="step-num">3</div>Selecione <strong>&nbsp;"Adicionar à tela inicial"</strong></div>
-      <div class="guide-step"><div class="step-done">✓</div>Toque em <strong>&nbsp;"Adicionar"</strong> e pronto!</div>
-      <button class="btn-back" onclick="verGuia('os')">← Voltar</button>
-    </div>
-    <div class="guide" id="guide-ios">
-      <div class="guide-step"><div class="step-num">1</div>Abra este site no <strong>&nbsp;Safari</strong></div>
-      <div class="guide-step"><div class="step-num">2</div>Toque no ícone <strong>&nbsp;Compartilhar</strong> (barra inferior)</div>
-      <div class="guide-step"><div class="step-num">3</div>Toque em <strong>&nbsp;"Adicionar à Tela de Início"</strong></div>
-      <div class="guide-step"><div class="step-done">✓</div>Toque em <strong>&nbsp;"Adicionar"</strong> e pronto!</div>
-      <button class="btn-back" onclick="verGuia('os')">← Voltar</button>
-    </div>
-  </div>
-</div>
-
-<!-- Firebase SDK compat (funciona sem servidor, sem módulos ES6) -->
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 <script>
-// Limpar service worker e cache
-if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.getRegistrations().then(regs => regs.forEach(r => r.unregister()));
-  caches.keys().then(keys => keys.forEach(k => caches.delete(k)));
+// Limpar service workers e cache
+if('serviceWorker' in navigator){
+  navigator.serviceWorker.getRegistrations().then(rs=>rs.forEach(r=>r.unregister()));
+  if(window.caches) caches.keys().then(ks=>ks.forEach(k=>caches.delete(k)));
 }
 
-  firebase.initializeApp({
-    apiKey: "AIzaSyAOpV5NFydHWwUwQKg0MANqMHVcXVDDqpQ",
-    authDomain: "gestor-convocacoes-89823.firebaseapp.com",
-    projectId: "gestor-convocacoes-89823",
-    storageBucket: "gestor-convocacoes-89823.firebasestorage.app",
-    messagingSenderId: "212389113483",
-    appId: "1:212389113483:web:eb97eefe621df0cba66e8e"
-  });
-  const auth = firebase.auth();
-  const db   = firebase.firestore();
+firebase.initializeApp({
+  apiKey:"AIzaSyAOpV5NFydHWwUwQKg0MANqMHVcXVDDqpQ",
+  authDomain:"gestor-convocacoes-89823.firebaseapp.com",
+  projectId:"gestor-convocacoes-89823",
+  storageBucket:"gestor-convocacoes-89823.firebasestorage.app",
+  messagingSenderId:"212389113483",
+  appId:"1:212389113483:web:eb97eefe621df0cba66e8e"
+});
+const auth=firebase.auth();
+const db=firebase.firestore();
 
-  auth.onAuthStateChanged(async user => {
-    if (!user) return; // Não logado, fica na tela de login normalmente
-    try {
-      const snap = await db.collection('usuarios').doc(user.uid).get();
-      if (snap.exists && snap.data().nome_completo) window.location.href = 'index.html';
-    } catch(e) { console.error(e); }
+function aba(t){
+  ['entrar','criar'].forEach(x=>{
+    document.getElementById('t-'+x).classList.toggle('on',x===t);
+    document.getElementById('p-'+x).classList.toggle('on',x===t);
   });
+  document.getElementById('msg').className='msg';
+}
 
-  function switchTab(tab) {
-    ['login','cadastro'].forEach(t => {
-      document.getElementById('tab-'+t).classList.toggle('active', t===tab);
-      document.getElementById('panel-'+t).classList.toggle('active', t===tab);
-    });
-    limparMsg();
-  }
-  function showMsg(txt, tipo='error') { const e=document.getElementById('msg'); e.textContent=txt; e.className='msg '+tipo; }
-  function limparMsg() { const e=document.getElementById('msg'); e.className='msg'; e.textContent=''; }
-  function setLoading(btn,sp,tx,on) {
-    document.getElementById(btn).disabled=on;
-    document.getElementById(sp).style.display=on?'block':'none';
-    document.getElementById(tx).style.display=on?'none':'block';
-  }
-  async function salvarPerfil(uid,nome,cargo,email) {
-    await db.collection('usuarios').doc(uid).set({
-      uid, nome_completo:nome, nomes_conhecidos:[nome], cargo, email,
-      grupo_id:null, fcm_token:null,
-      criado_em: firebase.firestore.FieldValue.serverTimestamp()
-    },{merge:true});
-  }
-  async function fazerLogin() {
-    const email=document.getElementById('login-email').value.trim();
-    const senha=document.getElementById('login-senha').value;
-    if(!email||!senha) return showMsg('Preencha e-mail e senha.');
-    setLoading('btn-login','login-spinner','login-txt',true);
-    try { await auth.signInWithEmailAndPassword(email,senha); window.location.href='index.html'; }
-    catch(e) { showMsg(traduzirErro(e.code)); setLoading('btn-login','login-spinner','login-txt',false); }
-  }
-  async function fazerCadastro() {
-    const email=document.getElementById('cad-email').value.trim();
-    const senha=document.getElementById('cad-senha').value;
-    const nome=document.getElementById('cad-nome').value.trim();
-    const cargo=document.getElementById('cad-cargo').value.trim();
-    if(!email||!senha||!nome||!cargo) return showMsg('Preencha todos os campos.');
-    if(senha.length<6) return showMsg('A senha precisa ter pelo menos 6 caracteres.');
-    setLoading('btn-cadastro','cad-spinner','cad-txt',true);
-    try {
-      const c=await auth.createUserWithEmailAndPassword(email,senha);
-      await salvarPerfil(c.user.uid,nome,cargo,email);
-      window.location.href='index.html';
-    } catch(e) { showMsg(traduzirErro(e.code)); setLoading('btn-cadastro','cad-spinner','cad-txt',false); }
-  }
-  async function loginGoogle() {
-    try {
-      const r=await auth.signInWithPopup(new firebase.auth.GoogleAuthProvider());
-      const snap=await db.collection('usuarios').doc(r.user.uid).get();
-      if(!snap.exists||!snap.data().nome_completo) {
-        const cargo=prompt('Bem-vindo(a)!\nQual é o seu cargo?');
-        if(!cargo){auth.signOut();return;}
-        await salvarPerfil(r.user.uid,r.user.displayName||'',cargo,r.user.email);
-      }
-      window.location.href='index.html';
-    } catch(e){showMsg(traduzirErro(e.code));}
-  }
-  function traduzirErro(c){
-    return({'auth/user-not-found':'Usuário não encontrado.','auth/wrong-password':'Senha incorreta.',
-    'auth/invalid-credential':'E-mail ou senha incorretos.','auth/email-already-in-use':'E-mail já cadastrado.',
-    'auth/invalid-email':'E-mail inválido.','auth/weak-password':'Senha muito fraca.',
-    'auth/popup-closed-by-user':'Login cancelado.','auth/network-request-failed':'Sem conexão.'}[c])||'Erro: '+c;
-  }
-  function abrirInstalar(){document.getElementById('modal-instalar').classList.add('show');verGuia('os');}
-  function fecharInstalar(){document.getElementById('modal-instalar').classList.remove('show');}
-  function verGuia(os){
-    document.getElementById('os-grid').style.display=os==='os'?'flex':'none';
-    document.getElementById('guide-android').classList.toggle('show',os==='android');
-    document.getElementById('guide-ios').classList.toggle('show',os==='ios');
-  }
-  document.addEventListener('keydown',e=>{
-    if(e.key==='Enter'){
-      if(document.getElementById('panel-login').classList.contains('active')) fazerLogin();
-      else fazerCadastro();
+function erro(m){const e=document.getElementById('msg');e.textContent=m;e.className='msg err';}
+
+function load(btn,sp,txt,on){
+  document.getElementById(btn).disabled=on;
+  document.getElementById(sp).style.display=on?'block':'none';
+  document.getElementById(txt).style.display=on?'none':'block';
+}
+
+function traduzir(c){
+  return({'auth/user-not-found':'Usuário não encontrado.',
+    'auth/wrong-password':'Senha incorreta.',
+    'auth/invalid-credential':'E-mail ou senha incorretos.',
+    'auth/email-already-in-use':'E-mail já cadastrado.',
+    'auth/invalid-email':'E-mail inválido.',
+    'auth/weak-password':'Senha muito fraca (mínimo 6 caracteres).',
+    'auth/popup-closed-by-user':'Login cancelado.',
+    'auth/network-request-failed':'Sem conexão com a internet.'}[c])||'Erro: '+c;
+}
+
+async function salvarPerfil(uid,nome,cargo,email){
+  await db.collection('usuarios').doc(uid).set({
+    uid,nome_completo:nome,nomes_conhecidos:[nome],
+    cargo,email,grupo_id:null,fcm_token:null,
+    criado_em:firebase.firestore.FieldValue.serverTimestamp()
+  },{merge:true});
+}
+
+async function irParaDashboard(uid){
+  try{
+    const snap=await db.collection('usuarios').doc(uid).get();
+    if(snap.exists && snap.data().nome_completo){
+      window.location.replace('index.html');
     }
-  });
+  }catch(e){
+    window.location.replace('index.html');
+  }
+}
+
+async function entrar(){
+  const email=document.getElementById('e-email').value.trim();
+  const senha=document.getElementById('e-senha').value;
+  if(!email||!senha){erro('Preencha e-mail e senha.');return;}
+  load('b-entrar','b-entrar-sp','b-entrar-txt',true);
+  try{
+    const r=await auth.signInWithEmailAndPassword(email,senha);
+    await irParaDashboard(r.user.uid);
+  }catch(e){
+    erro(traduzir(e.code));
+    load('b-entrar','b-entrar-sp','b-entrar-txt',false);
+  }
+}
+
+async function criar(){
+  const email=document.getElementById('c-email').value.trim();
+  const senha=document.getElementById('c-senha').value;
+  const nome=document.getElementById('c-nome').value.trim();
+  const cargo=document.getElementById('c-cargo').value.trim();
+  if(!email||!senha||!nome||!cargo){erro('Preencha todos os campos.');return;}
+  if(senha.length<6){erro('Senha precisa ter pelo menos 6 caracteres.');return;}
+  load('b-criar','b-criar-sp','b-criar-txt',true);
+  try{
+    const r=await auth.createUserWithEmailAndPassword(email,senha);
+    await salvarPerfil(r.user.uid,nome,cargo,email);
+    window.location.replace('index.html');
+  }catch(e){
+    erro(traduzir(e.code));
+    load('b-criar','b-criar-sp','b-criar-txt',false);
+  }
+}
+
+async function google(){
+  try{
+    const r=await auth.signInWithPopup(new firebase.auth.GoogleAuthProvider());
+    const snap=await db.collection('usuarios').doc(r.user.uid).get();
+    if(!snap.exists||!snap.data().nome_completo){
+      const cargo=prompt('Bem-vindo(a) '+r.user.displayName+'!\nQual é o seu cargo?');
+      if(!cargo){auth.signOut();return;}
+      await salvarPerfil(r.user.uid,r.user.displayName,cargo,r.user.email);
+    }
+    window.location.replace('index.html');
+  }catch(e){erro(traduzir(e.code));}
+}
+
+document.addEventListener('keydown',e=>{
+  if(e.key==='Enter'){
+    if(document.getElementById('p-entrar').classList.contains('on')) entrar();
+    else criar();
+  }
+});
 </script>
 </body>
 </html>
