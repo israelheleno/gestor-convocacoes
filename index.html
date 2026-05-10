@@ -484,9 +484,10 @@ async function recusar(uid) {
 // ── Eventos ──────────────────────────────────────────────────────────
 async function carregarEventos() {
   if (!grupoId) return;
-  const snap = await db.collection('eventos').where('grupo_id','==',grupoId).orderBy('data_hora','asc').get();
+  const snap = await db.collection('eventos').where('grupo_id','==',grupoId).get();
   const agora = new Date();
-  const eventos = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+  const eventos = snap.docs.map(d => ({ id: d.id, ...d.data() }))
+    .sort((a,b) => new Date(a.data_hora) - new Date(b.data_hora));
   document.getElementById('total-ev').textContent = eventos.length + ' total';
 
   const proxima = eventos.find(e => {
@@ -496,7 +497,10 @@ async function carregarEventos() {
     );
   });
   renderProximo(proxima);
-  renderLista(eventos);
+  // Todos os eventos do grupo: futuros primeiro, depois passados
+  const futuros = eventos.filter(e => new Date(e.data_hora) > agora);
+  const passados = eventos.filter(e => new Date(e.data_hora) <= agora).reverse();
+  renderLista([...futuros, ...passados]);
 }
 
 function renderProximo(ev) {
@@ -517,10 +521,13 @@ function renderLista(eventos) {
   lista.innerHTML = '';
   eventos.forEach(ev => {
     const dt = new Date(ev.data_hora);
+    const passado = dt <= new Date();
     const card = document.createElement('div');
     card.className = 'evento-card';
+    card.style.borderLeftColor = passado ? '#94a3b8' : 'var(--blue)';
+    card.style.opacity = passado ? '0.7' : '1';
     card.onclick = () => abrirModalEvento(ev);
-    card.innerHTML = `<div class="evento-card-titulo">${ev.titulo_evento||'Sem título'}</div>
+    card.innerHTML = `<div class="evento-card-titulo">${ev.titulo_evento||'Sem título'}${passado?' <span style="font-size:11px;color:#94a3b8;font-weight:400;">(encerrado)</span>':''}</div>
       <div class="evento-card-meta"><span>📅 ${fmtData(dt)}</span><span>🕐 ${fmtHora(dt)}</span></div>
       <div class="evento-card-convocados">${(ev.lista_convocados||[]).length} convocado(s)</div>`;
     lista.appendChild(card);
