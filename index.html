@@ -1,0 +1,1057 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Gestor de Convocações</title>
+  <link rel="manifest" href="manifest.json"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;600;700&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet"/>
+  <!-- Tesseract.js via CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --blue: #1E3A8A; --blue-light: #2d4fad; --blue-dark: #152a6e;
+      --green: #10B981; --green-dark: #059669;
+      --yellow: #f59e0b; --red: #ef4444;
+      --gray-bg: #F0F4FF; --gray-text: #334155;
+      --gray-light: #94a3b8; --gray-border: #e2e8f0;
+      --white: #ffffff;
+    }
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--gray-bg);
+      min-height: 100dvh;
+      color: var(--gray-text);
+      padding-bottom: 100px;
+    }
+
+    /* ── HEADER ── */
+    header {
+      background: var(--blue);
+      color: white;
+      padding: 20px 20px 16px;
+      position: sticky; top: 0; z-index: 100;
+      box-shadow: 0 2px 12px rgba(30,58,138,0.3);
+    }
+    .header-top {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 4px;
+    }
+    .header-logo { display: flex; align-items: center; gap: 10px; }
+    .header-logo svg { width: 22px; height: 22px; fill: rgba(255,255,255,0.9); }
+    .header-logo span {
+      font-family: 'Sora', sans-serif;
+      font-size: 15px; font-weight: 700;
+    }
+    .btn-sair {
+      background: rgba(255,255,255,0.15);
+      border: none; color: white;
+      padding: 6px 12px; border-radius: 8px;
+      font-size: 13px; cursor: pointer;
+      font-family: 'DM Sans', sans-serif;
+      transition: background 0.2s;
+    }
+    .btn-sair:hover { background: rgba(255,255,255,0.25); }
+    .header-user { font-size: 13px; opacity: 0.75; }
+
+    /* ── NOTIFICAÇÃO BANNER ── */
+    #banner-pwa {
+      background: #fef3c7; border-bottom: 1px solid #fde68a;
+      padding: 12px 20px; display: none; align-items: flex-start; gap: 10px;
+    }
+    #banner-pwa.show { display: flex; }
+    #banner-pwa p { font-size: 13px; color: #92400e; flex: 1; line-height: 1.5; }
+    #banner-pwa button {
+      background: none; border: none; font-size: 18px; cursor: pointer;
+      color: #92400e; padding: 0; flex-shrink: 0;
+    }
+
+    /* ── MAIN ── */
+    main { padding: 20px 16px; max-width: 480px; margin: 0 auto; }
+
+    /* ── GRUPO SELECTOR ── */
+    #section-grupo {
+      background: white; border-radius: 16px;
+      padding: 20px; margin-bottom: 20px;
+      box-shadow: 0 2px 12px rgba(30,58,138,0.06);
+      display: none;
+    }
+    #section-grupo.show { display: block; animation: fadeUp 0.4s ease; }
+    .grupo-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+    .grupo-header h2 { font-family: 'Sora', sans-serif; font-size: 15px; color: var(--blue); }
+    .grupo-badge {
+      background: var(--blue); color: white;
+      font-size: 11px; padding: 3px 10px; border-radius: 20px;
+      font-weight: 600;
+    }
+    .grupo-lista { list-style: none; }
+    .grupo-item {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 12px 0; border-bottom: 1px solid var(--gray-border);
+    }
+    .grupo-item:last-child { border-bottom: none; }
+    .grupo-item-nome { font-size: 14px; font-weight: 500; }
+    .grupo-item-membros { font-size: 12px; color: var(--gray-light); }
+    .btn-entrar-grupo {
+      background: var(--blue); color: white; border: none;
+      padding: 7px 14px; border-radius: 8px; font-size: 13px;
+      cursor: pointer; font-family: 'DM Sans', sans-serif;
+      transition: background 0.2s;
+    }
+    .btn-entrar-grupo:hover { background: var(--blue-light); }
+    .btn-entrar-grupo.pendente { background: var(--yellow); color: #1a1a1a; cursor: default; }
+    .btn-criar-grupo {
+      width: 100%; padding: 12px; margin-top: 14px;
+      background: transparent; border: 1.5px dashed var(--blue);
+      color: var(--blue); border-radius: 12px; font-size: 14px;
+      cursor: pointer; font-family: 'DM Sans', sans-serif;
+      transition: background 0.2s;
+    }
+    .btn-criar-grupo:hover { background: #eff6ff; }
+
+    /* ── PRÓXIMO EVENTO ── */
+    .card-proximo {
+      background: linear-gradient(135deg, var(--blue) 0%, #2563eb 100%);
+      border-radius: 20px; padding: 20px; margin-bottom: 20px;
+      color: white; position: relative; overflow: hidden;
+    }
+    .card-proximo::after {
+      content: '';
+      position: absolute; right: -20px; top: -20px;
+      width: 100px; height: 100px;
+      background: rgba(255,255,255,0.07);
+      border-radius: 50%;
+    }
+    .card-proximo-label {
+      font-size: 11px; text-transform: uppercase;
+      letter-spacing: 1px; opacity: 0.7; margin-bottom: 8px;
+    }
+    .card-proximo-titulo {
+      font-family: 'Sora', sans-serif;
+      font-size: 16px; font-weight: 700; margin-bottom: 12px;
+      line-height: 1.3;
+    }
+    .card-proximo-meta {
+      display: flex; gap: 16px; flex-wrap: wrap; margin-bottom: 16px;
+    }
+    .card-proximo-meta span {
+      font-size: 13px; opacity: 0.85;
+      display: flex; align-items: center; gap: 5px;
+    }
+    .btn-agenda {
+      background: var(--green); color: white;
+      border: none; padding: 10px 18px; border-radius: 10px;
+      font-size: 14px; font-weight: 600; cursor: pointer;
+      font-family: 'Sora', sans-serif;
+      display: flex; align-items: center; gap: 6px;
+      transition: background 0.2s; width: 100%;
+      justify-content: center;
+    }
+    .btn-agenda:hover { background: var(--green-dark); }
+    .card-vazio {
+      background: white; border-radius: 20px;
+      padding: 32px 20px; text-align: center; margin-bottom: 20px;
+      box-shadow: 0 2px 12px rgba(30,58,138,0.06);
+      color: var(--gray-light);
+    }
+    .card-vazio svg { width: 40px; height: 40px; margin-bottom: 12px; }
+    .card-vazio p { font-size: 14px; }
+
+    /* ── LISTA DE EVENTOS ── */
+    .section-title {
+      font-family: 'Sora', sans-serif;
+      font-size: 14px; font-weight: 700;
+      color: var(--blue); margin-bottom: 12px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .eventos-lista { display: flex; flex-direction: column; gap: 10px; }
+    .evento-card {
+      background: white; border-radius: 14px;
+      padding: 14px 16px; cursor: pointer;
+      box-shadow: 0 2px 8px rgba(30,58,138,0.05);
+      border-left: 3px solid var(--blue);
+      transition: transform 0.15s, box-shadow 0.15s;
+      animation: fadeUp 0.4s ease;
+    }
+    .evento-card:hover { transform: translateY(-1px); box-shadow: 0 4px 16px rgba(30,58,138,0.10); }
+    .evento-card-titulo { font-weight: 600; font-size: 14px; margin-bottom: 6px; }
+    .evento-card-meta { font-size: 12px; color: var(--gray-light); display: flex; gap: 12px; }
+    .evento-card-convocados {
+      margin-top: 8px; font-size: 12px;
+      color: var(--blue); font-weight: 500;
+    }
+
+    /* ── MODAL DETALHES ── */
+    .modal-overlay {
+      position: fixed; inset: 0; background: rgba(0,0,0,0.5);
+      z-index: 200; display: none; align-items: flex-end;
+    }
+    .modal-overlay.show { display: flex; }
+    .modal-sheet {
+      background: white; border-radius: 24px 24px 0 0;
+      width: 100%; max-height: 85dvh; overflow-y: auto;
+      padding: 24px 20px 40px; animation: slideUp 0.3s ease;
+    }
+    @keyframes slideUp {
+      from { transform: translateY(100%); }
+      to   { transform: translateY(0); }
+    }
+    .modal-handle {
+      width: 40px; height: 4px; background: #e2e8f0;
+      border-radius: 2px; margin: 0 auto 20px;
+    }
+    .modal-titulo {
+      font-family: 'Sora', sans-serif;
+      font-size: 18px; font-weight: 700; margin-bottom: 8px;
+    }
+    .modal-data { font-size: 14px; color: var(--gray-light); margin-bottom: 20px; }
+    .modal-section { margin-bottom: 16px; }
+    .modal-section h3 {
+      font-size: 12px; text-transform: uppercase;
+      letter-spacing: 1px; color: var(--gray-light); margin-bottom: 8px;
+    }
+    .convocado-tag {
+      display: inline-block; background: #eff6ff; color: var(--blue);
+      padding: 4px 10px; border-radius: 20px; font-size: 13px;
+      margin: 3px 3px 0 0; font-weight: 500;
+    }
+    .modal-btn-agenda {
+      width: 100%; margin-top: 20px;
+    }
+
+    /* ── SCANNER OVERLAY ── */
+    #scanner-overlay {
+      position: fixed; inset: 0; background: #000;
+      z-index: 300; display: none; flex-direction: column;
+    }
+    #scanner-overlay.show { display: flex; }
+    #scanner-header {
+      padding: 16px 20px; display: flex;
+      align-items: center; gap: 12px;
+      background: rgba(0,0,0,0.8);
+    }
+    .btn-fechar-scanner {
+      background: rgba(255,255,255,0.15); border: none;
+      color: white; width: 36px; height: 36px;
+      border-radius: 50%; font-size: 18px; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+    }
+    #scanner-header span {
+      color: white; font-family: 'Sora', sans-serif;
+      font-size: 15px; font-weight: 600;
+    }
+    #camera-container { flex: 1; position: relative; overflow: hidden; }
+    #video-preview {
+      width: 100%; height: 100%;
+      object-fit: cover;
+    }
+    .camera-mask {
+      position: absolute; inset: 0;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .camera-guide {
+      width: 85%; height: 60%; border: 2px solid rgba(255,255,255,0.6);
+      border-radius: 12px; position: relative;
+    }
+    .camera-guide::before, .camera-guide::after,
+    .camera-corner-bl, .camera-corner-br {
+      content: '';
+      position: absolute; width: 20px; height: 20px;
+      border-color: white; border-style: solid;
+    }
+    .camera-guide::before { top: -2px; left: -2px; border-width: 3px 0 0 3px; border-radius: 8px 0 0 0; }
+    .camera-guide::after  { top: -2px; right: -2px; border-width: 3px 3px 0 0; border-radius: 0 8px 0 0; }
+    .camera-corner-bl { bottom: -2px; left: -2px; border-width: 0 0 3px 3px; border-radius: 0 0 0 8px; }
+    .camera-corner-br { bottom: -2px; right: -2px; border-width: 0 3px 3px 0; border-radius: 0 0 8px 0; }
+    .camera-hint {
+      position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%);
+      color: rgba(255,255,255,0.8); font-size: 13px; text-align: center;
+      white-space: nowrap;
+    }
+    #scanner-controls {
+      padding: 24px 20px;
+      background: rgba(0,0,0,0.85);
+      display: flex; flex-direction: column; gap: 12px;
+    }
+    #input-foto { display: none; }
+    .btn-capturar {
+      width: 70px; height: 70px; border-radius: 50%;
+      background: white; border: 4px solid rgba(255,255,255,0.4);
+      cursor: pointer; margin: 0 auto;
+      display: flex; align-items: center; justify-content: center;
+      transition: transform 0.1s;
+    }
+    .btn-capturar:active { transform: scale(0.95); }
+    .btn-capturar svg { width: 30px; height: 30px; fill: var(--blue); }
+    .btn-galeria {
+      background: rgba(255,255,255,0.15); border: none;
+      color: white; padding: 12px; border-radius: 12px;
+      font-size: 14px; cursor: pointer;
+      font-family: 'DM Sans', sans-serif;
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+    }
+
+    /* ── TELA DE REVIEW ── */
+    #review-overlay {
+      position: fixed; inset: 0; background: var(--gray-bg);
+      z-index: 400; display: none; flex-direction: column;
+      overflow-y: auto;
+    }
+    #review-overlay.show { display: flex; }
+    #review-header {
+      background: var(--blue); color: white;
+      padding: 20px; display: flex; align-items: center; gap: 12px;
+    }
+    #review-header h2 { font-family: 'Sora', sans-serif; font-size: 16px; font-weight: 700; }
+    #review-content { padding: 20px; flex: 1; }
+
+    .review-section { margin-bottom: 20px; }
+    .review-label {
+      font-size: 12px; text-transform: uppercase;
+      letter-spacing: 1px; color: var(--gray-light); margin-bottom: 8px;
+    }
+    .review-value {
+      background: white; border-radius: 12px;
+      padding: 12px 14px; font-size: 15px;
+      border: 1.5px solid var(--gray-border);
+    }
+    .review-value input {
+      width: 100%; border: none; outline: none;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 15px; color: var(--gray-text);
+      background: transparent;
+    }
+
+    .match-item {
+      background: white; border-radius: 12px;
+      padding: 12px 14px; margin-bottom: 8px;
+      display: flex; align-items: center; gap: 12px;
+      border: 1.5px solid var(--gray-border);
+    }
+    .match-icon { font-size: 20px; flex-shrink: 0; }
+    .match-nome { font-size: 14px; font-weight: 500; flex: 1; }
+    .match-status { font-size: 12px; color: var(--gray-light); }
+    .match-item.exato { border-color: #d1fae5; background: #f0fdf4; }
+    .match-item.parcial { border-color: #fef3c7; background: #fffbeb; }
+    .match-item.nao_encontrado { border-color: #fee2e2; background: #fff5f5; }
+
+    /* Progress de OCR */
+    #ocr-progress {
+      position: fixed; inset: 0; background: rgba(255,255,255,0.95);
+      z-index: 500; display: none; flex-direction: column;
+      align-items: center; justify-content: center; gap: 20px;
+    }
+    #ocr-progress.show { display: flex; }
+    .progress-icon { font-size: 48px; animation: pulse 1s ease infinite; }
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.5} }
+    .progress-bar-outer {
+      width: 200px; height: 6px; background: #e2e8f0;
+      border-radius: 3px; overflow: hidden;
+    }
+    .progress-bar-inner {
+      height: 100%; background: var(--blue);
+      border-radius: 3px; transition: width 0.3s ease;
+      width: 0%;
+    }
+    .progress-text { font-size: 14px; color: var(--gray-light); }
+
+    /* ── FAB ── */
+    #fab {
+      position: fixed; bottom: 24px; right: 20px;
+      width: 60px; height: 60px;
+      background: var(--blue); border: none; border-radius: 50%;
+      box-shadow: 0 4px 20px rgba(30,58,138,0.4);
+      cursor: pointer; display: flex; align-items: center; justify-content: center;
+      transition: transform 0.2s, box-shadow 0.2s;
+      z-index: 50;
+    }
+    #fab:hover { transform: scale(1.05); box-shadow: 0 6px 24px rgba(30,58,138,0.5); }
+    #fab:active { transform: scale(0.95); }
+    #fab svg { width: 26px; height: 26px; fill: white; }
+    .fab-label {
+      position: fixed; bottom: 90px; right: 20px;
+      background: var(--blue); color: white;
+      font-size: 12px; padding: 4px 10px; border-radius: 6px;
+      opacity: 0; pointer-events: none;
+      transition: opacity 0.2s;
+    }
+    #fab:hover ~ .fab-label { opacity: 1; }
+
+    /* ── MODAL SOLICITAÇÃO GRUPO ── */
+    #modal-solicitacao {
+      position: fixed; inset: 0; background: rgba(0,0,0,0.5);
+      z-index: 600; display: none; align-items: center; justify-content: center;
+      padding: 20px;
+    }
+    #modal-solicitacao.show { display: flex; }
+    .modal-solicitacao-inner {
+      background: white; border-radius: 20px;
+      padding: 28px 24px; width: 100%; max-width: 360px;
+      animation: fadeUp 0.3s ease;
+    }
+    .modal-solicitacao-inner h3 {
+      font-family: 'Sora', sans-serif;
+      font-size: 17px; font-weight: 700; margin-bottom: 8px; color: var(--blue);
+    }
+    .modal-solicitacao-inner p { font-size: 14px; color: var(--gray-light); margin-bottom: 20px; }
+    .modal-solicitacao-btns { display: flex; gap: 10px; }
+    .btn-outline {
+      flex: 1; padding: 12px; background: transparent;
+      border: 1.5px solid var(--gray-border); border-radius: 12px;
+      font-size: 14px; cursor: pointer; font-family: 'DM Sans', sans-serif;
+      color: var(--gray-text);
+    }
+    .btn-confirm {
+      flex: 1; padding: 12px; background: var(--blue);
+      border: none; border-radius: 12px; color: white;
+      font-size: 14px; cursor: pointer; font-family: 'Sora', sans-serif;
+      font-weight: 600;
+    }
+
+    /* ── APROVAÇÕES PENDENTES ── */
+    .aprovacao-card {
+      background: white; border-radius: 12px;
+      padding: 14px 16px; margin-bottom: 10px;
+      border-left: 3px solid var(--yellow);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+    .aprovacao-nome { font-weight: 600; font-size: 14px; }
+    .aprovacao-cargo { font-size: 12px; color: var(--gray-light); margin-bottom: 10px; }
+    .aprovacao-btns { display: flex; gap: 8px; }
+    .btn-aprovar {
+      flex: 1; padding: 8px; background: var(--green);
+      border: none; border-radius: 8px; color: white;
+      font-size: 13px; cursor: pointer; font-family: 'Sora', sans-serif; font-weight: 600;
+    }
+    .btn-recusar {
+      flex: 1; padding: 8px; background: #fee2e2;
+      border: none; border-radius: 8px; color: var(--red);
+      font-size: 13px; cursor: pointer;
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(16px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .loading-skeleton {
+      background: linear-gradient(90deg, #e2e8f0 25%, #f1f5f9 50%, #e2e8f0 75%);
+      background-size: 200% 100%;
+      animation: shimmer 1.5s infinite;
+      border-radius: 10px; height: 80px; margin-bottom: 10px;
+    }
+    @keyframes shimmer { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
+  </style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+  <div class="header-top">
+    <div class="header-logo">
+      <svg viewBox="0 0 24 24"><path d="M17 3H7C5.9 3 5 3.9 5 5v16l7-3 7 3V5c0-1.1-.9-2-2-2zm0 15l-5-2.18L7 18V5h10v13z"/></svg>
+      <span>Gestor de Convocações</span>
+    </div>
+    <button class="btn-sair" onclick="sair()">Sair</button>
+  </div>
+  <div class="header-user" id="header-user">Carregando...</div>
+</header>
+
+<!-- BANNER PWA -->
+<div id="banner-pwa">
+  <p>📱 <strong>Instale o app</strong> na tela inicial para receber notificações de convocações.</p>
+  <button onclick="this.parentElement.classList.remove('show')">✕</button>
+</div>
+
+<!-- MAIN CONTENT -->
+<main>
+  <!-- Aprovações pendentes (admin) -->
+  <div id="section-aprovacoes" style="display:none; margin-bottom:20px;">
+    <div class="section-title">🔔 Solicitações de entrada</div>
+    <div id="lista-aprovacoes"></div>
+  </div>
+
+  <!-- Seletor de grupo -->
+  <div id="section-grupo" class="show">
+    <div class="grupo-header">
+      <h2>Meu Grupo</h2>
+      <span class="grupo-badge" id="grupo-nome-badge">—</span>
+    </div>
+    <ul class="grupo-lista" id="lista-grupos">
+      <div class="loading-skeleton"></div>
+    </ul>
+    <button class="btn-criar-grupo" onclick="abrirCriarGrupo()">+ Criar novo grupo</button>
+  </div>
+
+  <!-- Próxima convocação pessoal -->
+  <div class="section-title" style="margin-bottom:12px;">Minha próxima convocação</div>
+  <div id="card-proximo"></div>
+
+  <!-- Lista de eventos do grupo -->
+  <div class="section-title" style="margin-top:24px;">
+    Todas as convocações
+    <span style="font-size:12px; font-weight:400; color:var(--gray-light);" id="total-eventos"></span>
+  </div>
+  <div id="lista-eventos">
+    <div class="loading-skeleton"></div>
+    <div class="loading-skeleton"></div>
+  </div>
+</main>
+
+<!-- FAB SCANNER -->
+<button id="fab" onclick="abrirScanner()">
+  <svg viewBox="0 0 24 24"><path d="M9 3H5a2 2 0 00-2 2v4m6-6h10a2 2 0 012 2v4M9 3v18m0 0h10a2 2 0 002-2V9M9 21H5a2 2 0 01-2-2V9m0 0h18"/></svg>
+</button>
+<div class="fab-label">Escanear convocação</div>
+
+<!-- MODAL DETALHES EVENTO -->
+<div class="modal-overlay" id="modal-evento" onclick="fecharModalEvento(event)">
+  <div class="modal-sheet" id="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-titulo" id="modal-titulo"></div>
+    <div class="modal-data" id="modal-data"></div>
+    <div class="modal-section">
+      <h3>Convocados</h3>
+      <div id="modal-convocados"></div>
+    </div>
+    <button class="btn-agenda modal-btn-agenda" id="modal-btn-agenda">
+      📅 Adicionar à Agenda
+    </button>
+  </div>
+</div>
+
+<!-- SCANNER OVERLAY -->
+<div id="scanner-overlay">
+  <div id="scanner-header">
+    <button class="btn-fechar-scanner" onclick="fecharScanner()">✕</button>
+    <span>Escanear Convocação</span>
+  </div>
+  <div id="camera-container">
+    <video id="video-preview" autoplay playsinline muted></video>
+    <div class="camera-mask">
+      <div class="camera-guide">
+        <div class="camera-corner-bl"></div>
+        <div class="camera-corner-br"></div>
+        <div class="camera-hint">Enquadre o documento aqui</div>
+      </div>
+    </div>
+  </div>
+  <div id="scanner-controls">
+    <button class="btn-capturar" onclick="capturarFoto()">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3.2"/><path d="M9 2L7.17 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2h-3.17L15 2H9zm3 15c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5z"/></svg>
+    </button>
+    <input type="file" id="input-foto" accept="image/*" onchange="processarImagem(this.files[0])"/>
+    <button class="btn-galeria" onclick="document.getElementById('input-foto').click()">
+      🖼️ Escolher da galeria
+    </button>
+  </div>
+</div>
+
+<!-- OCR PROGRESS -->
+<div id="ocr-progress">
+  <div class="progress-icon">🔍</div>
+  <div style="font-family:'Sora',sans-serif; font-weight:700; font-size:16px;">Lendo documento...</div>
+  <div class="progress-bar-outer">
+    <div class="progress-bar-inner" id="progress-bar"></div>
+  </div>
+  <div class="progress-text" id="progress-pct">0%</div>
+</div>
+
+<!-- REVIEW OVERLAY -->
+<div id="review-overlay">
+  <div id="review-header">
+    <button class="btn-fechar-scanner" onclick="fecharReview()">✕</button>
+    <h2>Conferir dados lidos</h2>
+  </div>
+  <div id="review-content">
+    <div class="review-section">
+      <div class="review-label">Título do evento</div>
+      <div class="review-value"><input type="text" id="rv-titulo" placeholder="Informe o título..."/></div>
+    </div>
+    <div class="review-section">
+      <div class="review-label">Data e hora</div>
+      <div class="review-value"><input type="datetime-local" id="rv-data"/></div>
+    </div>
+    <div class="review-section">
+      <div class="review-label">Local</div>
+      <div class="review-value"><input type="text" id="rv-local" placeholder="Local do evento..."/></div>
+    </div>
+    <div class="review-section">
+      <div class="review-label">Convocados identificados</div>
+      <div id="rv-matches"></div>
+    </div>
+    <div style="display:flex; gap:10px; margin-top:8px;">
+      <button class="btn-outline" onclick="fecharReview()">Cancelar</button>
+      <button class="btn-confirm" onclick="confirmarSalvar()">✓ Confirmar e Notificar</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL SOLICITAÇÃO GRUPO -->
+<div id="modal-solicitacao">
+  <div class="modal-solicitacao-inner">
+    <h3 id="ms-titulo">Entrar no grupo</h3>
+    <p id="ms-desc">Sua solicitação será enviada aos membros do grupo. Qualquer membro poderá aprovar sua entrada.</p>
+    <div class="modal-solicitacao-btns">
+      <button class="btn-outline" onclick="fecharModalSolicitacao()">Cancelar</button>
+      <button class="btn-confirm" id="ms-btn-confirmar">Solicitar entrada</button>
+    </div>
+  </div>
+</div>
+
+<script type="module">
+import { auth, db } from './js/firebase-config.js';
+import { lerConvocacao } from './js/ocr-engine.js';
+import { cruzarNomes, confirmarAlias } from './js/matcher.js';
+import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import {
+  collection, doc, getDoc, getDocs, addDoc, updateDoc, query,
+  where, orderBy, serverTimestamp, setDoc
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+// ── Estado global ───────────────────────────────────────────────────
+let usuarioAtual = null;
+let grupoAtual = null;
+let dadosOCR = null;
+let matchesAtual = [];
+let streamCamera = null;
+let grupoSolicitacaoId = null;
+
+// Expor funções globais
+Object.assign(window, {
+  sair, abrirScanner, fecharScanner, capturarFoto, processarImagem,
+  confirmarSalvar, fecharReview, fecharModalEvento, abrirCriarGrupo,
+  fecharModalSolicitacao
+});
+
+// ── Auth guard ──────────────────────────────────────────────────────
+onAuthStateChanged(auth, async (user) => {
+  if (!user) { window.location.href = 'login.html'; return; }
+  const snap = await getDoc(doc(db, 'usuarios', user.uid));
+  if (!snap.exists()) { window.location.href = 'login.html'; return; }
+  usuarioAtual = { uid: user.uid, ...snap.data() };
+  document.getElementById('header-user').textContent =
+    `${usuarioAtual.nome_completo} · ${usuarioAtual.cargo}`;
+  verificarPWA();
+  carregarGrupos();
+  if (usuarioAtual.grupo_id) {
+    grupoAtual = usuarioAtual.grupo_id;
+    carregarEventos();
+    verificarAprovacoesPendentes();
+  }
+});
+
+// ── PWA Banner ──────────────────────────────────────────────────────
+function verificarPWA() {
+  const isInstalled = window.matchMedia('(display-mode: standalone)').matches;
+  if (!isInstalled) {
+    document.getElementById('banner-pwa').classList.add('show');
+  }
+}
+
+// ── GRUPOS ──────────────────────────────────────────────────────────
+async function carregarGrupos() {
+  const snap = await getDocs(collection(db, 'grupos'));
+  const lista = document.getElementById('lista-grupos');
+  lista.innerHTML = '';
+
+  if (snap.empty) {
+    lista.innerHTML = '<p style="color:var(--gray-light);font-size:14px;text-align:center;">Nenhum grupo encontrado. Crie o primeiro!</p>';
+    return;
+  }
+
+  snap.forEach(d => {
+    const g = { id: d.id, ...d.data() };
+    const li = document.createElement('li');
+    li.className = 'grupo-item';
+
+    let btnHtml = '';
+    if (usuarioAtual.grupo_id === g.id) {
+      btnHtml = '<span style="color:var(--green);font-weight:600;font-size:13px;">✓ Membro</span>';
+      document.getElementById('grupo-nome-badge').textContent = g.nome;
+    } else if ((usuarioAtual.solicitacoes || []).includes(g.id)) {
+      btnHtml = `<button class="btn-entrar-grupo pendente">Aguardando</button>`;
+    } else {
+      btnHtml = `<button class="btn-entrar-grupo" onclick="solicitarEntrada('${g.id}','${g.nome}')">Entrar</button>`;
+    }
+
+    li.innerHTML = `
+      <div>
+        <div class="grupo-item-nome">${g.nome}</div>
+        <div class="grupo-item-membros">${g.membros || 0} membro(s)</div>
+      </div>
+      ${btnHtml}`;
+    lista.appendChild(li);
+  });
+}
+
+window.solicitarEntrada = function(grupoId, grupoNome) {
+  grupoSolicitacaoId = grupoId;
+  document.getElementById('ms-titulo').textContent = `Entrar em "${grupoNome}"`;
+  document.getElementById('modal-solicitacao').classList.add('show');
+  document.getElementById('ms-btn-confirmar').onclick = async () => {
+    await updateDoc(doc(db, 'grupos', grupoId), {
+      [`solicitacoes.${usuarioAtual.uid}`]: {
+        nome: usuarioAtual.nome_completo,
+        cargo: usuarioAtual.cargo,
+        solicitado_em: new Date().toISOString()
+      }
+    });
+    await updateDoc(doc(db, 'usuarios', usuarioAtual.uid), {
+      solicitacoes: [...(usuarioAtual.solicitacoes || []), grupoId]
+    });
+    fecharModalSolicitacao();
+    carregarGrupos();
+  };
+};
+
+function fecharModalSolicitacao() {
+  document.getElementById('modal-solicitacao').classList.remove('show');
+}
+
+async function abrirCriarGrupo() {
+  const nome = prompt('Nome do novo grupo:');
+  if (!nome) return;
+  const ref = await addDoc(collection(db, 'grupos'), {
+    nome: nome.trim(),
+    criado_por: usuarioAtual.uid,
+    criado_em: serverTimestamp(),
+    membros: 1
+  });
+  await updateDoc(doc(db, 'usuarios', usuarioAtual.uid), { grupo_id: ref.id });
+  usuarioAtual.grupo_id = ref.id;
+  grupoAtual = ref.id;
+  carregarGrupos();
+  carregarEventos();
+}
+
+// ── APROVAÇÕES ──────────────────────────────────────────────────────
+async function verificarAprovacoesPendentes() {
+  if (!grupoAtual) return;
+  const snap = await getDoc(doc(db, 'grupos', grupoAtual));
+  if (!snap.exists()) return;
+  const solicitacoes = snap.data().solicitacoes || {};
+  const entries = Object.entries(solicitacoes);
+  if (entries.length === 0) return;
+
+  const section = document.getElementById('section-aprovacoes');
+  const lista = document.getElementById('lista-aprovacoes');
+  section.style.display = 'block';
+  lista.innerHTML = '';
+
+  entries.forEach(([uid, dados]) => {
+    const card = document.createElement('div');
+    card.className = 'aprovacao-card';
+    card.innerHTML = `
+      <div class="aprovacao-nome">${dados.nome}</div>
+      <div class="aprovacao-cargo">${dados.cargo}</div>
+      <div class="aprovacao-btns">
+        <button class="btn-aprovar" onclick="aprovarMembro('${uid}','${dados.nome}','${dados.cargo}')">✓ Aprovar</button>
+        <button class="btn-recusar" onclick="recusarMembro('${uid}')">✗ Recusar</button>
+      </div>`;
+    lista.appendChild(card);
+  });
+}
+
+window.aprovarMembro = async function(uid, nome, cargo) {
+  // Adiciona ao grupo
+  await updateDoc(doc(db, 'usuarios', uid), {
+    grupo_id: grupoAtual,
+    solicitacoes: []
+  });
+  // Remove da lista de solicitações
+  const grupoRef = doc(db, 'grupos', grupoAtual);
+  const snap = await getDoc(grupoRef);
+  const solic = snap.data().solicitacoes || {};
+  delete solic[uid];
+  await updateDoc(grupoRef, { solicitacoes: solic, membros: (snap.data().membros || 1) + 1 });
+  verificarAprovacoesPendentes();
+  alert(`${nome} foi aprovado(a)!`);
+};
+
+window.recusarMembro = async function(uid) {
+  const grupoRef = doc(db, 'grupos', grupoAtual);
+  const snap = await getDoc(grupoRef);
+  const solic = snap.data().solicitacoes || {};
+  delete solic[uid];
+  await updateDoc(grupoRef, { solicitacoes: solic });
+  await updateDoc(doc(db, 'usuarios', uid), { solicitacoes: [] });
+  verificarAprovacoesPendentes();
+};
+
+// ── EVENTOS ─────────────────────────────────────────────────────────
+async function carregarEventos() {
+  if (!grupoAtual) return;
+  const q = query(
+    collection(db, 'eventos'),
+    where('grupo_id', '==', grupoAtual),
+    orderBy('data_hora', 'asc')
+  );
+  const snap = await getDocs(q);
+  const agora = new Date();
+  const eventos = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+
+  document.getElementById('total-eventos').textContent = `${eventos.length} total`;
+
+  // Próxima convocação pessoal
+  const proxima = eventos.find(e => {
+    const eData = new Date(e.data_hora);
+    return eData > agora && (e.lista_convocados || []).some(n =>
+      usuarioAtual.nomes_conhecidos.some(nc =>
+        nc.toLowerCase().includes(n.toLowerCase()) || n.toLowerCase().includes(nc.toLowerCase())
+      )
+    );
+  });
+
+  renderProximo(proxima);
+  renderLista(eventos);
+}
+
+function renderProximo(evento) {
+  const el = document.getElementById('card-proximo');
+  if (!evento) {
+    el.innerHTML = `
+      <div class="card-vazio">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#cbd5e1" stroke-width="1.5">
+          <rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/>
+          <line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>
+        </svg>
+        <p>Você não tem convocações próximas</p>
+      </div>`;
+    return;
+  }
+  const dt = new Date(evento.data_hora);
+  el.innerHTML = `
+    <div class="card-proximo">
+      <div class="card-proximo-label">SUA PRÓXIMA CONVOCAÇÃO</div>
+      <div class="card-proximo-titulo">${evento.titulo_evento || 'Evento'}</div>
+      <div class="card-proximo-meta">
+        <span>📅 ${formatarData(dt)}</span>
+        <span>🕐 ${formatarHora(dt)}</span>
+        ${evento.local ? `<span>📍 ${evento.local}</span>` : ''}
+      </div>
+      <button class="btn-agenda" onclick="adicionarAgenda('${evento.id}')">
+        📅 Adicionar à Agenda
+      </button>
+    </div>`;
+}
+
+function renderLista(eventos) {
+  const lista = document.getElementById('lista-eventos');
+  if (eventos.length === 0) {
+    lista.innerHTML = '<p style="color:var(--gray-light);font-size:14px;text-align:center;padding:20px">Nenhuma convocação cadastrada ainda.</p>';
+    return;
+  }
+  lista.innerHTML = '';
+  eventos.forEach(e => {
+    const dt = new Date(e.data_hora);
+    const card = document.createElement('div');
+    card.className = 'evento-card';
+    card.onclick = () => abrirModalEvento(e);
+    card.innerHTML = `
+      <div class="evento-card-titulo">${e.titulo_evento || 'Evento sem título'}</div>
+      <div class="evento-card-meta">
+        <span>📅 ${formatarData(dt)}</span>
+        <span>🕐 ${formatarHora(dt)}</span>
+      </div>
+      <div class="evento-card-convocados">
+        ${(e.lista_convocados || []).length} convocado(s)
+      </div>`;
+    lista.appendChild(card);
+  });
+}
+
+function abrirModalEvento(evento) {
+  const dt = new Date(evento.data_hora);
+  document.getElementById('modal-titulo').textContent = evento.titulo_evento || 'Evento';
+  document.getElementById('modal-data').textContent =
+    `${formatarData(dt)} às ${formatarHora(dt)}${evento.local ? ' · ' + evento.local : ''}`;
+  const convEl = document.getElementById('modal-convocados');
+  convEl.innerHTML = (evento.lista_convocados || [])
+    .map(n => `<span class="convocado-tag">${n}</span>`).join('');
+  document.getElementById('modal-btn-agenda').onclick = () => adicionarAgendaEvento(evento);
+  document.getElementById('modal-evento').classList.add('show');
+}
+
+function fecharModalEvento(e) {
+  if (e.target === document.getElementById('modal-evento'))
+    document.getElementById('modal-evento').classList.remove('show');
+}
+
+// ── SCANNER ─────────────────────────────────────────────────────────
+async function abrirScanner() {
+  if (!grupoAtual) { alert('Você precisa fazer parte de um grupo antes de escanear.'); return; }
+  document.getElementById('scanner-overlay').classList.add('show');
+  try {
+    streamCamera = await navigator.mediaDevices.getUserMedia({
+      video: { facingMode: 'environment' }
+    });
+    document.getElementById('video-preview').srcObject = streamCamera;
+  } catch {
+    alert('Câmera não disponível. Use a galeria.');
+  }
+}
+
+function fecharScanner() {
+  document.getElementById('scanner-overlay').classList.remove('show');
+  if (streamCamera) { streamCamera.getTracks().forEach(t => t.stop()); streamCamera = null; }
+}
+
+function capturarFoto() {
+  const video = document.getElementById('video-preview');
+  const canvas = document.createElement('canvas');
+  canvas.width = video.videoWidth; canvas.height = video.videoHeight;
+  canvas.getContext('2d').drawImage(video, 0, 0);
+  canvas.toBlob(blob => processarImagem(blob), 'image/jpeg', 0.9);
+}
+
+async function processarImagem(arquivo) {
+  if (!arquivo) return;
+  fecharScanner();
+
+  // Mostrar progresso
+  const prog = document.getElementById('ocr-progress');
+  const bar = document.getElementById('progress-bar');
+  const pct = document.getElementById('progress-pct');
+  prog.classList.add('show');
+
+  try {
+    dadosOCR = await lerConvocacao(arquivo, (p) => {
+      bar.style.width = p + '%';
+      pct.textContent = p + '%';
+    });
+  } catch(e) {
+    prog.classList.remove('show');
+    alert('Erro ao processar imagem. Tente novamente.');
+    return;
+  }
+
+  prog.classList.remove('show');
+
+  // Verificar duplicidade
+  if (dadosOCR.id_verificacao) {
+    const q = query(
+      collection(db, 'eventos'),
+      where('id_verificacao', '==', dadosOCR.id_verificacao),
+      where('grupo_id', '==', grupoAtual)
+    );
+    const snap = await getDocs(q);
+    if (!snap.empty) {
+      alert('⚠️ Evento já cadastrado! Este evento já foi escaneado anteriormente.');
+      return;
+    }
+  }
+
+  // Cruzar nomes
+  matchesAtual = await cruzarNomes(dadosOCR.convocados, grupoAtual);
+
+  // Preencher review
+  document.getElementById('rv-titulo').value = dadosOCR.titulo_evento || '';
+  if (dadosOCR.data_hora) {
+    document.getElementById('rv-data').value = dadosOCR.data_hora.substring(0, 16);
+  }
+  document.getElementById('rv-local').value = dadosOCR.local || '';
+
+  const matchesEl = document.getElementById('rv-matches');
+  matchesEl.innerHTML = matchesAtual.map(m => {
+    if (m.tipo === 'exato') return `
+      <div class="match-item exato">
+        <div class="match-icon">✅</div>
+        <div>
+          <div class="match-nome">${m.nomeEncontrado}</div>
+          <div class="match-status">→ ${m.usuario.nome_completo} (${m.usuario.cargo})</div>
+        </div>
+      </div>`;
+    if (m.tipo === 'parcial') return `
+      <div class="match-item parcial">
+        <div class="match-icon">⚠️</div>
+        <div>
+          <div class="match-nome">${m.nomeEncontrado}</div>
+          <div class="match-status">Possível: ${m.usuario.nome_completo}?</div>
+        </div>
+      </div>`;
+    return `
+      <div class="match-item nao_encontrado">
+        <div class="match-icon">❓</div>
+        <div>
+          <div class="match-nome">${m.nomeOriginal}</div>
+          <div class="match-status">Não identificado no grupo</div>
+        </div>
+      </div>`;
+  }).join('');
+
+  document.getElementById('review-overlay').classList.add('show');
+}
+
+function fecharReview() {
+  document.getElementById('review-overlay').classList.remove('show');
+  dadosOCR = null; matchesAtual = [];
+}
+
+async function confirmarSalvar() {
+  const titulo = document.getElementById('rv-titulo').value.trim();
+  const dataVal = document.getElementById('rv-data').value;
+  if (!titulo || !dataVal) { alert('Título e data são obrigatórios.'); return; }
+
+  await addDoc(collection(db, 'eventos'), {
+    id_verificacao: dadosOCR?.id_verificacao || null,
+    titulo_evento: titulo,
+    data_hora: dataVal + ':00',
+    local: document.getElementById('rv-local').value.trim(),
+    lista_convocados: dadosOCR?.convocados || [],
+    grupo_id: grupoAtual,
+    criado_por: usuarioAtual.uid,
+    criado_em: serverTimestamp()
+  });
+
+  fecharReview();
+  alert('✅ Convocação salva! Os membros identificados foram notificados.');
+  carregarEventos();
+}
+
+// ── AGENDA .ICS ──────────────────────────────────────────────────────
+window.adicionarAgenda = async function(eventoId) {
+  const snap = await getDoc(doc(db, 'eventos', eventoId));
+  if (snap.exists()) adicionarAgendaEvento({ id: snap.id, ...snap.data() });
+};
+
+function adicionarAgendaEvento(evento) {
+  const inicio = new Date(evento.data_hora);
+  const fim = new Date(inicio.getTime() + 2 * 60 * 60 * 1000); // +2h padrão
+  const fmt = d => d.toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z';
+  const ics = [
+    'BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//GestorConvocacoes//PT',
+    'BEGIN:VEVENT',
+    `UID:${evento.id}@gestorconvocacoes`,
+    `DTSTAMP:${fmt(new Date())}`,
+    `DTSTART:${fmt(inicio)}`,
+    `DTEND:${fmt(fim)}`,
+    `SUMMARY:${evento.titulo_evento || 'Convocação'}`,
+    `LOCATION:${evento.local || 'Câmara Municipal'}`,
+    `DESCRIPTION:Convocados: ${(evento.lista_convocados || []).join(', ')}`,
+    'END:VEVENT', 'END:VCALENDAR'
+  ].join('\r\n');
+
+  const blob = new Blob([ics], { type: 'text/calendar;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = 'convocacao.ics'; a.click();
+  URL.revokeObjectURL(url);
+}
+
+// ── UTILS ────────────────────────────────────────────────────────────
+function formatarData(d) {
+  return d.toLocaleDateString('pt-BR', { day:'2-digit', month:'short', year:'numeric' });
+}
+function formatarHora(d) {
+  return d.toLocaleTimeString('pt-BR', { hour:'2-digit', minute:'2-digit' });
+}
+async function sair() {
+  await signOut(auth);
+  window.location.href = 'login.html';
+}
+</script>
+</body>
+</html>
