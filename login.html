@@ -114,7 +114,7 @@ if('serviceWorker' in navigator){
 
 firebase.initializeApp({
   apiKey:"AIzaSyAOpV5NFydHWwUwQKg0MANqMHVcXVDDqpQ",
-  authDomain:"israelheleno.github.io",
+  authDomain:"gestor-convocacoes-89823.firebaseapp.com",
   projectId:"gestor-convocacoes-89823",
   storageBucket:"gestor-convocacoes-89823.firebasestorage.app",
   messagingSenderId:"212389113483",
@@ -123,38 +123,33 @@ firebase.initializeApp({
 const auth=firebase.auth();
 const db=firebase.firestore();
 
-// ── Verificar redirect do Google ao carregar ──────────────────────────
-// Mostra loading se veio de um redirect
+// ── Verificar se voltou de redirect ───────────────────────────────────
 const veioDeRedirect = sessionStorage.getItem('googleRedirect');
 if(veioDeRedirect){
   document.getElementById('loading-ov').classList.add('on');
-  sessionStorage.removeItem('googleRedirect');
 }
 
 auth.getRedirectResult()
   .then(async result=>{
+    sessionStorage.removeItem('googleRedirect');
     document.getElementById('loading-ov').classList.remove('on');
-    if(!result||!result.user) return;
-    await finalizarGoogleLogin(result.user);
+    if(result && result.user) await finalizarGoogleLogin(result.user);
   })
   .catch(e=>{
+    sessionStorage.removeItem('googleRedirect');
     document.getElementById('loading-ov').classList.remove('on');
     console.error('Redirect error:',e.code, e.message);
-    if(e.code==='auth/web-storage-unsupported'){
-      erro('Seu browser bloqueia cookies de terceiros. Use login com e-mail e senha.');
-    } else if(e.code && e.code!=='auth/cancelled-popup-request'){
-      erro('Erro no login Google: '+e.message);
+    if(e.code && e.code!=='auth/cancelled-popup-request' && e.code!=='auth/credential-already-in-use'){
+      erro('Erro no login Google: '+traduzir(e.code));
     }
   });
 
-// Se já está logado, vai direto pro dashboard
+// Se já logado vai pro dashboard
 auth.onAuthStateChanged(async user=>{
   if(!user) return;
   try{
     const snap=await db.collection('usuarios').doc(user.uid).get();
-    if(snap.exists&&snap.data().nome_completo){
-      window.location.replace('index.html');
-    }
+    if(snap.exists&&snap.data().nome_completo) window.location.replace('index.html');
   }catch(e){console.error(e);}
 });
 
@@ -246,13 +241,30 @@ async function criar(){
 
 async function loginGoogle(){
   const provider=new firebase.auth.GoogleAuthProvider();
-  // Marca que vai fazer redirect para mostrar loading ao voltar
-  sessionStorage.setItem('googleRedirect','1');
+  provider.setCustomParameters({prompt:'select_account'});
+
+  // Tenta popup primeiro (Android/Chrome)
+  // Se falhar tenta redirect (iOS/Safari)
   try{
-    await auth.signInWithRedirect(provider);
-  }catch(e){
-    sessionStorage.removeItem('googleRedirect');
-    erro(traduzir(e.code));
+    const result=await auth.signInWithPopup(provider);
+    await finalizarGoogleLogin(result.user);
+  }catch(popupErr){
+    console.log('Popup falhou, tentando redirect:', popupErr.code);
+    // Popup bloqueado pelo Safari — usa redirect
+    if(popupErr.code==='auth/popup-blocked'||
+       popupErr.code==='auth/popup-closed-by-user'||
+       popupErr.code==='auth/cancelled-popup-request'||
+       popupErr.code==='auth/operation-not-supported-in-this-environment'){
+      try{
+        sessionStorage.setItem('googleRedirect','1');
+        await auth.signInWithRedirect(provider);
+      }catch(redirErr){
+        sessionStorage.removeItem('googleRedirect');
+        erro(traduzir(redirErr.code));
+      }
+    } else {
+      erro(traduzir(popupErr.code));
+    }
   }
 }
 
