@@ -116,6 +116,9 @@ firebase.initializeApp({
 const auth=firebase.auth();
 const db=firebase.firestore();
 
+// Persistência LOCAL garante que o iOS não perca a sessão ao instalar como PWA
+auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL).catch(e=>console.error(e));
+
 // ── Verificar se voltou de redirect ───────────────────────────────────
 const veioDeRedirect = sessionStorage.getItem('googleRedirect');
 if(veioDeRedirect){
