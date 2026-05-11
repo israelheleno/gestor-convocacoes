@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8"/>
@@ -53,6 +54,7 @@
   <div id="msg" class="msg"></div>
 
   <!-- ENTRAR -->
+
   <div class="panel on" id="p-entrar">
     <div class="field"><label>E-mail</label><input type="email" id="e-email" placeholder="seu@email.com"/></div>
     <div class="field"><label>Senha</label><input type="password" id="e-senha" placeholder="••••••••"/></div>
@@ -67,6 +69,7 @@
   </div>
 
   <!-- CRIAR CONTA -->
+
   <div class="panel" id="p-criar">
     <div class="field"><label>E-mail</label><input type="email" id="c-email" placeholder="seu@email.com"/></div>
     <div class="field"><label>Senha</label><input type="password" id="c-senha" placeholder="Mínimo 6 caracteres"/></div>
@@ -85,8 +88,11 @@
 </div>
 
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+
 <script>
 // Limpar service workers e cache
 if('serviceWorker' in navigator){
@@ -185,16 +191,30 @@ async function criar(){
 
 async function google(){
   try{
-    const r=await auth.signInWithPopup(new firebase.auth.GoogleAuthProvider());
-    const snap=await db.collection('usuarios').doc(r.user.uid).get();
+    const provider=new firebase.auth.GoogleAuthProvider();
+    // Safari/iOS não suporta popup — usa redirect
+    await auth.signInWithRedirect(provider);
+    // O resultado é tratado no onAuthStateChanged após o redirect
+  }catch(e){erro(traduzir(e.code));}
+}
+
+// Tratar resultado do redirect ao voltar para a página
+auth.getRedirectResult().then(async result=>{
+  if(!result||!result.user)return;
+  const user=result.user;
+  try{
+    const snap=await db.collection('usuarios').doc(user.uid).get();
     if(!snap.exists||!snap.data().nome_completo){
-      const cargo=prompt('Bem-vindo(a) '+r.user.displayName+'!\nQual é o seu cargo?');
+      // Redireciona para onboarding — pede cargo
+      const cargo=prompt('Bem-vindo(a) '+user.displayName+'!\nQual é o seu cargo?');
       if(!cargo){auth.signOut();return;}
-      await salvarPerfil(r.user.uid,r.user.displayName,cargo,r.user.email);
+      await salvarPerfil(user.uid,user.displayName,cargo,user.email);
     }
     window.location.replace('index.html');
   }catch(e){erro(traduzir(e.code));}
-}
+}).catch(e=>{
+  if(e.code&&e.code!=='auth/cancelled-popup-request') erro(traduzir(e.code));
+});
 
 document.addEventListener('keydown',e=>{
   if(e.key==='Enter'){
@@ -203,5 +223,6 @@ document.addEventListener('keydown',e=>{
   }
 });
 </script>
+
 </body>
 </html>
