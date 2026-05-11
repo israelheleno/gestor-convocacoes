@@ -24,22 +24,35 @@
     .panel{display:none}.panel.on{display:block}
     .field{margin-bottom:14px}
     .field label{display:block;font-size:13px;font-weight:500;color:#334155;margin-bottom:5px}
-    .field input{width:100%;padding:12px 14px;border:1.5px solid #e2e8f0;border-radius:12px;font-family:'DM Sans',sans-serif;font-size:15px;color:#334155;outline:none}
+    .field input{width:100%;padding:12px 14px;border:1.5px solid #e2e8f0;border-radius:12px;font-family:'DM Sans',sans-serif;font-size:15px;color:#334155;outline:none;-webkit-appearance:none}
     .field input:focus{border-color:#1E3A8A}
-    .sep{font-size:12px;color:#94a3b8;margin:4px 0 10px;border-top:1.5px dashed #e2e8f0;padding-top:12px}
-    .btn{width:100%;padding:14px;border:none;border-radius:12px;font-family:'Sora',sans-serif;font-size:15px;font-weight:600;cursor:pointer;margin-top:6px;display:flex;align-items:center;justify-content:center;gap:8px}
-    .btn-blue{background:#1E3A8A;color:#fff}.btn-blue:hover{background:#2d4fad}
+    .sep{font-size:12px;color:#94a3b8;margin-bottom:12px;border-top:1.5px dashed #e2e8f0;padding-top:14px;margin-top:4px}
+    .btn{width:100%;padding:14px;border:none;border-radius:12px;font-family:'Sora',sans-serif;font-size:15px;font-weight:600;cursor:pointer;margin-top:6px;display:flex;align-items:center;justify-content:center;gap:8px;-webkit-appearance:none}
+    .btn-blue{background:#1E3A8A;color:#fff}
     .btn-blue:disabled{background:#94a3b8;cursor:not-allowed}
-    .btn-google{background:#fff;color:#334155;border:1.5px solid #e2e8f0;margin-top:12px}
-    .divider{display:flex;align-items:center;gap:10px;margin:14px 0;color:#94a3b8;font-size:13px}
+    .btn-google{background:#fff;color:#334155;border:1.5px solid #e2e8f0;font-family:'DM Sans',sans-serif;font-weight:500;margin-top:12px}
+    .divider{display:flex;align-items:center;gap:10px;margin:16px 0;color:#94a3b8;font-size:13px}
     .divider::before,.divider::after{content:'';flex:1;height:1px;background:#e2e8f0}
     .msg{padding:11px 13px;border-radius:10px;font-size:13px;margin-bottom:14px;display:none}
     .msg.err{background:#fee2e2;color:#b91c1c;display:block}
+    .msg.ok{background:#d1fae5;color:#065f46;display:block}
     .spin{width:17px;height:17px;border:2px solid rgba(255,255,255,.4);border-top-color:#fff;border-radius:50%;animation:sp .6s linear infinite;display:none}
     @keyframes sp{to{transform:rotate(360deg)}}
+    .loading-overlay{position:fixed;inset:0;background:rgba(255,255,255,.95);display:none;flex-direction:column;align-items:center;justify-content:center;gap:16px;z-index:999}
+    .loading-overlay.on{display:flex}
+    .loading-spinner{width:40px;height:40px;border:3px solid #e2e8f0;border-top-color:#1E3A8A;border-radius:50%;animation:sp .8s linear infinite}
+    .loading-txt{font-family:'Sora',sans-serif;font-size:15px;color:#1E3A8A;font-weight:600}
   </style>
 </head>
 <body>
+
+<!-- Loading overlay para redirect -->
+
+<div class="loading-overlay" id="loading-ov">
+  <div class="loading-spinner"></div>
+  <div class="loading-txt">Entrando com Google...</div>
+</div>
+
 <div class="card">
   <div class="logo">
     <div class="logo-icon"><svg viewBox="0 0 24 24"><path d="M17 3H7C5.9 3 5 3.9 5 5v16l7-3 7 3V5c0-1.1-.9-2-2-2zm0 15l-5-2.18L7 18V5h10v13z"/></svg></div>
@@ -56,14 +69,14 @@
   <!-- ENTRAR -->
 
   <div class="panel on" id="p-entrar">
-    <div class="field"><label>E-mail</label><input type="email" id="e-email" placeholder="seu@email.com"/></div>
-    <div class="field"><label>Senha</label><input type="password" id="e-senha" placeholder="••••••••"/></div>
+    <div class="field"><label>E-mail</label><input type="email" id="e-email" placeholder="seu@email.com" autocomplete="email"/></div>
+    <div class="field"><label>Senha</label><input type="password" id="e-senha" placeholder="••••••••" autocomplete="current-password"/></div>
     <button class="btn btn-blue" id="b-entrar" onclick="entrar()">
       <span id="b-entrar-txt">Entrar</span><div class="spin" id="b-entrar-sp"></div>
     </button>
     <div class="divider">ou</div>
-    <button class="btn btn-google" onclick="google()">
-      <svg width="17" height="17" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.18 1.48-4.97 2.31-8.16 2.31-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
+    <button class="btn btn-google" onclick="loginGoogle()">
+      <svg width="18" height="18" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.18 1.48-4.97 2.31-8.16 2.31-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
       Continuar com Google
     </button>
   </div>
@@ -71,8 +84,8 @@
   <!-- CRIAR CONTA -->
 
   <div class="panel" id="p-criar">
-    <div class="field"><label>E-mail</label><input type="email" id="c-email" placeholder="seu@email.com"/></div>
-    <div class="field"><label>Senha</label><input type="password" id="c-senha" placeholder="Mínimo 6 caracteres"/></div>
+    <div class="field"><label>E-mail</label><input type="email" id="c-email" placeholder="seu@email.com" autocomplete="email"/></div>
+    <div class="field"><label>Senha</label><input type="password" id="c-senha" placeholder="Mínimo 6 caracteres" autocomplete="new-password"/></div>
     <p class="sep">📋 Perfil — preenchido uma única vez</p>
     <div class="field"><label>Nome completo</label><input type="text" id="c-nome" placeholder="Como aparece nos documentos"/></div>
     <div class="field"><label>Cargo</label><input type="text" id="c-cargo" placeholder="Ex: Operador de Câmera"/></div>
@@ -80,8 +93,8 @@
       <span id="b-criar-txt">Criar conta</span><div class="spin" id="b-criar-sp"></div>
     </button>
     <div class="divider">ou</div>
-    <button class="btn btn-google" onclick="google()">
-      <svg width="17" height="17" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.18 1.48-4.97 2.31-8.16 2.31-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
+    <button class="btn btn-google" onclick="loginGoogle()">
+      <svg width="18" height="18" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.18 1.48-4.97 2.31-8.16 2.31-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
       Continuar com Google
     </button>
   </div>
@@ -94,7 +107,6 @@
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 
 <script>
-// Limpar service workers e cache
 if('serviceWorker' in navigator){
   navigator.serviceWorker.getRegistrations().then(rs=>rs.forEach(r=>r.unregister()));
   if(window.caches) caches.keys().then(ks=>ks.forEach(k=>caches.delete(k)));
@@ -111,6 +123,42 @@ firebase.initializeApp({
 const auth=firebase.auth();
 const db=firebase.firestore();
 
+// ── Verificar redirect do Google ao carregar ──────────────────────────
+// Mostra loading se veio de um redirect
+const veioDeRedirect = sessionStorage.getItem('googleRedirect');
+if(veioDeRedirect){
+  document.getElementById('loading-ov').classList.add('on');
+  sessionStorage.removeItem('googleRedirect');
+}
+
+auth.getRedirectResult()
+  .then(async result=>{
+    document.getElementById('loading-ov').classList.remove('on');
+    if(!result||!result.user) return;
+    await finalizarGoogleLogin(result.user);
+  })
+  .catch(e=>{
+    document.getElementById('loading-ov').classList.remove('on');
+    console.error('Redirect error:',e.code, e.message);
+    if(e.code==='auth/web-storage-unsupported'){
+      erro('Seu browser bloqueia cookies de terceiros. Use login com e-mail e senha.');
+    } else if(e.code && e.code!=='auth/cancelled-popup-request'){
+      erro('Erro no login Google: '+e.message);
+    }
+  });
+
+// Se já está logado, vai direto pro dashboard
+auth.onAuthStateChanged(async user=>{
+  if(!user) return;
+  try{
+    const snap=await db.collection('usuarios').doc(user.uid).get();
+    if(snap.exists&&snap.data().nome_completo){
+      window.location.replace('index.html');
+    }
+  }catch(e){console.error(e);}
+});
+
+// ── Funções ───────────────────────────────────────────────────────────
 function aba(t){
   ['entrar','criar'].forEach(x=>{
     document.getElementById('t-'+x).classList.toggle('on',x===t);
@@ -119,7 +167,8 @@ function aba(t){
   document.getElementById('msg').className='msg';
 }
 
-function erro(m){const e=document.getElementById('msg');e.textContent=m;e.className='msg err';}
+function erro(m){const e=document.getElementById('msg');e.textContent=m;e.className='msg err';e.scrollIntoView();}
+function ok(m){const e=document.getElementById('msg');e.textContent=m;e.className='msg ok';}
 
 function load(btn,sp,txt,on){
   document.getElementById(btn).disabled=on;
@@ -128,32 +177,38 @@ function load(btn,sp,txt,on){
 }
 
 function traduzir(c){
-  return({'auth/user-not-found':'Usuário não encontrado.',
+  return({
+    'auth/user-not-found':'Usuário não encontrado.',
     'auth/wrong-password':'Senha incorreta.',
     'auth/invalid-credential':'E-mail ou senha incorretos.',
     'auth/email-already-in-use':'E-mail já cadastrado.',
     'auth/invalid-email':'E-mail inválido.',
-    'auth/weak-password':'Senha muito fraca (mínimo 6 caracteres).',
+    'auth/weak-password':'Senha fraca (mínimo 6 caracteres).',
     'auth/popup-closed-by-user':'Login cancelado.',
-    'auth/network-request-failed':'Sem conexão com a internet.'}[c])||'Erro: '+c;
+    'auth/network-request-failed':'Sem conexão com a internet.',
+    'auth/web-storage-unsupported':'Ative cookies no Safari para usar o Google.'
+  }[c])||'Erro: '+c;
 }
 
 async function salvarPerfil(uid,nome,cargo,email){
   await db.collection('usuarios').doc(uid).set({
     uid,nome_completo:nome,nomes_conhecidos:[nome],
-    cargo,email,grupo_id:null,fcm_token:null,
+    cargo,email,grupo_id:null,
     criado_em:firebase.firestore.FieldValue.serverTimestamp()
   },{merge:true});
 }
 
-async function irParaDashboard(uid){
+async function finalizarGoogleLogin(user){
   try{
-    const snap=await db.collection('usuarios').doc(uid).get();
-    if(snap.exists && snap.data().nome_completo){
-      window.location.replace('index.html');
+    const snap=await db.collection('usuarios').doc(user.uid).get();
+    if(!snap.exists||!snap.data().nome_completo){
+      const cargo=prompt('Bem-vindo(a) '+(user.displayName||'')+'!\nQual é o seu cargo?');
+      if(!cargo){ await auth.signOut(); return; }
+      await salvarPerfil(user.uid,user.displayName||'',cargo,user.email);
     }
-  }catch(e){
     window.location.replace('index.html');
+  }catch(e){
+    erro('Erro ao salvar perfil: '+e.message);
   }
 }
 
@@ -163,8 +218,8 @@ async function entrar(){
   if(!email||!senha){erro('Preencha e-mail e senha.');return;}
   load('b-entrar','b-entrar-sp','b-entrar-txt',true);
   try{
-    const r=await auth.signInWithEmailAndPassword(email,senha);
-    await irParaDashboard(r.user.uid);
+    await auth.signInWithEmailAndPassword(email,senha);
+    // onAuthStateChanged vai redirecionar
   }catch(e){
     erro(traduzir(e.code));
     load('b-entrar','b-entrar-sp','b-entrar-txt',false);
@@ -189,32 +244,17 @@ async function criar(){
   }
 }
 
-async function google(){
+async function loginGoogle(){
+  const provider=new firebase.auth.GoogleAuthProvider();
+  // Marca que vai fazer redirect para mostrar loading ao voltar
+  sessionStorage.setItem('googleRedirect','1');
   try{
-    const provider=new firebase.auth.GoogleAuthProvider();
-    // Safari/iOS não suporta popup — usa redirect
     await auth.signInWithRedirect(provider);
-    // O resultado é tratado no onAuthStateChanged após o redirect
-  }catch(e){erro(traduzir(e.code));}
+  }catch(e){
+    sessionStorage.removeItem('googleRedirect');
+    erro(traduzir(e.code));
+  }
 }
-
-// Tratar resultado do redirect ao voltar para a página
-auth.getRedirectResult().then(async result=>{
-  if(!result||!result.user)return;
-  const user=result.user;
-  try{
-    const snap=await db.collection('usuarios').doc(user.uid).get();
-    if(!snap.exists||!snap.data().nome_completo){
-      // Redireciona para onboarding — pede cargo
-      const cargo=prompt('Bem-vindo(a) '+user.displayName+'!\nQual é o seu cargo?');
-      if(!cargo){auth.signOut();return;}
-      await salvarPerfil(user.uid,user.displayName,cargo,user.email);
-    }
-    window.location.replace('index.html');
-  }catch(e){erro(traduzir(e.code));}
-}).catch(e=>{
-  if(e.code&&e.code!=='auth/cancelled-popup-request') erro(traduzir(e.code));
-});
 
 document.addEventListener('keydown',e=>{
   if(e.key==='Enter'){
