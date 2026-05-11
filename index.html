@@ -92,7 +92,7 @@ main{padding:16px;max-width:480px;margin:0 auto}
 .c-bl{position:absolute;bottom:-2px;left:-2px;width:20px;height:20px;border:3px solid #fff;border-right:none;border-top:none;border-radius:0 0 0 8px}
 .c-br{position:absolute;bottom:-2px;right:-2px;width:20px;height:20px;border:3px solid #fff;border-left:none;border-top:none;border-radius:0 0 8px 0}
 .cam-hint{position:absolute;bottom:18px;left:50%;transform:translateX(-50%);color:rgba(255,255,255,.8);font-size:12px;white-space:nowrap}
-.scan-ctrl{padding:20px 16px;background:rgba(0,0,0,.85);display:flex;flex-direction:column;gap:10px}
+.scan-ctrl{padding:16px;background:rgba(0,0,0,.85);display:flex;flex-direction:column;gap:10px;padding-bottom:max(16px, env(safe-area-inset-bottom))}
 .btn-cap{width:66px;height:66px;border-radius:50%;background:#fff;border:4px solid rgba(255,255,255,.4);cursor:pointer;margin:0 auto;display:flex;align-items:center;justify-content:center}
 .btn-cap svg{width:28px;height:28px;fill:var(--blue)}
 .btn-gal{background:rgba(255,255,255,.15);border:none;color:#fff;padding:11px;border-radius:12px;font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px}
@@ -537,12 +537,25 @@ async function processarFoto(file){
   document.getElementById('ocr-pct').textContent='Preparando imagem...';
 
   try{
-    // Converter para base64
+    // Redimensionar imagem para max 1600px (Vision API tem limite de tamanho)
     const base64=await new Promise((res,rej)=>{
-      const r=new FileReader();
-      r.onload=()=>res(r.result.split(',')[1]);
-      r.onerror=()=>rej(new Error('Erro ao ler arquivo'));
-      r.readAsDataURL(file);
+      const img=new Image();
+      const url=URL.createObjectURL(file);
+      img.onload=()=>{
+        const MAX=1600;
+        let w=img.width, h=img.height;
+        if(w>MAX||h>MAX){
+          if(w>h){h=Math.round(h*MAX/w);w=MAX;}
+          else{w=Math.round(w*MAX/h);h=MAX;}
+        }
+        const canvas=document.createElement('canvas');
+        canvas.width=w; canvas.height=h;
+        canvas.getContext('2d').drawImage(img,0,0,w,h);
+        URL.revokeObjectURL(url);
+        res(canvas.toDataURL('image/jpeg',0.9).split(',')[1]);
+      };
+      img.onerror=()=>rej(new Error('Erro ao carregar imagem'));
+      img.src=url;
     });
 
     document.getElementById('ocr-fill').style.width='50%';
@@ -566,13 +579,21 @@ async function processarFoto(file){
     document.getElementById('ocr-fill').style.width='80%';
     document.getElementById('ocr-pct').textContent='Processando texto...';
 
-    if(!resp.ok) throw new Error('Erro na API do Google Vision');
+    if(!resp.ok){
+      const errData=await resp.json().catch(()=>({}));
+      const msg=errData?.error?.message||'Erro na API do Google Vision (status '+resp.status+')';
+      throw new Error(msg);
+    }
     const data=await resp.json();
     const texto=data.responses?.[0]?.fullTextAnnotation?.text||'';
-    if(!texto) throw new Error('Nenhum texto encontrado na imagem');
-
-    document.getElementById('ocr-fill').style.width='100%';
-    ocrDados=extrair(texto);
+    if(!texto){
+      // Tenta pegar texto simples se DOCUMENT_TEXT_DETECTION falhar
+      const textoSimples=data.responses?.[0]?.textAnnotations?.[0]?.description||'';
+      if(!textoSimples) throw new Error('Nenhum texto encontrado. Tente uma foto mais nítida e bem iluminada.');
+      ocrDados=extrair(textoSimples);
+    } else {
+      ocrDados=extrair(texto);
+    }
 
   }catch(e){
     document.getElementById('ocr-ov').classList.remove('on');
