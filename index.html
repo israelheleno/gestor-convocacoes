@@ -563,15 +563,34 @@ async function processarFoto(file){
 
     // Google Cloud Vision API
     const resp=await fetch(
-      'https://vision.googleapis.com/v1/images:annotate?key=AIzaSyAoMwv8QtBh80Bi5yh3YlgYTjvxz7J9p60',
+      'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=AIzaSyCVDKIcCdLZVB_G7wQfOrlEsnqPm8iHa2A',
       {
         method:'POST',
         headers:{'Content-Type':'application/json'},
         body:JSON.stringify({
-          requests:[{
-            image:{content:base64},
-            features:[{type:'DOCUMENT_TEXT_DETECTION',maxResults:1}]
-          }]
+          contents:[{
+            parts:[
+              {
+                inline_data:{
+                  mime_type:'image/jpeg',
+                  data:base64
+                }
+              },
+              {
+                text:`Analise esta convocação oficial brasileira e extraia os dados. Responda APENAS com JSON válido, sem explicações, sem markdown, sem blocos de código.
+
+Formato exato:
+{"titulo":"tema ou título do evento","data":"YYYY-MM-DD","hora":"HH:MM","local":null,"nomes":["Nome 1","Nome 2"]}
+
+Regras obrigatórias:
+- nomes: APENAS nomes da coluna NOME da tabela. Separe "João e Maria" em dois: ["João","Maria"]
+- NÃO inclua funções, cargos, coordenadores nem assinantes
+- titulo: use o tema da reunião ou subtítulo após "TV CÂMARA"
+- data e hora: do cabeçalho da convocação formato YYYY-MM-DD e HH:MM`
+              }
+            ]
+          }],
+          generationConfig:{temperature:0,maxOutputTokens:500}
         })
       }
     );
@@ -581,18 +600,37 @@ async function processarFoto(file){
 
     if(!resp.ok){
       const errData=await resp.json().catch(()=>({}));
-      const msg=errData?.error?.message||'Erro na API do Google Vision (status '+resp.status+')';
+      const msg=errData?.error?.message||'Erro na API (status '+resp.status+')';
       throw new Error(msg);
     }
     const data=await resp.json();
-    const texto=data.responses?.[0]?.fullTextAnnotation?.text||'';
-    if(!texto){
-      // Tenta pegar texto simples se DOCUMENT_TEXT_DETECTION falhar
-      const textoSimples=data.responses?.[0]?.textAnnotations?.[0]?.description||'';
-      if(!textoSimples) throw new Error('Nenhum texto encontrado. Tente uma foto mais nítida e bem iluminada.');
-      ocrDados=extrair(textoSimples);
-    } else {
-      ocrDados=extrair(texto);
+
+    // Extrair texto da resposta do Gemini
+    const txtRaw=data.candidates?.[0]?.content?.parts?.[0]?.text||'';
+    if(!txtRaw) throw new Error('Resposta vazia da IA. Tente novamente.');
+
+    // Parse JSON — remove markdown se vier com ```
+    let parsed;
+    try{
+      const limpo=txtRaw.replace(/```json|```/g,'').trim();
+      parsed=JSON.parse(limpo);
+    }catch{
+      const match=txtRaw.match(/\{[\s\S]*\}/);
+      if(match) parsed=JSON.parse(match[0]);
+      else throw new Error('Formato inválido. Tente foto mais nítida.');
+    }
+
+    document.getElementById('ocr-fill').style.width='100%';
+
+    ocrDados={
+      titulo: parsed.titulo||null,
+      data_hora: (parsed.data&&parsed.hora)?`${parsed.data}T${parsed.hora}:00`:(parsed.data?`${parsed.data}T00:00:00`:null),
+      local: parsed.local||null,
+      nomes: Array.isArray(parsed.nomes)?parsed.nomes.filter(n=>n&&n.trim().length>2):[],
+      id_ver: null
+    };
+    if(parsed.data&&parsed.hora&&parsed.titulo){
+      ocrDados.id_ver=parsed.data.replace(/-/g,'')+parsed.hora.replace(':','')+parsed.titulo.toUpperCase().replace(/[^A-Z0-9]/g,'').substring(0,10);
     }
 
   }catch(e){
