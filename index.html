@@ -80,22 +80,22 @@ main{padding:16px;max-width:480px;margin:0 auto}
 /* SCANNER */
 #scan-ov{position:fixed;inset:0;background:#000;z-index:300;display:none;flex-direction:column}
 #scan-ov.on{display:flex}
-.scan-hd{padding:14px 16px;display:flex;align-items:center;gap:10px;background:rgba(0,0,0,.8)}
+.scan-hd{padding:14px 16px;display:flex;align-items:center;gap:10px;background:rgba(0,0,0,.8);flex-shrink:0}
 .btn-x{background:rgba(255,255,255,.15);border:none;color:#fff;width:34px;height:34px;border-radius:50%;font-size:16px;cursor:pointer}
 .scan-hd span{color:#fff;font-family:'Sora',sans-serif;font-size:14px;font-weight:600}
-#video{width:100%;height:100%;object-fit:cover;flex:1}
-.cam-wrap{flex:1;position:relative}
+#video{width:100%;height:100%;object-fit:cover;display:block}
+.cam-wrap{flex:1;position:relative;overflow:hidden;max-height:calc(100dvh - 200px)}
 .cam-mask{position:absolute;inset:0;display:flex;align-items:center;justify-content:center}
-.cam-box{width:85%;height:62%;border:2px solid rgba(255,255,255,.6);border-radius:12px;position:relative}
+.cam-box{width:85%;height:75%;border:2px solid rgba(255,255,255,.6);border-radius:12px;position:relative}
 .cam-box::before{content:'';position:absolute;top:-2px;left:-2px;width:20px;height:20px;border:3px solid #fff;border-right:none;border-bottom:none;border-radius:8px 0 0 0}
 .cam-box::after{content:'';position:absolute;top:-2px;right:-2px;width:20px;height:20px;border:3px solid #fff;border-left:none;border-bottom:none;border-radius:0 8px 0 0}
 .c-bl{position:absolute;bottom:-2px;left:-2px;width:20px;height:20px;border:3px solid #fff;border-right:none;border-top:none;border-radius:0 0 0 8px}
 .c-br{position:absolute;bottom:-2px;right:-2px;width:20px;height:20px;border:3px solid #fff;border-left:none;border-top:none;border-radius:0 0 8px 0}
-.cam-hint{position:absolute;bottom:18px;left:50%;transform:translateX(-50%);color:rgba(255,255,255,.8);font-size:12px;white-space:nowrap}
-.scan-ctrl{padding:16px;background:rgba(0,0,0,.85);display:flex;flex-direction:column;gap:10px;padding-bottom:max(16px, env(safe-area-inset-bottom))}
-.btn-cap{width:66px;height:66px;border-radius:50%;background:#fff;border:4px solid rgba(255,255,255,.4);cursor:pointer;margin:0 auto;display:flex;align-items:center;justify-content:center}
-.btn-cap svg{width:28px;height:28px;fill:var(--blue)}
-.btn-gal{background:rgba(255,255,255,.15);border:none;color:#fff;padding:11px;border-radius:12px;font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px}
+.cam-hint{position:absolute;bottom:12px;left:50%;transform:translateX(-50%);color:rgba(255,255,255,.8);font-size:12px;white-space:nowrap}
+.scan-ctrl{height:160px;flex-shrink:0;padding:16px;background:rgba(0,0,0,.9);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px}
+.btn-cap{width:60px;height:60px;border-radius:50%;background:#fff;border:4px solid rgba(255,255,255,.4);cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.btn-cap svg{width:26px;height:26px;fill:var(--blue)}
+.btn-gal{background:rgba(255,255,255,.15);border:none;color:#fff;padding:10px 24px;border-radius:12px;font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;width:100%;flex-shrink:0}
 
 /* OCR */
 #ocr-ov{position:fixed;inset:0;background:rgba(255,255,255,.96);z-index:500;display:none;flex-direction:column;align-items:center;justify-content:center;gap:18px}
