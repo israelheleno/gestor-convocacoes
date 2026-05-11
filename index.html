@@ -533,11 +533,11 @@ async function processarFoto(file){
   if(!file)return;
   fecharScanner();
   document.getElementById('ocr-ov').classList.add('on');
-  document.getElementById('ocr-fill').style.width='30%';
-  document.getElementById('ocr-pct').textContent='Enviando imagem...';
+  document.getElementById('ocr-fill').style.width='20%';
+  document.getElementById('ocr-pct').textContent='Preparando imagem...';
 
   try{
-    // Converter imagem para base64
+    // Converter para base64
     const base64=await new Promise((res,rej)=>{
       const r=new FileReader();
       r.onload=()=>res(r.result.split(',')[1]);
@@ -545,85 +545,34 @@ async function processarFoto(file){
       r.readAsDataURL(file);
     });
 
-    document.getElementById('ocr-fill').style.width='60%';
-    document.getElementById('ocr-pct').textContent='Analisando com IA...';
+    document.getElementById('ocr-fill').style.width='50%';
+    document.getElementById('ocr-pct').textContent='Lendo documento...';
 
-    // Chamar Claude Vision
-    const resp=await fetch('https://api.anthropic.com/v1/messages',{
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({
-        model:'claude-sonnet-4-20250514',
-        max_tokens:1000,
-        messages:[{
-          role:'user',
-          content:[
-            {
-              type:'image',
-              source:{type:'base64',media_type:file.type||'image/jpeg',data:base64}
-            },
-            {
-              type:'text',
-              text:`Analise esta convocação oficial brasileira e extraia os dados em JSON. Responda APENAS com JSON válido, sem explicações, sem markdown, sem blocos de código.
+    // Google Cloud Vision API
+    const resp=await fetch(
+      'https://vision.googleapis.com/v1/images:annotate?key=AIzaSyAoMwv8QtBh80Bi5yh3YlgYTjvxz7J9p60',
+      {
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({
+          requests:[{
+            image:{content:base64},
+            features:[{type:'DOCUMENT_TEXT_DETECTION',maxResults:1}]
+          }]
+        })
+      }
+    );
 
-Formato exato:
-{
-  "titulo": "texto do tema ou título do evento (ex: Homenagem à empresa X, ou SEMAE: Segurança hídrica...)",
-  "data": "YYYY-MM-DD",
-  "hora": "HH:MM",
-  "local": "local se mencionado ou null",
-  "nomes": ["Nome 1", "Nome 2", "Nome 3"]
-}
+    document.getElementById('ocr-fill').style.width='80%';
+    document.getElementById('ocr-pct').textContent='Processando texto...';
 
-Regras:
-- nomes: APENAS os nomes das pessoas convocadas (coluna NOME da tabela). Se uma linha tiver "Nome A e Nome B", separe em dois nomes diferentes
-- NÃO inclua funções/cargos nos nomes
-- NÃO inclua coordenadores nem assinantes do documento
-- titulo: use o tema da reunião ou o subtítulo após "TV CÂMARA"
-- data e hora: extraia do cabeçalho da convocação`
-            }
-          ]
-        }]
-      })
-    });
-
-    document.getElementById('ocr-fill').style.width='90%';
-    document.getElementById('ocr-pct').textContent='Processando...';
-
-    if(!resp.ok){
-      const err=await resp.json();
-      throw new Error(err.error?.message||'Erro na API');
-    }
-
+    if(!resp.ok) throw new Error('Erro na API do Google Vision');
     const data=await resp.json();
-    const txt=data.content[0].text.trim();
-
-    // Parse JSON da resposta
-    let parsed;
-    try{
-      parsed=JSON.parse(txt);
-    }catch{
-      // Tenta extrair JSON se vier com texto extra
-      const match=txt.match(/\{[\s\S]*\}/);
-      if(match) parsed=JSON.parse(match[0]);
-      else throw new Error('Resposta inválida da IA');
-    }
+    const texto=data.responses?.[0]?.fullTextAnnotation?.text||'';
+    if(!texto) throw new Error('Nenhum texto encontrado na imagem');
 
     document.getElementById('ocr-fill').style.width='100%';
-
-    // Montar ocrDados
-    ocrDados={
-      titulo: parsed.titulo||null,
-      data_hora: (parsed.data&&parsed.hora) ? `${parsed.data}T${parsed.hora}:00` : (parsed.data?`${parsed.data}T00:00:00`:null),
-      local: parsed.local||null,
-      nomes: Array.isArray(parsed.nomes)?parsed.nomes.filter(n=>n&&n.trim().length>2):[],
-      id_ver: null
-    };
-
-    // Gerar ID anti-duplicidade
-    if(parsed.data&&parsed.hora&&parsed.titulo){
-      ocrDados.id_ver=parsed.data.replace(/-/g,'')+parsed.hora.replace(':','')+parsed.titulo.toUpperCase().replace(/[^A-Z0-9]/g,'').substring(0,10);
-    }
+    ocrDados=extrair(texto);
 
   }catch(e){
     document.getElementById('ocr-ov').classList.remove('on');
