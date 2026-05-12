@@ -171,6 +171,28 @@
     .btn-expulsar{background:#fee2e2;color:var(--red)}
     .btn-fab-admin{position:fixed;bottom:92px;right:18px;width:44px;height:44px;background:#fff;border:2px solid var(--blue);border-radius:50%;box-shadow:0 2px 10px rgba(30,58,138,.2);cursor:pointer;display:none;align-items:center;justify-content:center;z-index:50;font-size:20px}
     .btn-fab-admin.on{display:flex}
+
+    /* PERFIL */
+    #perfil-ov{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:700;display:none;align-items:center;justify-content:center;padding:20px}
+    #perfil-ov.on{display:flex}
+    .perfil-box{background:#fff;border-radius:24px;padding:28px 22px;width:100%;max-width:360px;animation:fu .3s ease}
+    .perfil-box h3{font-family:'Sora',sans-serif;font-size:17px;font-weight:700;color:var(--blue);margin-bottom:6px}
+    .perfil-box p{font-size:13px;color:var(--light);margin-bottom:18px}
+    .perfil-field{margin-bottom:14px}
+    .perfil-field label{display:block;font-size:12px;font-weight:600;color:var(--text);margin-bottom:5px;text-transform:uppercase;letter-spacing:.5px}
+    .perfil-field input{width:100%;padding:11px 13px;border:1.5px solid var(--border);border-radius:12px;font-family:'DM Sans',sans-serif;font-size:15px;color:var(--text);outline:none}
+    .perfil-field input:focus{border-color:var(--blue)}
+    .perfil-btns{display:flex;gap:10px;margin-top:6px}
+    #notif-ov{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:800;display:none;align-items:center;justify-content:center;padding:20px}
+    #notif-ov.on{display:flex}
+    .notif-box{background:#fff;border-radius:24px;padding:28px 22px;width:100%;max-width:360px;animation:fu .3s ease}
+    .notif-emoji{font-size:44px;text-align:center;margin-bottom:12px}
+    .notif-titulo{font-family:'Sora',sans-serif;font-size:17px;font-weight:700;color:var(--blue);margin-bottom:8px;text-align:center}
+    .notif-desc{font-size:14px;color:var(--light);text-align:center;margin-bottom:20px;line-height:1.5}
+    .notif-evento{background:#eff6ff;border-radius:12px;padding:12px;margin-bottom:20px;text-align:center}
+    .notif-evento-titulo{font-weight:600;font-size:14px;color:var(--blue)}
+    .notif-evento-data{font-size:12px;color:var(--light);margin-top:3px}
+    .notif-btns{display:flex;gap:10px}
   </style>
 </head>
 <body>
@@ -183,8 +205,28 @@
     </div>
     <button class="btn-sair" onclick="sair()">Sair</button>
   </div>
-  <div class="h-sub" id="h-user">Carregando...</div>
+  <div class="h-sub" id="h-user" onclick="abrirPerfil()" style="cursor:pointer;text-decoration:underline dotted rgba(255,255,255,.4)">Carregando...</div>
 </header>
+
+<!-- MODAL PERFIL -->
+<div id="perfil-ov">
+  <div class="perfil-box">
+    <h3>✏️ Editar perfil</h3>
+    <p>Informe seu nome completo exatamente como aparece nos documentos oficiais.</p>
+    <div class="perfil-field">
+      <label>Nome completo</label>
+      <input type="text" id="perf-nome" placeholder="Ex: Israel Heleno de Castro"/>
+    </div>
+    <div class="perfil-field">
+      <label>Cargo</label>
+      <input type="text" id="perf-cargo" placeholder="Ex: Operador de Áudio"/>
+    </div>
+    <div class="perfil-btns">
+      <button class="btn-cancel" onclick="fecharPerfil()">Cancelar</button>
+      <button class="btn-salvar" onclick="salvarPerfil()">✓ Salvar</button>
+    </div>
+  </div>
+</div>
 
 <main>
   <div id="sec-apv" style="display:none;margin-bottom:16px">
@@ -211,6 +253,23 @@
 <button id="fab" onclick="abrirScanner()">
   <svg viewBox="0 0 24 24"><path d="M9 3H5a2 2 0 00-2 2v4m6-6h10a2 2 0 012 2v4M9 3v18m0 0h10a2 2 0 002-2V9M9 21H5a2 2 0 01-2-2V9m0 0h18"/></svg>
 </button>
+
+<!-- NOTIFICAÇÃO PENDENTE -->
+<div id="notif-ov">
+  <div class="notif-box">
+    <div class="notif-emoji">🔔</div>
+    <div class="notif-titulo" id="notif-titulo">Você foi convocado?</div>
+    <div class="notif-desc" id="notif-desc"></div>
+    <div class="notif-evento">
+      <div class="notif-evento-titulo" id="notif-ev-titulo"></div>
+      <div class="notif-evento-data" id="notif-ev-data"></div>
+    </div>
+    <div class="notif-btns">
+      <button class="btn-cancel" onclick="responderNotif(false)">✗ Não sou eu</button>
+      <button class="btn-salvar" onclick="responderNotif(true)">✓ Sim, sou eu!</button>
+    </div>
+  </div>
+</div>
 
 <!-- PAINEL ADMIN -->
 <div id="admin-ov">
@@ -351,6 +410,7 @@ auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL).then(()=>{
         grupoId=eu.grupo_id;
         carregarEventos();
         verificarAprovacoes();
+        verificarNotificacoesPendentes();
       } else {
         document.getElementById('lst-ev').innerHTML='<p style="color:var(--light);font-size:14px;padding:20px;text-align:center">Entre em um grupo para ver convocações.</p>';
         document.getElementById('prox').innerHTML='<div class="card-vazio">Entre em um grupo para ver suas convocações.</div>';
@@ -546,11 +606,25 @@ async function carregarEventos(){
   const evs=snap.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>new Date(a.data_hora)-new Date(b.data_hora));
   document.getElementById('total').textContent=evs.length+' total';
 
-  const prox=evs.find(e=>{
-    const dt=new Date(e.data_hora);
-    return dt>agora&&(e.lista_convocados||[]).some(n=>(eu.nomes_conhecidos||[]).some(nc=>
-      nc.toLowerCase().includes(n.toLowerCase())||n.toLowerCase().includes(nc.toLowerCase())));
-  });
+  // Função de matching igual ao cruzar()
+  const norm=s=>s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9\s]/g,'').trim();
+  const stopwords=new Set(['de','da','do','das','dos','e','a','o','as','os']);
+  const pwSig=s=>norm(s).split(/\s+/).filter(p=>p.length>1&&!stopwords.has(p));
+  const euNomes=[eu.nome_completo,...(eu.nomes_conhecidos||[])];
+  const euPalavras=pwSig(eu.nome_completo);
+
+  function euSouConvocado(lista){
+    return (lista||[]).some(n=>{
+      // Match exato com qualquer alias
+      if(euNomes.some(en=>norm(en)===norm(n))) return true;
+      // Match por palavras em comum
+      const pwN=pwSig(n);
+      const emComum=pwN.filter(p=>euPalavras.includes(p));
+      return emComum.length/Math.max(pwN.length,1)>=0.6;
+    });
+  }
+
+  const prox=evs.find(e=>new Date(e.data_hora)>agora&&euSouConvocado(e.lista_convocados));
 
   const el=document.getElementById('prox');
   if(!prox){el.innerHTML='<div class="card-vazio">Você não tem convocações próximas.</div>';}
@@ -805,6 +879,7 @@ async function salvar(){
   const titulo=document.getElementById('rv-tit').value.trim();
   const dataVal=document.getElementById('rv-data').value;
   if(!titulo||!dataVal){alert('Título e data são obrigatórios.');return;}
+
   await db.collection('eventos').add({
     id_verificacao:ocrDados?.id_ver||null,
     titulo_evento:titulo,
@@ -815,7 +890,28 @@ async function salvar(){
     criado_por:eu.uid,
     criado_em:firebase.firestore.FieldValue.serverTimestamp()
   });
-  fecharRv();alert('✅ Convocação salva!');carregarEventos();
+
+  fecharRv();
+
+  // Notificar matches parciais — perguntar se é a pessoa
+  const parciais=matches.filter(m=>m.tipo==='parcial');
+  for(const m of parciais){
+    const dtFmt=new Date(dataVal).toLocaleDateString('pt-BR',{day:'2-digit',month:'short',year:'numeric'});
+    // Salvar notificação pendente no Firestore para o usuário parcial
+    await db.collection('notificacoes').add({
+      uid:m.usuario.uid,
+      nome_convocacao:m.nome,
+      titulo_evento:titulo,
+      data_hora:dataVal+':00',
+      grupo_id:grupoId,
+      respondido:false,
+      criado_em:firebase.firestore.FieldValue.serverTimestamp()
+    });
+  }
+
+  alert('✅ Convocação salva!');
+  carregarEventos();
+  verificarNotificacoesPendentes();
 }
 
 // ── OCR ───────────────────────────────────────────────────────────────
@@ -949,22 +1045,120 @@ function limpar(n){return n.replace(/[^\wÀ-ÿ\s]/g,'').replace(/\s+/g,' ').trim
 async function cruzar(nomes){
   const snap=await db.collection('usuarios').where('grupo_id','==',grupoId).get();
   const users=snap.docs.map(d=>d.data());
+
   const norm=s=>s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9\s]/g,'').trim();
+
+  // Palavras irrelevantes para matching (preposições e artigos)
+  const stopwords=new Set(['de','da','do','das','dos','e','a','o','as','os']);
+
+  // Palavras significativas de um nome (sem stopwords)
+  const palavrasSignif=s=>norm(s).split(/\s+/).filter(p=>p.length>1&&!stopwords.has(p));
+
   return nomes.map(nome=>{
     const nn=norm(nome);
+    const pwNome=palavrasSignif(nome);
+
+    // 1. Match exato — nome completo ou alias conhecido
     for(const u of users){
-      if([u.nome_completo,...(u.nomes_conhecidos||[])].some(n=>norm(n)===nn))
+      const todos=[u.nome_completo,...(u.nomes_conhecidos||[])];
+      if(todos.some(n=>norm(n)===nn))
         return{tipo:'exato',nome,usuario:u};
     }
+
+    // 2. Match por palavras significativas em comum
+    // "Israel de Castro" vs "Israel Heleno de Castro"
+    // palavras sig do nome lido: ["israel","castro"]
+    // palavras sig do cadastro: ["israel","heleno","castro"]
+    // 2 de 2 palavras do nome lido estão no cadastro → match parcial forte
+    for(const u of users){
+      const pwUser=palavrasSignif(u.nome_completo);
+      const emComum=pwNome.filter(p=>pwUser.includes(p));
+      const score=emComum.length/Math.max(pwNome.length,1);
+      if(score>=0.6) // 60% das palavras do nome lido estão no cadastro
+        return{tipo:'parcial',nome,usuario:u,score};
+    }
+
+    // 3. Match por inclusão simples como fallback
     for(const u of users){
       const nc=norm(u.nome_completo);
-      if(nc.includes(nn)||nn.includes(nc))return{tipo:'parcial',nome,usuario:u};
+      if(nc.includes(nn)||nn.includes(nc))
+        return{tipo:'parcial',nome,usuario:u,score:0.5};
     }
+
     return{tipo:'nao_encontrado',nome};
   });
 }
 
-// ── ICS ───────────────────────────────────────────────────────────────
+// ── PERFIL ────────────────────────────────────────────────────────────
+function abrirPerfil(){
+  document.getElementById('perf-nome').value=eu.nome_completo||'';
+  document.getElementById('perf-cargo').value=eu.cargo||'';
+  document.getElementById('perfil-ov').classList.add('on');
+}
+function fecharPerfil(){
+  document.getElementById('perfil-ov').classList.remove('on');
+}
+async function salvarPerfil(){
+  const nome=document.getElementById('perf-nome').value.trim();
+  const cargo=document.getElementById('perf-cargo').value.trim();
+  if(!nome||!cargo){alert('Preencha nome e cargo.');return;}
+  await db.collection('usuarios').doc(eu.uid).update({
+    nome_completo:nome,
+    cargo,
+    nomes_conhecidos:firebase.firestore.FieldValue.arrayUnion(nome)
+  });
+  eu.nome_completo=nome;
+  eu.cargo=cargo;
+  document.getElementById('h-user').textContent=nome+' · '+cargo;
+  fecharPerfil();
+  alert('✅ Perfil atualizado!');
+  carregarEventos(); // Recarrega para atualizar "próxima convocação"
+}
+let notifAtual=null;
+let filaNotif=[];
+
+async function verificarNotificacoesPendentes(){
+  if(!eu||!eu.uid)return;
+  const snap=await db.collection('notificacoes')
+    .where('uid','==',eu.uid)
+    .where('respondido','==',false)
+    .get();
+  filaNotif=snap.docs.map(d=>({id:d.id,...d.data()}));
+  mostrarProximaNotif();
+}
+
+function mostrarProximaNotif(){
+  if(!filaNotif.length)return;
+  notifAtual=filaNotif.shift();
+  const dt=notifAtual.data_hora?new Date(notifAtual.data_hora).toLocaleDateString('pt-BR',{day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'}):'';
+  document.getElementById('notif-desc').textContent=
+    '"'+notifAtual.nome_convocacao+'" foi identificado na convocação abaixo. Esse nome se refere a você?';
+  document.getElementById('notif-ev-titulo').textContent=notifAtual.titulo_evento||'Evento';
+  document.getElementById('notif-ev-data').textContent=dt;
+  document.getElementById('notif-ov').classList.add('on');
+}
+
+async function responderNotif(confirmado){
+  document.getElementById('notif-ov').classList.remove('on');
+  if(!notifAtual)return;
+
+  // Marcar como respondido
+  await db.collection('notificacoes').doc(notifAtual.id).update({respondido:true,confirmado});
+
+  if(confirmado){
+    // Aprender o alias
+    await db.collection('usuarios').doc(eu.uid).update({
+      nomes_conhecidos:firebase.firestore.FieldValue.arrayUnion(notifAtual.nome_convocacao)
+    });
+    eu.nomes_conhecidos=[...(eu.nomes_conhecidos||[]),notifAtual.nome_convocacao];
+    alert('✅ Anotado! "'+notifAtual.nome_convocacao+'" agora te identifica automaticamente.');
+    carregarEventos(); // Atualiza "próxima convocação"
+  }
+
+  notifAtual=null;
+  // Mostrar próxima da fila se houver
+  setTimeout(mostrarProximaNotif,500);
+}
 function ics(ev){
   const ini=new Date(ev.data_hora);
   const fim=new Date(ini.getTime()+2*60*60*1000);
