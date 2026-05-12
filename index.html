@@ -284,41 +284,44 @@ firebase.initializeApp({
 });
 const auth=firebase.auth();
 const db=firebase.firestore();
-auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL).catch(e=>console.error(e));
 
 let eu=null,grupoId=null,ocrDados=null,matches=[],camStream=null;
 
-// ── AUTH: usa onAuthStateChanged mas com timeout agressivo ────────────
-let authOk=false;
-const T=setTimeout(()=>{
-  if(!authOk) window.location.replace('login.html');
-},8000);
+// AUTH dentro do setPersistence para garantir ordem correta
+auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL).then(()=>{
 
-auth.onAuthStateChanged(async user=>{
-  if(!user){ clearTimeout(T); window.location.replace('login.html'); return; }
-  try{
-    const snap=await db.collection('usuarios').doc(user.uid).get();
-    if(!snap.exists||!snap.data().nome_completo){
-      clearTimeout(T); window.location.replace('login.html'); return;
+  let authOk=false;
+  const T=setTimeout(()=>{
+    if(!authOk) window.location.replace('login.html');
+  },10000);
+
+  auth.onAuthStateChanged(async user=>{
+    if(!user){ clearTimeout(T); window.location.replace('login.html'); return; }
+    try{
+      const snap=await db.collection('usuarios').doc(user.uid).get();
+      if(!snap.exists||!snap.data().nome_completo){
+        clearTimeout(T); window.location.replace('login.html'); return;
+      }
+      authOk=true; clearTimeout(T);
+      eu={uid:user.uid,...snap.data()};
+      document.getElementById('h-user').textContent=eu.nome_completo+' · '+eu.cargo;
+      carregarGrupos();
+      if(eu.grupo_id){
+        grupoId=eu.grupo_id;
+        carregarEventos();
+        verificarAprovacoes();
+      } else {
+        document.getElementById('lst-ev').innerHTML='<p style="color:var(--light);font-size:14px;padding:20px;text-align:center">Entre em um grupo para ver convocações.</p>';
+        document.getElementById('prox').innerHTML='<div class="card-vazio">Entre em um grupo para ver suas convocações.</div>';
+      }
+    }catch(err){
+      console.error(err);
+      clearTimeout(T);
+      window.location.replace('login.html');
     }
-    authOk=true; clearTimeout(T);
-    eu={uid:user.uid,...snap.data()};
-    document.getElementById('h-user').textContent=eu.nome_completo+' · '+eu.cargo;
-    carregarGrupos();
-    if(eu.grupo_id){
-      grupoId=eu.grupo_id;
-      carregarEventos();
-      verificarAprovacoes();
-    } else {
-      document.getElementById('lst-ev').innerHTML='<p style="color:var(--light);font-size:14px;padding:20px;text-align:center">Entre em um grupo para ver convocações.</p>';
-      document.getElementById('prox').innerHTML='<div class="card-vazio">Entre em um grupo para ver suas convocações.</div>';
-    }
-  }catch(err){
-    console.error(err);
-    clearTimeout(T);
-    window.location.replace('login.html');
-  }
-});
+  });
+
+}).catch(e=>console.error('Persistence:',e));
 
 // ── GRUPOS ────────────────────────────────────────────────────────────
 async function carregarGrupos(){

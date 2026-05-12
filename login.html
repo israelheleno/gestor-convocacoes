@@ -116,38 +116,38 @@ firebase.initializeApp({
 const auth=firebase.auth();
 const db=firebase.firestore();
 
-// Persistência LOCAL garante que o iOS não perca a sessão ao instalar como PWA
-auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL).catch(e=>console.error(e));
+// Tudo dentro do setPersistence para garantir ordem correta
+auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL).then(()=>{
 
-// ── Verificar se voltou de redirect ───────────────────────────────────
-const veioDeRedirect = sessionStorage.getItem('googleRedirect');
-if(veioDeRedirect){
-  document.getElementById('loading-ov').classList.add('on');
-}
+  // Verificar se voltou de redirect do Google
+  const veioDeRedirect=sessionStorage.getItem('googleRedirect');
+  if(veioDeRedirect) document.getElementById('loading-ov').classList.add('on');
 
-auth.getRedirectResult()
-  .then(async result=>{
-    sessionStorage.removeItem('googleRedirect');
-    document.getElementById('loading-ov').classList.remove('on');
-    if(result && result.user) await finalizarGoogleLogin(result.user);
-  })
-  .catch(e=>{
-    sessionStorage.removeItem('googleRedirect');
-    document.getElementById('loading-ov').classList.remove('on');
-    console.error('Redirect error:',e.code, e.message);
-    if(e.code && e.code!=='auth/cancelled-popup-request' && e.code!=='auth/credential-already-in-use'){
-      erro('Erro no login Google: '+traduzir(e.code));
-    }
+  auth.getRedirectResult()
+    .then(async result=>{
+      sessionStorage.removeItem('googleRedirect');
+      document.getElementById('loading-ov').classList.remove('on');
+      if(result&&result.user) await finalizarGoogleLogin(result.user);
+    })
+    .catch(e=>{
+      sessionStorage.removeItem('googleRedirect');
+      document.getElementById('loading-ov').classList.remove('on');
+      console.error('Redirect:',e.code,e.message);
+      if(e.code&&e.code!=='auth/cancelled-popup-request'&&e.code!=='auth/credential-already-in-use'){
+        erro('Erro Google: '+traduzir(e.code));
+      }
+    });
+
+  // Se já logado vai pro dashboard
+  auth.onAuthStateChanged(async user=>{
+    if(!user) return;
+    try{
+      const snap=await db.collection('usuarios').doc(user.uid).get();
+      if(snap.exists&&snap.data().nome_completo) window.location.replace('index.html');
+    }catch(e){console.error(e);}
   });
 
-// Se já logado vai pro dashboard
-auth.onAuthStateChanged(async user=>{
-  if(!user) return;
-  try{
-    const snap=await db.collection('usuarios').doc(user.uid).get();
-    if(snap.exists&&snap.data().nome_completo) window.location.replace('index.html');
-  }catch(e){console.error(e);}
-});
+}).catch(e=>console.error('Persistence error:',e));
 
 // ── Funções ───────────────────────────────────────────────────────────
 function aba(t){
