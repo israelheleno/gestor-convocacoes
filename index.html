@@ -8,7 +8,6 @@
   <meta name="apple-mobile-web-app-title" content="Convocações"/>
   <meta name="theme-color" content="#1E3A8A"/>
   <link href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet"/>
-  <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
   <style>
     *{box-sizing:border-box;margin:0;padding:0}
     :root{--blue:#1E3A8A;--green:#10B981;--red:#ef4444;--yellow:#f59e0b;--bg:#F0F4FF;--text:#334155;--light:#94a3b8;--border:#e2e8f0;--w:#fff}
@@ -528,33 +527,102 @@ async function processarFoto(file){
   if(!file)return;
   fecharScanner();
   document.getElementById('ocr-ov').classList.add('on');
-  document.getElementById('ocr-fill').style.width='10%';
+  document.getElementById('ocr-fill').style.width='20%';
   document.getElementById('ocr-pct').textContent='Preparando imagem...';
 
   try{
-    // Pré-processar imagem: redimensionar + aumentar contraste para melhor OCR
-    const canvas=await preprocessarImagem(file);
-    document.getElementById('ocr-fill').style.width='25%';
-    document.getElementById('ocr-pct').textContent='Iniciando leitura...';
-
-    const resultado=await new Promise((res,rej)=>{
-      Tesseract.recognize(canvas,'por',{
-        logger:m=>{
-          if(m.status==='recognizing text'){
-            const p=25+Math.round(m.progress*65);
-            document.getElementById('ocr-fill').style.width=p+'%';
-            document.getElementById('ocr-pct').textContent='Lendo... '+Math.round(m.progress*100)+'%';
-          }
+    // Converter para base64
+    const base64=await new Promise((res,rej)=>{
+      const img=new Image();
+      const url=URL.createObjectURL(file);
+      img.onload=()=>{
+        const MAX=1600;
+        let w=img.width,h=img.height;
+        if(w>MAX||h>MAX){
+          if(w>h){h=Math.round(h*MAX/w);w=MAX;}
+          else{w=Math.round(w*MAX/h);h=MAX;}
         }
-      }).then(r=>res(r)).catch(e=>rej(e));
+        const c=document.createElement('canvas');
+        c.width=w;c.height=h;
+        c.getContext('2d').drawImage(img,0,0,w,h);
+        URL.revokeObjectURL(url);
+        res(c.toDataURL('image/jpeg',0.9).split(',')[1]);
+      };
+      img.onerror=()=>rej(new Error('Erro ao carregar imagem'));
+      img.src=url;
     });
 
-    document.getElementById('ocr-fill').style.width='95%';
+    document.getElementById('ocr-fill').style.width='50%';
+    document.getElementById('ocr-pct').textContent='Lendo com IA...';
+
+    const resp=await fetch('https://api.mistral.ai/v1/chat/completions',{
+      method:'POST',
+      headers:{
+        'Content-Type':'application/json',
+        'Authorization':'Bearer zQVzmFaX904lqaFwzt40BHXHfGoqSJca'
+      },
+      body:JSON.stringify({
+        model:'pixtral-12b-2409',
+        max_tokens:500,
+        messages:[{
+          role:'user',
+          content:[
+            {
+              type:'image_url',
+              image_url:{url:'data:image/jpeg;base64,'+base64}
+            },
+            {
+              type:'text',
+              text:`Analise esta convocação oficial brasileira e extraia os dados. Responda APENAS com JSON válido, sem explicações, sem markdown, sem blocos de código.
+
+Formato exato:
+{"titulo":"tema ou título do evento","data":"YYYY-MM-DD","hora":"HH:MM","local":null,"nomes":["Nome 1","Nome 2"]}
+
+Regras obrigatórias:
+- nomes: APENAS nomes da coluna NOME da tabela. Se tiver "João e Maria" numa linha, separe em dois: ["João","Maria"]
+- NÃO inclua funções, cargos, coordenadores nem assinantes do documento
+- titulo: use o tema da reunião ou subtítulo após "TV CÂMARA"
+- data e hora: extraia do cabeçalho no formato YYYY-MM-DD e HH:MM`
+            }
+          ]
+        }]
+      })
+    });
+
+    document.getElementById('ocr-fill').style.width='85%';
     document.getElementById('ocr-pct').textContent='Processando...';
 
-    const texto=resultado.data.text;
-    if(!texto||texto.trim().length<10) throw new Error('Não foi possível ler o documento. Tente foto mais nítida.');
-    ocrDados=extrair(texto);
+    if(!resp.ok){
+      const err=await resp.json().catch(()=>({}));
+      throw new Error(err.message||'Erro na API Mistral ('+resp.status+')');
+    }
+
+    const data=await resp.json();
+    const txtRaw=data.choices?.[0]?.message?.content||'';
+    if(!txtRaw) throw new Error('Resposta vazia. Tente novamente.');
+
+    let parsed;
+    try{
+      const limpo=txtRaw.replace(/```json|```/g,'').trim();
+      parsed=JSON.parse(limpo);
+    }catch{
+      const match=txtRaw.match(/\{[\s\S]*\}/);
+      if(match) parsed=JSON.parse(match[0]);
+      else throw new Error('Formato inválido. Tente foto mais nítida.');
+    }
+
+    document.getElementById('ocr-fill').style.width='100%';
+
+    ocrDados={
+      titulo:parsed.titulo||null,
+      data_hora:(parsed.data&&parsed.hora)?`${parsed.data}T${parsed.hora}:00`:(parsed.data?`${parsed.data}T00:00:00`:null),
+      local:parsed.local||null,
+      nomes:Array.isArray(parsed.nomes)?parsed.nomes.filter(n=>n&&n.trim().length>2):[],
+      id_ver:null
+    };
+    if(parsed.data&&parsed.hora&&parsed.titulo){
+      ocrDados.id_ver=parsed.data.replace(/-/g,'')+parsed.hora.replace(':','')+parsed.titulo.toUpperCase().replace(/[^A-Z0-9]/g,'').substring(0,10);
+    }
 
   }catch(e){
     document.getElementById('ocr-ov').classList.remove('on');
@@ -563,7 +631,6 @@ async function processarFoto(file){
     return;
   }
 
-  document.getElementById('ocr-fill').style.width='100%';
   document.getElementById('ocr-ov').classList.remove('on');
 
   if(ocrDados.id_ver){
@@ -579,50 +646,6 @@ async function processarFoto(file){
   document.getElementById('rv-loc').value=ocrDados.local||'';
   renderMatches();
   document.getElementById('rv-ov').classList.add('on');
-}
-
-// Pré-processamento: redimensiona e aumenta contraste para melhor OCR
-function preprocessarImagem(file){
-  return new Promise((res,rej)=>{
-    const img=new Image();
-    const url=URL.createObjectURL(file);
-    img.onload=()=>{
-      // Redimensiona para largura ideal de OCR (2000px)
-      const IDEAL=2000;
-      let w=img.width, h=img.height;
-      if(w<IDEAL){
-        h=Math.round(h*IDEAL/w); w=IDEAL;
-      } else if(w>3000){
-        h=Math.round(h*3000/w); w=3000;
-      }
-
-      const canvas=document.createElement('canvas');
-      canvas.width=w; canvas.height=h;
-      const ctx=canvas.getContext('2d');
-
-      // Fundo branco
-      ctx.fillStyle='#fff';
-      ctx.fillRect(0,0,w,h);
-      ctx.drawImage(img,0,0,w,h);
-
-      // Pré-processamento pixel a pixel: aumentar contraste e binarizar
-      const imgData=ctx.getImageData(0,0,w,h);
-      const d=imgData.data;
-      for(let i=0;i<d.length;i+=4){
-        // Converter para escala de cinza
-        const gray=0.299*d[i]+0.587*d[i+1]+0.114*d[i+2];
-        // Aumentar contraste (threshold adaptativo simples)
-        const val=gray>140?255:0;
-        d[i]=d[i+1]=d[i+2]=val;
-        d[i+3]=255;
-      }
-      ctx.putImageData(imgData,0,0);
-      URL.revokeObjectURL(url);
-      res(canvas);
-    };
-    img.onerror=()=>rej(new Error('Erro ao carregar imagem'));
-    img.src=url;
-  });
 }
 
 function renderMatches(){
@@ -714,43 +737,71 @@ function extrair(txt){
 function extrairNomes(txt){
   const nomes=[];
   const linhas=txt.split('\n').map(l=>l.trim()).filter(l=>l.length>1);
-  const regFn=/operador|responsável|repórter|reporter|mestre|cerim|caracteres|controle|DTV|transmiss|câmera|camera|áudio|audio|plenário|plenario/i;
-  const ignora=['NOME','FUNÇÃO','FUNCAO','OBSERV','DISPENSADO','CÂMARA','CAMARA','RUA','SILVA JARDIM',
-    'FONE','FAX','CEP','COORDENADOR','DEPARTAMENTO','CONVOCAÇÃO','CONVOCACAO','ORDEM','REUNIÃO',
-    'REUNIAO','SESSÃO','SESSAO','OBRIGAT','MULHER','HOMEM','TRAJE','ENCERRAMENTO','PRESIDENTE',
-    'POLYANE','ALEXANDRE GAMA','SÃO JOSÉ','SAO JOSE','MUNICIPAL'];
+
+  // Palavras que indicam início de uma função — tudo antes disso é o nome
+  const marcaFuncao=/\b(Responsável|Operador|Operadora|Operadores|Repórter|Reporter|Mestre|Diretor|Coordenador|Técnico|Assistente|Analista|Produtor|Cinegrafista|Apresentador|Locutor|Sonoplasta|Iluminador|Editor|Controle|DTV|Transmissão|Câmera|Áudio|Vídeo|Plenário|Cerimônia|Caracteres)\b/i;
+
+  const ignora=['NOME','FUNÇÃO','FUNCAO','OBSERV','DISPENSADO','CÂMARA','CAMARA',
+    'RUA','SILVA JARDIM','FONE','FAX','CEP','COORDENADOR DE','DEPARTAMENTO',
+    'CONVOCAÇÃO','ORDEM','REUNIÃO','SESSÃO','OBRIGAT','MULHER','HOMEM',
+    'TRAJE','ENCERRAMENTO','PRESIDENTE','POLYANE','ALEXANDRE GAMA',
+    'SÃO JOSÉ','MUNICIPAL','CÂMARA MUNICIPAL'];
+
   let tabela=false;
 
   for(let i=0;i<linhas.length;i++){
     const l=linhas[i];
+
+    // Detecta início da tabela
     if(/\bNOME\b/i.test(l)&&/\bFUN/i.test(l)){tabela=true;continue;}
     if(!tabela)continue;
+
+    // Para nas observações
     if(/observa[çc]|dispensado|encerramento|traje|coordenador de comunica|polyane|presiden/i.test(l))break;
-    if(regFn.test(l))continue;
-    if(ignora.some(p=>l.toUpperCase().includes(p)))continue;
+
+    // Ignora linhas institucionais
+    if(ignora.some(p=>l.toUpperCase().includes(p.toUpperCase())))continue;
+
+    // Se a linha tem marca de função, extrai só o nome (parte antes da função)
+    const mFuncao=l.match(new RegExp('^(.+?)\\s+(?:Responsável|Operador[ae]?s?|Repórter|Reporter|Mestre|Diretor|Coordenador|Técnico|Assistente|Analista|Produtor|Cinegrafista|Apresentador|Locutor|Sonoplasta|Iluminador|Editor|Controle|DTV)\\b','i'));
+    if(mFuncao){
+      const nomeParte=mFuncao[1].trim();
+      processarNome(nomeParte,nomes);
+      continue;
+    }
+
+    // Linha que é só função — pula
+    if(marcaFuncao.test(l)&&!ehNome(l.split(/\s+/).slice(0,3).join(' '))){continue;}
+
+    // Linha normal — verifica se parece nome
     const sem=l.replace(/[0-9\.\,\;\:\!\?\@\#\/\\]/g,'').trim();
     if(sem.length<4)continue;
-    if(ehNome(l)){
-      // Divide "Pessoa A e Pessoa B"
-      const comE=l.match(/^(.{4,}?)\s+e\s+(.{4,})$/i);
-      if(comE&&ehNome(comE[1])&&ehNome(comE[2])){
-        nomes.push(limpar(comE[1]));nomes.push(limpar(comE[2]));
-      } else { nomes.push(limpar(l)); }
-    }
+    if(ehNome(l)) processarNome(l,nomes);
   }
 
-  // Fallback: par nome+função adjacentes
+  // Fallback se não encontrou nada
   if(nomes.length===0){
     for(let i=0;i<linhas.length-1;i++){
-      if(regFn.test(linhas[i+1])&&ehNome(linhas[i])){
-        const comE=linhas[i].match(/^(.{4,}?)\s+e\s+(.{4,})$/i);
-        if(comE&&ehNome(comE[1])&&ehNome(comE[2])){
-          nomes.push(limpar(comE[1]));nomes.push(limpar(comE[2]));
-        } else { nomes.push(limpar(linhas[i])); }
+      if(marcaFuncao.test(linhas[i+1])){
+        const mF=linhas[i].match(new RegExp('^(.+?)\\s+(?:Responsável|Operador[ae]?s?|Repórter|Reporter|Mestre|Controle|DTV)\\b','i'));
+        if(mF) processarNome(mF[1],nomes);
+        else if(ehNome(linhas[i])) processarNome(linhas[i],nomes);
       }
     }
   }
+
   return[...new Set(nomes)];
+}
+
+function processarNome(texto,nomes){
+  // Divide "Pessoa A e Pessoa B"
+  const comE=texto.match(/^(.{4,}?)\s+e\s+(.{4,})$/i);
+  if(comE&&ehNome(comE[1])&&ehNome(comE[2])){
+    nomes.push(limpar(comE[1]));
+    nomes.push(limpar(comE[2]));
+  } else if(ehNome(texto)){
+    nomes.push(limpar(texto));
+  }
 }
 
 function ehNome(t){
