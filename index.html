@@ -149,6 +149,28 @@
     .skel{background:linear-gradient(90deg,#e2e8f0 25%,#f1f5f9 50%,#e2e8f0 75%);background-size:200% 100%;animation:sh 1.5s infinite;border-radius:10px;height:76px;margin-bottom:10px}
     @keyframes sh{0%{background-position:200% 0}100%{background-position:-200% 0}}
     @keyframes fu{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+
+    /* ADMIN */
+    #admin-ov{position:fixed;inset:0;background:var(--bg);z-index:400;display:none;flex-direction:column;overflow-y:auto}
+    #admin-ov.on{display:flex}
+    .admin-hd{background:var(--blue);color:#fff;padding:18px 16px;display:flex;align-items:center;gap:10px;flex-shrink:0}
+    .admin-hd h2{font-family:'Sora',sans-serif;font-size:15px;font-weight:700;flex:1}
+    .admin-body{padding:16px}
+    .membro-card{background:#fff;border-radius:12px;padding:13px 15px;margin-bottom:10px;display:flex;align-items:center;gap:12px;box-shadow:0 2px 8px rgba(30,58,138,.06)}
+    .membro-avatar{width:38px;height:38px;background:#eff6ff;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+    .membro-info{flex:1;min-width:0}
+    .membro-nome{font-size:14px;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .membro-cargo{font-size:12px;color:var(--light)}
+    .membro-badge{font-size:10px;padding:2px 8px;border-radius:20px;font-weight:600;margin-top:3px;display:inline-block}
+    .badge-admin{background:#eff6ff;color:var(--blue)}
+    .badge-membro{background:#f1f5f9;color:var(--light)}
+    .membro-acoes{display:flex;flex-direction:column;gap:6px;flex-shrink:0}
+    .btn-admin-sm{padding:5px 10px;border:none;border-radius:7px;font-size:11px;cursor:pointer;font-weight:600;white-space:nowrap}
+    .btn-promover{background:#eff6ff;color:var(--blue)}
+    .btn-rebaixar{background:#fef3c7;color:#92400e}
+    .btn-expulsar{background:#fee2e2;color:var(--red)}
+    .btn-fab-admin{position:fixed;bottom:92px;right:18px;width:44px;height:44px;background:#fff;border:2px solid var(--blue);border-radius:50%;box-shadow:0 2px 10px rgba(30,58,138,.2);cursor:pointer;display:none;align-items:center;justify-content:center;z-index:50;font-size:20px}
+    .btn-fab-admin.on{display:flex}
   </style>
 </head>
 <body>
@@ -189,6 +211,24 @@
 <button id="fab" onclick="abrirScanner()">
   <svg viewBox="0 0 24 24"><path d="M9 3H5a2 2 0 00-2 2v4m6-6h10a2 2 0 012 2v4M9 3v18m0 0h10a2 2 0 002-2V9M9 21H5a2 2 0 01-2-2V9m0 0h18"/></svg>
 </button>
+
+<!-- PAINEL ADMIN -->
+<div id="admin-ov">
+  <div class="admin-hd">
+    <button class="btn-x" onclick="fecharAdmin()">✕</button>
+    <h2>🛡️ Painel Admin</h2>
+  </div>
+  <div class="admin-body">
+    <div class="sec-titulo" style="margin-bottom:12px">
+      Membros do grupo
+      <span style="font-size:12px;font-weight:400;color:var(--light)" id="admin-total"></span>
+    </div>
+    <div id="admin-membros"></div>
+  </div>
+</div>
+
+<!-- Botão flutuante admin -->
+<button class="btn-fab-admin" id="btn-fab-admin" onclick="abrirAdmin()" title="Painel Admin">🛡️</button>
 
 <!-- MODAL EVENTO -->
 <div class="overlay" id="mod-ev" onclick="if(event.target===this)this.classList.remove('on')">
@@ -304,6 +344,8 @@ auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL).then(()=>{
       authOk=true; clearTimeout(T);
       eu={uid:user.uid,...snap.data()};
       document.getElementById('h-user').textContent=eu.nome_completo+' · '+eu.cargo;
+      // Mostrar botão admin se for admin
+      if(eu.is_admin) document.getElementById('btn-fab-admin').classList.add('on');
       carregarGrupos();
       if(eu.grupo_id){
         grupoId=eu.grupo_id;
@@ -330,6 +372,14 @@ async function carregarGrupos(){
   if(snap.empty){lst.innerHTML='<p style="color:var(--light);font-size:14px;text-align:center">Nenhum grupo ainda.</p>';return;}
   snap.forEach(d=>{
     const g={id:d.id,...d.data()};
+    // Verificar se é admin deste grupo
+    if(g.id===grupoId){
+      const admins=g.admins||[g.criado_por];
+      if(admins.includes(eu.uid)){
+        eu.is_admin=true;
+        document.getElementById('btn-fab-admin').classList.add('on');
+      }
+    }
     const li=document.createElement('li');
     li.className='grupo-item';
     let btn='';
@@ -363,10 +413,91 @@ function solicitarEntrada(gId,gNome){
 async function criarGrupo(){
   const nome=prompt('Nome do novo grupo:');
   if(!nome)return;
-  const ref=await db.collection('grupos').add({nome:nome.trim(),criado_por:eu.uid,criado_em:firebase.firestore.FieldValue.serverTimestamp(),membros:1});
-  await db.collection('usuarios').doc(eu.uid).update({grupo_id:ref.id});
-  eu.grupo_id=ref.id;grupoId=ref.id;
-  carregarGrupos();carregarEventos();
+  const ref=await db.collection('grupos').add({
+    nome:nome.trim(),
+    criado_por:eu.uid,
+    criado_em:firebase.firestore.FieldValue.serverTimestamp(),
+    membros:1,
+    admins:[eu.uid]
+  });
+  await db.collection('usuarios').doc(eu.uid).update({grupo_id:ref.id,is_admin:true});
+  eu.grupo_id=ref.id; eu.is_admin=true; grupoId=ref.id;
+  carregarGrupos(); carregarEventos();
+  // Mostrar botão admin
+  document.getElementById('btn-fab-admin').classList.add('on');
+}
+
+// ── ADMIN ─────────────────────────────────────────────────────────────
+function abrirAdmin(){
+  document.getElementById('admin-ov').classList.add('on');
+  carregarMembrosAdmin();
+}
+function fecharAdmin(){
+  document.getElementById('admin-ov').classList.remove('on');
+}
+
+async function carregarMembrosAdmin(){
+  const lst=document.getElementById('admin-membros');
+  lst.innerHTML='<div class="skel"></div><div class="skel"></div>';
+
+  // Buscar dados do grupo para saber lista de admins
+  const grupoSnap=await db.collection('grupos').doc(grupoId).get();
+  const admins=grupoSnap.data().admins||[grupoSnap.data().criado_por];
+
+  // Buscar todos os membros
+  const snap=await db.collection('usuarios').where('grupo_id','==',grupoId).get();
+  const membros=snap.docs.map(d=>({id:d.id,...d.data()}));
+
+  document.getElementById('admin-total').textContent=membros.length+' membro(s)';
+  lst.innerHTML='';
+
+  membros.forEach(m=>{
+    const isAdmin=admins.includes(m.uid);
+    const isSelf=m.uid===eu.uid;
+    const card=document.createElement('div');
+    card.className='membro-card';
+    card.innerHTML=`
+      <div class="membro-avatar">${isAdmin?'🛡️':'👤'}</div>
+      <div class="membro-info">
+        <div class="membro-nome">${m.nome_completo}</div>
+        <div class="membro-cargo">${m.cargo||'Sem cargo'}</div>
+        <span class="membro-badge ${isAdmin?'badge-admin':'badge-membro'}">${isAdmin?'Admin':'Membro'}</span>
+      </div>
+      ${!isSelf?`<div class="membro-acoes">
+        ${!isAdmin?`<button class="btn-admin-sm btn-promover" onclick="promoverAdmin('${m.uid}','${m.nome_completo}')">⬆ Admin</button>`:''}
+        ${isAdmin?`<button class="btn-admin-sm btn-rebaixar" onclick="rebaixarAdmin('${m.uid}','${m.nome_completo}')">⬇ Membro</button>`:''}
+        <button class="btn-admin-sm btn-expulsar" onclick="expulsarMembro('${m.uid}','${m.nome_completo}')">✕ Expulsar</button>
+      </div>`:'<div style="font-size:12px;color:var(--light)">Você</div>'}`;
+    lst.appendChild(card);
+  });
+}
+
+async function promoverAdmin(uid,nome){
+  if(!confirm('Promover '+nome+' a admin?'))return;
+  await db.collection('grupos').doc(grupoId).update({
+    admins:firebase.firestore.FieldValue.arrayUnion(uid)
+  });
+  await db.collection('usuarios').doc(uid).update({is_admin:true});
+  carregarMembrosAdmin();
+}
+
+async function rebaixarAdmin(uid,nome){
+  if(!confirm('Remover privilégio de admin de '+nome+'?'))return;
+  const snap=await db.collection('grupos').doc(grupoId).get();
+  const admins=(snap.data().admins||[]).filter(a=>a!==uid);
+  await db.collection('grupos').doc(grupoId).update({admins});
+  await db.collection('usuarios').doc(uid).update({is_admin:false});
+  carregarMembrosAdmin();
+}
+
+async function expulsarMembro(uid,nome){
+  if(!confirm('Expulsar '+nome+' do grupo? Essa ação não pode ser desfeita.'))return;
+  await db.collection('usuarios').doc(uid).update({grupo_id:null,is_admin:false});
+  const snap=await db.collection('grupos').doc(grupoId).get();
+  const membros=Math.max(0,(snap.data().membros||1)-1);
+  await db.collection('grupos').doc(grupoId).update({membros});
+  carregarMembrosAdmin();
+  carregarGrupos();
 }
 
 // ── APROVAÇÕES ────────────────────────────────────────────────────────
