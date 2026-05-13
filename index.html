@@ -208,6 +208,73 @@
   <div class="h-sub" id="h-user" onclick="abrirPerfil()" style="cursor:pointer;text-decoration:underline dotted rgba(255,255,255,.4)">Carregando...</div>
 </header>
 
+<!-- BANNER INSTALAR -->
+<div id="banner-instalar" style="display:none;background:#EFF6FF;border-bottom:1px solid #BFDBFE;padding:10px 16px;">
+  <button onclick="abrirModalInstalar()" style="width:100%;padding:11px;background:var(--blue);color:white;border:none;border-radius:12px;font-family:'Sora',sans-serif;font-size:14px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width:17px;height:17px;"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+    📱 Instalar App no Celular
+  </button>
+</div>
+
+<!-- MODAL INSTALAR -->
+<div id="modal-instalar" style="position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:900;display:none;align-items:center;justify-content:center;padding:20px;">
+  <div style="background:white;border-radius:24px;padding:28px 22px;width:100%;max-width:340px;position:relative;animation:fu .3s ease;">
+    <button onclick="fecharModalInstalar()" style="position:absolute;top:14px;right:16px;background:none;border:none;font-size:22px;color:#94a3b8;cursor:pointer;">✕</button>
+    <h3 style="font-family:'Sora',sans-serif;font-size:17px;font-weight:700;color:var(--blue);margin-bottom:6px;">Instalar o App</h3>
+    <p style="font-size:13px;color:var(--light);margin-bottom:18px;">Escolha seu sistema:</p>
+    <div id="inst-os" style="display:flex;gap:12px;">
+      <div onclick="instGuia('android')" style="flex:1;background:#F8FAFC;border:1.5px solid #e2e8f0;border-radius:14px;padding:18px 8px;text-align:center;cursor:pointer;">
+        <div style="font-size:38px;margin-bottom:6px;">🤖</div><div style="font-weight:700;font-size:13px;">Android</div>
+      </div>
+      <div onclick="instGuia('ios')" style="flex:1;background:#F8FAFC;border:1.5px solid #e2e8f0;border-radius:14px;padding:18px 8px;text-align:center;cursor:pointer;">
+        <div style="font-size:38px;margin-bottom:6px;">🍎</div><div style="font-weight:700;font-size:13px;">iPhone</div>
+      </div>
+    </div>
+    <div id="inst-android" style="display:none;">
+      <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:14px;">
+        <div style="background:#F8FAFC;border:1px solid #e2e8f0;border-radius:12px;padding:12px 14px;display:flex;gap:10px;align-items:center;font-size:13px;">
+          <div style="background:var(--blue);color:white;width:26px;height:26px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px;flex-shrink:0;">1</div>
+          Abra este site no <strong>&nbsp;Chrome</strong>
+        </div>
+        <div style="background:#F8FAFC;border:1px solid #e2e8f0;border-radius:12px;padding:12px 14px;display:flex;gap:10px;align-items:center;font-size:13px;">
+          <div style="background:var(--blue);color:white;width:26px;height:26px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px;flex-shrink:0;">2</div>
+          Toque nos <strong>&nbsp;⋮ três pontinhos</strong>
+        </div>
+        <div style="background:#F8FAFC;border:1px solid #e2e8f0;border-radius:12px;padding:12px 14px;display:flex;gap:10px;align-items:center;font-size:13px;">
+          <div style="background:var(--blue);color:white;width:26px;height:26px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px;flex-shrink:0;">3</div>
+          Toque em <strong>&nbsp;"Adicionar à tela inicial"</strong>
+        </div>
+        <div style="background:#f0fdf4;border:1px solid #d1fae5;border-radius:12px;padding:12px 14px;display:flex;gap:10px;align-items:center;font-size:13px;">
+          <div style="background:var(--green);color:white;width:26px;height:26px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;">✓</div>
+          Confirme em <strong>&nbsp;"Adicionar"</strong>
+        </div>
+      </div>
+      <button onclick="instGuia('os')" style="width:100%;padding:10px;background:transparent;border:1.5px solid #e2e8f0;border-radius:10px;font-size:13px;cursor:pointer;color:var(--text);">← Voltar</button>
+    </div>
+    <div id="inst-ios" style="display:none;">
+      <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:14px;">
+        <div style="background:#F8FAFC;border:1px solid #e2e8f0;border-radius:12px;padding:12px 14px;display:flex;gap:10px;align-items:center;font-size:13px;">
+          <div style="background:var(--blue);color:white;width:26px;height:26px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px;flex-shrink:0;">1</div>
+          Abra este site no <strong>&nbsp;Safari</strong>
+        </div>
+        <div style="background:#F8FAFC;border:1px solid #e2e8f0;border-radius:12px;padding:12px 14px;display:flex;gap:10px;align-items:center;font-size:13px;">
+          <div style="background:var(--blue);color:white;width:26px;height:26px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px;flex-shrink:0;">2</div>
+          Toque no ícone <strong>&nbsp;Compartilhar</strong> (barra inferior)
+        </div>
+        <div style="background:#F8FAFC;border:1px solid #e2e8f0;border-radius:12px;padding:12px 14px;display:flex;gap:10px;align-items:center;font-size:13px;">
+          <div style="background:var(--blue);color:white;width:26px;height:26px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px;flex-shrink:0;">3</div>
+          Toque em <strong>&nbsp;"Adicionar à Tela de Início"</strong>
+        </div>
+        <div style="background:#f0fdf4;border:1px solid #d1fae5;border-radius:12px;padding:12px 14px;display:flex;gap:10px;align-items:center;font-size:13px;">
+          <div style="background:var(--green);color:white;width:26px;height:26px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;">✓</div>
+          Confirme em <strong>&nbsp;"Adicionar"</strong>
+        </div>
+      </div>
+      <button onclick="instGuia('os')" style="width:100%;padding:10px;background:transparent;border:1.5px solid #e2e8f0;border-radius:10px;font-size:13px;cursor:pointer;color:var(--text);">← Voltar</button>
+    </div>
+  </div>
+</div>
+
 <!-- MODAL PERFIL -->
 <div id="perfil-ov">
   <div class="perfil-box">
@@ -405,6 +472,7 @@ auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL).then(()=>{
       document.getElementById('h-user').textContent=eu.nome_completo+' · '+eu.cargo;
       // Mostrar botão admin se for admin
       if(eu.is_admin) document.getElementById('btn-fab-admin').classList.add('on');
+      verificarInstalacao();
       carregarGrupos();
       if(eu.grupo_id){
         grupoId=eu.grupo_id;
@@ -1058,46 +1126,74 @@ async function cruzar(nomes){
   const users=snap.docs.map(d=>d.data());
 
   const norm=s=>s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9\s]/g,'').trim();
-
-  // Palavras irrelevantes para matching (preposições e artigos)
   const stopwords=new Set(['de','da','do','das','dos','e','a','o','as','os']);
+  const pwSig=s=>norm(s).split(/\s+/).filter(p=>p.length>1&&!stopwords.has(p));
 
-  // Palavras significativas de um nome (sem stopwords)
-  const palavrasSignif=s=>norm(s).split(/\s+/).filter(p=>p.length>1&&!stopwords.has(p));
+  // Distância de Levenshtein para erros de OCR (ex: Zani vs Zati)
+  function lev(a,b){
+    if(a===b)return 0;
+    const m=a.length,n=b.length;
+    const dp=Array.from({length:m+1},(_,i)=>[i,...Array(n).fill(0)]);
+    for(let j=0;j<=n;j++)dp[0][j]=j;
+    for(let i=1;i<=m;i++)
+      for(let j=1;j<=n;j++)
+        dp[i][j]=a[i-1]===b[j-1]?dp[i-1][j-1]:1+Math.min(dp[i-1][j],dp[i][j-1],dp[i-1][j-1]);
+    return dp[m][n];
+  }
+
+  // Verifica se duas palavras são similares (aceita 1 erro de OCR)
+  function palavrasSimilares(a,b){
+    if(a===b)return true;
+    if(Math.abs(a.length-b.length)>2)return false;
+    return lev(a,b)<=1; // 1 letra diferente = erro de OCR
+  }
 
   return nomes.map(nome=>{
     const nn=norm(nome);
-    const pwNome=palavrasSignif(nome);
+    const pwNome=pwSig(nome);
+    const primeiroNome=pwNome[0]; // Primeiro nome para match rápido
 
-    // 1. Match exato — nome completo ou alias conhecido
+    // 1. Match exato com nome completo ou alias
     for(const u of users){
       const todos=[u.nome_completo,...(u.nomes_conhecidos||[])];
       if(todos.some(n=>norm(n)===nn))
         return{tipo:'exato',nome,usuario:u};
     }
 
-    // 2. Match por palavras significativas em comum
-    // "Israel de Castro" vs "Israel Heleno de Castro"
-    // palavras sig do nome lido: ["israel","castro"]
-    // palavras sig do cadastro: ["israel","heleno","castro"]
-    // 2 de 2 palavras do nome lido estão no cadastro → match parcial forte
+    // 2. Match por palavras com Levenshtein (tolera erro de OCR)
     for(const u of users){
-      const pwUser=palavrasSignif(u.nome_completo);
-      const emComum=pwNome.filter(p=>pwUser.includes(p));
+      const pwUser=pwSig(u.nome_completo);
+      const emComum=pwNome.filter(p=>pwUser.some(pu=>palavrasSimilares(p,pu)));
       const score=emComum.length/Math.max(pwNome.length,1);
-      if(score>=0.6) // 60% das palavras do nome lido estão no cadastro
+      if(score>=0.5) // 50% das palavras coincidem (ou são similares)
         return{tipo:'parcial',nome,usuario:u,score};
     }
 
-    // 3. Match por inclusão simples como fallback
-    for(const u of users){
-      const nc=norm(u.nome_completo);
-      if(nc.includes(nn)||nn.includes(nc))
-        return{tipo:'parcial',nome,usuario:u,score:0.5};
+    // 3. Só o primeiro nome já dispara pergunta
+    // (para "Eduardo" ou "Fernando" que aparecem sem sobrenome)
+    if(primeiroNome&&primeiroNome.length>=4){
+      for(const u of users){
+        const pwUser=pwSig(u.nome_completo);
+        if(pwUser.some(pu=>palavrasSimilares(primeiroNome,pu)))
+          return{tipo:'parcial',nome,usuario:u,score:0.3};
+      }
     }
 
     return{tipo:'nao_encontrado',nome};
   });
+}
+
+// ── INSTALAR PWA ──────────────────────────────────────────────────────
+function verificarInstalacao(){
+  const instalado=window.matchMedia('(display-mode: standalone)').matches||window.navigator.standalone;
+  if(!instalado) document.getElementById('banner-instalar').style.display='block';
+}
+function abrirModalInstalar(){document.getElementById('modal-instalar').style.display='flex';instGuia('os');}
+function fecharModalInstalar(){document.getElementById('modal-instalar').style.display='none';}
+function instGuia(os){
+  document.getElementById('inst-os').style.display=os==='os'?'flex':'none';
+  document.getElementById('inst-android').style.display=os==='android'?'block':'none';
+  document.getElementById('inst-ios').style.display=os==='ios'?'block':'none';
 }
 
 // ── PERFIL ────────────────────────────────────────────────────────────
