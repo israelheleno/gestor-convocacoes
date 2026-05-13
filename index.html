@@ -430,8 +430,19 @@ async function carregarGrupos(){
   const lst=document.getElementById('lst-grp');
   lst.innerHTML='';
   if(snap.empty){lst.innerHTML='<p style="color:var(--light);font-size:14px;text-align:center">Nenhum grupo ainda.</p>';return;}
-  snap.forEach(d=>{
+
+  for(const d of snap.docs){
     const g={id:d.id,...d.data()};
+
+    // Contar membros reais direto do banco
+    const membrosSnap=await db.collection('usuarios').where('grupo_id','==',g.id).get();
+    const totalMembros=membrosSnap.size;
+
+    // Sincronizar contador se estiver errado
+    if(totalMembros!==(g.membros||0)){
+      db.collection('grupos').doc(g.id).update({membros:totalMembros});
+    }
+
     // Verificar se é admin deste grupo
     if(g.id===grupoId){
       const admins=g.admins||[g.criado_por];
@@ -451,9 +462,9 @@ async function carregarGrupos(){
     } else {
       btn=`<button class="btn-entrar" onclick="solicitarEntrada('${g.id}','${g.nome}')">Entrar</button>`;
     }
-    li.innerHTML=`<div><div class="grupo-nome">${g.nome}</div><div class="grupo-sub">${g.membros||0} membro(s)</div></div>${btn}`;
+    li.innerHTML=`<div><div class="grupo-nome">${g.nome}</div><div class="grupo-sub">${totalMembros} membro(s)</div></div>${btn}`;
     lst.appendChild(li);
-  });
+  }
 }
 
 function solicitarEntrada(gId,gNome){
