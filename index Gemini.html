@@ -149,50 +149,6 @@
     .skel{background:linear-gradient(90deg,#e2e8f0 25%,#f1f5f9 50%,#e2e8f0 75%);background-size:200% 100%;animation:sh 1.5s infinite;border-radius:10px;height:76px;margin-bottom:10px}
     @keyframes sh{0%{background-position:200% 0}100%{background-position:-200% 0}}
     @keyframes fu{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
-
-    /* ADMIN */
-    #admin-ov{position:fixed;inset:0;background:var(--bg);z-index:400;display:none;flex-direction:column;overflow-y:auto}
-    #admin-ov.on{display:flex}
-    .admin-hd{background:var(--blue);color:#fff;padding:18px 16px;display:flex;align-items:center;gap:10px;flex-shrink:0}
-    .admin-hd h2{font-family:'Sora',sans-serif;font-size:15px;font-weight:700;flex:1}
-    .admin-body{padding:16px}
-    .membro-card{background:#fff;border-radius:12px;padding:13px 15px;margin-bottom:10px;display:flex;align-items:center;gap:12px;box-shadow:0 2px 8px rgba(30,58,138,.06)}
-    .membro-avatar{width:38px;height:38px;background:#eff6ff;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
-    .membro-info{flex:1;min-width:0}
-    .membro-nome{font-size:14px;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-    .membro-cargo{font-size:12px;color:var(--light)}
-    .membro-badge{font-size:10px;padding:2px 8px;border-radius:20px;font-weight:600;margin-top:3px;display:inline-block}
-    .badge-admin{background:#eff6ff;color:var(--blue)}
-    .badge-membro{background:#f1f5f9;color:var(--light)}
-    .membro-acoes{display:flex;flex-direction:column;gap:6px;flex-shrink:0}
-    .btn-admin-sm{padding:5px 10px;border:none;border-radius:7px;font-size:11px;cursor:pointer;font-weight:600;white-space:nowrap}
-    .btn-promover{background:#eff6ff;color:var(--blue)}
-    .btn-rebaixar{background:#fef3c7;color:#92400e}
-    .btn-expulsar{background:#fee2e2;color:var(--red)}
-    .btn-fab-admin{position:fixed;bottom:92px;right:18px;width:44px;height:44px;background:#fff;border:2px solid var(--blue);border-radius:50%;box-shadow:0 2px 10px rgba(30,58,138,.2);cursor:pointer;display:none;align-items:center;justify-content:center;z-index:50;font-size:20px}
-    .btn-fab-admin.on{display:flex}
-
-    /* PERFIL */
-    #perfil-ov{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:700;display:none;align-items:center;justify-content:center;padding:20px}
-    #perfil-ov.on{display:flex}
-    .perfil-box{background:#fff;border-radius:24px;padding:28px 22px;width:100%;max-width:360px;animation:fu .3s ease}
-    .perfil-box h3{font-family:'Sora',sans-serif;font-size:17px;font-weight:700;color:var(--blue);margin-bottom:6px}
-    .perfil-box p{font-size:13px;color:var(--light);margin-bottom:18px}
-    .perfil-field{margin-bottom:14px}
-    .perfil-field label{display:block;font-size:12px;font-weight:600;color:var(--text);margin-bottom:5px;text-transform:uppercase;letter-spacing:.5px}
-    .perfil-field input{width:100%;padding:11px 13px;border:1.5px solid var(--border);border-radius:12px;font-family:'DM Sans',sans-serif;font-size:15px;color:var(--text);outline:none}
-    .perfil-field input:focus{border-color:var(--blue)}
-    .perfil-btns{display:flex;gap:10px;margin-top:6px}
-    #notif-ov{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:800;display:none;align-items:center;justify-content:center;padding:20px}
-    #notif-ov.on{display:flex}
-    .notif-box{background:#fff;border-radius:24px;padding:28px 22px;width:100%;max-width:360px;animation:fu .3s ease}
-    .notif-emoji{font-size:44px;text-align:center;margin-bottom:12px}
-    .notif-titulo{font-family:'Sora',sans-serif;font-size:17px;font-weight:700;color:var(--blue);margin-bottom:8px;text-align:center}
-    .notif-desc{font-size:14px;color:var(--light);text-align:center;margin-bottom:20px;line-height:1.5}
-    .notif-evento{background:#eff6ff;border-radius:12px;padding:12px;margin-bottom:20px;text-align:center}
-    .notif-evento-titulo{font-weight:600;font-size:14px;color:var(--blue)}
-    .notif-evento-data{font-size:12px;color:var(--light);margin-top:3px}
-    .notif-btns{display:flex;gap:10px}
   </style>
 </head>
 <body>
@@ -205,95 +161,8 @@
     </div>
     <button class="btn-sair" onclick="sair()">Sair</button>
   </div>
-  <div class="h-sub" id="h-user" onclick="abrirPerfil()" style="cursor:pointer;text-decoration:underline dotted rgba(255,255,255,.4)">Carregando...</div>
+  <div class="h-sub" id="h-user">Carregando...</div>
 </header>
-
-<!-- BANNER INSTALAR -->
-<div id="banner-instalar" style="display:none;background:#EFF6FF;border-bottom:1px solid #BFDBFE;padding:10px 16px;">
-  <button onclick="abrirModalInstalar()" style="width:100%;padding:11px;background:var(--blue);color:white;border:none;border-radius:12px;font-family:'Sora',sans-serif;font-size:14px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width:17px;height:17px;"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-    📱 Instalar App no Celular
-  </button>
-</div>
-
-<!-- MODAL INSTALAR -->
-<div id="modal-instalar" style="position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:900;display:none;align-items:center;justify-content:center;padding:20px;">
-  <div style="background:white;border-radius:24px;padding:28px 22px;width:100%;max-width:340px;position:relative;animation:fu .3s ease;">
-    <button onclick="fecharModalInstalar()" style="position:absolute;top:14px;right:16px;background:none;border:none;font-size:22px;color:#94a3b8;cursor:pointer;">✕</button>
-    <h3 style="font-family:'Sora',sans-serif;font-size:17px;font-weight:700;color:var(--blue);margin-bottom:6px;">Instalar o App</h3>
-    <p style="font-size:13px;color:var(--light);margin-bottom:18px;">Escolha seu sistema:</p>
-    <div id="inst-os" style="display:flex;gap:12px;">
-      <div onclick="instGuia('android')" style="flex:1;background:#F8FAFC;border:1.5px solid #e2e8f0;border-radius:14px;padding:18px 8px;text-align:center;cursor:pointer;">
-        <div style="font-size:38px;margin-bottom:6px;">🤖</div><div style="font-weight:700;font-size:13px;">Android</div>
-      </div>
-      <div onclick="instGuia('ios')" style="flex:1;background:#F8FAFC;border:1.5px solid #e2e8f0;border-radius:14px;padding:18px 8px;text-align:center;cursor:pointer;">
-        <div style="font-size:38px;margin-bottom:6px;">🍎</div><div style="font-weight:700;font-size:13px;">iPhone</div>
-      </div>
-    </div>
-    <div id="inst-android" style="display:none;">
-      <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:14px;">
-        <div style="background:#F8FAFC;border:1px solid #e2e8f0;border-radius:12px;padding:12px 14px;display:flex;gap:10px;align-items:center;font-size:13px;">
-          <div style="background:var(--blue);color:white;width:26px;height:26px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px;flex-shrink:0;">1</div>
-          Abra este site no <strong>&nbsp;Chrome</strong>
-        </div>
-        <div style="background:#F8FAFC;border:1px solid #e2e8f0;border-radius:12px;padding:12px 14px;display:flex;gap:10px;align-items:center;font-size:13px;">
-          <div style="background:var(--blue);color:white;width:26px;height:26px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px;flex-shrink:0;">2</div>
-          Toque nos <strong>&nbsp;⋮ três pontinhos</strong>
-        </div>
-        <div style="background:#F8FAFC;border:1px solid #e2e8f0;border-radius:12px;padding:12px 14px;display:flex;gap:10px;align-items:center;font-size:13px;">
-          <div style="background:var(--blue);color:white;width:26px;height:26px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px;flex-shrink:0;">3</div>
-          Toque em <strong>&nbsp;"Adicionar à tela inicial"</strong>
-        </div>
-        <div style="background:#f0fdf4;border:1px solid #d1fae5;border-radius:12px;padding:12px 14px;display:flex;gap:10px;align-items:center;font-size:13px;">
-          <div style="background:var(--green);color:white;width:26px;height:26px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;">✓</div>
-          Confirme em <strong>&nbsp;"Adicionar"</strong>
-        </div>
-      </div>
-      <button onclick="instGuia('os')" style="width:100%;padding:10px;background:transparent;border:1.5px solid #e2e8f0;border-radius:10px;font-size:13px;cursor:pointer;color:var(--text);">← Voltar</button>
-    </div>
-    <div id="inst-ios" style="display:none;">
-      <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:14px;">
-        <div style="background:#F8FAFC;border:1px solid #e2e8f0;border-radius:12px;padding:12px 14px;display:flex;gap:10px;align-items:center;font-size:13px;">
-          <div style="background:var(--blue);color:white;width:26px;height:26px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px;flex-shrink:0;">1</div>
-          Abra este site no <strong>&nbsp;Safari</strong>
-        </div>
-        <div style="background:#F8FAFC;border:1px solid #e2e8f0;border-radius:12px;padding:12px 14px;display:flex;gap:10px;align-items:center;font-size:13px;">
-          <div style="background:var(--blue);color:white;width:26px;height:26px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px;flex-shrink:0;">2</div>
-          Toque no ícone <strong>&nbsp;Compartilhar</strong> (barra inferior)
-        </div>
-        <div style="background:#F8FAFC;border:1px solid #e2e8f0;border-radius:12px;padding:12px 14px;display:flex;gap:10px;align-items:center;font-size:13px;">
-          <div style="background:var(--blue);color:white;width:26px;height:26px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px;flex-shrink:0;">3</div>
-          Toque em <strong>&nbsp;"Adicionar à Tela de Início"</strong>
-        </div>
-        <div style="background:#f0fdf4;border:1px solid #d1fae5;border-radius:12px;padding:12px 14px;display:flex;gap:10px;align-items:center;font-size:13px;">
-          <div style="background:var(--green);color:white;width:26px;height:26px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;">✓</div>
-          Confirme em <strong>&nbsp;"Adicionar"</strong>
-        </div>
-      </div>
-      <button onclick="instGuia('os')" style="width:100%;padding:10px;background:transparent;border:1.5px solid #e2e8f0;border-radius:10px;font-size:13px;cursor:pointer;color:var(--text);">← Voltar</button>
-    </div>
-  </div>
-</div>
-
-<!-- MODAL PERFIL -->
-<div id="perfil-ov">
-  <div class="perfil-box">
-    <h3>✏️ Editar perfil</h3>
-    <p>Informe seu nome completo exatamente como aparece nos documentos oficiais.</p>
-    <div class="perfil-field">
-      <label>Nome completo</label>
-      <input type="text" id="perf-nome" placeholder="Ex: Israel Heleno de Castro"/>
-    </div>
-    <div class="perfil-field">
-      <label>Cargo</label>
-      <input type="text" id="perf-cargo" placeholder="Ex: Operador de Áudio"/>
-    </div>
-    <div class="perfil-btns">
-      <button class="btn-cancel" onclick="fecharPerfil()">Cancelar</button>
-      <button class="btn-salvar" onclick="salvarPerfil()">✓ Salvar</button>
-    </div>
-  </div>
-</div>
 
 <main>
   <div id="sec-apv" style="display:none;margin-bottom:16px">
@@ -320,41 +189,6 @@
 <button id="fab" onclick="abrirScanner()">
   <svg viewBox="0 0 24 24"><path d="M9 3H5a2 2 0 00-2 2v4m6-6h10a2 2 0 012 2v4M9 3v18m0 0h10a2 2 0 002-2V9M9 21H5a2 2 0 01-2-2V9m0 0h18"/></svg>
 </button>
-
-<!-- NOTIFICAÇÃO PENDENTE -->
-<div id="notif-ov">
-  <div class="notif-box">
-    <div class="notif-emoji">🔔</div>
-    <div class="notif-titulo" id="notif-titulo">Você foi convocado?</div>
-    <div class="notif-desc" id="notif-desc"></div>
-    <div class="notif-evento">
-      <div class="notif-evento-titulo" id="notif-ev-titulo"></div>
-      <div class="notif-evento-data" id="notif-ev-data"></div>
-    </div>
-    <div class="notif-btns">
-      <button class="btn-cancel" onclick="responderNotif(false)">✗ Não sou eu</button>
-      <button class="btn-salvar" onclick="responderNotif(true)">✓ Sim, sou eu!</button>
-    </div>
-  </div>
-</div>
-
-<!-- PAINEL ADMIN -->
-<div id="admin-ov">
-  <div class="admin-hd">
-    <button class="btn-x" onclick="fecharAdmin()">✕</button>
-    <h2>🛡️ Painel Admin</h2>
-  </div>
-  <div class="admin-body">
-    <div class="sec-titulo" style="margin-bottom:12px">
-      Membros do grupo
-      <span style="font-size:12px;font-weight:400;color:var(--light)" id="admin-total"></span>
-    </div>
-    <div id="admin-membros"></div>
-  </div>
-</div>
-
-<!-- Botão flutuante admin -->
-<button class="btn-fab-admin" id="btn-fab-admin" onclick="abrirAdmin()" title="Painel Admin">🛡️</button>
 
 <!-- MODAL EVENTO -->
 <div class="overlay" id="mod-ev" onclick="if(event.target===this)this.classList.remove('on')">
@@ -449,49 +283,41 @@ firebase.initializeApp({
 });
 const auth=firebase.auth();
 const db=firebase.firestore();
+auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL).catch(e=>console.error(e));
 
 let eu=null,grupoId=null,ocrDados=null,matches=[],camStream=null;
 
-// AUTH dentro do setPersistence para garantir ordem correta
-auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL).then(()=>{
+// ── AUTH: usa onAuthStateChanged mas com timeout agressivo ────────────
+let authOk=false;
+const T=setTimeout(()=>{
+  if(!authOk) window.location.replace('login.html');
+},8000);
 
-  let authOk=false;
-  const T=setTimeout(()=>{
-    if(!authOk) window.location.replace('login.html');
-  },10000);
-
-  auth.onAuthStateChanged(async user=>{
-    if(!user){ clearTimeout(T); window.location.replace('login.html'); return; }
-    try{
-      const snap=await db.collection('usuarios').doc(user.uid).get();
-      if(!snap.exists||!snap.data().nome_completo){
-        clearTimeout(T); window.location.replace('login.html'); return;
-      }
-      authOk=true; clearTimeout(T);
-      eu={uid:user.uid,...snap.data()};
-      document.getElementById('h-user').textContent=eu.nome_completo+' · '+eu.cargo;
-      // Mostrar botão admin se for admin
-      if(eu.is_admin) document.getElementById('btn-fab-admin').classList.add('on');
-      verificarInstalacao();
-      iniciarNotificacoes();
-      carregarGrupos();
-      if(eu.grupo_id){
-        grupoId=eu.grupo_id;
-        carregarEventos();
-        verificarAprovacoes();
-        verificarNotificacoesPendentes();
-      } else {
-        document.getElementById('lst-ev').innerHTML='<p style="color:var(--light);font-size:14px;padding:20px;text-align:center">Entre em um grupo para ver convocações.</p>';
-        document.getElementById('prox').innerHTML='<div class="card-vazio">Entre em um grupo para ver suas convocações.</div>';
-      }
-    }catch(err){
-      console.error(err);
-      clearTimeout(T);
-      window.location.replace('login.html');
+auth.onAuthStateChanged(async user=>{
+  if(!user){ clearTimeout(T); window.location.replace('login.html'); return; }
+  try{
+    const snap=await db.collection('usuarios').doc(user.uid).get();
+    if(!snap.exists||!snap.data().nome_completo){
+      clearTimeout(T); window.location.replace('login.html'); return;
     }
-  });
-
-}).catch(e=>console.error('Persistence:',e));
+    authOk=true; clearTimeout(T);
+    eu={uid:user.uid,...snap.data()};
+    document.getElementById('h-user').textContent=eu.nome_completo+' · '+eu.cargo;
+    carregarGrupos();
+    if(eu.grupo_id){
+      grupoId=eu.grupo_id;
+      carregarEventos();
+      verificarAprovacoes();
+    } else {
+      document.getElementById('lst-ev').innerHTML='<p style="color:var(--light);font-size:14px;padding:20px;text-align:center">Entre em um grupo para ver convocações.</p>';
+      document.getElementById('prox').innerHTML='<div class="card-vazio">Entre em um grupo para ver suas convocações.</div>';
+    }
+  }catch(err){
+    console.error(err);
+    clearTimeout(T);
+    window.location.replace('login.html');
+  }
+});
 
 // ── GRUPOS ────────────────────────────────────────────────────────────
 async function carregarGrupos(){
@@ -499,27 +325,8 @@ async function carregarGrupos(){
   const lst=document.getElementById('lst-grp');
   lst.innerHTML='';
   if(snap.empty){lst.innerHTML='<p style="color:var(--light);font-size:14px;text-align:center">Nenhum grupo ainda.</p>';return;}
-
-  for(const d of snap.docs){
+  snap.forEach(d=>{
     const g={id:d.id,...d.data()};
-
-    // Contar membros reais direto do banco
-    const membrosSnap=await db.collection('usuarios').where('grupo_id','==',g.id).get();
-    const totalMembros=membrosSnap.size;
-
-    // Sincronizar contador se estiver errado
-    if(totalMembros!==(g.membros||0)){
-      db.collection('grupos').doc(g.id).update({membros:totalMembros});
-    }
-
-    // Verificar se é admin deste grupo
-    if(g.id===grupoId){
-      const admins=g.admins||[g.criado_por];
-      if(admins.includes(eu.uid)){
-        eu.is_admin=true;
-        document.getElementById('btn-fab-admin').classList.add('on');
-      }
-    }
     const li=document.createElement('li');
     li.className='grupo-item';
     let btn='';
@@ -531,9 +338,9 @@ async function carregarGrupos(){
     } else {
       btn=`<button class="btn-entrar" onclick="solicitarEntrada('${g.id}','${g.nome}')">Entrar</button>`;
     }
-    li.innerHTML=`<div><div class="grupo-nome">${g.nome}</div><div class="grupo-sub">${totalMembros} membro(s)</div></div>${btn}`;
+    li.innerHTML=`<div><div class="grupo-nome">${g.nome}</div><div class="grupo-sub">${g.membros||0} membro(s)</div></div>${btn}`;
     lst.appendChild(li);
-  }
+  });
 }
 
 function solicitarEntrada(gId,gNome){
@@ -553,91 +360,10 @@ function solicitarEntrada(gId,gNome){
 async function criarGrupo(){
   const nome=prompt('Nome do novo grupo:');
   if(!nome)return;
-  const ref=await db.collection('grupos').add({
-    nome:nome.trim(),
-    criado_por:eu.uid,
-    criado_em:firebase.firestore.FieldValue.serverTimestamp(),
-    membros:1,
-    admins:[eu.uid]
-  });
-  await db.collection('usuarios').doc(eu.uid).update({grupo_id:ref.id,is_admin:true});
-  eu.grupo_id=ref.id; eu.is_admin=true; grupoId=ref.id;
-  carregarGrupos(); carregarEventos();
-  // Mostrar botão admin
-  document.getElementById('btn-fab-admin').classList.add('on');
-}
-
-// ── ADMIN ─────────────────────────────────────────────────────────────
-function abrirAdmin(){
-  document.getElementById('admin-ov').classList.add('on');
-  carregarMembrosAdmin();
-}
-function fecharAdmin(){
-  document.getElementById('admin-ov').classList.remove('on');
-}
-
-async function carregarMembrosAdmin(){
-  const lst=document.getElementById('admin-membros');
-  lst.innerHTML='<div class="skel"></div><div class="skel"></div>';
-
-  // Buscar dados do grupo para saber lista de admins
-  const grupoSnap=await db.collection('grupos').doc(grupoId).get();
-  const admins=grupoSnap.data().admins||[grupoSnap.data().criado_por];
-
-  // Buscar todos os membros
-  const snap=await db.collection('usuarios').where('grupo_id','==',grupoId).get();
-  const membros=snap.docs.map(d=>({id:d.id,...d.data()}));
-
-  document.getElementById('admin-total').textContent=membros.length+' membro(s)';
-  lst.innerHTML='';
-
-  membros.forEach(m=>{
-    const isAdmin=admins.includes(m.uid);
-    const isSelf=m.uid===eu.uid;
-    const card=document.createElement('div');
-    card.className='membro-card';
-    card.innerHTML=`
-      <div class="membro-avatar">${isAdmin?'🛡️':'👤'}</div>
-      <div class="membro-info">
-        <div class="membro-nome">${m.nome_completo}</div>
-        <div class="membro-cargo">${m.cargo||'Sem cargo'}</div>
-        <span class="membro-badge ${isAdmin?'badge-admin':'badge-membro'}">${isAdmin?'Admin':'Membro'}</span>
-      </div>
-      ${!isSelf?`<div class="membro-acoes">
-        ${!isAdmin?`<button class="btn-admin-sm btn-promover" onclick="promoverAdmin('${m.uid}','${m.nome_completo}')">⬆ Admin</button>`:''}
-        ${isAdmin?`<button class="btn-admin-sm btn-rebaixar" onclick="rebaixarAdmin('${m.uid}','${m.nome_completo}')">⬇ Membro</button>`:''}
-        <button class="btn-admin-sm btn-expulsar" onclick="expulsarMembro('${m.uid}','${m.nome_completo}')">✕ Expulsar</button>
-      </div>`:'<div style="font-size:12px;color:var(--light)">Você</div>'}`;
-    lst.appendChild(card);
-  });
-}
-
-async function promoverAdmin(uid,nome){
-  if(!confirm('Promover '+nome+' a admin?'))return;
-  await db.collection('grupos').doc(grupoId).update({
-    admins:firebase.firestore.FieldValue.arrayUnion(uid)
-  });
-  await db.collection('usuarios').doc(uid).update({is_admin:true});
-  carregarMembrosAdmin();
-}
-
-async function rebaixarAdmin(uid,nome){
-  if(!confirm('Remover privilégio de admin de '+nome+'?'))return;
-  const snap=await db.collection('grupos').doc(grupoId).get();
-  const admins=(snap.data().admins||[]).filter(a=>a!==uid);
-  await db.collection('grupos').doc(grupoId).update({admins});
-  await db.collection('usuarios').doc(uid).update({is_admin:false});
-  carregarMembrosAdmin();
-}
-
-async function expulsarMembro(uid,nome){
-  if(!confirm('Expulsar '+nome+' do grupo? Essa ação não pode ser desfeita.'))return;
-  await db.collection('usuarios').doc(uid).update({grupo_id:null,is_admin:false});
-  const snap=await db.collection('grupos').doc(grupoId).get();
-  const membros=Math.max(0,(snap.data().membros||1)-1);
-  await db.collection('grupos').doc(grupoId).update({membros});
-  carregarMembrosAdmin();
-  carregarGrupos();
+  const ref=await db.collection('grupos').add({nome:nome.trim(),criado_por:eu.uid,criado_em:firebase.firestore.FieldValue.serverTimestamp(),membros:1});
+  await db.collection('usuarios').doc(eu.uid).update({grupo_id:ref.id});
+  eu.grupo_id=ref.id;grupoId=ref.id;
+  carregarGrupos();carregarEventos();
 }
 
 // ── APROVAÇÕES ────────────────────────────────────────────────────────
@@ -686,40 +412,22 @@ async function carregarEventos(){
   const evs=snap.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>new Date(a.data_hora)-new Date(b.data_hora));
   document.getElementById('total').textContent=evs.length+' total';
 
-  // Função de matching igual ao cruzar()
-  const norm=s=>s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9\s]/g,'').trim();
-  const stopwords=new Set(['de','da','do','das','dos','e','a','o','as','os']);
-  const pwSig=s=>norm(s).split(/\s+/).filter(p=>p.length>1&&!stopwords.has(p));
-  const euNomes=[eu.nome_completo,...(eu.nomes_conhecidos||[])];
-  const euPalavras=pwSig(eu.nome_completo);
-
-  function euSouConvocado(lista){
-    return (lista||[]).some(n=>{
-      // Match exato com qualquer alias
-      if(euNomes.some(en=>norm(en)===norm(n))) return true;
-      // Match por palavras em comum
-      const pwN=pwSig(n);
-      const emComum=pwN.filter(p=>euPalavras.includes(p));
-      return emComum.length/Math.max(pwN.length,1)>=0.6;
-    });
-  }
-
-  const prox=evs.find(e=>new Date(e.data_hora)>agora&&euSouConvocado(e.lista_convocados));
-  const minhasProximas=evs.filter(e=>new Date(e.data_hora)>agora&&euSouConvocado(e.lista_convocados));
+  const prox=evs.find(e=>{
+    const dt=new Date(e.data_hora);
+    return dt>agora&&(e.lista_convocados||[]).some(n=>(eu.nomes_conhecidos||[]).some(nc=>
+      nc.toLowerCase().includes(n.toLowerCase())||n.toLowerCase().includes(nc.toLowerCase())));
+  });
 
   const el=document.getElementById('prox');
-  if(!minhasProximas.length){
-    el.innerHTML='<div class="card-vazio">Você não tem convocações próximas.</div>';
-  } else {
-    el.innerHTML=minhasProximas.map((ev,idx)=>{
-      const dt=new Date(ev.data_hora);
-      return `<div class="card-prox" style="margin-bottom:${idx<minhasProximas.length-1?'10px':'16px'}">
-        <div class="prox-label">${idx===0?'SUA PRÓXIMA CONVOCAÇÃO':'TAMBÉM CONVOCADO'}</div>
-        <div class="prox-titulo">${ev.titulo_evento||'Evento'}</div>
-        <div class="prox-meta"><span>📅 ${fD(dt)}</span><span>🕐 ${fH(dt)}</span>${ev.local?'<span>📍 '+ev.local+'</span>':''}</div>
-        <button class="btn-agenda" onclick='ics(${JSON.stringify(ev).replace(/'/g,"&#39;")})'>📅 Adicionar à Agenda</button>
-      </div>`;
-    }).join('');
+  if(!prox){el.innerHTML='<div class="card-vazio">Você não tem convocações próximas.</div>';}
+  else{
+    const dt=new Date(prox.data_hora);
+    el.innerHTML=`<div class="card-prox">
+      <div class="prox-label">SUA PRÓXIMA CONVOCAÇÃO</div>
+      <div class="prox-titulo">${prox.titulo_evento||'Evento'}</div>
+      <div class="prox-meta"><span>📅 ${fD(dt)}</span><span>🕐 ${fH(dt)}</span>${prox.local?'<span>📍 '+prox.local+'</span>':''}</div>
+      <button class="btn-agenda" onclick='ics(${JSON.stringify(prox).replace(/'/g,"&#39;")})'>📅 Adicionar à Agenda</button>
+    </div>`;
   }
 
   const lst=document.getElementById('lst-ev');
@@ -820,76 +528,79 @@ async function processarFoto(file){
   document.getElementById('ocr-pct').textContent='Preparando imagem...';
 
   try{
-    // Converter para base64
+    // Redimensionar imagem para max 1600px (Vision API tem limite de tamanho)
     const base64=await new Promise((res,rej)=>{
       const img=new Image();
       const url=URL.createObjectURL(file);
       img.onload=()=>{
         const MAX=1600;
-        let w=img.width,h=img.height;
+        let w=img.width, h=img.height;
         if(w>MAX||h>MAX){
           if(w>h){h=Math.round(h*MAX/w);w=MAX;}
           else{w=Math.round(w*MAX/h);h=MAX;}
         }
-        const c=document.createElement('canvas');
-        c.width=w;c.height=h;
-        c.getContext('2d').drawImage(img,0,0,w,h);
+        const canvas=document.createElement('canvas');
+        canvas.width=w; canvas.height=h;
+        canvas.getContext('2d').drawImage(img,0,0,w,h);
         URL.revokeObjectURL(url);
-        res(c.toDataURL('image/jpeg',0.9).split(',')[1]);
+        res(canvas.toDataURL('image/jpeg',0.9).split(',')[1]);
       };
       img.onerror=()=>rej(new Error('Erro ao carregar imagem'));
       img.src=url;
     });
 
     document.getElementById('ocr-fill').style.width='50%';
-    document.getElementById('ocr-pct').textContent='Lendo com IA...';
+    document.getElementById('ocr-pct').textContent='Lendo documento...';
 
-    const resp=await fetch('https://api.mistral.ai/v1/chat/completions',{
-      method:'POST',
-      headers:{
-        'Content-Type':'application/json',
-        'Authorization':'Bearer zQVzmFaX904lqaFwzt40BHXHfGoqSJca'
-      },
-      body:JSON.stringify({
-        model:'pixtral-12b-2409',
-        max_tokens:500,
-        messages:[{
-          role:'user',
-          content:[
-            {
-              type:'image_url',
-              image_url:{url:'data:image/jpeg;base64,'+base64}
-            },
-            {
-              type:'text',
-              text:`Analise esta convocação oficial brasileira e extraia os dados. Responda APENAS com JSON válido, sem explicações, sem markdown, sem blocos de código.
+    // Google Cloud Vision API
+    const resp=await fetch(
+      'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=AIzaSyBuzjGeJ1EblMua3W13hP3hYrT0Llg5h-c',
+      {
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({
+          contents:[{
+            parts:[
+              {
+                inline_data:{
+                  mime_type:'image/jpeg',
+                  data:base64
+                }
+              },
+              {
+                text:`Analise esta convocação oficial brasileira e extraia os dados. Responda APENAS com JSON válido, sem explicações, sem markdown, sem blocos de código.
 
 Formato exato:
 {"titulo":"tema ou título do evento","data":"YYYY-MM-DD","hora":"HH:MM","local":null,"nomes":["Nome 1","Nome 2"]}
 
 Regras obrigatórias:
-- nomes: APENAS nomes da coluna NOME da tabela. Se tiver "João e Maria" numa linha, separe em dois: ["João","Maria"]
-- NÃO inclua funções, cargos, coordenadores nem assinantes do documento
+- nomes: APENAS nomes da coluna NOME da tabela. Separe "João e Maria" em dois: ["João","Maria"]
+- NÃO inclua funções, cargos, coordenadores nem assinantes
 - titulo: use o tema da reunião ou subtítulo após "TV CÂMARA"
-- data e hora: extraia do cabeçalho no formato YYYY-MM-DD e HH:MM`
-            }
-          ]
-        }]
-      })
-    });
+- data e hora: do cabeçalho da convocação formato YYYY-MM-DD e HH:MM`
+              }
+            ]
+          }],
+          generationConfig:{temperature:0,maxOutputTokens:500}
+        })
+      }
+    );
 
-    document.getElementById('ocr-fill').style.width='85%';
-    document.getElementById('ocr-pct').textContent='Processando...';
+    document.getElementById('ocr-fill').style.width='80%';
+    document.getElementById('ocr-pct').textContent='Processando texto...';
 
     if(!resp.ok){
-      const err=await resp.json().catch(()=>({}));
-      throw new Error(err.message||'Erro na API Mistral ('+resp.status+')');
+      const errData=await resp.json().catch(()=>({}));
+      const msg=errData?.error?.message||'Erro na API (status '+resp.status+')';
+      throw new Error(msg);
     }
-
     const data=await resp.json();
-    const txtRaw=data.choices?.[0]?.message?.content||'';
-    if(!txtRaw) throw new Error('Resposta vazia. Tente novamente.');
 
+    // Extrair texto da resposta do Gemini
+    const txtRaw=data.candidates?.[0]?.content?.parts?.[0]?.text||'';
+    if(!txtRaw) throw new Error('Resposta vazia da IA. Tente novamente.');
+
+    // Parse JSON — remove markdown se vier com ```
     let parsed;
     try{
       const limpo=txtRaw.replace(/```json|```/g,'').trim();
@@ -903,11 +614,11 @@ Regras obrigatórias:
     document.getElementById('ocr-fill').style.width='100%';
 
     ocrDados={
-      titulo:parsed.titulo||null,
-      data_hora:(parsed.data&&parsed.hora)?`${parsed.data}T${parsed.hora}:00`:(parsed.data?`${parsed.data}T00:00:00`:null),
-      local:parsed.local||null,
-      nomes:Array.isArray(parsed.nomes)?parsed.nomes.filter(n=>n&&n.trim().length>2):[],
-      id_ver:null
+      titulo: parsed.titulo||null,
+      data_hora: (parsed.data&&parsed.hora)?`${parsed.data}T${parsed.hora}:00`:(parsed.data?`${parsed.data}T00:00:00`:null),
+      local: parsed.local||null,
+      nomes: Array.isArray(parsed.nomes)?parsed.nomes.filter(n=>n&&n.trim().length>2):[],
+      id_ver: null
     };
     if(parsed.data&&parsed.hora&&parsed.titulo){
       ocrDados.id_ver=parsed.data.replace(/-/g,'')+parsed.hora.replace(':','')+parsed.titulo.toUpperCase().replace(/[^A-Z0-9]/g,'').substring(0,10);
@@ -922,6 +633,7 @@ Regras obrigatórias:
 
   document.getElementById('ocr-ov').classList.remove('on');
 
+  // Anti-duplicidade
   if(ocrDados.id_ver){
     const dup=await db.collection('eventos')
       .where('id_verificacao','==',ocrDados.id_ver)
@@ -963,7 +675,6 @@ async function salvar(){
   const titulo=document.getElementById('rv-tit').value.trim();
   const dataVal=document.getElementById('rv-data').value;
   if(!titulo||!dataVal){alert('Título e data são obrigatórios.');return;}
-
   await db.collection('eventos').add({
     id_verificacao:ocrDados?.id_ver||null,
     titulo_evento:titulo,
@@ -974,61 +685,7 @@ async function salvar(){
     criado_por:eu.uid,
     criado_em:firebase.firestore.FieldValue.serverTimestamp()
   });
-
-  fecharRv();
-
-  const dtFmt=new Date(dataVal+':00').toLocaleDateString('pt-BR',{day:'2-digit',month:'short',year:'numeric'});
-
-  // Notificar matches EXATOS — push imediato
-  const exatos=matches.filter(m=>m.tipo==='exato');
-  for(const m of exatos){
-    // Salva notificação no Firestore (outros dispositivos vão ler)
-    await db.collection('notificacoes').add({
-      uid:m.usuario.uid,
-      tipo:'convocado',
-      nome_convocacao:m.nome,
-      titulo_evento:titulo,
-      data_hora:dataVal+':00',
-      grupo_id:grupoId,
-      respondido:false,
-      criado_em:firebase.firestore.FieldValue.serverTimestamp()
-    });
-    // Se for o próprio usuário logado, notifica agora
-    if(m.usuario.uid===eu.uid){
-      enviarNotificacaoPush(
-        '📋 Você foi convocado!',
-        `${titulo} — ${dtFmt}`,
-        'conv-'+Date.now()
-      );
-    }
-  }
-
-  // Notificar matches PARCIAIS — perguntar se é a pessoa
-  const parciais=matches.filter(m=>m.tipo==='parcial');
-  for(const m of parciais){
-    await db.collection('notificacoes').add({
-      uid:m.usuario.uid,
-      tipo:'confirmar',
-      nome_convocacao:m.nome,
-      titulo_evento:titulo,
-      data_hora:dataVal+':00',
-      grupo_id:grupoId,
-      respondido:false,
-      criado_em:firebase.firestore.FieldValue.serverTimestamp()
-    });
-    // Se for o próprio usuário logado, mostra pergunta agora
-    if(m.usuario.uid===eu.uid){
-      enviarNotificacaoPush(
-        '❓ Você foi convocado?',
-        `"${m.nome}" aparece em: ${titulo}`,
-        'conf-'+Date.now()
-      );
-    }
-  }
-
-  alert('✅ Convocação salva!');
-  carregarEventos();
-  verificarNotificacoesPendentes();
+  fecharRv();alert('✅ Convocação salva!');carregarEventos();
 }
 
 // ── OCR ───────────────────────────────────────────────────────────────
@@ -1081,71 +738,43 @@ function extrair(txt){
 function extrairNomes(txt){
   const nomes=[];
   const linhas=txt.split('\n').map(l=>l.trim()).filter(l=>l.length>1);
-
-  // Palavras que indicam início de uma função — tudo antes disso é o nome
-  const marcaFuncao=/\b(Responsável|Operador|Operadora|Operadores|Repórter|Reporter|Mestre|Diretor|Coordenador|Técnico|Assistente|Analista|Produtor|Cinegrafista|Apresentador|Locutor|Sonoplasta|Iluminador|Editor|Controle|DTV|Transmissão|Câmera|Áudio|Vídeo|Plenário|Cerimônia|Caracteres)\b/i;
-
-  const ignora=['NOME','FUNÇÃO','FUNCAO','OBSERV','DISPENSADO','CÂMARA','CAMARA',
-    'RUA','SILVA JARDIM','FONE','FAX','CEP','COORDENADOR DE','DEPARTAMENTO',
-    'CONVOCAÇÃO','ORDEM','REUNIÃO','SESSÃO','OBRIGAT','MULHER','HOMEM',
-    'TRAJE','ENCERRAMENTO','PRESIDENTE','POLYANE','ALEXANDRE GAMA',
-    'SÃO JOSÉ','MUNICIPAL','CÂMARA MUNICIPAL'];
-
+  const regFn=/operador|responsável|repórter|reporter|mestre|cerim|caracteres|controle|DTV|transmiss|câmera|camera|áudio|audio|plenário|plenario/i;
+  const ignora=['NOME','FUNÇÃO','FUNCAO','OBSERV','DISPENSADO','CÂMARA','CAMARA','RUA','SILVA JARDIM',
+    'FONE','FAX','CEP','COORDENADOR','DEPARTAMENTO','CONVOCAÇÃO','CONVOCACAO','ORDEM','REUNIÃO',
+    'REUNIAO','SESSÃO','SESSAO','OBRIGAT','MULHER','HOMEM','TRAJE','ENCERRAMENTO','PRESIDENTE',
+    'POLYANE','ALEXANDRE GAMA','SÃO JOSÉ','SAO JOSE','MUNICIPAL'];
   let tabela=false;
 
   for(let i=0;i<linhas.length;i++){
     const l=linhas[i];
-
-    // Detecta início da tabela
     if(/\bNOME\b/i.test(l)&&/\bFUN/i.test(l)){tabela=true;continue;}
     if(!tabela)continue;
-
-    // Para nas observações
     if(/observa[çc]|dispensado|encerramento|traje|coordenador de comunica|polyane|presiden/i.test(l))break;
-
-    // Ignora linhas institucionais
-    if(ignora.some(p=>l.toUpperCase().includes(p.toUpperCase())))continue;
-
-    // Se a linha tem marca de função, extrai só o nome (parte antes da função)
-    const mFuncao=l.match(new RegExp('^(.+?)\\s+(?:Responsável|Operador[ae]?s?|Repórter|Reporter|Mestre|Diretor|Coordenador|Técnico|Assistente|Analista|Produtor|Cinegrafista|Apresentador|Locutor|Sonoplasta|Iluminador|Editor|Controle|DTV)\\b','i'));
-    if(mFuncao){
-      const nomeParte=mFuncao[1].trim();
-      processarNome(nomeParte,nomes);
-      continue;
-    }
-
-    // Linha que é só função — pula
-    if(marcaFuncao.test(l)&&!ehNome(l.split(/\s+/).slice(0,3).join(' '))){continue;}
-
-    // Linha normal — verifica se parece nome
+    if(regFn.test(l))continue;
+    if(ignora.some(p=>l.toUpperCase().includes(p)))continue;
     const sem=l.replace(/[0-9\.\,\;\:\!\?\@\#\/\\]/g,'').trim();
     if(sem.length<4)continue;
-    if(ehNome(l)) processarNome(l,nomes);
+    if(ehNome(l)){
+      // Divide "Pessoa A e Pessoa B"
+      const comE=l.match(/^(.{4,}?)\s+e\s+(.{4,})$/i);
+      if(comE&&ehNome(comE[1])&&ehNome(comE[2])){
+        nomes.push(limpar(comE[1]));nomes.push(limpar(comE[2]));
+      } else { nomes.push(limpar(l)); }
+    }
   }
 
-  // Fallback se não encontrou nada
+  // Fallback: par nome+função adjacentes
   if(nomes.length===0){
     for(let i=0;i<linhas.length-1;i++){
-      if(marcaFuncao.test(linhas[i+1])){
-        const mF=linhas[i].match(new RegExp('^(.+?)\\s+(?:Responsável|Operador[ae]?s?|Repórter|Reporter|Mestre|Controle|DTV)\\b','i'));
-        if(mF) processarNome(mF[1],nomes);
-        else if(ehNome(linhas[i])) processarNome(linhas[i],nomes);
+      if(regFn.test(linhas[i+1])&&ehNome(linhas[i])){
+        const comE=linhas[i].match(/^(.{4,}?)\s+e\s+(.{4,})$/i);
+        if(comE&&ehNome(comE[1])&&ehNome(comE[2])){
+          nomes.push(limpar(comE[1]));nomes.push(limpar(comE[2]));
+        } else { nomes.push(limpar(linhas[i])); }
       }
     }
   }
-
   return[...new Set(nomes)];
-}
-
-function processarNome(texto,nomes){
-  // Divide "Pessoa A e Pessoa B"
-  const comE=texto.match(/^(.{4,}?)\s+e\s+(.{4,})$/i);
-  if(comE&&ehNome(comE[1])&&ehNome(comE[2])){
-    nomes.push(limpar(comE[1]));
-    nomes.push(limpar(comE[2]));
-  } else if(ehNome(texto)){
-    nomes.push(limpar(texto));
-  }
 }
 
 function ehNome(t){
@@ -1162,197 +791,22 @@ function limpar(n){return n.replace(/[^\wÀ-ÿ\s]/g,'').replace(/\s+/g,' ').trim
 async function cruzar(nomes){
   const snap=await db.collection('usuarios').where('grupo_id','==',grupoId).get();
   const users=snap.docs.map(d=>d.data());
-
   const norm=s=>s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9\s]/g,'').trim();
-  const stopwords=new Set(['de','da','do','das','dos','e','a','o','as','os']);
-  const pwSig=s=>norm(s).split(/\s+/).filter(p=>p.length>1&&!stopwords.has(p));
-
-  // Distância de Levenshtein para erros de OCR (ex: Zani vs Zati)
-  function lev(a,b){
-    if(a===b)return 0;
-    const m=a.length,n=b.length;
-    const dp=Array.from({length:m+1},(_,i)=>[i,...Array(n).fill(0)]);
-    for(let j=0;j<=n;j++)dp[0][j]=j;
-    for(let i=1;i<=m;i++)
-      for(let j=1;j<=n;j++)
-        dp[i][j]=a[i-1]===b[j-1]?dp[i-1][j-1]:1+Math.min(dp[i-1][j],dp[i][j-1],dp[i-1][j-1]);
-    return dp[m][n];
-  }
-
-  // Verifica se duas palavras são similares (aceita 1 erro de OCR)
-  function palavrasSimilares(a,b){
-    if(a===b)return true;
-    if(Math.abs(a.length-b.length)>2)return false;
-    return lev(a,b)<=1; // 1 letra diferente = erro de OCR
-  }
-
   return nomes.map(nome=>{
     const nn=norm(nome);
-    const pwNome=pwSig(nome);
-    const primeiroNome=pwNome[0]; // Primeiro nome para match rápido
-
-    // 1. Match exato com nome completo ou alias
     for(const u of users){
-      const todos=[u.nome_completo,...(u.nomes_conhecidos||[])];
-      if(todos.some(n=>norm(n)===nn))
+      if([u.nome_completo,...(u.nomes_conhecidos||[])].some(n=>norm(n)===nn))
         return{tipo:'exato',nome,usuario:u};
     }
-
-    // 2. Match por palavras com Levenshtein (tolera erro de OCR)
     for(const u of users){
-      const pwUser=pwSig(u.nome_completo);
-      const emComum=pwNome.filter(p=>pwUser.some(pu=>palavrasSimilares(p,pu)));
-      const score=emComum.length/Math.max(pwNome.length,1);
-      if(score>=0.5) // 50% das palavras coincidem (ou são similares)
-        return{tipo:'parcial',nome,usuario:u,score};
+      const nc=norm(u.nome_completo);
+      if(nc.includes(nn)||nn.includes(nc))return{tipo:'parcial',nome,usuario:u};
     }
-
-    // 3. Só o primeiro nome já dispara pergunta
-    // (para "Eduardo" ou "Fernando" que aparecem sem sobrenome)
-    if(primeiroNome&&primeiroNome.length>=4){
-      for(const u of users){
-        const pwUser=pwSig(u.nome_completo);
-        if(pwUser.some(pu=>palavrasSimilares(primeiroNome,pu)))
-          return{tipo:'parcial',nome,usuario:u,score:0.3};
-      }
-    }
-
     return{tipo:'nao_encontrado',nome};
   });
 }
 
-// ── NOTIFICAÇÕES PUSH ─────────────────────────────────────────────────
-let swReg = null;
-
-async function iniciarNotificacoes(){
-  if(!('serviceWorker' in navigator)||!('Notification' in window)) return;
-
-  // Registrar service worker
-  try{
-    swReg = await navigator.serviceWorker.register('/gestor-convocacoes/sw.js');
-    console.log('SW registrado');
-  }catch(e){ console.error('SW erro:', e); return; }
-
-  // Pedir permissão
-  const perm = await Notification.requestPermission();
-  if(perm !== 'granted'){
-    console.log('Notificações negadas');
-    return;
-  }
-  console.log('Notificações permitidas ✓');
-}
-
-function enviarNotificacaoPush(titulo, corpo, tag){
-  // Tenta via SW (funciona com tela bloqueada)
-  if(swReg && Notification.permission === 'granted'){
-    swReg.active?.postMessage({
-      type: 'PUSH_NOTIF',
-      title: titulo,
-      body: corpo,
-      tag: tag || 'convocacao-'+Date.now(),
-      url: '/gestor-convocacoes/index.html'
-    });
-  }
-  // Fallback: Notification API direta (app aberto)
-  else if(Notification.permission === 'granted'){
-    new Notification(titulo, {body: corpo, icon: '/gestor-convocacoes/notif-icon.png'});
-  }
-}
-
-// ── INSTALAR PWA ──────────────────────────────────────────────────────
-function verificarInstalacao(){
-  const instalado=window.matchMedia('(display-mode: standalone)').matches||window.navigator.standalone;
-  if(!instalado) document.getElementById('banner-instalar').style.display='block';
-}
-function abrirModalInstalar(){document.getElementById('modal-instalar').style.display='flex';instGuia('os');}
-function fecharModalInstalar(){document.getElementById('modal-instalar').style.display='none';}
-function instGuia(os){
-  document.getElementById('inst-os').style.display=os==='os'?'flex':'none';
-  document.getElementById('inst-android').style.display=os==='android'?'block':'none';
-  document.getElementById('inst-ios').style.display=os==='ios'?'block':'none';
-}
-
-// ── PERFIL ────────────────────────────────────────────────────────────
-function abrirPerfil(){
-  document.getElementById('perf-nome').value=eu.nome_completo||'';
-  document.getElementById('perf-cargo').value=eu.cargo||'';
-  document.getElementById('perfil-ov').classList.add('on');
-}
-function fecharPerfil(){
-  document.getElementById('perfil-ov').classList.remove('on');
-}
-async function salvarPerfil(){
-  const nome=document.getElementById('perf-nome').value.trim();
-  const cargo=document.getElementById('perf-cargo').value.trim();
-  if(!nome||!cargo){alert('Preencha nome e cargo.');return;}
-  await db.collection('usuarios').doc(eu.uid).update({
-    nome_completo:nome,
-    cargo,
-    nomes_conhecidos:firebase.firestore.FieldValue.arrayUnion(nome)
-  });
-  eu.nome_completo=nome;
-  eu.cargo=cargo;
-  document.getElementById('h-user').textContent=nome+' · '+cargo;
-  fecharPerfil();
-  alert('✅ Perfil atualizado!');
-  carregarEventos(); // Recarrega para atualizar "próxima convocação"
-}
-let notifAtual=null;
-let filaNotif=[];
-let pollingNotif=null;
-
-async function verificarNotificacoesPendentes(){
-  if(!eu||!eu.uid)return;
-  const snap=await db.collection('notificacoes')
-    .where('uid','==',eu.uid)
-    .where('respondido','==',false)
-    .get();
-
-  const novas=snap.docs.map(d=>({id:d.id,...d.data()}));
-
-  for(const n of novas){
-    if(n.tipo==='convocado'){
-      const dt=n.data_hora?new Date(n.data_hora).toLocaleDateString('pt-BR',{day:'2-digit',month:'short',year:'numeric'}):'';
-      enviarNotificacaoPush('📋 Você foi convocado!',`${n.titulo_evento} — ${dt}`,'conv-'+n.id);
-      await db.collection('notificacoes').doc(n.id).update({respondido:true});
-    } else if(n.tipo==='confirmar'){
-      if(!filaNotif.find(f=>f.id===n.id)) filaNotif.push(n);
-    }
-  }
-
-  if(filaNotif.length>0&&!notifAtual) mostrarProximaNotif();
-
-  // Polling a cada 30s
-  if(!pollingNotif) pollingNotif=setInterval(verificarNotificacoesPendentes,30000);
-}
-
-function mostrarProximaNotif(){
-  if(!filaNotif.length)return;
-  notifAtual=filaNotif.shift();
-  const dt=notifAtual.data_hora?new Date(notifAtual.data_hora).toLocaleDateString('pt-BR',{day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'}):'';
-  document.getElementById('notif-desc').textContent=
-    '"'+notifAtual.nome_convocacao+'" aparece na convocação abaixo. Esse nome se refere a você?';
-  document.getElementById('notif-ev-titulo').textContent=notifAtual.titulo_evento||'Evento';
-  document.getElementById('notif-ev-data').textContent=dt;
-  document.getElementById('notif-ov').classList.add('on');
-}
-
-async function responderNotif(confirmado){
-  document.getElementById('notif-ov').classList.remove('on');
-  if(!notifAtual)return;
-  await db.collection('notificacoes').doc(notifAtual.id).update({respondido:true,confirmado});
-  if(confirmado){
-    await db.collection('usuarios').doc(eu.uid).update({
-      nomes_conhecidos:firebase.firestore.FieldValue.arrayUnion(notifAtual.nome_convocacao)
-    });
-    eu.nomes_conhecidos=[...(eu.nomes_conhecidos||[]),notifAtual.nome_convocacao];
-    enviarNotificacaoPush('✅ Convocação confirmada!','Você está na lista: '+notifAtual.titulo_evento,'ok-'+notifAtual.id);
-    alert('✅ Anotado! "'+notifAtual.nome_convocacao+'" agora te identifica automaticamente.');
-    carregarEventos();
-  }
-  notifAtual=null;
-  setTimeout(mostrarProximaNotif,500);
-}
+// ── ICS ───────────────────────────────────────────────────────────────
 function ics(ev){
   const ini=new Date(ev.data_hora);
   const fim=new Date(ini.getTime()+2*60*60*1000);
