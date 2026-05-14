@@ -74,6 +74,29 @@
     .conv-nome{font-size:14px;font-weight:500}
     .btn-ag{width:100%;padding:12px;background:var(--green);color:#fff;border:none;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;margin-top:16px;font-family:'Sora',sans-serif}
     .btn-del{width:100%;padding:11px;background:#fee2e2;color:var(--red);border:none;border-radius:10px;font-size:14px;cursor:pointer;margin-top:8px}
+    .btn-trocar{width:100%;padding:11px;background:#fff7ed;color:#c2410c;border:1.5px solid #fed7aa;border-radius:10px;font-size:14px;cursor:pointer;margin-top:8px;font-weight:600}
+
+    /* Card de substituição - cor âmbar/laranja */
+    .card-prox-sub{background:linear-gradient(135deg,#92400e,#b45309);border-radius:18px;padding:18px;margin-bottom:10px;color:#fff;position:relative;overflow:hidden}
+    .card-prox-sub::after{content:'';position:absolute;right:-15px;top:-15px;width:80px;height:80px;background:rgba(255,255,255,.07);border-radius:50%}
+    .sub-badge{display:inline-block;background:rgba(255,255,255,.2);border-radius:20px;padding:2px 10px;font-size:10px;font-weight:700;letter-spacing:1px;margin-bottom:6px}
+
+    /* Modal trocar escala */
+    #trocar-ov{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:750;display:none;align-items:center;justify-content:center;padding:20px}
+    #trocar-ov.on{display:flex}
+    .trocar-box{background:#fff;border-radius:24px;padding:28px 22px;width:100%;max-width:360px;animation:fu .3s ease}
+    .trocar-box h3{font-family:'Sora',sans-serif;font-size:17px;font-weight:700;color:#c2410c;margin-bottom:6px}
+    .trocar-box p{font-size:13px;color:var(--light);margin-bottom:16px;line-height:1.5}
+    .trocar-field{margin-bottom:14px}
+    .trocar-field label{display:block;font-size:12px;font-weight:600;color:var(--text);margin-bottom:5px;text-transform:uppercase;letter-spacing:.5px}
+    .trocar-field input{width:100%;padding:11px 13px;border:1.5px solid var(--border);border-radius:12px;font-family:'DM Sans',sans-serif;font-size:15px;color:var(--text);outline:none}
+    .trocar-field input:focus{border-color:#c2410c}
+    .trocar-membros{max-height:180px;overflow-y:auto;border:1.5px solid var(--border);border-radius:12px;margin-bottom:14px}
+    .trocar-membro{padding:12px 14px;border-bottom:1px solid var(--border);cursor:pointer;display:flex;align-items:center;gap:10px;font-size:14px;transition:background .15s}
+    .trocar-membro:last-child{border-bottom:none}
+    .trocar-membro:hover{background:#fff7ed}
+    .trocar-membro.selecionado{background:#fff7ed;font-weight:600;color:#c2410c}
+    .trocar-btns{display:flex;gap:10px}
 
     /* SCANNER */
     #scan-ov{position:fixed;inset:0;background:#000;z-index:300;display:none;flex-direction:column}
@@ -364,7 +387,24 @@
     <div class="mod-sub" id="mod-sub"></div>
     <div class="mod-sec"><h3>Convocados</h3><div id="mod-conv"></div></div>
     <button class="btn-ag" id="mod-ag">📅 Adicionar à Agenda</button>
+    <button class="btn-trocar" id="mod-trocar">🔄 Trocar escala</button>
     <button class="btn-del" id="mod-del">🗑 Excluir convocação</button>
+  </div>
+</div>
+
+<!-- MODAL TROCAR ESCALA -->
+<div id="trocar-ov">
+  <div class="trocar-box">
+    <h3>🔄 Trocar escala</h3>
+    <p id="trocar-desc">Escolha quem vai te substituir. Essa pessoa será notificada.</p>
+    <div class="trocar-field">
+      <label>Selecione o substituto</label>
+      <div class="trocar-membros" id="trocar-lista"></div>
+    </div>
+    <div class="trocar-btns">
+      <button class="btn-cancel" onclick="fecharTrocar()">Cancelar</button>
+      <button class="btn-salvar" style="background:#c2410c" id="trocar-confirmar">🔄 Confirmar troca</button>
+    </div>
   </div>
 </div>
 
@@ -706,20 +746,35 @@ async function carregarEventos(){
 
   const prox=evs.find(e=>new Date(e.data_hora)>agora&&euSouConvocado(e.lista_convocados));
   const minhasProximas=evs.filter(e=>new Date(e.data_hora)>agora&&euSouConvocado(e.lista_convocados));
+  // Substituições que assumi
+  const minhasSubstituicoes=evs.filter(e=>new Date(e.data_hora)>agora&&(e.substitutos||[]).some(s=>s.uid===eu.uid));
 
   const el=document.getElementById('prox');
-  if(!minhasProximas.length){
+  if(!minhasProximas.length&&!minhasSubstituicoes.length){
     el.innerHTML='<div class="card-vazio">Você não tem convocações próximas.</div>';
   } else {
-    el.innerHTML=minhasProximas.map((ev,idx)=>{
-      const dt=new Date(ev.data_hora);
-      return `<div class="card-prox" style="margin-bottom:${idx<minhasProximas.length-1?'10px':'16px'}">
-        <div class="prox-label">${idx===0?'SUA PRÓXIMA CONVOCAÇÃO':'TAMBÉM CONVOCADO'}</div>
-        <div class="prox-titulo">${ev.titulo_evento||'Evento'}</div>
-        <div class="prox-meta"><span>📅 ${fD(dt)}</span><span>🕐 ${fH(dt)}</span>${ev.local?'<span>📍 '+ev.local+'</span>':''}</div>
-        <button class="btn-agenda" onclick='ics(${JSON.stringify(ev).replace(/'/g,"&#39;")})'>📅 Adicionar à Agenda</button>
-      </div>`;
-    }).join('');
+    el.innerHTML=[
+      ...minhasProximas.map((ev,idx)=>{
+        const dt=new Date(ev.data_hora);
+        return `<div class="card-prox" style="margin-bottom:10px">
+          <div class="prox-label">${idx===0?'SUA PRÓXIMA CONVOCAÇÃO':'TAMBÉM CONVOCADO'}</div>
+          <div class="prox-titulo">${ev.titulo_evento||'Evento'}</div>
+          <div class="prox-meta"><span>📅 ${fD(dt)}</span><span>🕐 ${fH(dt)}</span>${ev.local?'<span>📍 '+ev.local+'</span>':''}</div>
+          <button class="btn-agenda" onclick='ics(${JSON.stringify(ev).replace(/'/g,"&#39;")})'>📅 Adicionar à Agenda</button>
+        </div>`;
+      }),
+      ...minhasSubstituicoes.map(ev=>{
+        const dt=new Date(ev.data_hora);
+        const sub=ev.substitutos.find(s=>s.uid===eu.uid);
+        return `<div class="card-prox-sub" style="margin-bottom:10px">
+          <div class="sub-badge">🔄 SUBSTITUIÇÃO</div>
+          <div class="prox-titulo" style="font-family:'Sora',sans-serif;font-size:15px;font-weight:700;margin-bottom:10px;line-height:1.3">${ev.titulo_evento||'Evento'}</div>
+          <div style="font-size:12px;opacity:.8;margin-bottom:10px">Substituindo: ${sub.substituindo}</div>
+          <div class="prox-meta"><span>📅 ${fD(dt)}</span><span>🕐 ${fH(dt)}</span>${ev.local?'<span>📍 '+ev.local+'</span>':''}</div>
+          <button class="btn-agenda" style="background:#d97706" onclick='ics(${JSON.stringify(ev).replace(/'/g,"&#39;")})'>📅 Adicionar à Agenda</button>
+        </div>`;
+      })
+    ].join('');
   }
 
   const lst=document.getElementById('lst-ev');
@@ -781,6 +836,7 @@ function abrirMod(ev){
       <span class="conv-nome">${n}</span>
     </div>`).join('');
   document.getElementById('mod-ag').onclick=()=>ics(ev);
+  document.getElementById('mod-trocar').onclick=()=>abrirTrocar(ev);
   document.getElementById('mod-del').onclick=()=>{
     if(confirm('Excluir esta convocação?')){
       db.collection('eventos').doc(ev.id).delete().then(()=>{
@@ -865,13 +921,24 @@ async function processarFoto(file){
               text:`Analise esta convocação oficial brasileira e extraia os dados. Responda APENAS com JSON válido, sem explicações, sem markdown, sem blocos de código.
 
 Formato exato:
-{"titulo":"tema ou título do evento","data":"YYYY-MM-DD","hora":"HH:MM","local":null,"nomes":["Nome 1","Nome 2"]}
+{"titulo":"TIPO - Tema do evento","data":"YYYY-MM-DD","hora":"HH:MM","local":"local ou null","nomes":["Nome 1","Nome 2"]}
 
 Regras obrigatórias:
-- nomes: APENAS nomes da coluna NOME da tabela. Se tiver "João e Maria" numa linha, separe em dois: ["João","Maria"]
+
+TÍTULO: Sempre no formato "TIPO - Tema". 
+- TIPO deve ser um destes (exatamente como escrito): Sessão Ordinária, Sessão Extraordinária, Sessão Solene, Solenidade, Reunião Pública, CEI, CEV, Audiência Pública, Escola do Legislativo, Sessão de Posse, TV Câmara
+- O Tema vem após o tipo — é o assunto da convocação (homenagem, votação, etc.)
+- Exemplo: "Sessão Solene - Homenagem à empresa X" ou "Audiência Pública - Prestação de contas"
+- Se não encontrar o tipo claramente, use "TV Câmara" como prefixo
+- O subtítulo após "TV CÂMARA" no documento geralmente é o TIPO da sessão
+
+LOCAL: extraia se mencionado (ex: Plenário, Câmara Municipal), senão null
+
+NOMES: APENAS nomes da coluna NOME da tabela
+- Se tiver "João e Maria" numa linha, separe em dois: ["João","Maria"]
 - NÃO inclua funções, cargos, coordenadores nem assinantes do documento
-- titulo: use o tema da reunião ou subtítulo após "TV CÂMARA"
-- data e hora: extraia do cabeçalho no formato YYYY-MM-DD e HH:MM`
+
+DATA e HORA: extraia do cabeçalho no formato YYYY-MM-DD e HH:MM`
             }
           ]
         }]
@@ -1259,7 +1326,107 @@ function enviarNotificacaoPush(titulo, corpo, tag){
   }
 }
 
-// ── INSTALAR PWA ──────────────────────────────────────────────────────
+// ── TROCAR ESCALA ─────────────────────────────────────────────────────
+let eventoTroca=null;
+let substitutoSelecionado=null;
+
+async function abrirTrocar(ev){
+  eventoTroca=ev;
+  substitutoSelecionado=null;
+  document.getElementById('mod-ev').classList.remove('on');
+  document.getElementById('trocar-desc').textContent=
+    `Você será removido de "${ev.titulo_evento||'Evento'}". Escolha quem vai te substituir:`;
+
+  // Carregar membros do grupo (exceto eu)
+  const snap=await db.collection('usuarios').where('grupo_id','==',grupoId).get();
+  const lista=document.getElementById('trocar-lista');
+  lista.innerHTML='';
+  snap.forEach(d=>{
+    const m=d.data();
+    if(m.uid===eu.uid)return;
+    const div=document.createElement('div');
+    div.className='trocar-membro';
+    div.innerHTML=`<span style="font-size:20px">👤</span><div><div style="font-weight:500">${m.nome_completo}</div><div style="font-size:12px;color:var(--light)">${m.cargo||''}</div></div>`;
+    div.onclick=()=>{
+      lista.querySelectorAll('.trocar-membro').forEach(el=>el.classList.remove('selecionado'));
+      div.classList.add('selecionado');
+      substitutoSelecionado=m;
+    };
+    lista.appendChild(div);
+  });
+
+  document.getElementById('trocar-ov').classList.add('on');
+}
+
+function fecharTrocar(){
+  document.getElementById('trocar-ov').classList.remove('on');
+  eventoTroca=null; substitutoSelecionado=null;
+}
+
+document.getElementById('trocar-confirmar').onclick=async()=>{
+  if(!substitutoSelecionado){alert('Selecione um substituto.');return;}
+  if(!confirm(`Confirmar troca?\n"${eu.nome_completo}" → "${substitutoSelecionado.nome_completo}"`))return;
+
+  const ev=eventoTroca;
+  const substitutos=[...(ev.substitutos||[]),{
+    uid:substitutoSelecionado.uid,
+    nome:substitutoSelecionado.nome_completo,
+    substituindo:eu.nome_completo,
+    em:new Date().toISOString()
+  }];
+
+  // Salvar substituição no evento
+  await db.collection('eventos').doc(ev.id).update({substitutos});
+
+  // Remover o usuário atual da lista de convocados
+  const novaLista=(ev.lista_convocados||[]).filter(n=>{
+    const norm=s=>s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9\s]/g,'').trim();
+    return !euSouConvocadoNome(n);
+  });
+  await db.collection('eventos').doc(ev.id).update({lista_convocados:novaLista});
+
+  // Notificar substituto
+  const dt=new Date(ev.data_hora).toLocaleDateString('pt-BR',{day:'2-digit',month:'short',year:'numeric'});
+  await db.collection('notificacoes').add({
+    uid:substitutoSelecionado.uid,
+    tipo:'substituicao',
+    nome_convocacao:substitutoSelecionado.nome_completo,
+    titulo_evento:ev.titulo_evento||'Evento',
+    data_hora:ev.data_hora,
+    substituindo:eu.nome_completo,
+    grupo_id:grupoId,
+    respondido:false,
+    criado_em:firebase.firestore.FieldValue.serverTimestamp()
+  });
+
+  fecharTrocar();
+  alert(`✅ Troca confirmada!\n${substitutoSelecionado.nome_completo} foi notificado(a).`);
+  carregarEventos();
+};
+
+// Verifica se um nome da lista é o usuário atual
+function euSouConvocadoNome(nome){
+  const norm=s=>s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9\s]/g,'').trim();
+  const stopwords=new Set(['de','da','do','das','dos','e','a','o','as','os']);
+  const pwSig=s=>norm(s).split(/\s+/).filter(p=>p.length>1&&!stopwords.has(p));
+  const euNomes=[eu.nome_completo,...(eu.nomes_conhecidos||[])];
+  if(euNomes.some(en=>norm(en)===norm(nome)))return true;
+  const pwN=pwSig(nome);
+  const pwEu=pwSig(eu.nome_completo);
+  const emComum=pwN.filter(p=>pwEu.some(pe=>p===pe||lev(p,pe)<=1));
+  return emComum.length/Math.max(pwN.length,1)>=0.5;
+}
+
+function lev(a,b){
+  if(a===b)return 0;
+  const m=a.length,n=b.length;
+  const dp=Array.from({length:m+1},(_,i)=>[i,...Array(n).fill(0)]);
+  for(let j=0;j<=n;j++)dp[0][j]=j;
+  for(let i=1;i<=m;i++)
+    for(let j=1;j<=n;j++)
+      dp[i][j]=a[i-1]===b[j-1]?dp[i-1][j-1]:1+Math.min(dp[i-1][j],dp[i][j-1],dp[i-1][j-1]);
+  return dp[m][n];
+}
 function verificarInstalacao(){
   const instalado=window.matchMedia('(display-mode: standalone)').matches||window.navigator.standalone;
   if(!instalado) document.getElementById('banner-instalar').style.display='block';
@@ -1315,6 +1482,15 @@ async function verificarNotificacoesPendentes(){
       const dt=n.data_hora?new Date(n.data_hora).toLocaleDateString('pt-BR',{day:'2-digit',month:'short',year:'numeric'}):'';
       enviarNotificacaoPush('📋 Você foi convocado!',`${n.titulo_evento} — ${dt}`,'conv-'+n.id);
       await db.collection('notificacoes').doc(n.id).update({respondido:true});
+    } else if(n.tipo==='substituicao'){
+      const dt=n.data_hora?new Date(n.data_hora).toLocaleDateString('pt-BR',{day:'2-digit',month:'short',year:'numeric'}):'';
+      enviarNotificacaoPush(
+        '🔄 Você foi escalado como substituto!',
+        `Substituindo ${n.substituindo} em: ${n.titulo_evento} — ${dt}`,
+        'sub-'+n.id
+      );
+      await db.collection('notificacoes').doc(n.id).update({respondido:true});
+      carregarEventos();
     } else if(n.tipo==='confirmar'){
       if(!filaNotif.find(f=>f.id===n.id)) filaNotif.push(n);
     }
