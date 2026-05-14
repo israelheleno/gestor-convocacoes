@@ -62,7 +62,7 @@
     /* MODAL EVENTO */
     .overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:200;display:none;align-items:flex-end}
     .overlay.on{display:flex}
-    .sheet{background:var(--w);border-radius:24px 24px 0 0;width:100%;max-height:85dvh;overflow-y:auto;padding:22px 18px 36px;animation:sup .3s ease}
+    .sheet{background:var(--w);border-radius:24px 24px 0 0;width:100%;max-height:90dvh;overflow-y:auto;padding:22px 18px 48px;animation:sup .3s ease}
     @keyframes sup{from{transform:translateY(100%)}to{transform:translateY(0)}}
     .handle{width:38px;height:4px;background:var(--border);border-radius:2px;margin:0 auto 18px}
     .mod-titulo{font-family:'Sora',sans-serif;font-size:17px;font-weight:700;margin-bottom:6px}
@@ -1010,20 +1010,46 @@ function renderMatches(){
     :matches.map((m,i)=>{
       if(m.tipo==='exato')return`<div class="mi ok"><div class="mi-top"><span style="font-size:18px">✅</span><div><div class="mi-nome">${m.nome}</div><div class="mi-sub">→ ${m.usuario.nome_completo} · ${m.usuario.cargo}</div></div></div></div>`;
       if(m.tipo==='parcial')return`<div class="mi av"><div class="mi-top"><span style="font-size:18px">⚠️</span><div><div class="mi-nome">${m.nome}</div><div class="mi-sub">Pode ser: ${m.usuario.nome_completo}?</div></div></div><div class="mi-btns"><button class="btn-sim" onclick="confirmar(${i},true)">✓ É essa pessoa</button><button class="btn-nao" onclick="confirmar(${i},false)">✗ Não é</button></div></div>`;
+      if(m.tipo==='por_cargo')return`<div class="mi" style="border-color:#e9d5ff;background:#faf5ff"><div class="mi-top"><span style="font-size:18px">🔍</span><div><div class="mi-nome">${m.nome}</div><div class="mi-sub">OCR leu um cargo. Corresponde a: ${m.usuario.nome_completo} (${m.cargo})?</div></div></div><div class="mi-btns"><button class="btn-sim" onclick="confirmar(${i},true)">✓ É essa pessoa</button><button class="btn-nao" onclick="confirmar(${i},false)">✗ Não é</button></div></div>`;
       return`<div class="mi no"><div class="mi-top"><span style="font-size:18px">❓</span><div><div class="mi-nome">${m.nome}</div><div class="mi-sub">Não encontrado no grupo</div></div></div></div>`;
     }).join('');
 }
 
 function confirmar(i,sim){
   if(sim){
+    const m=matches[i];
     matches[i].tipo='exato';
-    db.collection('usuarios').doc(matches[i].usuario.uid).update({
-      nomes_conhecidos:firebase.firestore.FieldValue.arrayUnion(matches[i].nome)
+    // Salvar alias
+    db.collection('usuarios').doc(m.usuario.uid).update({
+      nomes_conhecidos:firebase.firestore.FieldValue.arrayUnion(m.nome)
     });
-  } else { matches[i].tipo='nao_encontrado'; }
+    // Converter notificação confirmar → convocado para este usuário
+    // (para que ele receba push quando abrir o app)
+    db.collection('notificacoes')
+      .where('uid','==',m.usuario.uid)
+      .where('nome_convocacao','==',m.nome)
+      .where('respondido','==',false)
+      .get().then(snap=>{
+        snap.forEach(d=>d.ref.update({tipo:'convocado'}));
+        // Se não existe ainda, criar
+        if(snap.empty){
+          db.collection('notificacoes').add({
+            uid:m.usuario.uid,
+            tipo:'convocado',
+            nome_convocacao:m.nome,
+            titulo_evento:document.getElementById('rv-tit').value,
+            data_hora:document.getElementById('rv-data').value+':00',
+            grupo_id:grupoId,
+            respondido:false,
+            criado_em:firebase.firestore.FieldValue.serverTimestamp()
+          });
+        }
+      });
+  } else {
+    matches[i].tipo='nao_encontrado';
+  }
   renderMatches();
 }
-
 function fecharRv(){document.getElementById('rv-ov').classList.remove('on');ocrDados=null;matches=[];}
 
 async function salvar(){
@@ -1234,7 +1260,6 @@ async function cruzar(nomes){
   const stopwords=new Set(['de','da','do','das','dos','e','a','o','as','os']);
   const pwSig=s=>norm(s).split(/\s+/).filter(p=>p.length>1&&!stopwords.has(p));
 
-  // Distância de Levenshtein para erros de OCR (ex: Zani vs Zati)
   function lev(a,b){
     if(a===b)return 0;
     const m=a.length,n=b.length;
@@ -1246,17 +1271,20 @@ async function cruzar(nomes){
     return dp[m][n];
   }
 
-  // Verifica se duas palavras são similares (aceita 1 erro de OCR)
   function palavrasSimilares(a,b){
     if(a===b)return true;
     if(Math.abs(a.length-b.length)>2)return false;
-    return lev(a,b)<=1; // 1 letra diferente = erro de OCR
+    return lev(a,b)<=1;
   }
 
-  return nomes.map(nome=>{
+  // Verifica se um texto parece ser um cargo (não um nome próprio)
+  // Cargos têm palavras como: operador, responsável, repórter, diretor, etc.
+  const regCargo=/operador|responsável|reporter|repórter|diretor|coordenador|técnico|editor|produtor|cinegrafista|apresentador|locutor|caracteres|caracter|transmiss|câmera|camera|áudio|audio|plenário|plenario|DTV|controle|mestre/i;
+
+  const resultados=nomes.map(nome=>{
     const nn=norm(nome);
     const pwNome=pwSig(nome);
-    const primeiroNome=pwNome[0]; // Primeiro nome para match rápido
+    const primeiroNome=pwNome[0];
 
     // 1. Match exato com nome completo ou alias
     for(const u of users){
@@ -1265,17 +1293,16 @@ async function cruzar(nomes){
         return{tipo:'exato',nome,usuario:u};
     }
 
-    // 2. Match por palavras com Levenshtein (tolera erro de OCR)
+    // 2. Match por palavras com Levenshtein
     for(const u of users){
       const pwUser=pwSig(u.nome_completo);
       const emComum=pwNome.filter(p=>pwUser.some(pu=>palavrasSimilares(p,pu)));
       const score=emComum.length/Math.max(pwNome.length,1);
-      if(score>=0.5) // 50% das palavras coincidem (ou são similares)
+      if(score>=0.5)
         return{tipo:'parcial',nome,usuario:u,score};
     }
 
-    // 3. Só o primeiro nome já dispara pergunta
-    // (para "Eduardo" ou "Fernando" que aparecem sem sobrenome)
+    // 3. Primeiro nome dispara pergunta
     if(primeiroNome&&primeiroNome.length>=4){
       for(const u of users){
         const pwUser=pwSig(u.nome_completo);
@@ -1284,8 +1311,24 @@ async function cruzar(nomes){
       }
     }
 
+    // 4. Match por CARGO — se o texto lido parece um cargo cadastrado
+    // Ex: OCR leu "Operador de Caracteres" mas deveria ser um nome
+    if(regCargo.test(nome)){
+      const pwNomeCargo=pwSig(nome);
+      for(const u of users){
+        if(!u.cargo)continue;
+        const pwCargo=pwSig(u.cargo);
+        const emComum=pwNomeCargo.filter(p=>pwCargo.some(pc=>palavrasSimilares(p,pc)));
+        const score=emComum.length/Math.max(Math.min(pwNomeCargo.length,pwCargo.length),1);
+        if(score>=0.5)
+          return{tipo:'por_cargo',nome,usuario:u,score,cargo:u.cargo};
+      }
+    }
+
     return{tipo:'nao_encontrado',nome};
   });
+
+  return resultados;
 }
 
 // ── NOTIFICAÇÕES PUSH ─────────────────────────────────────────────────
@@ -1466,40 +1509,38 @@ async function salvarPerfil(){
 }
 let notifAtual=null;
 let filaNotif=[];
-let pollingNotif=null;
+let notifListener=null;
 
-async function verificarNotificacoesPendentes(){
+function verificarNotificacoesPendentes(){
   if(!eu||!eu.uid)return;
-  const snap=await db.collection('notificacoes')
+  if(notifListener) notifListener(); // cancela listener anterior
+
+  notifListener=db.collection('notificacoes')
     .where('uid','==',eu.uid)
     .where('respondido','==',false)
-    .get();
+    .onSnapshot(async snap=>{
+      for(const change of snap.docChanges()){
+        if(change.type!=='added'&&change.type!=='modified') continue;
+        const n={id:change.doc.id,...change.doc.data()};
 
-  const novas=snap.docs.map(d=>({id:d.id,...d.data()}));
-
-  for(const n of novas){
-    if(n.tipo==='convocado'){
-      const dt=n.data_hora?new Date(n.data_hora).toLocaleDateString('pt-BR',{day:'2-digit',month:'short',year:'numeric'}):'';
-      enviarNotificacaoPush('📋 Você foi convocado!',`${n.titulo_evento} — ${dt}`,'conv-'+n.id);
-      await db.collection('notificacoes').doc(n.id).update({respondido:true});
-    } else if(n.tipo==='substituicao'){
-      const dt=n.data_hora?new Date(n.data_hora).toLocaleDateString('pt-BR',{day:'2-digit',month:'short',year:'numeric'}):'';
-      enviarNotificacaoPush(
-        '🔄 Você foi escalado como substituto!',
-        `Substituindo ${n.substituindo} em: ${n.titulo_evento} — ${dt}`,
-        'sub-'+n.id
-      );
-      await db.collection('notificacoes').doc(n.id).update({respondido:true});
-      carregarEventos();
-    } else if(n.tipo==='confirmar'){
-      if(!filaNotif.find(f=>f.id===n.id)) filaNotif.push(n);
-    }
-  }
-
-  if(filaNotif.length>0&&!notifAtual) mostrarProximaNotif();
-
-  // Polling a cada 30s
-  if(!pollingNotif) pollingNotif=setInterval(verificarNotificacoesPendentes,30000);
+        if(n.tipo==='convocado'){
+          const dt=n.data_hora?new Date(n.data_hora).toLocaleDateString('pt-BR',{day:'2-digit',month:'short',year:'numeric'}):'';
+          enviarNotificacaoPush('📋 Você foi convocado!',`${n.titulo_evento} — ${dt}`,'conv-'+n.id);
+          await db.collection('notificacoes').doc(n.id).update({respondido:true});
+          carregarEventos();
+        } else if(n.tipo==='substituicao'){
+          const dt=n.data_hora?new Date(n.data_hora).toLocaleDateString('pt-BR',{day:'2-digit',month:'short',year:'numeric'}):'';
+          enviarNotificacaoPush('🔄 Você foi escalado como substituto!',`Substituindo ${n.substituindo} em: ${n.titulo_evento} — ${dt}`,'sub-'+n.id);
+          await db.collection('notificacoes').doc(n.id).update({respondido:true});
+          carregarEventos();
+        } else if(n.tipo==='confirmar'){
+          if(!filaNotif.find(f=>f.id===n.id)){
+            filaNotif.push(n);
+            if(!notifAtual) mostrarProximaNotif();
+          }
+        }
+      }
+    });
 }
 
 function mostrarProximaNotif(){
