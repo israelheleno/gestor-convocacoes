@@ -386,8 +386,10 @@
     <div class="mod-titulo" id="mod-tit"></div>
     <div class="mod-sub" id="mod-sub"></div>
     <div class="mod-sec"><h3>Convocados</h3><div id="mod-conv"></div></div>
-    <button class="btn-ag" id="mod-ag">📅 Adicionar à Agenda</button>
-    <button class="btn-trocar" id="mod-trocar">🔄 Trocar escala</button>
+    <div style="display:flex;gap:8px;margin-top:16px;">
+      <button class="btn-ag" id="mod-ag" style="flex:1;margin-top:0">📅 Agenda</button>
+      <button id="mod-trocar" style="flex:1;padding:12px;background:#fff7ed;color:#c2410c;border:1.5px solid #fed7aa;border-radius:10px;font-size:14px;cursor:pointer;font-weight:600;">🔄 Trocar</button>
+    </div>
     <button class="btn-del" id="mod-del">🗑 Excluir convocação</button>
   </div>
 </div>
