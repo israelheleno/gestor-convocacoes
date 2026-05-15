@@ -230,6 +230,7 @@
   <div class="h-sub" id="h-user" onclick="abrirPerfil()" style="cursor:pointer;text-decoration:underline dotted rgba(255,255,255,.4)">Carregando...</div>
 </header>
 
+<!-- BANNER INSTALAR -->
 <div id="banner-instalar" style="display:none;background:#EFF6FF;border-bottom:1px solid #BFDBFE;padding:10px 16px;">
   <button onclick="abrirModalInstalar()" style="width:100%;padding:11px;background:var(--blue);color:white;border:none;border-radius:12px;font-family:'Sora',sans-serif;font-size:14px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width:17px;height:17px;"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
@@ -237,6 +238,7 @@
   </button>
 </div>
 
+<!-- MODAL INSTALAR -->
 <div id="modal-instalar" style="position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:900;display:none;align-items:center;justify-content:center;padding:20px;">
   <div style="background:white;border-radius:24px;padding:28px 22px;width:100%;max-width:340px;position:relative;animation:fu .3s ease;">
     <button onclick="fecharModalInstalar()" style="position:absolute;top:14px;right:16px;background:none;border:none;font-size:22px;color:#94a3b8;cursor:pointer;">✕</button>
@@ -295,6 +297,7 @@
   </div>
 </div>
 
+<!-- MODAL PERFIL -->
 <div id="perfil-ov">
   <div class="perfil-box">
     <h3>✏️ Editar perfil</h3>
@@ -340,6 +343,7 @@
   <svg viewBox="0 0 24 24"><path d="M9 3H5a2 2 0 00-2 2v4m6-6h10a2 2 0 012 2v4M9 3v18m0 0h10a2 2 0 002-2V9M9 21H5a2 2 0 01-2-2V9m0 0h18"/></svg>
 </button>
 
+<!-- NOTIFICAÇÃO PENDENTE -->
 <div id="notif-ov">
   <div class="notif-box">
     <div class="notif-emoji">🔔</div>
@@ -356,6 +360,7 @@
   </div>
 </div>
 
+<!-- PAINEL ADMIN -->
 <div id="admin-ov">
   <div class="admin-hd">
     <button class="btn-x" onclick="fecharAdmin()">✕</button>
@@ -370,8 +375,10 @@
   </div>
 </div>
 
+<!-- Botão flutuante admin -->
 <button class="btn-fab-admin" id="btn-fab-admin" onclick="abrirAdmin()" title="Painel Admin">🛡️</button>
 
+<!-- MODAL EVENTO -->
 <div class="overlay" id="mod-ev" onclick="if(event.target===this)this.classList.remove('on')">
   <div class="sheet">
     <div class="handle"></div>
@@ -386,6 +393,7 @@
   </div>
 </div>
 
+<!-- MODAL TROCAR ESCALA -->
 <div id="trocar-ov">
   <div class="trocar-box">
     <h3>🔄 Trocar escala</h3>
@@ -401,6 +409,7 @@
   </div>
 </div>
 
+<!-- SCANNER -->
 <div id="scan-ov">
   <div class="scan-hd">
     <button class="btn-x" onclick="fecharScanner()">✕</button>
@@ -422,6 +431,7 @@
   </div>
 </div>
 
+<!-- OCR -->
 <div id="ocr-ov">
   <div class="ocr-icon">🔍</div>
   <div style="font-family:'Sora',sans-serif;font-weight:700;font-size:15px">Lendo documento...</div>
@@ -429,6 +439,7 @@
   <div style="font-size:13px;color:var(--light)" id="ocr-pct">0%</div>
 </div>
 
+<!-- REVIEW -->
 <div id="rv-ov">
   <div class="rv-hd"><button class="btn-x" onclick="fecharRv()">✕</button><h2>Conferir dados</h2></div>
   <div class="rv-body">
@@ -447,6 +458,7 @@
   </div>
 </div>
 
+<!-- MODAL SOLICITAÇÃO -->
 <div id="ms-ov">
   <div class="ms-box">
     <h3 id="ms-tit">Entrar no grupo</h3>
@@ -481,9 +493,7 @@ const db=firebase.firestore();
 
 let eu=null,grupoId=null,ocrDados=null,matches=[],camStream=null;
 
-// AUTH dentro do setPersistence para garantir ordem correta
 auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL).then(()=>{
-
   let authOk=false;
   const T=setTimeout(()=>{
     if(!authOk) window.location.replace('login.html');
@@ -499,7 +509,6 @@ auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL).then(()=>{
       authOk=true; clearTimeout(T);
       eu={uid:user.uid,...snap.data()};
       document.getElementById('h-user').textContent=eu.nome_completo+' · '+eu.cargo;
-      // Mostrar botão admin se for admin
       if(eu.is_admin) document.getElementById('btn-fab-admin').classList.add('on');
       verificarInstalacao();
       iniciarNotificacoes();
@@ -531,17 +540,13 @@ async function carregarGrupos(){
 
   for(const d of snap.docs){
     const g={id:d.id,...d.data()};
-
-    // Contar membros reais direto do banco
     const membrosSnap=await db.collection('usuarios').where('grupo_id','==',g.id).get();
     const totalMembros=membrosSnap.size;
 
-    // Sincronizar contador se estiver errado
     if(totalMembros!==(g.membros||0)){
       db.collection('grupos').doc(g.id).update({membros:totalMembros});
     }
 
-    // Verificar se é admin deste grupo
     if(g.id===grupoId){
       const admins=g.admins||[g.criado_por];
       if(admins.includes(eu.uid)){
@@ -569,7 +574,6 @@ function solicitarEntrada(gId,gNome){
   document.getElementById('ms-tit').textContent='Entrar em "'+gNome+'"';
   document.getElementById('ms-ov').classList.add('on');
   document.getElementById('ms-ok').onclick=async()=>{
-    // Entrada automática — sem necessidade de aprovação
     await db.collection('usuarios').doc(eu.uid).update({grupo_id:gId});
     const snap=await db.collection('grupos').doc(gId).get();
     await db.collection('grupos').doc(gId).update({membros:(snap.data().membros||0)+1});
@@ -592,28 +596,18 @@ async function criarGrupo(){
   await db.collection('usuarios').doc(eu.uid).update({grupo_id:ref.id,is_admin:true});
   eu.grupo_id=ref.id; eu.is_admin=true; grupoId=ref.id;
   carregarGrupos(); carregarEventos();
-  // Mostrar botão admin
   document.getElementById('btn-fab-admin').classList.add('on');
 }
 
 // ── ADMIN ─────────────────────────────────────────────────────────────
-function abrirAdmin(){
-  document.getElementById('admin-ov').classList.add('on');
-  carregarMembrosAdmin();
-}
-function fecharAdmin(){
-  document.getElementById('admin-ov').classList.remove('on');
-}
+function abrirAdmin(){ document.getElementById('admin-ov').classList.add('on'); carregarMembrosAdmin(); }
+function fecharAdmin(){ document.getElementById('admin-ov').classList.remove('on'); }
 
 async function carregarMembrosAdmin(){
   const lst=document.getElementById('admin-membros');
   lst.innerHTML='<div class="skel"></div><div class="skel"></div>';
-
-  // Buscar dados do grupo para saber lista de admins
   const grupoSnap=await db.collection('grupos').doc(grupoId).get();
   const admins=grupoSnap.data().admins||[grupoSnap.data().criado_por];
-
-  // Buscar todos os membros
   const snap=await db.collection('usuarios').where('grupo_id','==',grupoId).get();
   const membros=snap.docs.map(d=>({id:d.id,...d.data()}));
 
@@ -643,13 +637,10 @@ async function carregarMembrosAdmin(){
 
 async function promoverAdmin(uid,nome){
   if(!confirm('Promover '+nome+' a admin?'))return;
-  await db.collection('grupos').doc(grupoId).update({
-    admins:firebase.firestore.FieldValue.arrayUnion(uid)
-  });
+  await db.collection('grupos').doc(grupoId).update({ admins:firebase.firestore.FieldValue.arrayUnion(uid) });
   await db.collection('usuarios').doc(uid).update({is_admin:true});
   carregarMembrosAdmin();
 }
-
 async function rebaixarAdmin(uid,nome){
   if(!confirm('Remover privilégio de admin de '+nome+'?'))return;
   const snap=await db.collection('grupos').doc(grupoId).get();
@@ -658,15 +649,13 @@ async function rebaixarAdmin(uid,nome){
   await db.collection('usuarios').doc(uid).update({is_admin:false});
   carregarMembrosAdmin();
 }
-
 async function expulsarMembro(uid,nome){
-  if(!confirm('Expulsar '+nome+' do grupo? Essa ação não pode ser desfeita.'))return;
+  if(!confirm('Expulsar '+nome+' do grupo?'))return;
   await db.collection('usuarios').doc(uid).update({grupo_id:null,is_admin:false});
   const snap=await db.collection('grupos').doc(grupoId).get();
   const membros=Math.max(0,(snap.data().membros||1)-1);
   await db.collection('grupos').doc(grupoId).update({membros});
-  carregarMembrosAdmin();
-  carregarGrupos();
+  carregarMembrosAdmin(); carregarGrupos();
 }
 
 // ── APROVAÇÕES ────────────────────────────────────────────────────────
@@ -680,8 +669,7 @@ async function verificarAprovacoes(){
   const lst=document.getElementById('lst-apv');
   lst.innerHTML='';
   entries.forEach(([uid,d])=>{
-    const el=document.createElement('div');
-    el.className='apv';
+    const el=document.createElement('div'); el.className='apv';
     el.innerHTML=`<div class="apv-nome">${d.nome}</div><div class="apv-cargo">${d.cargo}</div>
       <div class="apv-btns">
         <button class="btn-apr" onclick="aprovar('${uid}','${d.nome}')">✓ Aprovar</button>
@@ -690,7 +678,6 @@ async function verificarAprovacoes(){
     lst.appendChild(el);
   });
 }
-
 async function aprovar(uid,nome){
   await db.collection('usuarios').doc(uid).update({grupo_id:grupoId,solicitacoes:[]});
   const snap=await db.collection('grupos').doc(grupoId).get();
@@ -698,13 +685,24 @@ async function aprovar(uid,nome){
   await db.collection('grupos').doc(grupoId).update({solicitacoes:s,membros:(snap.data().membros||1)+1});
   verificarAprovacoes();alert(nome+' aprovado(a)!');
 }
-
 async function recusar(uid){
   const snap=await db.collection('grupos').doc(grupoId).get();
   const s=snap.data().solicitacoes||{};delete s[uid];
   await db.collection('grupos').doc(grupoId).update({solicitacoes:s});
   await db.collection('usuarios').doc(uid).update({solicitacoes:[]});
   verificarAprovacoes();
+}
+
+// ── ALGORITMO DE DISTÂNCIA (Tolerância a erros de OCR) ─────────
+function lev(a,b){
+  if(a===b)return 0;
+  const m=a.length,n=b.length;
+  const dp=Array.from({length:m+1},(_,i)=>[i,...Array(n).fill(0)]);
+  for(let j=0;j<=n;j++)dp[0][j]=j;
+  for(let i=1;i<=m;i++)
+    for(let j=1;j<=n;j++)
+      dp[i][j]=a[i-1]===b[j-1]?dp[i-1][j-1]:1+Math.min(dp[i-1][j],dp[i][j-1],dp[i-1][j-1]);
+  return dp[m][n];
 }
 
 // ── EVENTOS ───────────────────────────────────────────────────────────
@@ -723,10 +721,11 @@ async function carregarEventos(){
 
   function euSouConvocado(lista){
     return (lista||[]).some(n=>{
-      if(euNomes.some(en=>norm(en)===norm(n))) return true;
+      if(euNomes.some(en=>norm(en)===norm(n))) return true; // Match exato
       const pwN=pwSig(n);
-      const emComum=pwN.filter(p=>euPalavras.includes(p));
-      return emComum.length/Math.max(pwN.length,1)>=0.6;
+      // Avalia palavras em comum tolerando 1 letra de erro
+      const emComum=pwN.filter(p=>euPalavras.some(pe => p === pe || lev(p, pe) <= 1));
+      return emComum.length/Math.max(pwN.length,1)>=0.5;
     });
   }
 
@@ -985,7 +984,7 @@ function renderMatches(){
     ?'<p style="color:var(--light);font-size:13px;padding:12px;background:#fff;border-radius:10px;">Nenhum nome identificado.</p>'
     :matches.map((m,i)=>{
       if(m.tipo==='exato')return`<div class="mi ok"><div class="mi-top"><span style="font-size:18px">✅</span><div><div class="mi-nome">${m.nome}</div><div class="mi-sub">→ ${m.usuario.nome_completo}</div></div></div></div>`;
-      if(m.tipo==='parcial')return`<div class="mi av"><div class="mi-top"><span style="font-size:18px">⚠️</span><div><div class="mi-nome">${m.nome}</div><div class="mi-sub">É ${m.usuario.nome_completo}?</div></div></div><div class="mi-btns"><button class="btn-sim" onclick="confirmar(${i},true)">✓ Sim</button><button class="btn-nao" onclick="confirmar(${i},false)">✗ Não</button></div></div>`;
+      if(m.tipo==='parcial' || m.tipo==='por_cargo')return`<div class="mi av"><div class="mi-top"><span style="font-size:18px">⚠️</span><div><div class="mi-nome">${m.nome}</div><div class="mi-sub">É ${m.usuario.nome_completo}?</div></div></div><div class="mi-btns"><button class="btn-sim" onclick="confirmar(${i},true)">✓ Sim</button><button class="btn-nao" onclick="confirmar(${i},false)">✗ Não</button></div></div>`;
       return`<div class="mi no"><div class="mi-top"><span style="font-size:18px">❓</span><div><div class="mi-nome">${m.nome}</div><div class="mi-sub">Não encontrado</div></div></div></div>`;
     }).join('');
 }
@@ -1002,6 +1001,7 @@ function confirmar(i,sim){
 }
 function fecharRv(){document.getElementById('rv-ov').classList.remove('on');ocrDados=null;matches=[];}
 
+// ── SALVAR E NOTIFICAR ──────────────────────────────────────────────
 async function salvar(){
   const titulo=document.getElementById('rv-tit').value.trim();
   const dataVal=document.getElementById('rv-data').value;
@@ -1019,21 +1019,101 @@ async function salvar(){
   });
 
   fecharRv();
+  const dtFmt=new Date(dataVal+':00').toLocaleDateString('pt-BR',{day:'2-digit',month:'short',year:'numeric'});
+
+  // 1. Notificar matches EXATOS (Push direto)
+  const exatos=matches.filter(m=>m.tipo==='exato');
+  for(const m of exatos){
+    await db.collection('notificacoes').add({
+      uid:m.usuario.uid,
+      tipo:'convocado',
+      nome_convocacao:m.nome,
+      titulo_evento:titulo,
+      data_hora:dataVal+':00',
+      grupo_id:grupoId,
+      respondido:false,
+      criado_em:firebase.firestore.FieldValue.serverTimestamp()
+    });
+    if(m.usuario.uid===eu.uid){
+      enviarNotificacaoPush('📋 Você foi convocado!',`${titulo} — ${dtFmt}`,'conv-'+Date.now());
+    }
+  }
+
+  // 2. Notificar matches PARCIAIS (Pergunta na tela)
+  const parciais=matches.filter(m=>m.tipo==='parcial' || m.tipo==='por_cargo');
+  for(const m of parciais){
+    await db.collection('notificacoes').add({
+      uid:m.usuario.uid,
+      tipo:'confirmar',
+      nome_convocacao:m.nome,
+      titulo_evento:titulo,
+      data_hora:dataVal+':00',
+      grupo_id:grupoId,
+      respondido:false,
+      criado_em:firebase.firestore.FieldValue.serverTimestamp()
+    });
+    if(m.usuario.uid===eu.uid){
+      enviarNotificacaoPush('❓ Você foi convocado?',`"${m.nome}" aparece em: ${titulo}`,'conf-'+Date.now());
+    }
+  }
+
   alert('✅ Convocação salva!');
   carregarEventos();
+  verificarNotificacoesPendentes();
 }
 
-// ── MATCH ─────────────────────────────────────────────────────────────
+// ── MATCH INTELIGENTE (Levenshtein e Nomes) ─────────────────────────
 async function cruzar(nomes){
   const snap=await db.collection('usuarios').where('grupo_id','==',grupoId).get();
   const users=snap.docs.map(d=>d.data());
+
   const norm=s=>s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9\s]/g,'').trim();
+  const stopwords=new Set(['de','da','do','das','dos','e','a','o','as','os']);
+  const pwSig=s=>norm(s).split(/\s+/).filter(p=>p.length>1&&!stopwords.has(p));
+
+  function palavrasSimilares(a,b){
+    return a===b || (Math.abs(a.length-b.length)<=2 && lev(a,b)<=1);
+  }
+
+  const regCargo=/operador|responsável|reporter|repórter|diretor|coordenador|técnico|editor|produtor|cinegrafista|apresentador|locutor|caracteres|caracter|transmiss|câmera|camera|áudio|audio|plenário|plenario|DTV|controle|mestre/i;
 
   return nomes.map(nome=>{
     const nn=norm(nome);
+    const pwNome=pwSig(nome);
+    const primeiroNome=pwNome[0];
+
+    // 1. Exato
     for(const u of users){
       const todos=[u.nome_completo,...(u.nomes_conhecidos||[])];
       if(todos.some(n=>norm(n)===nn)) return {tipo:'exato',nome,usuario:u};
+    }
+
+    // 2. Parcial (Erro de OCR ou Nome Abreviado)
+    for(const u of users){
+      const pwUser=pwSig(u.nome_completo);
+      const emComum=pwNome.filter(p=>pwUser.some(pu=>palavrasSimilares(p,pu)));
+      const score=emComum.length/Math.max(pwNome.length,1);
+      if(score>=0.5) return {tipo:'parcial',nome,usuario:u,score};
+    }
+
+    // 3. Match pelo primeiro nome longo (caso OCR corte)
+    if(primeiroNome&&primeiroNome.length>=4){
+      for(const u of users){
+        const pwUser=pwSig(u.nome_completo);
+        if(pwUser.some(pu=>palavrasSimilares(primeiroNome,pu))) return {tipo:'parcial',nome,usuario:u,score:0.3};
+      }
+    }
+
+    // 4. Match de OCR lendo Cargo em vez de nome
+    if(regCargo.test(nome)){
+      const pwNomeCargo=pwSig(nome);
+      for(const u of users){
+        if(!u.cargo)continue;
+        const pwCargo=pwSig(u.cargo);
+        const emComum=pwNomeCargo.filter(p=>pwCargo.some(pc=>palavrasSimilares(p,pc)));
+        const score=emComum.length/Math.max(Math.min(pwNomeCargo.length,pwCargo.length),1);
+        if(score>=0.5) return {tipo:'por_cargo',nome,usuario:u,score,cargo:u.cargo};
+      }
     }
     return {tipo:'nao_encontrado',nome};
   });
@@ -1050,6 +1130,80 @@ function enviarNotificacaoPush(titulo, corpo, tag){
   if(Notification.permission === 'granted'){
     new Notification(titulo, {body: corpo, tag: tag || 'conv'});
   }
+}
+
+let notifAtual=null;
+let filaNotifs=[];
+
+function verificarNotificacoesPendentes(){
+  db.collection('notificacoes').where('uid','==',eu.uid).where('respondido','==',false).onSnapshot(snap=>{
+    const docs = snap.docs;
+    if(docs.length === 0) return;
+    
+    // Tratamento direto para substituições
+    snap.docChanges().forEach(async change=>{
+      if(change.type==='added'){
+        const n=change.doc.data();
+        if(n.tipo==='substituicao'){
+          enviarNotificacaoPush('🔄 Substituição escalada', `Você substitui ${n.substituindo} em ${n.titulo_evento}`);
+          await change.doc.ref.update({respondido:true});
+          carregarEventos();
+        }
+      }
+    });
+
+    // Tratamento em fila para confirmacoes / convocacoes normais
+    const pendentes = docs.filter(d => d.data().tipo === 'confirmar' || d.data().tipo === 'convocado');
+    if(pendentes.length > 0 && !document.getElementById('notif-ov').classList.contains('on')){
+        mostrarProximaNotif();
+    }
+  });
+}
+
+async function mostrarProximaNotif() {
+    const snap = await db.collection('notificacoes')
+        .where('uid','==',eu.uid)
+        .where('respondido','==',false)
+        .where('tipo','in',['confirmar','convocado'])
+        .get();
+    
+    filaNotifs = snap.docs.map(d => ({id: d.id, ...d.data()}));
+    if(filaNotifs.length === 0) {
+        document.getElementById('notif-ov').classList.remove('on');
+        return;
+    }
+
+    notifAtual = filaNotifs[0];
+    document.getElementById('notif-ov').classList.add('on');
+    document.getElementById('notif-titulo').textContent = notifAtual.tipo === 'convocado' ? 'Você foi convocado!' : 'Você foi convocado?';
+    document.getElementById('notif-desc').textContent = notifAtual.tipo === 'convocado' ? 'Você está na lista deste evento:' : `O nome "${notifAtual.nome_convocacao}" apareceu nesta convocação. É você?`;
+    document.getElementById('notif-ev-titulo').textContent = notifAtual.titulo_evento || 'Evento';
+    
+    // Fallback safe para data
+    try {
+      const dt = new Date(notifAtual.data_hora);
+      document.getElementById('notif-ev-data').textContent = fD(dt) + ' às ' + fH(dt);
+    } catch(e) {
+      document.getElementById('notif-ev-data').textContent = "";
+    }
+}
+
+async function responderNotif(sim) {
+    if(!notifAtual) return;
+    document.getElementById('notif-ov').classList.remove('on');
+    
+    await db.collection('notificacoes').doc(notifAtual.id).update({respondido:true});
+    
+    if(sim && notifAtual.tipo === 'confirmar') {
+        await db.collection('usuarios').doc(eu.uid).update({
+            nomes_conhecidos: firebase.firestore.FieldValue.arrayUnion(notifAtual.nome_convocacao)
+        });
+        eu.nomes_conhecidos = [...(eu.nomes_conhecidos||[]), notifAtual.nome_convocacao];
+        alert(`✅ Anotado! O nome "${notifAtual.nome_convocacao}" agora te identifica automaticamente.`);
+        carregarEventos();
+    }
+    notifAtual = null;
+    setTimeout(mostrarProximaNotif, 500);
 }
 
 // ── TROCAR ESCALA ─────────────────────────────────────────────────────
@@ -1151,21 +1305,6 @@ async function salvarPerfil(){
   eu.nome_completo=nome; eu.cargo=cargo;
   document.getElementById('h-user').textContent=nome+' · '+cargo;
   fecharPerfil(); alert('✅ Perfil atualizado!'); carregarEventos();
-}
-
-function verificarNotificacoesPendentes(){
-  db.collection('notificacoes').where('uid','==',eu.uid).where('respondido','==',false).onSnapshot(snap=>{
-    snap.docChanges().forEach(async change=>{
-      if(change.type==='added'){
-        const n=change.doc.data();
-        if(n.tipo==='substituicao'){
-          enviarNotificacaoPush('🔄 Substituição escalada', `Você substitui ${n.substituindo} em ${n.titulo_evento}`);
-          await change.doc.ref.update({respondido:true});
-          carregarEventos();
-        }
-      }
-    });
-  });
 }
 
 function ics(ev){
