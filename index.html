@@ -42,7 +42,7 @@
     .card-prox{background:linear-gradient(135deg,var(--blue),#2563eb);border-radius:18px;padding:18px;margin-bottom:16px;color:#fff;position:relative;overflow:hidden}
     .card-prox::after{content:'';position:absolute;right:-15px;top:-15px;width:80px;height:80px;background:rgba(255,255,255,.07);border-radius:50%}
     .prox-label{font-size:10px;text-transform:uppercase;letter-spacing:1px;opacity:.7;margin-bottom:6px}
-    .prox-titulo{font-family:'Sora',sans-serif;font-size:15px;font-weight:700;margin-bottom:10px;line-height:1.3}
+    .prox-titulo{font-family:'Sora',sans-serif;font-size:15px;font-weight:700;margin-bottom:10px;line-height:1.3;cursor:pointer;text-decoration:underline dotted rgba(255,255,255,.3)}
     .prox-meta{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:14px;font-size:12px;opacity:.85}
     .btn-agenda{background:var(--green);color:#fff;border:none;padding:10px;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;width:100%;font-family:'Sora',sans-serif}
     .card-vazio{background:var(--w);border-radius:18px;padding:28px 16px;text-align:center;margin-bottom:16px;box-shadow:0 2px 10px rgba(30,58,138,.06);color:var(--light);font-size:14px}
@@ -742,7 +742,7 @@ async function carregarEventos(){
         const evString = JSON.stringify(ev).replace(/'/g,"&#39;");
         return `<div class="card-prox" style="margin-bottom:10px">
           <div class="prox-label">${idx===0?'SUA PRÓXIMA CONVOCAÇÃO':'TAMBÉM CONVOCADO'}</div>
-          <div class="prox-titulo">${ev.titulo_evento||'Evento'}</div>
+          <div class="prox-titulo" onclick='abrirMod(${evString})'>${ev.titulo_evento||'Evento'}</div>
           <div class="prox-meta"><span>📅 ${fD(dt)}</span><span>🕐 ${fH(dt)}</span>${ev.local?'<span>📍 '+ev.local+'</span>':''}</div>
           <div style="display:flex; gap:8px;">
             <button class="btn-agenda" style="flex:1; margin-top:0;" onclick='ics(${evString})'>📅 Agenda</button>
@@ -756,7 +756,7 @@ async function carregarEventos(){
         const sub=ev.substitutos.find(s=>s.uid===eu.uid);
         return `<div class="card-prox-sub" style="margin-bottom:10px">
           <div class="sub-badge">🔄 SUBSTITUIÇÃO</div>
-          <div class="prox-titulo" style="font-family:'Sora',sans-serif;font-size:15px;font-weight:700;margin-bottom:10px;line-height:1.3">${ev.titulo_evento||'Evento'}</div>
+          <div class="prox-titulo" onclick='abrirMod(${evString})'>${ev.titulo_evento||'Evento'}</div>
           <div style="font-size:12px;opacity:.8;margin-bottom:10px">Substituindo: ${sub.substituindo}</div>
           <div class="prox-meta"><span>📅 ${fD(dt)}</span><span>🕐 ${fH(dt)}</span>${ev.local?'<span>📍 '+ev.local+'</span>':''}</div>
           <div style="display:flex; gap:8px;">
@@ -782,7 +782,6 @@ function criarCard(ev){
   const wrap=document.createElement('div');
   wrap.className='ev-wrap';
   
-  // Condiciona o botão de excluir a quem é admin
   wrap.innerHTML=`
     <div class="ev-bg">
       <div class="ev-bg-l"><span>👁 Ver</span></div>
@@ -799,14 +798,12 @@ function criarCard(ev){
   card.addEventListener('touchstart',e=>{sx=e.touches[0].clientX;mov=false;},{passive:true});
   card.addEventListener('touchmove',e=>{
     dx=e.touches[0].clientX-sx;mov=true;
-    // Se não for admin, bloqueia o swipe para a esquerda (dx < 0)
     if(!eu.is_admin && dx < 0) dx = 0;
     
     if(Math.abs(dx)>8){card.style.transition='none';card.style.transform=`translateX(${Math.max(-100,Math.min(100,dx))}px)`;}
   },{passive:true});
   card.addEventListener('touchend',()=>{
     card.style.transition='transform .2s ease';
-    // Só aciona o excluir se a distância foi alcançada e o usuário é admin
     if(dx<-60 && eu.is_admin){
       if(confirm('Excluir esta convocação?')){
         db.collection('eventos').doc(ev.id).delete().then(()=>carregarEventos());
@@ -826,7 +823,7 @@ function criarCard(ev){
 function abrirMod(ev){
   const dt=new Date(ev.data_hora);
   document.getElementById('mod-tit').textContent=ev.titulo_evento||'Evento';
-  document.getElementById('mod-sub').textContent=fD(dt)+' às '+fH(dt)+(ev.local?' · '+ev.local:'');
+  document.getElementById('mod-sub').textContent=fD(dt)+' às '+fH(dt)+(ev.local?' · '+ev.local : '');
   document.getElementById('mod-conv').innerHTML=(ev.lista_convocados||[]).map(n=>`
     <div class="conv-linha">
       <div class="conv-icon"><svg viewBox="0 0 24 24"><path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/></svg></div>
@@ -847,10 +844,8 @@ function abrirMod(ev){
 
   document.getElementById('mod-ag').onclick=()=>ics(ev);
   
-  // Mostra botão de exclusão SOMENTE se for admin
   document.getElementById('mod-del').style.display = eu.is_admin ? 'block' : 'none';
   document.getElementById('mod-del').onclick=()=>{
-    // Bloqueia execução se alguém tentar forçar o HTML
     if(!eu.is_admin) return;
     
     if(confirm('Excluir esta convocação?')){
@@ -1150,7 +1145,6 @@ function verificarNotificacoesPendentes(){
     const docs = snap.docs;
     if(docs.length === 0) return;
     
-    // Tratamento direto para substituições
     snap.docChanges().forEach(async change=>{
       if(change.type==='added'){
         const n=change.doc.data();
@@ -1162,7 +1156,6 @@ function verificarNotificacoesPendentes(){
       }
     });
 
-    // Tratamento em fila para confirmacoes / convocacoes normais
     const pendentes = docs.filter(d => d.data().tipo === 'confirmar' || d.data().tipo === 'convocado');
     if(pendentes.length > 0 && !document.getElementById('notif-ov').classList.contains('on')){
         mostrarProximaNotif();
@@ -1189,7 +1182,6 @@ async function mostrarProximaNotif() {
     document.getElementById('notif-desc').textContent = notifAtual.tipo === 'convocado' ? 'Você está na lista deste evento:' : `O nome "${notifAtual.nome_convocacao}" apareceu nesta convocação. É você?`;
     document.getElementById('notif-ev-titulo').textContent = notifAtual.titulo_evento || 'Evento';
     
-    // Fallback safe para data
     try {
       const dt = new Date(notifAtual.data_hora);
       document.getElementById('notif-ev-data').textContent = fD(dt) + ' às ' + fH(dt);
