@@ -549,9 +549,15 @@ async function carregarGrupos(){
 
     if(g.id===grupoId){
       const admins=g.admins||[g.criado_por];
-      if(admins.includes(eu.uid)){
+      if(admins.includes(eu.uid) || g.criado_por === eu.uid){
         eu.is_admin=true;
         document.getElementById('btn-fab-admin').classList.add('on');
+        // Auto-heal the database if creator isn't in admins array
+        if(g.admins && !g.admins.includes(g.criado_por)) {
+           db.collection('grupos').doc(g.id).update({
+             admins: firebase.firestore.FieldValue.arrayUnion(g.criado_por)
+           });
+        }
       }
     }
     const li=document.createElement('li');
@@ -637,18 +643,37 @@ async function carregarMembrosAdmin(){
 
 async function promoverAdmin(uid,nome){
   if(!confirm('Promover '+nome+' a admin?'))return;
-  await db.collection('grupos').doc(grupoId).update({ admins:firebase.firestore.FieldValue.arrayUnion(uid) });
+  const snap = await db.collection('grupos').doc(grupoId).get();
+  const data = snap.data();
+  let admins = data.admins || [data.criado_por];
+  if(!admins.includes(uid)) admins.push(uid);
+  if(!admins.includes(data.criado_por)) admins.push(data.criado_por);
+  
+  await db.collection('grupos').doc(grupoId).update({ admins });
   await db.collection('usuarios').doc(uid).update({is_admin:true});
+  if(uid === eu.uid) eu.is_admin = true;
   carregarMembrosAdmin();
 }
+
 async function rebaixarAdmin(uid,nome){
-  if(!confirm('Remover privilégio de admin de '+nome+'?'))return;
   const snap=await db.collection('grupos').doc(grupoId).get();
-  const admins=(snap.data().admins||[]).filter(a=>a!==uid);
+  const data = snap.data();
+  if(uid === data.criado_por){
+     alert("O criador do grupo não pode perder o status de Admin.");
+     return;
+  }
+  if(!confirm('Remover privilégio de admin de '+nome+'?'))return;
+  const admins=(data.admins||[data.criado_por]).filter(a=>a!==uid);
   await db.collection('grupos').doc(grupoId).update({admins});
   await db.collection('usuarios').doc(uid).update({is_admin:false});
+  if(uid === eu.uid) {
+     eu.is_admin = false;
+     document.getElementById('btn-fab-admin').classList.remove('on');
+     fecharAdmin();
+  }
   carregarMembrosAdmin();
 }
+
 async function expulsarMembro(uid,nome){
   if(!confirm('Expulsar '+nome+' do grupo?'))return;
   await db.collection('usuarios').doc(uid).update({grupo_id:null,is_admin:false});
@@ -721,11 +746,10 @@ async function carregarEventos(){
 
   function euSouConvocado(lista){
     return (lista||[]).some(n=>{
-      if(euNomes.some(en=>norm(en)===norm(n))) return true; // Match exato
+      if(euNomes.some(en=>norm(en)===norm(n))) return true; 
       const pwN=pwSig(n);
-      // Avalia palavras em comum tolerando 1 letra de erro
-      const emComum=pwN.filter(p=>euPalavras.some(pe => p === pe || lev(p, pe) <= 1));
-      return emComum.length/Math.max(pwN.length,1)>=0.5;
+      const emComum=pwN.filter(p=>euPalavras.some(pe => p === pe || (p.length>=5 && lev(p, pe) <= 1)));
+      return emComum.length/Math.max(pwN.length,1)>=0.55; 
     });
   }
 
@@ -1077,7 +1101,7 @@ async function cruzar(nomes){
   const pwSig=s=>norm(s).split(/\s+/).filter(p=>p.length>1&&!stopwords.has(p));
 
   function palavrasSimilares(a,b){
-    return a===b || (Math.abs(a.length-b.length)<=2 && lev(a,b)<=1);
+    return a===b || (a.length>=5 && Math.abs(a.length-b.length)<=1 && lev(a,b)<=1);
   }
 
   const regCargo=/operador|responsável|reporter|repórter|diretor|coordenador|técnico|editor|produtor|cinegrafista|apresentador|locutor|caracteres|caracter|transmiss|câmera|camera|áudio|audio|plenário|plenario|DTV|controle|mestre/i;
@@ -1093,20 +1117,34 @@ async function cruzar(nomes){
       if(todos.some(n=>norm(n)===nn)) return {tipo:'exato',nome,usuario:u};
     }
 
-    // 2. Parcial (Erro de OCR ou Nome Abreviado)
+    // 2. Parcial (Melhor match)
+    let melhorUser = null;
+    let melhorScore = 0;
     for(const u of users){
       const pwUser=pwSig(u.nome_completo);
       const emComum=pwNome.filter(p=>pwUser.some(pu=>palavrasSimilares(p,pu)));
       const score=emComum.length/Math.max(pwNome.length,1);
-      if(score>=0.5) return {tipo:'parcial',nome,usuario:u,score};
+      const recall=emComum.length/Math.max(pwUser.length,1);
+      const finalScore=score+(recall*0.1);
+      
+      if(score>=0.55 && finalScore>melhorScore){
+        melhorScore=finalScore;
+        melhorUser=u;
+      }
     }
+    if (melhorUser) return {tipo:'parcial',nome,usuario:melhorUser,score:melhorScore};
 
     // 3. Match pelo primeiro nome longo (caso OCR corte)
-    if(primeiroNome&&primeiroNome.length>=4){
+    if(primeiroNome&&primeiroNome.length>=5){
+      let possiveis = [];
       for(const u of users){
         const pwUser=pwSig(u.nome_completo);
-        if(pwUser.some(pu=>palavrasSimilares(primeiroNome,pu))) return {tipo:'parcial',nome,usuario:u,score:0.3};
+        if(pwUser.length>0 && palavrasSimilares(primeiroNome,pwUser[0])){
+          possiveis.push(u);
+        }
       }
+      // Só assume se houver exatamente 1 pessoa com esse primeiro nome
+      if(possiveis.length === 1) return {tipo:'parcial',nome,usuario:possiveis[0],score:0.4};
     }
 
     // 4. Match de OCR lendo Cargo em vez de nome
@@ -1117,7 +1155,7 @@ async function cruzar(nomes){
         const pwCargo=pwSig(u.cargo);
         const emComum=pwNomeCargo.filter(p=>pwCargo.some(pc=>palavrasSimilares(p,pc)));
         const score=emComum.length/Math.max(Math.min(pwNomeCargo.length,pwCargo.length),1);
-        if(score>=0.5) return {tipo:'por_cargo',nome,usuario:u,score,cargo:u.cargo};
+        if(score>=0.6) return {tipo:'por_cargo',nome,usuario:u,score,cargo:u.cargo};
       }
     }
     return {tipo:'nao_encontrado',nome};
