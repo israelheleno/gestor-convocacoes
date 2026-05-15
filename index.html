@@ -781,10 +781,12 @@ function criarCard(ev){
   const passado=dt<=new Date();
   const wrap=document.createElement('div');
   wrap.className='ev-wrap';
+  
+  // Condiciona o botão de excluir a quem é admin
   wrap.innerHTML=`
     <div class="ev-bg">
       <div class="ev-bg-l"><span>👁 Ver</span></div>
-      <div class="ev-bg-r"><span>🗑 Excluir</span></div>
+      ${eu.is_admin ? '<div class="ev-bg-r"><span>🗑 Excluir</span></div>' : ''}
     </div>
     <div class="ev-card" style="border-left-color:${passado?'#94a3b8':'var(--blue)'};opacity:${passado?.7:1}">
       <div class="ev-titulo">${ev.titulo_evento||'Sem título'}${passado?' <span style="font-size:11px;color:#94a3b8">(encerrado)</span>':''}</div>
@@ -797,11 +799,15 @@ function criarCard(ev){
   card.addEventListener('touchstart',e=>{sx=e.touches[0].clientX;mov=false;},{passive:true});
   card.addEventListener('touchmove',e=>{
     dx=e.touches[0].clientX-sx;mov=true;
+    // Se não for admin, bloqueia o swipe para a esquerda (dx < 0)
+    if(!eu.is_admin && dx < 0) dx = 0;
+    
     if(Math.abs(dx)>8){card.style.transition='none';card.style.transform=`translateX(${Math.max(-100,Math.min(100,dx))}px)`;}
   },{passive:true});
   card.addEventListener('touchend',()=>{
     card.style.transition='transform .2s ease';
-    if(dx<-60){
+    // Só aciona o excluir se a distância foi alcançada e o usuário é admin
+    if(dx<-60 && eu.is_admin){
       if(confirm('Excluir esta convocação?')){
         db.collection('eventos').doc(ev.id).delete().then(()=>carregarEventos());
       } else card.style.transform='translateX(0)';
@@ -841,8 +847,12 @@ function abrirMod(ev){
 
   document.getElementById('mod-ag').onclick=()=>ics(ev);
   
-  document.getElementById('mod-del').style.display = (eu.is_admin || ev.criado_por === eu.uid) ? 'block' : 'none';
+  // Mostra botão de exclusão SOMENTE se for admin
+  document.getElementById('mod-del').style.display = eu.is_admin ? 'block' : 'none';
   document.getElementById('mod-del').onclick=()=>{
+    // Bloqueia execução se alguém tentar forçar o HTML
+    if(!eu.is_admin) return;
+    
     if(confirm('Excluir esta convocação?')){
       db.collection('eventos').doc(ev.id).delete().then(()=>{
         document.getElementById('mod-ev').classList.remove('on');carregarEventos();
