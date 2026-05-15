@@ -1382,7 +1382,6 @@ async function abrirTrocar(ev){
   document.getElementById('trocar-desc').textContent=
     `Você será removido de "${ev.titulo_evento||'Evento'}". Escolha quem vai te substituir:`;
 
-  // Carregar membros do grupo (exceto eu)
   const snap=await db.collection('usuarios').where('grupo_id','==',grupoId).get();
   const lista=document.getElementById('trocar-lista');
   lista.innerHTML='';
@@ -1400,54 +1399,48 @@ async function abrirTrocar(ev){
     lista.appendChild(div);
   });
 
+  // Definir onclick aqui, dentro da função, quando eu já está carregado
+  document.getElementById('trocar-confirmar').onclick=async()=>{
+    if(!substitutoSelecionado){alert('Selecione um substituto.');return;}
+    if(!confirm(`Confirmar troca?\n"${eu.nome_completo}" → "${substitutoSelecionado.nome_completo}"`))return;
+
+    const substitutos=[...(eventoTroca.substitutos||[]),{
+      uid:substitutoSelecionado.uid,
+      nome:substitutoSelecionado.nome_completo,
+      substituindo:eu.nome_completo,
+      em:new Date().toISOString()
+    }];
+
+    await db.collection('eventos').doc(eventoTroca.id).update({substitutos});
+
+    const novaLista=(eventoTroca.lista_convocados||[]).filter(n=>!euSouConvocadoNome(n));
+    await db.collection('eventos').doc(eventoTroca.id).update({lista_convocados:novaLista});
+
+    const dt=new Date(eventoTroca.data_hora).toLocaleDateString('pt-BR',{day:'2-digit',month:'short',year:'numeric'});
+    await db.collection('notificacoes').add({
+      uid:substitutoSelecionado.uid,
+      tipo:'substituicao',
+      nome_convocacao:substitutoSelecionado.nome_completo,
+      titulo_evento:eventoTroca.titulo_evento||'Evento',
+      data_hora:eventoTroca.data_hora,
+      substituindo:eu.nome_completo,
+      grupo_id:grupoId,
+      respondido:false,
+      criado_em:firebase.firestore.FieldValue.serverTimestamp()
+    });
+
+    fecharTrocar();
+    alert(`✅ Troca confirmada!\n${substitutoSelecionado.nome_completo} foi notificado(a).`);
+    carregarEventos();
+  };
+
   document.getElementById('trocar-ov').classList.add('on');
-}
+} // fim abrirTrocar
 
 function fecharTrocar(){
   document.getElementById('trocar-ov').classList.remove('on');
   eventoTroca=null; substitutoSelecionado=null;
 }
-
-document.getElementById('trocar-confirmar').onclick=async()=>{
-  if(!substitutoSelecionado){alert('Selecione um substituto.');return;}
-  if(!confirm(`Confirmar troca?\n"${eu.nome_completo}" → "${substitutoSelecionado.nome_completo}"`))return;
-
-  const ev=eventoTroca;
-  const substitutos=[...(ev.substitutos||[]),{
-    uid:substitutoSelecionado.uid,
-    nome:substitutoSelecionado.nome_completo,
-    substituindo:eu.nome_completo,
-    em:new Date().toISOString()
-  }];
-
-  // Salvar substituição no evento
-  await db.collection('eventos').doc(ev.id).update({substitutos});
-
-  // Remover o usuário atual da lista de convocados
-  const novaLista=(ev.lista_convocados||[]).filter(n=>{
-    const norm=s=>s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9\s]/g,'').trim();
-    return !euSouConvocadoNome(n);
-  });
-  await db.collection('eventos').doc(ev.id).update({lista_convocados:novaLista});
-
-  // Notificar substituto
-  const dt=new Date(ev.data_hora).toLocaleDateString('pt-BR',{day:'2-digit',month:'short',year:'numeric'});
-  await db.collection('notificacoes').add({
-    uid:substitutoSelecionado.uid,
-    tipo:'substituicao',
-    nome_convocacao:substitutoSelecionado.nome_completo,
-    titulo_evento:ev.titulo_evento||'Evento',
-    data_hora:ev.data_hora,
-    substituindo:eu.nome_completo,
-    grupo_id:grupoId,
-    respondido:false,
-    criado_em:firebase.firestore.FieldValue.serverTimestamp()
-  });
-
-  fecharTrocar();
-  alert(`✅ Troca confirmada!\n${substitutoSelecionado.nome_completo} foi notificado(a).`);
-  carregarEventos();
-};
 
 // Verifica se um nome da lista é o usuário atual
 function euSouConvocadoNome(nome){
