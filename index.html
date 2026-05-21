@@ -22,6 +22,11 @@
     .btn-sair{background:rgba(255,255,255,.15);border:none;color:#fff;padding:6px 12px;border-radius:8px;font-size:13px;cursor:pointer}
     .h-sub{font-size:12px;opacity:.7;cursor:pointer;text-decoration:underline dotted rgba(255,255,255,.4)}
 
+    /* NAV TABS */
+    .nav-tabs{display:flex;background:var(--w);box-shadow:0 2px 8px rgba(0,0,0,.05);margin-bottom:16px;position:sticky;top:60px;z-index:90}
+    .nav-tab{flex:1;text-align:center;padding:14px;font-family:'Sora',sans-serif;font-size:13px;font-weight:700;color:var(--light);border-bottom:3px solid transparent;cursor:pointer;transition:all .2s}
+    .nav-tab.active{color:var(--blue);border-bottom-color:var(--blue)}
+
     main{padding:16px;max-width:480px;margin:0 auto}
 
     /* CARDS */
@@ -37,6 +42,7 @@
     .btn-entrar{background:var(--blue);color:#fff;border:none;padding:6px 13px;border-radius:8px;font-size:13px;cursor:pointer}
     .btn-entrar.pend{background:var(--yellow);color:#1a1a1a;cursor:default}
     .btn-criar{width:100%;padding:11px;margin-top:12px;background:transparent;border:1.5px dashed var(--blue);color:var(--blue);border-radius:12px;font-size:14px;cursor:pointer}
+    .btn-criar-ausencia{background:var(--blue);color:#fff;border:none;padding:10px 16px;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;font-family:'Sora',sans-serif;width:100%}
 
     /* PRÓXIMO */
     .card-prox{background:linear-gradient(135deg,var(--blue),#2563eb);border-radius:18px;padding:18px;margin-bottom:16px;color:#fff;position:relative;overflow:hidden}
@@ -63,6 +69,17 @@
     .ev-conv{margin-top:6px;font-size:12px;color:var(--blue);font-weight:500}
     .aviso-ferias{background:#fee2e2;color:#991b1b;font-size:11px;padding:6px 10px;border-radius:6px;margin-top:8px;font-weight:600;display:flex;align-items:center;gap:6px}
 
+    /* AUSÊNCIAS */
+    .aus-card{background:var(--w);border-radius:12px;padding:13px 15px;margin-bottom:10px;display:flex;align-items:center;gap:12px;border-left:3px solid var(--blue);box-shadow:0 2px 8px rgba(30,58,138,.06)}
+    .aus-card.tipo-ferias{border-left-color:#ec4899}
+    .aus-card.tipo-licenca{border-left-color:#f59e0b}
+    .aus-card.tipo-abono{border-left-color:#06b6d4}
+    .aus-icon{font-size:24px}
+    .aus-info{flex:1}
+    .aus-nome{font-weight:600;font-size:14px}
+    .aus-detalhe{font-size:12px;color:var(--light)}
+    .aus-tipo{font-size:10px;text-transform:uppercase;letter-spacing:.5px;color:var(--light);margin-top:4px}
+
     /* MODAL EVENTO */
     .overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:200;display:none;align-items:flex-end}
     .overlay.on{display:flex}
@@ -79,15 +96,27 @@
     .conv-nome.editable{border-bottom:1px dashed var(--blue);cursor:text;padding:2px 4px;border-radius:4px;transition:background .2s}
     .conv-nome.editable:hover{background:#f0f4ff}
     .conv-nome.editable:focus{background:#eff6ff;outline:none;border-bottom:2px solid var(--blue)}
-    .btn-editar-nome{background:transparent;border:1px solid var(--border);color:var(--blue);padding:4px 10px;border-radius:6px;font-size:11px;cursor:pointer;font-weight:600;white-space:nowrap}
     .btn-remover-nome{background:transparent;border:1px solid #fee2e2;color:var(--red);padding:4px 10px;border-radius:6px;font-size:11px;cursor:pointer;font-weight:600;white-space:nowrap}
-    .btn-adicionar-nome{width:100%;padding:10px;background:transparent;border:1.5px dashed var(--border);border-radius:10px;font-size:13px;cursor:pointer;color:var(--light);margin-top:8px;transition:all .2s}
-    .btn-adicionar-nome:hover{border-color:var(--blue);color:var(--blue);background:#f8faff}
     .input-novo-nome{width:100%;padding:10px;border:1.5px solid var(--blue);border-radius:10px;font-family:'DM Sans',sans-serif;font-size:14px;margin-top:8px;outline:none}
     .btn-salvar-nomes{width:100%;padding:10px;background:var(--blue);color:#fff;border:none;border-radius:10px;font-size:14px;cursor:pointer;margin-top:8px;font-family:'Sora',sans-serif;font-weight:600}
     .admin-badge{display:inline-block;background:#fef3c7;color:#92400e;font-size:9px;padding:2px 6px;border-radius:4px;margin-left:6px;font-weight:700;text-transform:uppercase;letter-spacing:.5px}
     .btn-ag{width:100%;padding:12px;background:var(--green);color:#fff;border:none;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;margin-top:16px;font-family:'Sora',sans-serif}
     .btn-del{width:100%;padding:11px;background:#fee2e2;color:var(--red);border:none;border-radius:10px;font-size:14px;cursor:pointer;margin-top:8px}
+
+    /* Modal Genérico Centro */
+    .ov-center{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:750;display:none;align-items:center;justify-content:center;padding:20px}
+    .ov-center.on{display:flex}
+    .box-center{background:#fff;border-radius:24px;padding:28px 22px;width:100%;max-width:360px;animation:fu .3s ease;position:relative}
+    .box-center h3{font-family:'Sora',sans-serif;font-size:17px;font-weight:700;color:var(--blue);margin-bottom:6px}
+    .box-center p{font-size:13px;color:var(--light);margin-bottom:16px;line-height:1.5}
+    .field{margin-bottom:14px}
+    .field label{display:block;font-size:12px;font-weight:600;color:var(--text);margin-bottom:5px;text-transform:uppercase;letter-spacing:.5px}
+    .field input, .field select{width:100%;padding:11px 13px;border:1.5px solid var(--border);border-radius:12px;font-family:'DM Sans',sans-serif;font-size:15px;color:var(--text);outline:none;background:#fff}
+    .field input:focus, .field select:focus{border-color:var(--blue)}
+    .btns-row{display:flex;gap:10px;margin-top:20px}
+    .btn-cancel{flex:1;padding:12px;background:transparent;border:1.5px solid var(--border);border-radius:12px;font-size:14px;cursor:pointer;color:var(--text);font-weight:500}
+    .btn-salvar{flex:1;padding:12px;background:var(--blue);border:none;border-radius:12px;color:#fff;font-size:14px;cursor:pointer;font-family:'Sora',sans-serif;font-weight:600}
+    .btn-salvar:disabled{opacity:0.6;cursor:not-allowed}
 
     /* SCANNER */
     #scan-ov{position:fixed;inset:0;background:#000;z-index:300;display:none;flex-direction:column}
@@ -140,9 +169,6 @@
     .btn-sim{flex:1;padding:7px;background:var(--green);color:#fff;border:none;border-radius:8px;font-size:12px;cursor:pointer;font-weight:600}
     .btn-nao{flex:1;padding:7px;background:#fee2e2;color:var(--red);border:none;border-radius:8px;font-size:12px;cursor:pointer}
     .rv-btns{display:flex;gap:10px;margin:16px;flex-shrink:0}
-    .btn-cancel{flex:1;padding:12px;background:transparent;border:1.5px solid var(--border);border-radius:12px;font-size:14px;cursor:pointer;color:var(--text);font-weight:500}
-    .btn-salvar{flex:1;padding:12px;background:var(--blue);border:none;border-radius:12px;color:#fff;font-size:14px;cursor:pointer;font-family:'Sora',sans-serif;font-weight:600}
-    .btn-salvar:disabled{opacity:0.6;cursor:not-allowed}
 
     /* FAB */
     #fab{position:fixed;bottom:22px;right:18px;width:58px;height:58px;background:var(--blue);border:none;border-radius:50%;box-shadow:0 4px 18px rgba(30,58,138,.4);cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:50}
@@ -254,29 +280,47 @@
   </button>
 </div>
 
+<!-- NAV TABS -->
+<div class="nav-tabs">
+  <div class="nav-tab active" onclick="mostrarAba('convocacoes', this)">📋 Convocações</div>
+  <div class="nav-tab" onclick="mostrarAba('ferias', this)">🏖️ Férias</div>
+</div>
+
 <!-- TOAST -->
 <div class="toast" id="toast"></div>
 
 <main>
-  <div id="sec-apv" style="display:none;margin-bottom:16px">
-    <div class="sec-titulo">🔔 Solicitações de entrada</div>
-    <div id="lst-apv"></div>
+  <!-- ABA CONVOCAÇÕES -->
+  <div id="aba-convocacoes" class="aba-content">
+    <div id="sec-apv" style="display:none;margin-bottom:16px">
+      <div class="sec-titulo">🔔 Solicitações de entrada</div>
+      <div id="lst-apv"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo">Meu Grupo <span class="badge" id="grp-badge">—</span></div>
+      <ul id="lst-grp" style="list-style:none"><div class="skel"></div></ul>
+      <button class="btn-criar" onclick="criarGrupo()">+ Criar novo grupo</button>
+    </div>
+
+    <div class="sec-titulo" style="margin-bottom:10px">Minha próxima convocação</div>
+    <div id="prox"></div>
+
+    <div class="sec-titulo" style="margin-top:20px">
+      Todas as convocações
+      <span style="font-size:12px;font-weight:400;color:var(--light)" id="total"></span>
+    </div>
+    <div id="lst-ev"><div class="skel"></div><div class="skel"></div></div>
   </div>
 
-  <div class="card">
-    <div class="card-titulo">Meu Grupo <span class="badge" id="grp-badge">—</span></div>
-    <ul id="lst-grp" style="list-style:none"><div class="skel"></div></ul>
-    <button class="btn-criar" onclick="criarGrupo()">+ Criar novo grupo</button>
+  <!-- ABA FÉRIAS -->
+  <div id="aba-ferias" class="aba-content" style="display:none">
+    <div class="card">
+      <div class="card-titulo">Minhas Ausências</div>
+      <button class="btn-criar-ausencia" onclick="iniciarAddFerias()">+ Adicionar Período</button>
+    </div>
+    <div id="lst-ausencias"></div>
   </div>
-
-  <div class="sec-titulo" style="margin-bottom:10px">Minha próxima convocação</div>
-  <div id="prox"></div>
-
-  <div class="sec-titulo" style="margin-top:20px">
-    Todas as convocações
-    <span style="font-size:12px;font-weight:400;color:var(--light)" id="total"></span>
-  </div>
-  <div id="lst-ev"><div class="skel"></div><div class="skel"></div></div>
 </main>
 
 <button id="fab" onclick="abrirScanner()">
@@ -313,6 +357,45 @@
     <div class="trocar-btns">
       <button class="btn-cancel" onclick="fecharTrocar()">Cancelar</button>
       <button class="btn-salvar" style="background:#c2410c" id="trocar-confirmar">🔄 Confirmar troca</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL FÉRIAS CONSENT -->
+<div class="ov-center" id="ferias-consent-ov">
+  <div class="box-center">
+    <h3>Registrar Período</h3>
+    <p>Você está prestes a registrar um período de férias, licença ou abono. Isso afetará suas convocações durante este período.</p>
+    <div class="btns-row">
+      <button class="btn-cancel" onclick="document.getElementById('ferias-consent-ov').classList.remove('on')">Cancelar</button>
+      <button class="btn-salvar" onclick="abrirFormFerias()">Continuar</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL FÉRIAS FORM -->
+<div class="ov-center" id="ferias-form-ov">
+  <div class="box-center">
+    <h3>Datas do Período</h3>
+    <div class="field">
+      <label>Tipo</label>
+      <select id="ferias-tipo">
+        <option value="abono">Abono</option>
+        <option value="licenca">Licença</option>
+        <option value="ferias">Férias</option>
+      </select>
+    </div>
+    <div class="field">
+      <label>Data de início</label>
+      <input type="date" id="ferias-ini"/>
+    </div>
+    <div class="field">
+      <label>Data de término</label>
+      <input type="date" id="ferias-fim"/>
+    </div>
+    <div class="btns-row">
+      <button class="btn-cancel" onclick="document.getElementById('ferias-form-ov').classList.remove('on')">Cancelar</button>
+      <button class="btn-salvar" onclick="salvarFerias()">✓ Salvar</button>
     </div>
   </div>
 </div>
@@ -403,11 +486,12 @@ firebase.initializeApp({apiKey:"AIzaSyAOpV5NFydHWwUwQKg0MANqMHVcXVDDqpQ",authDom
 const auth=firebase.auth();const db=firebase.firestore();
 
 let eu=null,grupoId=null,ocrDados=null,matches=[],camStream=null,eventoTroca=null,substitutoSelecionado=null,eventoAtualMod=null,nomesEditaveis=[];
-let notifAtual=null,filaNotifs=[];
+let notifAtual=null,filaNotifs=[],listaAusencias=[];
 let toastTimeout;
 
 function mostrarToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');clearTimeout(toastTimeout);toastTimeout=setTimeout(()=>t.classList.remove('show'),2500);}
 function lev(a,b){if(a===b)return 0;const m=a.length,n=b.length;const dp=Array.from({length:m+1},(_,i)=>[i,...Array(n).fill(0)]);for(let j=0;j<=n;j++)dp[0][j]=j;for(let i=1;i<=m;i++)for(let j=1;j<=n;j++)dp[i][j]=a[i-1]===b[j-1]?dp[i-1][j-1]:1+Math.min(dp[i-1][j],dp[i][j-1],dp[i-1][j-1]);return dp[m][n];}
+function mostrarAba(aba,el){document.querySelectorAll('.aba-content').forEach(e=>e.style.display='none');document.getElementById('aba-'+aba).style.display='block';document.querySelectorAll('.nav-tab').forEach(e=>e.classList.remove('active'));if(el)el.classList.add('active');if(aba==='ferias')carregarFerias();}
 
 auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL).then(()=>{
   let authOk=false;const T=setTimeout(()=>{if(!authOk)window.location.replace('login.html');},10000);
@@ -418,11 +502,21 @@ auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL).then(()=>{
       document.getElementById('h-user').textContent=eu.nome_completo+' · '+eu.cargo;
       if(eu.is_admin)document.getElementById('btn-fab-admin').classList.add('on');
       verificarInstalacao();iniciarNotificacoes();carregarGrupos();
-      if(eu.grupo_id){grupoId=eu.grupo_id;carregarEventos();verificarAprovacoes();verificarNotificacoesPendentes();}
+      if(eu.grupo_id){grupoId=eu.grupo_id;carregarEventos();verificarAprovacoes();verificarNotificacoesPendentes();fetchAusencias();}
       else{document.getElementById('lst-ev').innerHTML='<p style="color:var(--light);font-size:14px;padding:20px;text-align:center">Entre em um grupo para ver convocações.</p>';document.getElementById('prox').innerHTML='<div class="card-vazio">Entre em um grupo para ver suas convocações.</div>';}
     }catch(err){console.error(err);clearTimeout(T);window.location.replace('login.html');}
   });
 }).catch(e=>console.error('Persistence:',e));
+
+// ── FÉRIAS & AUSÊNCIAS ──
+async function fetchAusencias(){if(!grupoId)return;const hojeStr=new Date().toISOString().split('T')[0];const snap=await db.collection('ausencias').where('grupo_id','==',grupoId).where('data_fim','>=',hojeStr).get();listaAusencias=snap.docs.map(d=>({id:d.id,...d.data()}));}
+async function carregarFerias(){await fetchAusencias();const lst=document.getElementById('lst-ausencias');lst.innerHTML='';const ordenados=listaAusencias.sort((a,b)=>new Date(a.data_inicio)-new Date(b.data_inicio));if(ordenados.length===0){lst.innerHTML='<p style="color:var(--light);font-size:14px;padding:20px;text-align:center">Nenhum período registrado para os próximos dias.</p>';return;}
+  ordenados.forEach(aus=>{let dtIni=new Date(aus.data_inicio+"T12:00:00");let dtFim=new Date(aus.data_fim+"T12:00:00");let icone=aus.tipo==='ferias'?'🏖️':(aus.tipo==='licenca'?'🏥':'⏱️');const div=document.createElement('div');div.className=`aus-card tipo-${aus.tipo}`;div.innerHTML=`<div class="aus-icon">${icone}</div><div class="aus-info"><div class="aus-nome">${aus.nome_completo}</div><div class="aus-detalhe">De ${dtIni.toLocaleDateString('pt-BR')} a ${dtFim.toLocaleDateString('pt-BR')}</div><div class="aus-tipo">${aus.tipo}</div></div>${(eu.is_admin||eu.uid===aus.uid)?`<button class="btn-cancel" style="border:none;color:var(--red);padding:5px;max-width:40px;" onclick="excluirFerias('${aus.id}')">🗑️</button>`:''}`;lst.appendChild(div);});}
+function iniciarAddFerias(){document.getElementById('ferias-consent-ov').classList.add('on');}
+function abrirFormFerias(){document.getElementById('ferias-consent-ov').classList.remove('on');document.getElementById('ferias-form-ov').classList.add('on');document.getElementById('ferias-ini').value="";document.getElementById('ferias-fim').value="";document.getElementById('ferias-tipo').value="abono";}
+async function salvarFerias(){const tipo=document.getElementById('ferias-tipo').value;const iniStr=document.getElementById('ferias-ini').value;const fimStr=document.getElementById('ferias-fim').value;if(!iniStr||!fimStr){alert("Preencha ambas as datas.");return;}const dtIni=new Date(iniStr+"T12:00:00");const dtFim=new Date(fimStr+"T12:00:00");if(dtIni>dtFim){alert("A data de término não pode ser anterior ao início.");return;}const diffTime=Math.abs(dtFim-dtIni);const diffDays=Math.ceil(diffTime/(1000*60*60*24))+1;if(tipo==='abono'&&diffDays<1){alert("Abono requer no mínimo 1 dia.");return;}if(tipo==='licenca'&&diffDays<2){alert("Licença requer no mínimo 2 dias.");return;}if(tipo==='ferias'&&diffDays<5){alert("Férias requer no mínimo 5 dias.");return;}await db.collection('ausencias').add({uid:eu.uid,nome_completo:eu.nome_completo,grupo_id:grupoId,tipo:tipo,data_inicio:iniStr,data_fim:fimStr,criado_em:firebase.firestore.FieldValue.serverTimestamp()});document.getElementById('ferias-form-ov').classList.remove('on');mostrarToast("✅ Período registrado com sucesso!");carregarFerias();}
+async function excluirFerias(id){if(!confirm("Deseja apagar este registro?"))return;await db.collection('ausencias').doc(id).delete();carregarFerias();}
+function verificarStatusAusencia(uid,dataEvento){if(!uid||!dataEvento)return null;const dataStr=dataEvento.split('T')[0];return listaAusencias.find(aus=>aus.uid===uid&&aus.data_inicio<=dataStr&&aus.data_fim>=dataStr)||null;}
 
 // ── GRUPOS ──
 async function carregarGrupos(){const snap=await db.collection('grupos').get();const lst=document.getElementById('lst-grp');lst.innerHTML='';if(snap.empty){lst.innerHTML='<p style="color:var(--light);font-size:14px;text-align:center">Nenhum grupo ainda.</p>';return;}
@@ -456,7 +550,14 @@ async function carregarEventos(){if(!grupoId)return;const snap=await db.collecti
   const el=document.getElementById('prox');if(!minhasProximas.length&&!minhasSubstituicoes.length){el.innerHTML='<div class="card-vazio">Você não tem convocações próximas.</div>';}else{el.innerHTML=[...minhasProximas.map((ev,idx)=>{const dt=new Date(ev.data_hora);const evString=JSON.stringify(ev).replace(/'/g,"&#39;");return`<div class="card-prox" style="margin-bottom:10px"><div class="prox-label">${idx===0?'SUA PRÓXIMA CONVOCAÇÃO':'TAMBÉM CONVOCADO'}</div><div class="prox-titulo" onclick='abrirMod(${evString})'>${ev.titulo_evento||'Evento'}</div><div class="prox-meta"><span>📅 ${fD(dt)}</span><span>🕐 ${fH(dt)}</span>${ev.local?'<span>📍 '+ev.local+'</span>':''}</div><div style="display:flex;gap:8px;"><button class="btn-agenda" style="flex:1;margin-top:0;" onclick='ics(${evString})'>📅 Agenda</button><button class="btn-agenda" style="flex:1;margin-top:0;background:#fff7ed;color:#c2410c;border:1.5px solid #fed7aa;" onclick='abrirTrocar(${evString})'>🔄 Trocar</button></div></div>`;}),...minhasSubstituicoes.map(ev=>{const dt=new Date(ev.data_hora);const evString=JSON.stringify(ev).replace(/'/g,"&#39;");const sub=ev.substitutos.find(s=>s.uid===eu.uid);return`<div class="card-prox-sub" style="margin-bottom:10px"><div class="sub-badge">🔄 SUBSTITUIÇÃO</div><div class="prox-titulo" onclick='abrirMod(${evString})'>${ev.titulo_evento||'Evento'}</div><div style="font-size:12px;opacity:.8;margin-bottom:10px">Substituindo: ${sub.substituindo}</div><div class="prox-meta"><span>📅 ${fD(dt)}</span><span>🕐 ${fH(dt)}</span>${ev.local?'<span>📍 '+ev.local+'</span>':''}</div><div style="display:flex;gap:8px;"><button class="btn-agenda" style="flex:1;margin-top:0;background:#d97706" onclick='ics(${evString})'>📅 Agenda</button><button class="btn-agenda" style="flex:1;margin-top:0;background:#fff7ed;color:#c2410c;border:1.5px solid #fed7aa;" onclick='abrirTrocar(${evString})'>🔄 Trocar</button></div></div>`;})].join('');}
   const lst=document.getElementById('lst-ev');if(!evs.length){lst.innerHTML='<p style="color:var(--light);font-size:14px;padding:20px;text-align:center">Nenhuma convocação ainda.</p>';return;}lst.innerHTML='';const futuros=evs.filter(e=>new Date(e.data_hora)>agora);const passados=evs.filter(e=>new Date(e.data_hora)<=agora).reverse();[...futuros,...passados].forEach(ev=>lst.appendChild(criarCard(ev)));}
 function criarCard(ev){const dt=new Date(ev.data_hora);const passado=dt<=new Date();const wrap=document.createElement('div');wrap.className='ev-wrap';wrap.innerHTML=`<div class="ev-bg"><div class="ev-bg-l"><span>👁 Ver</span></div>${eu.is_admin?'<div class="ev-bg-r"><span>🗑 Excluir</span></div>':''}</div><div class="ev-card" style="border-left-color:${passado?'#94a3b8':'var(--blue)'};opacity:${passado?'.7':'1'}"><div class="ev-titulo">${ev.titulo_evento||'Sem título'}${passado?' <span style="font-size:11px;color:#94a3b8">(encerrado)</span>':''}</div><div class="ev-meta"><span>📅 ${fD(dt)}</span><span>🕐 ${fH(dt)}</span></div><div class="ev-conv">${(ev.lista_convocados||[]).length} convocado(s)</div></div>`;const card=wrap.querySelector('.ev-card');let sx=0,dx=0,mov=false;card.addEventListener('touchstart',e=>{sx=e.touches[0].clientX;mov=false;},{passive:true});card.addEventListener('touchmove',e=>{dx=e.touches[0].clientX-sx;mov=true;if(!eu.is_admin&&dx<0)dx=0;if(Math.abs(dx)>8){card.style.transition='none';card.style.transform=`translateX(${Math.max(-100,Math.min(100,dx))}px)`;}},{passive:true});card.addEventListener('touchend',()=>{card.style.transition='transform .2s ease';if(dx<-60&&eu.is_admin){if(confirm('Excluir esta convocação?')){db.collection('eventos').doc(ev.id).delete().then(()=>carregarEventos());}else card.style.transform='translateX(0)';}else if(dx>60){card.style.transform='translateX(0)';abrirMod(ev);}else{card.style.transform='translateX(0)';if(!mov)abrirMod(ev);}dx=0;});card.addEventListener('click',()=>{if(!mov)abrirMod(ev);});return wrap;}
-function abrirMod(ev){eventoAtualMod=ev;const dt=new Date(ev.data_hora);document.getElementById('mod-tit').textContent=ev.titulo_evento||'Evento';document.getElementById('mod-sub').textContent=fD(dt)+' às '+fH(dt)+(ev.local?' · '+ev.local:'');const adminBadge=document.getElementById('admin-badge-conv');if(eu.is_admin){adminBadge.style.display='inline-block';renderizarNomesAdmin(ev);}else{adminBadge.style.display='none';document.getElementById('mod-conv').innerHTML=(ev.lista_convocados||[]).map(n=>`<div class="conv-linha"><div class="conv-icon"><svg viewBox="0 0 24 24"><path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/></svg></div><span class="conv-nome">${n}</span></div>`).join('');}const agora=new Date();const eventoNoFuturo=dt>agora;const euEstouConvocado=(ev.lista_convocados||[]).some(n=>euSouConvocadoNome(n));const btnTrocar=document.getElementById('mod-trocar');if(euEstouConvocado&&eventoNoFuturo){btnTrocar.style.display='block';btnTrocar.onclick=()=>abrirTrocar(ev);}else{btnTrocar.style.display='none';}document.getElementById('mod-ag').onclick=()=>ics(ev);document.getElementById('mod-del').style.display=eu.is_admin?'block':'none';document.getElementById('mod-del').onclick=()=>{if(!eu.is_admin)return;if(confirm('Excluir esta convocação?')){db.collection('eventos').doc(ev.id).delete().then(()=>{fecharMod();carregarEventos();mostrarToast('🗑 Convocação excluída');});}};document.getElementById('mod-ev').classList.add('on');}
+function abrirMod(ev){eventoAtualMod=ev;const dt=new Date(ev.data_hora);document.getElementById('mod-tit').textContent=ev.titulo_evento||'Evento';document.getElementById('mod-sub').textContent=fD(dt)+' às '+fH(dt)+(ev.local?' · '+ev.local:'');const adminBadge=document.getElementById('admin-badge-conv');if(eu.is_admin){adminBadge.style.display='inline-block';renderizarNomesAdmin(ev);}else{adminBadge.style.display='none';
+    const snap=db.collection('usuarios').where('grupo_id','==',grupoId).get();snap.then(snapUsers=>{const users=snapUsers.docs.map(d=>d.data());const norm=s=>s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9\s]/g,'').trim();
+      document.getElementById('mod-conv').innerHTML=(ev.lista_convocados||[]).map(nome=>{const nn=norm(nome);let myUid=null;for(const u of users){const todos=[u.nome_completo,...(u.nomes_conhecidos||[])];if(todos.some(n=>norm(n)===nn)){myUid=u.uid;break;}}let avisoHTML='';if(myUid){const isAusente=verificarStatusAusencia(myUid,ev.data_hora);if(isAusente){let icon=isAusente.tipo==='ferias'?'🏖️':(isAusente.tipo==='licenca'?'🏥':'⏱️');let label=isAusente.tipo.charAt(0).toUpperCase()+isAusente.tipo.slice(1);avisoHTML=`<div class="aviso-ferias">${icon} Atenção: Convocado está de ${label} neste dia!</div>`;}}
+        return`<div class="conv-linha"><div style="display:flex;align-items:center;gap:10px;width:100%"><div class="conv-icon"><svg viewBox="0 0 24 24"><path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/></svg></div><span class="conv-nome">${nome}</span></div>${avisoHTML}</div>`;
+      }).join('');
+    });
+  }
+  const agora=new Date();const eventoNoFuturo=dt>agora;const euEstouConvocado=(ev.lista_convocados||[]).some(n=>euSouConvocadoNome(n));const btnTrocar=document.getElementById('mod-trocar');if(euEstouConvocado&&eventoNoFuturo){btnTrocar.style.display='block';btnTrocar.onclick=()=>abrirTrocar(ev);}else{btnTrocar.style.display='none';}document.getElementById('mod-ag').onclick=()=>ics(ev);document.getElementById('mod-del').style.display=eu.is_admin?'block':'none';document.getElementById('mod-del').onclick=()=>{if(!eu.is_admin)return;if(confirm('Excluir esta convocação?')){db.collection('eventos').doc(ev.id).delete().then(()=>{fecharMod();carregarEventos();mostrarToast('🗑 Convocação excluída');});}};document.getElementById('mod-ev').classList.add('on');}
 function fecharMod(){document.getElementById('mod-ev').classList.remove('on');eventoAtualMod=null;nomesEditaveis=[];}
 function renderizarNomesAdmin(ev){const container=document.getElementById('mod-conv');nomesEditaveis=[...(ev.lista_convocados||[])];container.innerHTML=nomesEditaveis.map((nome,idx)=>`<div class="conv-linha" style="flex-direction:column;align-items:stretch;gap:6px"><div style="display:flex;align-items:center;gap:10px;width:100%"><div class="conv-icon"><svg viewBox="0 0 24 24"><path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/></svg></div><span class="conv-nome editable" contenteditable="true" data-idx="${idx}" onblur="atualizarNomeAdmin(${idx},this.textContent)">${nome}</span><button class="btn-remover-nome" onclick="removerNomeAdmin(${idx})" title="Remover">✕</button></div></div>`).join('')+`<div style="display:flex;gap:8px;margin-top:8px"><input type="text" class="input-novo-nome" id="input-novo-nome" placeholder="Digite o nome para adicionar..." style="flex:1;margin-top:0;"><button class="btn-salvar" onclick="adicionarNomeAdmin()" style="width:auto;padding:10px 16px;margin-top:0;flex-shrink:0;">+ Adicionar</button></div><button class="btn-salvar-nomes" onclick="salvarNomesAdmin()">💾 Salvar alterações</button>`;}
 function atualizarNomeAdmin(idx,novoNome){if(novoNome&&novoNome.trim()){nomesEditaveis[idx]=novoNome.trim();}}
