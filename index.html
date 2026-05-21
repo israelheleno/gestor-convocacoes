@@ -1,435 +1,953 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Gestor de Convocações</title>
+  <meta name="apple-mobile-web-app-capable" content="yes"/>
+  <meta name="apple-mobile-web-app-title" content="Convocações"/>
+  <meta name="theme-color" content="#1E3A8A"/>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet"/>
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0}
+    :root{--blue:#1E3A8A;--green:#10B981;--red:#ef4444;--yellow:#f59e0b;--bg:#F0F4FF;--text:#334155;--light:#94a3b8;--border:#e2e8f0;--w:#fff}
+    body{font-family:'DM Sans',sans-serif;background:var(--bg);min-height:100dvh;color:var(--text);padding-bottom:90px}
 
-# Correções definitivas para o index.html
+    /* HEADER */
+    header{background:var(--blue);color:#fff;padding:18px 16px 14px;position:sticky;top:0;z-index:100;box-shadow:0 2px 12px rgba(30,58,138,.3)}
+    .h-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:3px}
+    .h-logo{display:flex;align-items:center;gap:9px}
+    .h-logo svg{width:20px;height:20px;fill:rgba(255,255,255,.9)}
+    .h-logo span{font-family:'Sora',sans-serif;font-size:14px;font-weight:700}
+    .btn-sair{background:rgba(255,255,255,.15);border:none;color:#fff;padding:6px 12px;border-radius:8px;font-size:13px;cursor:pointer}
+    .h-sub{font-size:12px;opacity:.7}
 
-## 1) SUBSTITUA O MODAL REVIEW COMPLETO
+    /* NAV TABS */
+    .nav-tabs{display:flex;background:var(--w);box-shadow:0 2px 8px rgba(0,0,0,.05);margin-bottom:16px;position:sticky;top:60px;z-index:90}
+    .nav-tab{flex:1;text-align:center;padding:14px;font-family:'Sora',sans-serif;font-size:13px;font-weight:700;color:var(--light);border-bottom:3px solid transparent;cursor:pointer;transition:all .2s}
+    .nav-tab.active{color:var(--blue);border-bottom-color:var(--blue)}
 
-```html
-<!-- REVIEW -->
-<div id="rv-ov">
-  <div class="rv-hd">
-    <button class="btn-x" id="rv-btn-fechar">✕</button>
-    <h2>Conferir dados</h2>
+    main{padding:16px;max-width:480px;margin:0 auto}
+
+    /* CARDS */
+    .card{background:var(--w);border-radius:16px;padding:18px;margin-bottom:16px;box-shadow:0 2px 10px rgba(30,58,138,.06)}
+    .card-titulo{font-family:'Sora',sans-serif;font-size:14px;font-weight:700;color:var(--blue);margin-bottom:12px;display:flex;align-items:center;justify-content:space-between}
+    .badge{background:var(--blue);color:#fff;font-size:11px;padding:3px 9px;border-radius:20px;font-weight:600}
+
+    /* GRUPOS */
+    .grupo-item{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border)}
+    .grupo-item:last-child{border-bottom:none}
+    .grupo-nome{font-size:14px;font-weight:500}
+    .grupo-sub{font-size:12px;color:var(--light)}
+    .btn-entrar{background:var(--blue);color:#fff;border:none;padding:6px 13px;border-radius:8px;font-size:13px;cursor:pointer}
+    .btn-entrar.pend{background:var(--yellow);color:#1a1a1a;cursor:default}
+    .btn-criar{width:100%;padding:11px;margin-top:12px;background:transparent;border:1.5px dashed var(--blue);color:var(--blue);border-radius:12px;font-size:14px;cursor:pointer}
+
+    /* PRÓXIMO */
+    .card-prox{background:linear-gradient(135deg,var(--blue),#2563eb);border-radius:18px;padding:18px;margin-bottom:16px;color:#fff;position:relative;overflow:hidden}
+    .card-prox::after{content:'';position:absolute;right:-15px;top:-15px;width:80px;height:80px;background:rgba(255,255,255,.07);border-radius:50%}
+    .prox-label{font-size:10px;text-transform:uppercase;letter-spacing:1px;opacity:.7;margin-bottom:6px}
+    .prox-titulo{font-family:'Sora',sans-serif;font-size:15px;font-weight:700;margin-bottom:10px;line-height:1.3;cursor:pointer;text-decoration:underline dotted rgba(255,255,255,.3)}
+    .prox-meta{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:14px;font-size:12px;opacity:.85}
+    .btn-agenda{background:var(--green);color:#fff;border:none;padding:10px;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;width:100%;font-family:'Sora',sans-serif}
+    .card-vazio{background:var(--w);border-radius:18px;padding:28px 16px;text-align:center;margin-bottom:16px;box-shadow:0 2px 10px rgba(30,58,138,.06);color:var(--light);font-size:14px}
+
+    /* EVENTOS */
+    .sec-titulo{font-family:'Sora',sans-serif;font-size:13px;font-weight:700;color:var(--blue);margin-bottom:10px;display:flex;align-items:center;justify-content:space-between}
+    .ev-wrap{position:relative;margin-bottom:10px;border-radius:14px;overflow:hidden}
+    .ev-bg{position:absolute;inset:0;display:flex;border-radius:14px}
+    .ev-bg-l{flex:1;background:var(--green);display:flex;align-items:center;padding-left:16px}
+    .ev-bg-r{flex:1;background:var(--red);display:flex;align-items:center;justify-content:flex-end;padding-right:16px}
+    .ev-bg span{color:#fff;font-size:12px;font-weight:700}
+    .ev-card{background:var(--w);border-radius:14px;padding:13px 15px;position:relative;border-left:3px solid var(--blue);transition:transform .2s ease;touch-action:pan-y;cursor:pointer}
+    .ev-titulo{font-weight:600;font-size:14px;margin-bottom:5px}
+    .ev-meta{font-size:12px;color:var(--light);display:flex;gap:10px}
+    .ev-conv{margin-top:6px;font-size:12px;color:var(--blue);font-weight:500}
+    .aviso-ferias{background:#fee2e2;color:#991b1b;font-size:11px;padding:6px 10px;border-radius:6px;margin-top:8px;font-weight:600;display:flex;align-items:center;gap:6px}
+
+    /* MODAL EVENTO */
+    .overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:200;display:none;align-items:flex-end}
+    .overlay.on{display:flex}
+    .sheet{background:var(--w);border-radius:24px 24px 0 0;width:100%;max-height:90dvh;overflow-y:auto;padding:22px 18px 48px;animation:sup .3s ease}
+    @keyframes sup{from{transform:translateY(100%)}to{transform:translateY(0)}}
+    .handle{width:38px;height:4px;background:var(--border);border-radius:2px;margin:0 auto 18px}
+    .mod-titulo{font-family:'Sora',sans-serif;font-size:17px;font-weight:700;margin-bottom:6px}
+    .mod-sub{font-size:13px;color:var(--light);margin-bottom:16px}
+    .mod-sec h3{font-size:11px;text-transform:uppercase;letter-spacing:1px;color:var(--light);margin-bottom:8px}
+    .conv-linha{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid #f1f5f9;flex-wrap:wrap}
+    .conv-icon{width:30px;height:30px;background:#eff6ff;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+    .conv-icon svg{width:15px;height:15px;fill:var(--blue)}
+    .conv-nome{font-size:14px;font-weight:500;flex:1}
+    .btn-ag{width:100%;padding:12px;background:var(--green);color:#fff;border:none;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;margin-top:16px;font-family:'Sora',sans-serif}
+    .btn-del{width:100%;padding:11px;background:#fee2e2;color:var(--red);border:none;border-radius:10px;font-size:14px;cursor:pointer;margin-top:8px}
+
+    /* Card de substituição - cor âmbar/laranja */
+    .card-prox-sub{background:linear-gradient(135deg,#92400e,#b45309);border-radius:18px;padding:18px;margin-bottom:10px;color:#fff;position:relative;overflow:hidden}
+    .card-prox-sub::after{content:'';position:absolute;right:-15px;top:-15px;width:80px;height:80px;background:rgba(255,255,255,.07);border-radius:50%}
+    .sub-badge{display:inline-block;background:rgba(255,255,255,.2);border-radius:20px;padding:2px 10px;font-size:10px;font-weight:700;letter-spacing:1px;margin-bottom:6px}
+
+    /* Modal Genérico Centro */
+    .ov-center{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:750;display:none;align-items:center;justify-content:center;padding:20px}
+    .ov-center.on{display:flex}
+    .box-center{background:#fff;border-radius:24px;padding:28px 22px;width:100%;max-width:360px;animation:fu .3s ease;position:relative}
+    .box-center h3{font-family:'Sora',sans-serif;font-size:17px;font-weight:700;color:var(--blue);margin-bottom:6px}
+    .box-center p{font-size:13px;color:var(--light);margin-bottom:16px;line-height:1.5}
+    .field{margin-bottom:14px}
+    .field label{display:block;font-size:12px;font-weight:600;color:var(--text);margin-bottom:5px;text-transform:uppercase;letter-spacing:.5px}
+    .field input, .field select{width:100%;padding:11px 13px;border:1.5px solid var(--border);border-radius:12px;font-family:'DM Sans',sans-serif;font-size:15px;color:var(--text);outline:none;background:#fff}
+    .field input:focus, .field select:focus{border-color:var(--blue)}
+    .btns-row{display:flex;gap:10px;margin-top:20px}
+    .btn-cancel{flex:1;padding:12px;background:transparent;border:1.5px solid var(--border);border-radius:12px;font-size:14px;cursor:pointer;color:var(--text);font-weight:500}
+    .btn-salvar{flex:1;padding:12px;background:var(--blue);border:none;border-radius:12px;color:#fff;font-size:14px;cursor:pointer;font-family:'Sora',sans-serif;font-weight:600}
+    .btn-salvar:disabled{opacity:0.6; cursor:not-allowed;}
+
+    /* SCANNER */
+    #scan-ov{position:fixed;inset:0;background:#000;z-index:300;display:none;flex-direction:column}
+    #scan-ov.on{display:flex}
+    .scan-hd{padding:14px 16px;display:flex;align-items:center;gap:10px;background:rgba(0,0,0,.8);flex-shrink:0}
+    .btn-x{background:rgba(255,255,255,.15);border:none;color:#fff;width:34px;height:34px;border-radius:50%;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+    .scan-hd span{color:#fff;font-family:'Sora',sans-serif;font-size:14px;font-weight:600}
+    #video{width:100%;height:100%;object-fit:cover;display:block}
+    .cam-wrap{flex:1;position:relative;overflow:hidden;max-height:calc(100dvh - 200px)}
+    .cam-mask{position:absolute;inset:0;display:flex;align-items:center;justify-content:center}
+    .cam-box{width:85%;height:75%;border:2px solid rgba(255,255,255,.6);border-radius:12px;position:relative}
+    .cam-box::before{content:'';position:absolute;top:-2px;left:-2px;width:20px;height:20px;border:3px solid #fff;border-right:none;border-bottom:none;border-radius:8px 0 0 0}
+    .cam-box::after{content:'';position:absolute;top:-2px;right:-2px;width:20px;height:20px;border:3px solid #fff;border-left:none;border-bottom:none;border-radius:0 8px 0 0}
+    .c-bl{position:absolute;bottom:-2px;left:-2px;width:20px;height:20px;border:3px solid #fff;border-right:none;border-top:none;border-radius:0 0 0 8px}
+    .c-br{position:absolute;bottom:-2px;right:-2px;width:20px;height:20px;border:3px solid #fff;border-left:none;border-top:none;border-radius:0 0 8px 0}
+    .cam-hint{position:absolute;bottom:12px;left:50%;transform:translateX(-50%);color:rgba(255,255,255,.8);font-size:12px;white-space:nowrap}
+    .scan-ctrl{height:160px;flex-shrink:0;padding:16px;background:rgba(0,0,0,.9);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px}
+    .btn-cap{width:60px;height:60px;border-radius:50%;background:#fff;border:4px solid rgba(255,255,255,.4);cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+    .btn-cap svg{width:26px;height:26px;fill:var(--blue)}
+    .btn-gal{background:rgba(255,255,255,.15);border:none;color:#fff;padding:10px 24px;border-radius:12px;font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;width:100%;flex-shrink:0}
+
+    /* OCR */
+    #ocr-ov{position:fixed;inset:0;background:rgba(255,255,255,.96);z-index:500;display:none;flex-direction:column;align-items:center;justify-content:center;gap:18px}
+    #ocr-ov.on{display:flex}
+    .ocr-icon{font-size:44px;animation:pu 1s ease infinite}
+    @keyframes pu{0%,100%{opacity:1}50%{opacity:.5}}
+    .ocr-bar{width:190px;height:6px;background:var(--border);border-radius:3px;overflow:hidden}
+    .ocr-fill{height:100%;background:var(--blue);border-radius:3px;transition:width .3s;width:0}
+
+    /* REVIEW */
+    #rv-ov{position:fixed;inset:0;background:var(--bg);z-index:400;display:none;flex-direction:column;overflow-y:auto}
+    #rv-ov.on{display:flex}
+    .rv-hd{background:var(--blue);color:#fff;padding:18px 16px;display:flex;align-items:center;gap:10px;flex-shrink:0}
+    .rv-hd h2{font-family:'Sora',sans-serif;font-size:15px;font-weight:700;flex:1}
+    .rv-body{padding:16px;flex:1}
+    .rv-lbl{font-size:11px;text-transform:uppercase;letter-spacing:1px;color:var(--light);margin-bottom:6px}
+    .rv-val{background:var(--w);border-radius:12px;padding:11px 13px;border:1.5px solid var(--border);margin-bottom:14px}
+    .rv-val input{width:100%;border:none;outline:none;font-family:'DM Sans',sans-serif;font-size:15px;color:var(--text);background:transparent}
+    .mi{background:var(--w);border-radius:12px;padding:11px 13px;margin-bottom:8px;border:1.5px solid var(--border);display:flex;flex-direction:column;gap:6px}
+    .mi.ok{border-color:#d1fae5;background:#f0fdf4}
+    .mi.av{border-color:#fef3c7;background:#fffbeb}
+    .mi.no{border-color:#fee2e2;background:#fff5f5}
+    .mi-top{display:flex;align-items:center;gap:8px}
+    .mi-nome{font-size:14px;font-weight:500;flex:1}
+    .mi-sub{font-size:12px;color:var(--light)}
+    .mi-btns{display:flex;gap:8px;padding-left:28px}
+    .btn-sim{flex:1;padding:7px;background:var(--green);color:#fff;border:none;border-radius:8px;font-size:12px;cursor:pointer;font-weight:600}
+    .btn-nao{flex:1;padding:7px;background:#fee2e2;color:var(--red);border:none;border-radius:8px;font-size:12px;cursor:pointer}
+    .rv-btns{display:flex;gap:10px;margin:16px;flex-shrink:0}
+    .btn-cancel{flex:1;padding:12px;background:transparent;border:1.5px solid var(--border);border-radius:12px;font-size:14px;cursor:pointer;color:var(--text)}
+    .btn-salvar{flex:1;padding:12px;background:var(--blue);border:none;border-radius:12px;color:#fff;font-size:14px;cursor:pointer;font-family:'Sora',sans-serif;font-weight:600}
+    .btn-salvar:disabled{opacity:0.6; cursor:not-allowed;}
+
+    /* FAB */
+    #fab{position:fixed;bottom:22px;right:18px;width:58px;height:58px;background:var(--blue);border:none;border-radius:50%;box-shadow:0 4px 18px rgba(30,58,138,.4);cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:50}
+    #fab svg{width:24px;height:24px;fill:#fff}
+
+    /* APROVAÇÕES */
+    .apv{background:var(--w);border-radius:12px;padding:13px 15px;margin-bottom:8px;border-left:3px solid var(--yellow)}
+    .apv-nome{font-weight:600;font-size:14px}
+    .apv-cargo{font-size:12px;color:var(--light);margin-bottom:8px}
+    .apv-btns{display:flex;gap:8px}
+    .btn-apr{flex:1;padding:8px;background:var(--green);color:#fff;border:none;border-radius:8px;font-size:13px;cursor:pointer;font-weight:600}
+    .btn-rec{flex:1;padding:8px;background:#fee2e2;color:var(--red);border:none;border-radius:8px;font-size:13px;cursor:pointer}
+
+    /* ADMIN */
+    #admin-ov{position:fixed;inset:0;background:var(--bg);z-index:400;display:none;flex-direction:column;overflow-y:auto}
+    #admin-ov.on{display:flex}
+    .admin-hd{background:var(--blue);color:#fff;padding:18px 16px;display:flex;align-items:center;gap:10px;flex-shrink:0}
+    .admin-hd h2{font-family:'Sora',sans-serif;font-size:15px;font-weight:700;flex:1}
+    .admin-body{padding:16px}
+    .membro-card{background:#fff;border-radius:12px;padding:13px 15px;margin-bottom:10px;display:flex;align-items:center;gap:12px;box-shadow:0 2px 8px rgba(30,58,138,.06)}
+    .membro-avatar{width:38px;height:38px;background:#eff6ff;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+    .membro-info{flex:1;min-width:0}
+    .membro-nome{font-size:14px;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .membro-cargo{font-size:12px;color:var(--light)}
+    .membro-badge{font-size:10px;padding:2px 8px;border-radius:4px;font-weight:600;background:#eff6ff;color:var(--blue)}
+    .membro-acoes{display:flex;gap:6px}
+    .btn-admin-sm{padding:6px 10px;border:none;border-radius:6px;font-size:11px;cursor:pointer;font-weight:600;white-space:nowrap}
+    .btn-promover{background:var(--green);color:#fff}
+    .btn-rebaixar{background:var(--yellow);color:#1a1a1a}
+    .btn-expulsar{background:#fee2e2;color:var(--red)}
+    .skel{height:50px;background:linear-gradient(90deg,#f0f4ff,#e2e8f0,#f0f4ff);background-size:200% 100%;animation:load 1.5s infinite;border-radius:8px;margin-bottom:8px}
+    @keyframes load{0%{background-position:200% 0}100%{background-position:-200% 0}}
+
+    /* AUSÊNCIAS */
+    .aus-card{background:var(--w);border-radius:12px;padding:13px 15px;margin-bottom:10px;display:flex;align-items:center;gap:12px;border-left:3px solid var(--blue);box-shadow:0 2px 8px rgba(30,58,138,.06)}
+    .aus-card.tipo-ferias{border-left-color:#ec4899}
+    .aus-card.tipo-licenca{border-left-color:#f59e0b}
+    .aus-card.tipo-abono{border-left-color:#06b6d4}
+    .aus-icon{font-size:24px}
+    .aus-info{flex:1}
+    .aus-nome{font-weight:600;font-size:14px}
+    .aus-detalhe{font-size:12px;color:var(--light)}
+    .aus-tipo{font-size:10px;text-transform:uppercase;letter-spacing:.5px;color:var(--light);margin-top:4px}
+
+    /* TROCAR */
+    #trocar-ov{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:400;display:none;align-items:flex-end}
+    #trocar-ov.on{display:flex}
+    .trocar-sheet{background:var(--w);border-radius:24px 24px 0 0;width:100%;max-height:90dvh;overflow-y:auto;padding:22px 18px 48px;animation:sup .3s ease}
+    .trocar-membro{background:var(--w);border-radius:12px;padding:13px 15px;margin-bottom:10px;display:flex;align-items:center;gap:12px;border:1.5px solid var(--border);cursor:pointer;transition:all .2s}
+    .trocar-membro.selecionado{border-color:var(--blue);background:#eff6ff}
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="h-top">
+    <div class="h-logo">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm3.5-9c.83 0 1.5-.67 1.5-1.5S16.33 8 15.5 8 14 8.67 14 9.5s.67 1.5 1.5 1.5zm-7 0c.83 0 1.5-.67 1.5-1.5S9.33 8 8.5 8 7 8.67 7 9.5 7.67 11 8.5 11zm3.5 6.5c2.33 0 4.31-1.46 5.11-3.5H6.89c.8 2.04 2.78 3.5 5.11 3.5z"/></svg>
+      <span>Convocações</span>
+    </div>
+    <button class="btn-sair" onclick="sair()">Sair</button>
+  </div>
+  <div class="h-sub" id="h-user">Carregando...</div>
+</header>
+
+<div class="nav-tabs">
+  <div class="nav-tab active" onclick="mostrarAba('convocacoes')">📋 Convocações</div>
+  <div class="nav-tab" onclick="mostrarAba('ferias')">🏖️ Férias</div>
+</div>
+
+<main>
+  <!-- ABA CONVOCAÇÕES -->
+  <div id="aba-convocacoes" class="aba-content">
+    <div id="prox"></div>
+    <div class="sec-titulo">Todas as convocações <span class="badge" id="total">0</span></div>
+    <div id="lst-ev"></div>
   </div>
 
-  <div class="rv-body">
-    <div class="rv-lbl">Título do evento</div>
-    <div class="rv-val">
-      <input type="text" id="rv-tit" placeholder="Informe o título"/>
+  <!-- ABA FÉRIAS -->
+  <div id="aba-ferias" class="aba-content" style="display:none">
+    <div class="card">
+      <div class="card-titulo">Minhas Ausências</div>
+      <button class="btn-criar" onclick="iniciarAddFerias()">+ Adicionar Ausência</button>
     </div>
+    <div id="lst-ausencias"></div>
+  </div>
+</main>
 
-    <div class="rv-lbl">Data e hora</div>
-    <div class="rv-val">
-      <input type="datetime-local" id="rv-data"/>
+<!-- MODAL EVENTO -->
+<div class="overlay" id="mod-ev">
+  <div class="sheet">
+    <div class="handle"></div>
+    <div class="mod-titulo" id="mod-tit">Evento</div>
+    <div class="mod-sub" id="mod-sub">Data e hora</div>
+    <div class="mod-sec">
+      <h3>Convocados</h3>
+      <div id="mod-conv"></div>
     </div>
-
-    <div class="rv-lbl">Local</div>
-    <div class="rv-val">
-      <input type="text" id="rv-loc" placeholder="Local do evento"/>
+    <div style="display:flex;gap:8px;margin-top:16px">
+      <button class="btn-ag" id="mod-ag">📅 Adicionar à agenda</button>
+      <button class="btn-ag" id="mod-trocar" style="display:none;background:#fff7ed;color:#c2410c;border:1.5px solid #fed7aa;">🔄 Trocar</button>
     </div>
+    <button class="btn-del" id="mod-del" style="display:none">🗑 Excluir</button>
+  </div>
+</div>
 
-    <div class="rv-lbl" style="margin-bottom:8px">
-      Convocados identificados
-    </div>
-
-    <div id="rv-matches"></div>
-
-    <div class="rv-btns">
-      <button class="btn-cancel" id="rv-btn-cancelar">
-        Cancelar
-      </button>
-
-      <button class="btn-salvar" id="rv-btn-salvar">
-        ✓ Salvar
-      </button>
+<!-- MODAL FÉRIAS -->
+<div class="ov-center" id="ferias-consent-ov">
+  <div class="box-center">
+    <h3>Registrar Ausência</h3>
+    <p>Você está prestes a registrar um período de férias, licença ou abono. Isso afetará suas convocações durante este período.</p>
+    <div class="btns-row">
+      <button class="btn-cancel" onclick="document.getElementById('ferias-consent-ov').classList.remove('on')">Cancelar</button>
+      <button class="btn-salvar" onclick="abrirFormFerias()">Continuar</button>
     </div>
   </div>
 </div>
-```
 
----
+<div class="ov-center" id="ferias-form-ov">
+  <div class="box-center">
+    <h3>Datas da Ausência</h3>
+    <div class="field">
+      <label>Tipo</label>
+      <select id="ferias-tipo">
+        <option value="abono">Abono</option>
+        <option value="licenca">Licença</option>
+        <option value="ferias">Férias</option>
+      </select>
+    </div>
+    <div class="field">
+      <label>Data de início</label>
+      <input type="date" id="ferias-ini"/>
+    </div>
+    <div class="field">
+      <label>Data de término</label>
+      <input type="date" id="ferias-fim"/>
+    </div>
+    <div class="btns-row">
+      <button class="btn-cancel" onclick="document.getElementById('ferias-form-ov').classList.remove('on')">Cancelar</button>
+      <button class="btn-salvar" onclick="salvarFerias()">✓ Salvar</button>
+    </div>
+  </div>
+</div>
 
-## 2) ADICIONE O CSS
+<!-- SCANNER -->
+<div id="scan-ov">
+  <div class="scan-hd">
+    <button class="btn-x" onclick="fecharScanner()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:20px;height:20px"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button>
+    <span>Scanner de Convocação</span>
+  </div>
+  <div class="cam-wrap">
+    <video id="video"></video>
+    <div class="cam-mask">
+      <div class="cam-box">
+        <div class="c-bl"></div>
+        <div class="c-br"></div>
+        <div class="cam-hint">Alinhe a convocação</div>
+      </div>
+    </div>
+  </div>
+  <div class="scan-ctrl">
+    <button class="btn-cap" onclick="capturar()"><svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="8"/></svg></button>
+    <button class="btn-gal" onclick="document.getElementById('file-input').click()"><svg viewBox="0 0 24 24" fill="currentColor" style="width:18px;height:18px"><path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/></svg> Galeria</button>
+  </div>
+</div>
 
-```css
-.mi-input{
-  width:100%;
-  padding:10px 12px;
-  border:1.5px solid #dbe2ea;
-  border-radius:10px;
-  font-size:14px;
-  outline:none;
+<!-- OCR LOADING -->
+<div id="ocr-ov">
+  <div class="ocr-icon">🔍</div>
+  <div style="font-family:'Sora',sans-serif;font-weight:700;font-size:15px">Lendo documento...</div>
+  <div class="ocr-bar"><div class="ocr-fill" id="ocr-fill"></div></div>
+  <div style="font-size:13px;color:var(--light)" id="ocr-pct">0%</div>
+</div>
+
+<!-- REVIEW MODAL - CORRIGIDO PARA NÃO TRAVAR -->
+<div id="rv-ov">
+  <div class="rv-hd">
+    <button class="btn-x" onclick="fecharRv()" style="margin-right:auto"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:20px;height:20px"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button>
+    <h2>Conferir dados</h2>
+  </div>
+  <div class="rv-body">
+    <div class="rv-lbl">Título do evento</div>
+    <div class="rv-val"><input type="text" id="rv-tit" placeholder="Informe o título..."/></div>
+    <div class="rv-lbl">Data e hora</div>
+    <div class="rv-val"><input type="datetime-local" id="rv-data"/></div>
+    <div class="rv-lbl">Local</div>
+    <div class="rv-val"><input type="text" id="rv-loc" placeholder="Local do evento..."/></div>
+    <div class="rv-lbl" style="margin-bottom:8px">Convocados identificados</div>
+    <div id="rv-matches"></div>
+  </div>
+  <div class="rv-btns">
+    <button class="btn-cancel" onclick="fecharRv()">Cancelar</button>
+    <button class="btn-salvar" id="rv-btn-salvar" onclick="salvar()">✓ Salvar</button>
+  </div>
+</div>
+
+<!-- FAB -->
+<button id="fab" onclick="abrirScanner()"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm5 11h-4v4h-2v-4H7v-2h4V7h2v4h4v2z"/></svg></button>
+
+<input type="file" id="file-input" style="display:none" accept="image/*" onchange="processarFoto(this.files[0])"/>
+
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+<script>
+firebase.initializeApp({
+  apiKey:"AIzaSyAOpV5NFydHWwUwQKg0MANqMHVcXVDDqpQ",
+  authDomain:"gestor-convocacoes-89823.firebaseapp.com",
+  projectId:"gestor-convocacoes-89823",
+  storageBucket:"gestor-convocacoes-89823.firebasestorage.app",
+  messagingSenderId:"212389113483",
+  appId:"1:212389113483:web:eb97eefe621df0cba66e8e"
+});
+const auth=firebase.auth();
+const db=firebase.firestore();
+
+// ── VARIÁVEIS GLOBAIS ─────────────────────────────────────────────────
+let authOk=false,eu={},grupoId=null,camStream=null,ocrDados=null,matches=[],eventoTroca=null,substitutoSelecionado=null;
+let listaAusencias=[];
+let isProcessingSave=false;
+
+const T=setTimeout(()=>{if(!authOk)window.location.replace('login.html');},10000);
+
+// ── UTILS ──────────────────────────────────────────────────────────────
+function palavrasSimilares(a,b){const l=Math.max(a.length,b.length);if(l<3)return a===b;let d=0;for(let i=0;i<Math.min(a.length,b.length);i++)if(a[i]!==b[i])d++;return d/l<0.4;}
+
+function mostrarAba(aba){
+  document.querySelectorAll('.aba-content').forEach(el=>el.style.display='none');
+  document.getElementById('aba-'+aba).style.display='block';
+  document.querySelectorAll('.nav-tab').forEach(el=>el.classList.remove('active'));
+  const target = event.currentTarget || event.target;
+  if(target) target.classList.add('active');
+  if(aba==='ferias') carregarFerias();
 }
 
-.mi-input:focus{
-  border-color:#2563eb;
+// ── AUTH ───────────────────────────────────────────────────────────────
+auth.onAuthStateChanged(async user=>{
+  if(!user){ clearTimeout(T); window.location.replace('login.html'); return; }
+  try{
+    const snap=await db.collection('usuarios').doc(user.uid).get();
+    if(!snap.exists||!snap.data().nome_completo){
+      clearTimeout(T); window.location.replace('login.html'); return;
+    }
+    authOk=true; clearTimeout(T);
+    eu={uid:user.uid,...snap.data()};
+    document.getElementById('h-user').textContent=eu.nome_completo+' · '+eu.cargo;
+    
+    try{ fetchAusencias(); }catch(e){}
+    
+    if(eu.grupo_id){
+      grupoId=eu.grupo_id;
+      carregarEventos();
+    } else {
+      document.getElementById('lst-ev').innerHTML='<p style="color:var(--light);font-size:14px;padding:20px;text-align:center">Entre em um grupo para ver convocações.</p>';
+      document.getElementById('prox').innerHTML='<div class="card-vazio">Entre em um grupo para ver suas convocações.</div>';
+    }
+  }catch(err){
+    console.error(err);
+    clearTimeout(T);
+    window.location.replace('login.html');
+  }
+}).catch(e=>console.error('Persistence:',e));
+
+// ── FÉRIAS & AUSÊNCIAS ────────────────────────────────────────────────
+async function fetchAusencias() {
+  const hojeStr = new Date().toISOString().split('T')[0];
+  const snap = await db.collection('ausencias')
+    .where('grupo_id', '==', grupoId)
+    .where('data_fim', '>=', hojeStr)
+    .get();
+  listaAusencias = snap.docs.map(d => ({id: d.id, ...d.data()}));
 }
 
-.btn-salvar[disabled]{
-  opacity:.6;
-  cursor:not-allowed;
+async function carregarFerias() {
+  await fetchAusencias();
+  const lst = document.getElementById('lst-ausencias');
+  lst.innerHTML = '';
+
+  const ordenados = listaAusencias.sort((a,b) => new Date(a.data_inicio) - new Date(b.data_inicio));
+
+  if (ordenados.length === 0) {
+    lst.innerHTML = '<p style="color:var(--light);font-size:14px;padding:20px;text-align:center">Nenhuma ausência registrada para os próximos dias.</p>';
+    return;
+  }
+
+  ordenados.forEach(aus => {
+    let dtIni = new Date(aus.data_inicio+"T12:00:00");
+    let dtFim = new Date(aus.data_fim+"T12:00:00");
+    let icone = aus.tipo === 'ferias' ? '🏖️' : (aus.tipo === 'licenca' ? '🏥' : '⏱️');
+    
+    const div = document.createElement('div');
+    div.className = `aus-card tipo-${aus.tipo}`;
+    div.innerHTML = `
+      <div class="aus-icon">${icone}</div>
+      <div class="aus-info">
+        <div class="aus-nome">${aus.nome_completo}</div>
+        <div class="aus-detalhe">De ${dtIni.toLocaleDateString('pt-BR')} a ${dtFim.toLocaleDateString('pt-BR')}</div>
+        <div class="aus-tipo">${aus.tipo}</div>
+      </div>
+      ${(eu.is_admin || eu.uid === aus.uid) ? `<button class="btn-cancel" style="border:none; color:var(--red); padding:5px; max-width:40px;" onclick="excluirFerias('${aus.id}')">🗑️</button>` : ''}
+    `;
+    lst.appendChild(div);
+  });
 }
-```
 
----
+function iniciarAddFerias() {
+  document.getElementById('ferias-consent-ov').classList.add('on');
+}
 
-## 3) REMOVA TODOS ESTES ONCLICK DO REVIEW
+function abrirFormFerias() {
+  document.getElementById('ferias-consent-ov').classList.remove('on');
+  document.getElementById('ferias-form-ov').classList.add('on');
+  document.getElementById('ferias-ini').value = "";
+  document.getElementById('ferias-fim').value = "";
+  document.getElementById('ferias-tipo').value = "abono";
+}
 
-REMOVER:
+async function salvarFerias() {
+  const tipo = document.getElementById('ferias-tipo').value;
+  const iniStr = document.getElementById('ferias-ini').value;
+  const fimStr = document.getElementById('ferias-fim').value;
 
-onclick="fecharRv()"
-onclick="salvar()"
+  if(!iniStr || !fimStr) { alert("Preencha ambas as datas."); return; }
 
-Agora tudo será por addEventListener.
+  const dtIni = new Date(iniStr+"T12:00:00");
+  const dtFim = new Date(fimStr+"T12:00:00");
 
----
+  if(dtIni > dtFim) { alert("A data de término não pode ser anterior ao início."); return; }
 
-## 4) ADICIONE ESTES LISTENERS
+  const diffTime = Math.abs(dtFim - dtIni);
+  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
 
-```javascript
-document.getElementById('rv-btn-fechar')
-  .addEventListener('click', fecharRv);
+  if (tipo === 'abono' && diffDays < 1) { alert("Abono requer no mínimo 1 dia."); return; }
+  if (tipo === 'licenca' && diffDays < 2) { alert("Licença requer no mínimo 2 dias."); return; }
+  if (tipo === 'ferias' && diffDays < 5) { alert("Férias requer no mínimo 5 dias."); return; }
 
-document.getElementById('rv-btn-cancelar')
-  .addEventListener('click', fecharRv);
+  await db.collection('ausencias').add({
+    uid: eu.uid,
+    nome_completo: eu.nome_completo,
+    grupo_id: grupoId,
+    tipo: tipo,
+    data_inicio: iniStr,
+    data_fim: fimStr,
+    criado_em: firebase.firestore.FieldValue.serverTimestamp()
+  });
 
-document.getElementById('rv-btn-salvar')
-  .addEventListener('click', salvar);
-```
+  document.getElementById('ferias-form-ov').classList.remove('on');
+  alert("Período registrado com sucesso!");
+  carregarFerias();
+}
 
----
+async function excluirFerias(id) {
+  if(!confirm("Deseja apagar este registro?")) return;
+  await db.collection('ausencias').doc(id).delete();
+  carregarFerias();
+}
 
-## 5) SUBSTITUA fecharRv()
+function verificarStatusAusencia(uid, dataEvento) {
+  if(!uid || !dataEvento) return null;
+  const dataStr = dataEvento.split('T')[0];
+  return listaAusencias.find(aus => aus.uid === uid && aus.data_inicio <= dataStr && aus.data_fim >= dataStr) || null;
+}
 
-```javascript
+// ── EVENTOS ────────────────────────────────────────────────────────────
+async function carregarEventos(){
+  const snap=await db.collection('eventos').where('grupo_id','==',grupoId).get();
+  const agora=new Date();
+  const evs=snap.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>new Date(a.data_hora)-new Date(b.data_hora));
+  document.getElementById('total').textContent=evs.length+' total';
+
+  const norm=s=>s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9\s]/g,'').trim();
+  const stopwords=new Set(['de','da','do','das','dos','e','a','o','as','os']);
+  const pwSig=s=>norm(s).split(/\s+/).filter(p=>p.length>1&&!stopwords.has(p));
+  const euNomes=[eu.nome_completo,...(eu.nomes_conhecidos||[])];
+  const euPalavras=pwSig(eu.nome_completo);
+
+  function euSouConvocado(lista){
+    return (lista||[]).some(n=>{
+      if(euNomes.some(en=>norm(en)===norm(n))) return true; 
+      const pwN=pwSig(n);
+      const emComum=pwN.filter(p=>euPalavras.some(pe => p === pe || palavrasSimilares(p,pe)));
+      return emComum.length/Math.max(pwN.length,1)>=0.55; 
+    });
+  }
+
+  const minhasProximas=evs.filter(e=>new Date(e.data_hora)>agora&&euSouConvocado(e.lista_convocados));
+  const minhasSubstituicoes=evs.filter(e=>new Date(e.data_hora)>agora&&(e.substitutos||[]).some(s=>s.uid===eu.uid));
+
+  const el=document.getElementById('prox');
+  if(!minhasProximas.length&&!minhasSubstituicoes.length){
+    el.innerHTML='<div class="card-vazio">Você não tem convocações próximas.</div>';
+  } else {
+    el.innerHTML=[
+      ...minhasProximas.map((ev,idx)=>{
+        const dt=new Date(ev.data_hora); const evString = JSON.stringify(ev).replace(/'/g,"&#39;");
+        return `<div class="card-prox" style="margin-bottom:10px">
+          <div class="prox-label">${idx===0?'SUA PRÓXIMA CONVOCAÇÃO':'TAMBÉM CONVOCADO'}</div>
+          <div class="prox-titulo" onclick='abrirMod(${evString})'>${ev.titulo_evento||'Evento'}</div>
+          <div class="prox-meta"><span>📅 ${fD(dt)}</span><span>🕐 ${fH(dt)}</span>${ev.local?'<span>📍 '+ev.local+'</span>':''}</div>
+          <div style="display:flex; gap:8px;">
+            <button class="btn-agenda" style="flex:1; margin-top:0;" onclick='ics(${evString})'>📅 Agenda</button>
+            <button class="btn-agenda" style="flex:1; margin-top:0; background:#fff7ed; color:#c2410c; border:1.5px solid #fed7aa;" onclick='abrirTrocar(${evString})'>🔄 Trocar</button>
+          </div>
+        </div>`;
+      }),
+      ...minhasSubstituicoes.map(ev=>{
+        const dt=new Date(ev.data_hora); const evString = JSON.stringify(ev).replace(/'/g,"&#39;"); const sub=ev.substitutos.find(s=>s.uid===eu.uid);
+        return `<div class="card-prox-sub" style="margin-bottom:10px">
+          <div class="sub-badge">🔄 SUBSTITUIÇÃO</div>
+          <div class="prox-titulo" onclick='abrirMod(${evString})'>${ev.titulo_evento||'Evento'}</div>
+          <div style="font-size:12px;opacity:.8;margin-bottom:10px">Substituindo: ${sub.substituindo}</div>
+          <div class="prox-meta"><span>📅 ${fD(dt)}</span><span>🕐 ${fH(dt)}</span>${ev.local?'<span>📍 '+ev.local+'</span>':''}</div>
+          <div style="display:flex; gap:8px;">
+            <button class="btn-agenda" style="flex:1; margin-top:0; background:#d97706" onclick='ics(${evString})'>📅 Agenda</button>
+            <button class="btn-agenda" style="flex:1; margin-top:0; background:#fff7ed; color:#c2410c; border:1.5px solid #fed7aa;" onclick='abrirTrocar(${evString})'>🔄 Trocar</button>
+          </div>
+        </div>`;
+      })
+    ].join('');
+  }
+
+  const lst=document.getElementById('lst-ev');
+  if(!evs.length){lst.innerHTML='<p style="color:var(--light);font-size:14px;padding:20px;text-align:center">Nenhuma convocação ainda.</p>';return;}
+  lst.innerHTML='';
+  const futuros=evs.filter(e=>new Date(e.data_hora)>agora);
+  const passados=evs.filter(e=>new Date(e.data_hora)<=agora).reverse();
+  [...futuros,...passados].forEach(ev=>lst.appendChild(criarCard(ev)));
+}
+
+function criarCard(ev){
+  const dt=new Date(ev.data_hora); const passado=dt<=new Date();
+  const wrap=document.createElement('div'); wrap.className='ev-wrap';
+  wrap.innerHTML=`<div class="ev-bg"><div class="ev-bg-l"><span>👁 Ver</span></div>${eu.is_admin ? '<div class="ev-bg-r"><span>🗑 Excluir</span></div>' : ''}</div>
+    <div class="ev-card" style="border-left-color:${passado?'#94a3b8':'var(--blue)'};opacity:${passado?.7:1}">
+      <div class="ev-titulo">${ev.titulo_evento||'Sem título'}${passado?' <span style="font-size:11px;color:#94a3b8">(encerrado)</span>':''}</div>
+      <div class="ev-meta"><span>📅 ${fD(dt)}</span><span>🕐 ${fH(dt)}</span></div>
+      <div class="ev-conv">${(ev.lista_convocados||[]).length} convocado(s)</div>
+    </div>`;
+
+  const card=wrap.querySelector('.ev-card');
+  let sx=0,dx=0,mov=false;
+  card.addEventListener('touchstart',e=>{sx=e.touches[0].clientX;mov=false;},{passive:true});
+  card.addEventListener('touchmove',e=>{
+    dx=e.touches[0].clientX-sx;mov=true; 
+    if(!eu.is_admin && dx < 0) dx = 0;
+    if(Math.abs(dx)>8){card.style.transition='none';card.style.transform=`translateX(${Math.max(-100,Math.min(100,dx))}px)`;}
+  },{passive:true});
+  card.addEventListener('touchend',()=>{
+    card.style.transition='transform .2s ease';
+    if(dx<-60 && eu.is_admin){
+      if(confirm('Excluir esta convocação?')){ db.collection('eventos').doc(ev.id).delete().then(()=>carregarEventos()); } else card.style.transform='translateX(0)';
+    } else if(dx>60){ card.style.transform='translateX(0)';abrirMod(ev);
+    } else { card.style.transform='translateX(0)'; if(!mov)abrirMod(ev); } dx=0;
+  });
+  card.addEventListener('click',()=>{if(!mov)abrirMod(ev);});
+  return wrap;
+}
+
+async function abrirMod(ev){
+  const dt=new Date(ev.data_hora);
+  document.getElementById('mod-tit').textContent=ev.titulo_evento||'Evento';
+  document.getElementById('mod-sub').textContent=fD(dt)+' às '+fH(dt)+(ev.local?' · '+ev.local : '');
+  
+  const snap=await db.collection('usuarios').where('grupo_id','==',grupoId).get();
+  const users=snap.docs.map(d=>d.data());
+  const norm=s=>s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9\s]/g,'').trim();
+
+  document.getElementById('mod-conv').innerHTML=(ev.lista_convocados||[]).map(nome=>{
+    const nn=norm(nome);
+    let myUid = null;
+    for(const u of users){
+      const todos=[u.nome_completo,...(u.nomes_conhecidos||[])];
+      if(todos.some(n=>norm(n)===nn)){ myUid = u.uid; break; }
+    }
+    
+    let avisoHTML = '';
+    if(myUid) {
+      const isAusente = verificarStatusAusencia(myUid, ev.data_hora);
+      if(isAusente) {
+         let icon = isAusente.tipo === 'ferias' ? '🏖️' : (isAusente.tipo === 'licenca' ? '🏥' : '⏱️');
+         let label = isAusente.tipo.charAt(0).toUpperCase() + isAusente.tipo.slice(1);
+         avisoHTML = `<div class="aviso-ferias">${icon} Atenção: Convocado está de ${label} neste dia!</div>`;
+      }
+    }
+
+    return `<div class="conv-linha">
+      <div style="display:flex;align-items:center;gap:10px;width:100%">
+        <div class="conv-icon"><svg viewBox="0 0 24 24"><path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/></svg></div>
+        <span class="conv-nome">${nome}</span>
+      </div>
+      ${avisoHTML}
+    </div>`;
+  }).join('');
+
+  const agora = new Date(); const eventoNoFuturo = dt > agora; const euEstouConvocado = (ev.lista_convocados || []).some(n => euSouConvocadoNome(n));
+  const btnTrocar = document.getElementById('mod-trocar');
+  if (euEstouConvocado && eventoNoFuturo) { btnTrocar.style.display = 'block'; btnTrocar.onclick = () => abrirTrocar(ev); } else { btnTrocar.style.display = 'none'; }
+  document.getElementById('mod-ag').onclick=()=>ics(ev);
+  
+  document.getElementById('mod-del').style.display = eu.is_admin ? 'block' : 'none';
+  document.getElementById('mod-del').onclick=()=>{
+    if(!eu.is_admin) return;
+    if(confirm('Excluir esta convocação?')){ db.collection('eventos').doc(ev.id).delete().then(()=>{ document.getElementById('mod-ev').classList.remove('on');carregarEventos(); }); }
+  };
+  document.getElementById('mod-ev').classList.add('on');
+}
+
+// ── SCANNER E OCR ─────────────────────────────────────────────────────
+async function abrirScanner(){
+  if(!grupoId){alert('Entre em um grupo primeiro.');return;} document.getElementById('scan-ov').classList.add('on');
+  try{ camStream=await navigator.mediaDevices.getUserMedia({video:{facingMode:'environment'}}); document.getElementById('video').srcObject=camStream; }catch{alert('Câmera não disponível. Use a galeria.');}
+}
+
+function fecharScanner(){ document.getElementById('scan-ov').classList.remove('on'); if(camStream){camStream.getTracks().forEach(t=>t.stop());camStream=null;} }
+
+function capturar(){
+  const v=document.getElementById('video'); const c=document.createElement('canvas'); c.width=v.videoWidth;c.height=v.videoHeight;
+  c.getContext('2d').drawImage(v,0,0); c.toBlob(b=>processarFoto(b),'image/jpeg',.9);
+}
+
+async function processarFoto(file){
+  if(!file)return; fecharScanner(); document.getElementById('ocr-ov').classList.add('on'); document.getElementById('ocr-fill').style.width='20%'; document.getElementById('ocr-pct').textContent='Preparando imagem...';
+  try{
+    const base64=await new Promise((res,rej)=>{
+      const img=new Image(); const url=URL.createObjectURL(file);
+      img.onload=()=>{ const MAX=1600; let w=img.width,h=img.height; if(w>MAX||h>MAX){ if(w>h){h=Math.round(h*MAX/w);w=MAX;} else{w=Math.round(w*MAX/h);h=MAX;} }
+        const c=document.createElement('canvas'); c.width=w;c.height=h; c.getContext('2d').drawImage(img,0,0,w,h); URL.revokeObjectURL(url); res(c.toDataURL('image/jpeg',0.9).split(',')[1]); };
+      img.onerror=()=>rej(new Error('Erro ao carregar imagem')); img.src=url;
+    });
+    document.getElementById('ocr-fill').style.width='50%'; document.getElementById('ocr-pct').textContent='Lendo com IA...';
+
+    const resp=await fetch('https://api.mistral.ai/v1/chat/completions',{
+      method:'POST', headers:{ 'Content-Type':'application/json', 'Authorization':'Bearer zQVzmFaX904lqaFwzt40BHXHfGoqSJca' },
+      body:JSON.stringify({ model:'pixtral-12b-2409', max_tokens:500, messages:[{role:'user',content:[{type:'image_url',image_url:{url:'data:image/jpeg;base64,'+base64}},{type:'text',text:`Analise esta convocação oficial brasileira e extraia os dados. Responda APENAS com JSON válido. Formato exato: {"titulo":"TIPO - Tema","data":"YYYY-MM-DD","hora":"HH:MM","local":"local ou null","nomes":["Nome 1","Nome 2"]}`}]}] })
+    });
+    document.getElementById('ocr-fill').style.width='85%'; document.getElementById('ocr-pct').textContent='Processando...';
+
+    const data=await resp.json(); const txtRaw=data.choices?.[0]?.message?.content||''; let parsed;
+    try{ parsed=JSON.parse(txtRaw.replace(/```json|```/g,'').trim()); }catch{ const match=txtRaw.match(/\{[\s\S]*\}/); if(match) parsed=JSON.parse(match[0]); else throw new Error('Formato inválido.'); }
+    document.getElementById('ocr-fill').style.width='100%';
+    ocrDados={ titulo:parsed.titulo||null, data_hora:(parsed.data&&parsed.hora)?`${parsed.data}T${parsed.hora}:00`:(parsed.data?`${parsed.data}T00:00:00`:null), local:parsed.local||null, nomes:Array.isArray(parsed.nomes)?parsed.nomes.filter(n=>n&&n.trim().length>2):[], id_ver:null };
+    
+    if(parsed.data&&parsed.hora&&parsed.titulo){
+      ocrDados.id_ver=parsed.data.replace(/-/g,'')+parsed.hora.replace(':','')+parsed.titulo.toUpperCase().replace(/[^A-Z0-9]/g,'').substring(0,10);
+    }
+  }catch(e){ document.getElementById('ocr-ov').classList.remove('on'); alert('Erro ao analisar imagem: '+e.message); return; }
+
+  document.getElementById('ocr-ov').classList.remove('on');
+  
+  if(ocrDados.id_ver){
+    const dup=await db.collection('eventos').where('id_verificacao','==',ocrDados.id_ver).where('grupo_id','==',grupoId).get();
+    if(!dup.empty){alert('⚠️ Evento já cadastrado!');return;}
+  }
+
+  matches=await cruzar(ocrDados.nomes);
+  document.getElementById('rv-tit').value=ocrDados.titulo||'';
+  document.getElementById('rv-data').value=ocrDados.data_hora?ocrDados.data_hora.substring(0,16):'';
+  document.getElementById('rv-loc').value=ocrDados.local||'';
+  renderMatches(); 
+  document.getElementById('rv-ov').classList.add('on');
+}
+
+// ── MATCHING COM LEVENSHTEIN MELHORADO - CORRIGIDO PARA SEPARAR NOMES ────
+async function cruzar(nomes){
+  const snap=await db.collection('usuarios').where('grupo_id','==',grupoId).get(); 
+  const users=snap.docs.map(d=>d.data());
+  const norm=s=>s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9\s]/g,'').trim(); 
+  const stopwords=new Set(['de','da','do','das','dos','e','a','o','as','os']); 
+  const pwSig=s=>norm(s).split(/\s+/).filter(p=>p.length>1&&!stopwords.has(p));
+  
+  const regCargo=/operador|responsável|reporter|repórter|diretor|coordenador|técnico|editor|produtor|cinegrafista|apresentador|locutor|caracteres|caracter|transmiss|câmera|camera|áudio|audio|plenário|plenario|DTV|controle|mestre/i;
+  
+  const nomesProcessados = [];
+  for(const nome of nomes) {
+    const nn = norm(nome);
+    const palavras = nn.split(/\s+/).filter(p => p.length > 0);
+    
+    if(palavras.length >= 4) {
+      let encontrouCombinacao = false;
+      for(let i = 1; i < palavras.length; i++) {
+        const parte1 = palavras.slice(0, i).join(' ');
+        const parte2 = palavras.slice(i).join(' ');
+        
+        const user1 = users.find(u => {
+          const todos = [u.nome_completo, ...(u.nomes_conhecidos||[])];
+          return todos.some(n => norm(n).includes(parte1) || parte1.includes(norm(n)));
+        });
+        const user2 = users.find(u => {
+          const todos = [u.nome_completo, ...(u.nomes_conhecidos||[])];
+          return todos.some(n => norm(n).includes(parte2) || parte2.includes(norm(n)));
+        });
+        
+        if(user1 && user2 && user1.uid !== user2.uid) {
+          nomesProcessados.push(parte1, parte2);
+          encontrouCombinacao = true;
+          break;
+        }
+      }
+      if(!encontrouCombinacao) nomesProcessados.push(nome);
+    } else {
+      nomesProcessados.push(nome);
+    }
+  }
+  
+  return nomesProcessados.map(nome=>{
+    const nn=norm(nome); 
+    const pwNome=pwSig(nome); 
+    const primeiroNome=pwNome[0];
+    
+    for(const u of users){ 
+      const todos=[u.nome_completo,...(u.nomes_conhecidos||[])]; 
+      if(todos.some(n=>norm(n)===nn)) return {tipo:'exato',nome,usuario:u}; 
+    }
+    
+    let melhorUser = null; 
+    let melhorScore = 0;
+    for(const u of users){
+      const pwUser=pwSig(u.nome_completo); 
+      const emComum=pwNome.filter(p=>pwUser.some(pu=>palavrasSimilares(p,pu)));
+      const score=emComum.length/Math.max(pwNome.length,1); 
+      const recall=emComum.length/Math.max(pwUser.length,1); 
+      const finalScore=score+(recall*0.1);
+      if(score>=0.70 && finalScore>melhorScore){ melhorScore=finalScore; melhorUser=u; }
+    }
+    if (melhorUser) return {tipo:'parcial',nome,usuario:melhorUser,score:melhorScore};
+    
+    if(primeiroNome&&primeiroNome.length>=5){
+      let possiveis = []; 
+      for(const u of users){ 
+        const pwUser=pwSig(u.nome_completo); 
+        if(pwUser.length>0 && palavrasSimilares(primeiroNome,pwUser[0])) possiveis.push(u); 
+      }
+      if(possiveis.length === 1) return {tipo:'parcial',nome,usuario:possiveis[0],score:0.4};
+    }
+    
+    if(regCargo.test(nome)){
+      const pwNomeCargo=pwSig(nome);
+      for(const u of users){
+        if(!u.cargo)continue; 
+        const pwCargo=pwSig(u.cargo); 
+        const emComum=pwNomeCargo.filter(p=>pwCargo.some(pc=>palavrasSimilares(p,pc)));
+        const score=emComum.length/Math.max(Math.min(pwNomeCargo.length,pwCargo.length),1); 
+        if(score>=0.6) return {tipo:'por_cargo',nome,usuario:u,score,cargo:u.cargo};
+      }
+    }
+    return {tipo:'nao_encontrado',nome};
+  });
+}
+
+function renderMatches(){
+  document.getElementById('rv-matches').innerHTML=matches.length===0?'<p style="color:var(--light);font-size:13px;padding:12px;background:#fff;border-radius:10px;">Nenhum nome identificado.</p>':matches.map((m,i)=>{
+      if(m.tipo==='exato')return`<div class="mi ok"><div class="mi-top"><span style="font-size:18px">✅</span><div><div class="mi-nome">${m.nome}</div><div class="mi-sub">→ ${m.usuario.nome_completo}</div></div></div></div>`;
+      if(m.tipo==='parcial' || m.tipo==='por_cargo')return`<div class="mi av"><div class="mi-top"><span style="font-size:18px">⚠️</span><div><div class="mi-nome">${m.nome}</div><div class="mi-sub">É ${m.usuario.nome_completo}?</div></div></div><div class="mi-btns"><button class="btn-sim" onclick="confirmar(${i},true)">✓ Sim</button><button class="btn-nao" onclick="confirmar(${i},false)">✗ Não</button></div></div>`;
+      return`<div class="mi no"><div class="mi-top"><span style="font-size:18px">❓</span><div><div class="mi-nome">${m.nome}</div><div class="mi-sub">Não encontrado</div></div></div></div>`;
+    }).join('');
+}
+
+function confirmar(i,sim){
+  if(sim){ matches[i].tipo='exato'; db.collection('usuarios').doc(matches[i].usuario.uid).update({nomes_conhecidos:firebase.firestore.FieldValue.arrayUnion(matches[i].nome)}); } else { matches[i].tipo='nao_encontrado'; } renderMatches();
+}
+
+// ── SALVAR COM PROTEÇÃO CONTRA DUPLICATAS E TRAVAMENTOS ────────────────
+async function salvar(){
+  if(isProcessingSave) return;
+  
+  const titulo=document.getElementById('rv-tit').value.trim();
+  const dataVal=document.getElementById('rv-data').value;
+  if(!titulo||!dataVal){alert('Preencha título e data.');return;}
+  
+  isProcessingSave = true;
+  const btnSalvar = document.getElementById('rv-btn-salvar');
+  if(btnSalvar) { btnSalvar.textContent = "Salvando..."; btnSalvar.disabled = true; }
+
+  try {
+    let idVerificacao = ocrDados?.id_ver || null;
+    if(!idVerificacao) idVerificacao = titulo.replace(/\s/g,'').toUpperCase().substring(0,10) + dataVal.replace(/[-:T]/g,'');
+
+    const dup = await db.collection('eventos')
+      .where('id_verificacao','==',idVerificacao)
+      .where('grupo_id','==',grupoId)
+      .get();
+    
+    if(!dup.empty){
+      alert('⚠️ Este evento já foi adicionado! Não é possível duplicar.');
+      fecharRv();
+      return; 
+    }
+
+    await db.collection('eventos').add({ 
+      id_verificacao: idVerificacao, 
+      titulo_evento: titulo, 
+      data_hora: dataVal+':00', 
+      local: document.getElementById('rv-loc').value.trim(), 
+      lista_convocados: ocrDados?.nomes||[], 
+      grupo_id: grupoId, 
+      criado_por: eu.uid, 
+      criado_em: firebase.firestore.FieldValue.serverTimestamp() 
+    });
+    
+    const exatos=matches.filter(m=>m.tipo==='exato');
+    for(const m of exatos){
+      await db.collection('notificacoes').add({ 
+        uid:m.usuario.uid, 
+        tipo:'convocado', 
+        nome_convocacao:m.nome, 
+        titulo_evento:titulo, 
+        data_hora:dataVal+':00', 
+        grupo_id:grupoId, 
+        respondido:false, 
+        criado_em:firebase.firestore.FieldValue.serverTimestamp() 
+      });
+    }
+    
+    const parciais=matches.filter(m=>m.tipo==='parcial' || m.tipo==='por_cargo');
+    for(const m of parciais){
+      await db.collection('notificacoes').add({ 
+        uid:m.usuario.uid, 
+        tipo:'confirmar', 
+        nome_convocacao:m.nome, 
+        titulo_evento:titulo, 
+        data_hora:dataVal+':00', 
+        grupo_id:grupoId, 
+        respondido:false, 
+        criado_em:firebase.firestore.FieldValue.serverTimestamp() 
+      });
+    }
+    
+    alert('✅ Convocação salva com sucesso!'); 
+    fecharRv();
+    carregarEventos();
+    
+  } catch(e) {
+    console.error(e);
+    alert('Erro ao salvar no servidor: '+e.message);
+    isProcessingSave = false;
+    if(btnSalvar) { btnSalvar.textContent = "✓ Salvar"; btnSalvar.disabled = false; }
+  }
+}
+
+// ── FECHAR REVIEW MODAL - CORRIGIDO PARA NÃO TRAVAR ────────────────────
 function fecharRv(){
-
-  const rv = document.getElementById('rv-ov');
-
-  rv.classList.remove('on');
-
+  document.getElementById('rv-ov').classList.remove('on');
+  ocrDados=null;
+  matches=[];
+  isProcessingSave = false;
+  const btnSalvar = document.getElementById('rv-btn-salvar');
+  if(btnSalvar) { 
+    btnSalvar.textContent = "✓ Salvar"; 
+    btnSalvar.disabled = false; 
+  }
   document.getElementById('rv-tit').value = '';
   document.getElementById('rv-data').value = '';
   document.getElementById('rv-loc').value = '';
   document.getElementById('rv-matches').innerHTML = '';
-
-  ocrDados = null;
-  matches = [];
-
-  isProcessingSave = false;
-
-  const btnSalvar = document.getElementById('rv-btn-salvar');
-
-  if(btnSalvar){
-    btnSalvar.disabled = false;
-    btnSalvar.innerHTML = '✓ Salvar';
-    btnSalvar.style.pointerEvents = 'auto';
-    btnSalvar.style.opacity = '1';
-  }
-
-  document.body.style.pointerEvents = 'auto';
-  document.body.style.overflow = '';
-
-  rv.offsetHeight;
-}
-```
-
----
-
-## 6) SUBSTITUA salvar()
-
-```javascript
-let isProcessingSave = false;
-
-async function salvar(){
-
-  if(isProcessingSave) return;
-
-  const titulo = document.getElementById('rv-tit').value.trim();
-  const dataVal = document.getElementById('rv-data').value;
-
-  if(!titulo || !dataVal){
-    alert('Preencha título e data.');
-    return;
-  }
-
-  isProcessingSave = true;
-
-  document.body.style.pointerEvents = 'none';
-
-  const btnSalvar = document.getElementById('rv-btn-salvar');
-
-  btnSalvar.disabled = true;
-  btnSalvar.innerHTML = 'Salvando...';
-
-  try{
-
-    let idVerificacao = ocrDados?.id_ver || null;
-
-    if(!idVerificacao){
-      idVerificacao =
-        titulo.replace(/\s/g,'')
-        .toUpperCase()
-        .substring(0,10)
-        + dataVal.replace(/[-:T]/g,'');
-    }
-
-    const eventoRef = db.collection('eventos').doc(idVerificacao);
-
-    const jaExiste = await eventoRef.get();
-
-    if(jaExiste.exists){
-
-      alert('⚠️ Este evento já existe.');
-
-      fecharRv();
-
-      return;
-    }
-
-    await eventoRef.set({
-
-      id_verificacao:idVerificacao,
-
-      titulo_evento:titulo,
-
-      data_hora:dataVal+':00',
-
-      local:document.getElementById('rv-loc').value.trim(),
-
-      lista_convocados:
-        matches.map(m => m.nome),
-
-      grupo_id:grupoId,
-
-      criado_por:eu.uid,
-
-      criado_em:
-        firebase.firestore.FieldValue.serverTimestamp()
-
-    });
-
-    fecharRv();
-
-    alert('✅ Convocação salva com sucesso!');
-
-    carregarEventos();
-
-  }catch(e){
-
-    console.error(e);
-
-    alert('Erro ao salvar.');
-
-  }finally{
-
-    document.body.style.pointerEvents = 'auto';
-
-    isProcessingSave = false;
-
-    btnSalvar.disabled = false;
-    btnSalvar.innerHTML = '✓ Salvar';
-  }
-}
-```
-
----
-
-## 7) SUBSTITUA O PROMPT OCR
-
-```javascript
-text:`
-Analise esta convocação oficial brasileira.
-
-Responda APENAS JSON válido.
-
-Formato:
-
-{
-  "titulo":"TIPO - Tema",
-  "data":"YYYY-MM-DD",
-  "hora":"HH:MM",
-  "local":"texto ou null",
-  "nomes":["Nome Sobrenome","Nome Sobrenome"]
 }
 
-REGRAS IMPORTANTES:
+function fecharScanner(){ document.getElementById('scan-ov').classList.remove('on'); if(camStream){camStream.getTracks().forEach(t=>t.stop());camStream=null;} }
+function fecharTrocar(){ document.getElementById('trocar-ov').classList.remove('on'); }
+function euSouConvocadoNome(nome){ const norm=s=>s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9\s]/g,'').trim(); const euNomes=[eu.nome_completo,...(eu.nomes_conhecidos||[])]; return euNomes.some(en=>norm(en)===norm(nome)); }
 
-- Cada pessoa deve ser um item separado no array "nomes"
-- Nunca juntar dois nomes em um único item
-- Nunca inventar nomes
-- Nunca corrigir nomes automaticamente
-- Preserve exatamente o texto do documento
-- Ignore cargos e funções
-- Ignore palavras como operador, diretor, repórter, câmera, áudio
-- Se houver dúvida entre dois nomes, mantenha exatamente como está escrito
-- NÃO transforme "Renata" em "Renato"
-- NÃO faça aproximação fonética
-- NÃO resuma nomes compostos
-`
-```
-
----
-
-## 8) SUBSTITUA O MATCHER
-
-LOCALIZE:
-
-```javascript
-if(score>=0.55 && finalScore>melhorScore)
-```
-
-TROQUE POR:
-
-```javascript
-const primeiroOCR = nn.split(' ')[0];
-const primeiroUser = norm(u.nome_completo).split(' ')[0];
-
-if(primeiroOCR !== primeiroUser){
-  continue;
+async function abrirTrocar(ev){
+  eventoTroca=ev; substitutoSelecionado=null; document.getElementById('mod-ev').classList.remove('on');
+  const snap=await db.collection('usuarios').where('grupo_id','==',grupoId).get();
+  const lista=document.getElementById('trocar-lista'); lista.innerHTML='';
+  snap.forEach(d=>{
+    const m=d.data(); if(m.uid===eu.uid)return;
+    const div=document.createElement('div'); div.className='trocar-membro';
+    div.innerHTML=`<span style="font-size:20px">👤</span><div><div style="font-weight:500">${m.nome_completo}</div><div style="font-size:12px;color:var(--light)">${m.cargo||''}</div></div>`;
+    div.onclick=()=>{ lista.querySelectorAll('.trocar-membro').forEach(el=>el.classList.remove('selecionado')); div.classList.add('selecionado'); substitutoSelecionado=m; };
+    lista.appendChild(div);
+  });
+  document.getElementById('trocar-confirmar').onclick=async()=>{
+    if(!substitutoSelecionado){alert('Selecione um substituto.');return;}
+    if(!confirm(`Confirmar troca: ${eu.nome_completo} → ${substitutoSelecionado.nome_completo}?`))return;
+    const substitutos=[...(eventoTroca.substitutos||[]),{ uid:substitutoSelecionado.uid, nome:substitutoSelecionado.nome_completo, substituindo:eu.nome_completo, em:new Date().toISOString() }];
+    await db.collection('eventos').doc(eventoTroca.id).update({ substitutos, lista_convocados: (eventoTroca.lista_convocados||[]).filter(n => !euSouConvocadoNome(n)) });
+    await db.collection('notificacoes').add({ uid:substitutoSelecionado.uid, tipo:'substituicao', nome_convocacao:substitutoSelecionado.nome_completo, titulo_evento:eventoTroca.titulo_evento||'Evento', data_hora:eventoTroca.data_hora, substituindo:eu.nome_completo, respondido:false, criado_em:firebase.firestore.FieldValue.serverTimestamp() });
+    document.getElementById('trocar-ov').classList.remove('on'); alert(`✅ Troca confirmada!`); carregarEventos();
+  };
+  document.getElementById('trocar-ov').classList.add('on');
 }
 
-if(score>=0.85 && finalScore>melhorScore)
-```
-
----
-
-## 9) BLOQUEIO EXTRA CONTRA OCR DUPLICADO
-
-ANTES DE:
-
-```javascript
-document.getElementById('rv-ov').classList.add('on');
-```
-
-ADICIONE:
-
-```javascript
-if(document.getElementById('rv-ov').classList.contains('on')){
-  return;
+function ics(ev){
+  const ini=new Date(ev.data_hora); 
+  const fim=new Date(ini.getTime()+2*60*60*1000); 
+  const f=d=>d.toISOString().replace(/[-:]/g,'').split('.')[0]+'Z';
+  const c=['BEGIN:VCALENDAR','VERSION:2.0','BEGIN:VEVENT','SUMMARY:'+(ev.titulo_evento||'Convocação'),'DTSTART:'+f(ini),'DTEND:'+f(fim),'END:VEVENT','END:VCALENDAR'].join('\r\n');
+  const a=document.createElement('a'); 
+  a.href=URL.createObjectURL(new Blob([c],{type:'text/calendar'})); 
+  a.download='conv.ics'; 
+  a.click();
 }
-```
 
----
-
-## 10) RENDER EDITÁVEL DOS NOMES
-
-SUBSTITUA:
-
-```javascript
-<div class="mi-nome">${m.nome}</div>
-```
-
-POR:
-
-```javascript
-<input
- class="mi-input"
- value="${m.nome}"
- onchange="editarNome(${i}, this.value)"
-/>
-```
-
----
-
-## 11) ADICIONE editarNome()
-
-```javascript
-function editarNome(i, valor){
-
-  if(!matches[i]) return;
-
-  matches[i].nome = valor.trim();
-}
-```
-
----
-
-## 12) TIMEOUT DE SEGURANÇA
-
-ADICIONE DENTRO DE salvar()
-
-```javascript
-setTimeout(()=>{
-   isProcessingSave=false;
-},10000);
-```
-
----
-
-## 13) PROBLEMA DE LISTENER DUPLICADO
-
-SUBSTITUA:
-
-```javascript
-document.getElementById('trocar-confirmar').onclick=
-```
-
-POR:
-
-```javascript
-const trocarBtn =
-  document.getElementById('trocar-confirmar');
-
-const novoBtn = trocarBtn.cloneNode(true);
-
-trocarBtn.parentNode.replaceChild(
-  novoBtn,
-  trocarBtn
-);
-
-novoBtn.addEventListener('click', async()=>{
-```
-
----
-
-## 14) MESMO PROCESSO NO MODAL EVENTO
-
-REMOVA TODOS:
-
-.onclick=
-
-E USE:
-
-addEventListener()
-
-Principalmente:
-- mod-del
-- mod-ag
-- mod-trocar
-
----
-
-## 15) VALIDAÇÃO EXTRA DOS NOMES
-
-ADICIONE ANTES DE SALVAR:
-
-```javascript
-matches = matches.filter(m => {
-
-  if(!m.nome) return false;
-
-  if(m.nome.trim().length < 5) return false;
-
-  return true;
-});
-```
-
----
-
-## RESULTADO FINAL
-
-Essas correções resolvem:
-
-✅ eventos duplicados  
-✅ salvar infinito  
-✅ modal travado  
-✅ tela congelada  
-✅ nomes grudados  
-✅ OCR confuso  
-✅ Renata virando Renato  
-✅ múltiplos cliques  
-✅ listeners acumulados  
-✅ confirmação presa  
-✅ botão cancelar morto  
-✅ botão X morto  
-✅ travamento ao adicionar  
+function fD(d){return d.toLocaleDateString('pt-BR',{day:'2-digit',month:'short'});}
+function fH(d){return d.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});}
+function sair(){auth.signOut().then(()=>window.location.replace('login.html'));}
+</script>
+</body>
+</html>
