@@ -73,6 +73,19 @@
     .conv-icon{width:30px;height:30px;background:#eff6ff;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
     .conv-icon svg{width:15px;height:15px;fill:var(--blue)}
     .conv-nome{font-size:14px;font-weight:500;flex:1}
+    .conv-nome.editable{border-bottom:1px dashed var(--blue);cursor:text;padding:2px 4px;border-radius:4px;transition:background .2s}
+    .conv-nome.editable:hover{background:#f0f4ff}
+    .conv-nome.editable:focus{background:#eff6ff;outline:none;border-bottom:2px solid var(--blue)}
+    .btn-editar-nome{background:transparent;border:1px solid var(--border);color:var(--blue);padding:4px 10px;border-radius:6px;font-size:11px;cursor:pointer;font-weight:600;white-space:nowrap}
+    .btn-editar-nome:hover{background:#eff6ff}
+    .btn-remover-nome{background:transparent;border:1px solid #fee2e2;color:var(--red);padding:4px 10px;border-radius:6px;font-size:11px;cursor:pointer;font-weight:600;white-space:nowrap}
+    .btn-remover-nome:hover{background:#fff5f5}
+    .btn-adicionar-nome{width:100%;padding:10px;background:transparent;border:1.5px dashed var(--border);border-radius:10px;font-size:13px;cursor:pointer;color:var(--light);margin-top:8px;transition:all .2s}
+    .btn-adicionar-nome:hover{border-color:var(--blue);color:var(--blue);background:#f8faff}
+    .input-novo-nome{width:100%;padding:10px;border:1.5px solid var(--blue);border-radius:10px;font-family:'DM Sans',sans-serif;font-size:14px;margin-top:8px;outline:none}
+    .btn-salvar-nomes{width:100%;padding:10px;background:var(--blue);color:#fff;border:none;border-radius:10px;font-size:14px;cursor:pointer;margin-top:8px;font-family:'Sora',sans-serif;font-weight:600}
+    .admin-badge{display:inline-block;background:#fef3c7;color:#92400e;font-size:9px;padding:2px 6px;border-radius:4px;margin-left:6px;font-weight:700;text-transform:uppercase;letter-spacing:.5px}
+
     .btn-ag{width:100%;padding:12px;background:var(--green);color:#fff;border:none;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;margin-top:16px;font-family:'Sora',sans-serif}
     .btn-del{width:100%;padding:11px;background:#fee2e2;color:var(--red);border:none;border-radius:10px;font-size:14px;cursor:pointer;margin-top:8px}
 
@@ -163,6 +176,10 @@
     .trocar-sheet{background:var(--w);border-radius:24px 24px 0 0;width:100%;max-height:90dvh;overflow-y:auto;padding:22px 18px 48px;animation:sup .3s ease}
     .trocar-membro{background:var(--w);border-radius:12px;padding:13px 15px;margin-bottom:10px;display:flex;align-items:center;gap:12px;border:1.5px solid var(--border);cursor:pointer;transition:all .2s}
     .trocar-membro.selecionado{border-color:var(--blue);background:#eff6ff}
+
+    /* TOAST */
+    .toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:#1e293b;color:#fff;padding:12px 24px;border-radius:12px;font-size:14px;z-index:999;opacity:0;transition:opacity .3s;pointer-events:none;white-space:nowrap}
+    .toast.show{opacity:1}
   </style>
 </head>
 <body>
@@ -201,6 +218,9 @@
   </div>
 </main>
 
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
 <!-- MODAL EVENTO -->
 <div class="overlay" id="mod-ev" onclick="if(event.target===this) fecharMod()">
   <div class="sheet">
@@ -208,7 +228,7 @@
     <div class="mod-titulo" id="mod-tit">Evento</div>
     <div class="mod-sub" id="mod-sub">Data e hora</div>
     <div class="mod-sec">
-      <h3>Convocados</h3>
+      <h3>Convocados <span id="admin-badge-conv" style="display:none" class="admin-badge">Admin</span></h3>
       <div id="mod-conv"></div>
     </div>
     <div style="display:flex;gap:8px;margin-top:16px">
@@ -352,8 +372,19 @@ const db=firebase.firestore();
 let authOk=false,eu={},grupoId=null,camStream=null,ocrDados=null,matches=[],eventoTroca=null,substitutoSelecionado=null;
 let listaAusencias=[];
 let isProcessingSave=false;
+let eventoAtualMod=null; // Evento sendo visualizado no modal
+let nomesEditaveis=[]; // Array de nomes sendo editados no modal admin
 
 const T=setTimeout(()=>{if(!authOk)window.location.replace('login.html');},10000);
+
+// ── TOAST ──────────────────────────────────────────────────────────────
+let toastTimeout;
+function mostrarToast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.classList.add('show');
+  clearTimeout(toastTimeout);
+  toastTimeout=setTimeout(()=>t.classList.remove('show'),2500);
+}
 
 // ── UTILS ──────────────────────────────────────────────────────────────
 function palavrasSimilares(a,b){const l=Math.max(a.length,b.length);if(l<3)return a===b;let d=0;for(let i=0;i<Math.min(a.length,b.length);i++)if(a[i]!==b[i])d++;return d/l<0.4;}
@@ -376,7 +407,7 @@ auth.onAuthStateChanged(async user=>{
     }
     authOk=true; clearTimeout(T);
     eu={uid:user.uid,...snap.data()};
-    document.getElementById('h-user').textContent=eu.nome_completo+' · '+eu.cargo;
+    document.getElementById('h-user').textContent=eu.nome_completo+' · '+eu.cargo+(eu.is_admin?' · Admin':'');
     
     try{ fetchAusencias(); }catch(e){}
     
@@ -478,7 +509,7 @@ async function salvarFerias() {
   });
 
   document.getElementById('ferias-form-ov').classList.remove('on');
-  alert("Período registrado com sucesso!");
+  mostrarToast("✅ Período registrado com sucesso!");
   carregarFerias();
 }
 
@@ -564,7 +595,7 @@ function criarCard(ev){
   const dt=new Date(ev.data_hora); const passado=dt<=new Date();
   const wrap=document.createElement('div'); wrap.className='ev-wrap';
   wrap.innerHTML=`<div class="ev-bg"><div class="ev-bg-l"><span>👁 Ver</span></div>${eu.is_admin ? '<div class="ev-bg-r"><span>🗑 Excluir</span></div>' : ''}</div>
-    <div class="ev-card" style="border-left-color:${passado?'#94a3b8':'var(--blue)'};opacity:${passado?.7:1}">
+    <div class="ev-card" style="border-left-color:${passado?'#94a3b8':'var(--blue)'};opacity:${passado?'.7':'1'}">
       <div class="ev-titulo">${ev.titulo_evento||'Sem título'}${passado?' <span style="font-size:11px;color:#94a3b8">(encerrado)</span>':''}</div>
       <div class="ev-meta"><span>📅 ${fD(dt)}</span><span>🕐 ${fH(dt)}</span></div>
       <div class="ev-conv">${(ev.lista_convocados||[]).length} convocado(s)</div>
@@ -581,7 +612,7 @@ function criarCard(ev){
   card.addEventListener('touchend',()=>{
     card.style.transition='transform .2s ease';
     if(dx<-60 && eu.is_admin){
-      if(confirm('Excluir esta convocação?')){ db.collection('eventos').doc(ev.id).delete().then(()=>carregarEventos()); } else card.style.transform='translateX(0)';
+      if(confirm('Excluir esta convocação?')){ db.collection('eventos').doc(ev.id).delete().then(()=>{ mostrarToast('🗑 Convocação excluída'); carregarEventos(); }); } else card.style.transform='translateX(0)';
     } else if(dx>60){ card.style.transform='translateX(0)';abrirMod(ev);
     } else { card.style.transform='translateX(0)'; if(!mov)abrirMod(ev); } dx=0;
   });
@@ -589,561 +620,247 @@ function criarCard(ev){
   return wrap;
 }
 
+function renderizarNomesAdmin(ev){
+  const container=document.getElementById('mod-conv');
+  nomesEditaveis=[...(ev.lista_convocados||[])];
+  
+  const snap=db.collection('usuarios').where('grupo_id','==',grupoId).get();
+  snap.then(snapUsers=>{
+    const users=snapUsers.docs.map(d=>d.data());
+    const norm=s=>s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9\s]/g,'').trim();
+    
+    container.innerHTML=nomesEditaveis.map((nome,idx)=>{
+      const nn=norm(nome);
+      let myUid=null;
+      for(const u of users){
+        const todos=[u.nome_completo,...(u.nomes_conhecidos||[])];
+        if(todos.some(n=>norm(n)===nn)){myUid=u.uid;break;}
+      }
+      
+      let avisoHTML='';
+      if(myUid){
+        const isAusente=verificarStatusAusencia(myUid,ev.data_hora);
+        if(isAusente){
+          let icon=isAusente.tipo==='ferias'?'🏖️':(isAusente.tipo==='licenca'?'🏥':'⏱️');
+          let label=isAusente.tipo.charAt(0).toUpperCase()+isAusente.tipo.slice(1);
+          avisoHTML=`<div class="aviso-ferias">${icon} Atenção: Convocado está de ${label} neste dia!</div>`;
+        }
+      }
+      
+      return `<div class="conv-linha" style="flex-direction:column;align-items:stretch;gap:6px">
+        <div style="display:flex;align-items:center;gap:10px;width:100%">
+          <div class="conv-icon"><svg viewBox="0 0 24 24"><path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/></svg></div>
+          <span class="conv-nome editable" contenteditable="true" data-idx="${idx}" onblur="atualizarNomeAdmin(${idx}, this.textContent)" onclick="event.stopPropagation()">${nome}</span>
+          <button class="btn-remover-nome" onclick="removerNomeAdmin(${idx})" title="Remover">✕</button>
+        </div>
+        ${avisoHTML}
+      </div>`;
+    }).join('')+`
+    <div style="display:flex;gap:8px;margin-top:8px">
+      <input type="text" class="input-novo-nome" id="input-novo-nome" placeholder="Digite o nome para adicionar..." style="flex:1;margin-top:0;">
+      <button class="btn-salvar" onclick="adicionarNomeAdmin()" style="width:auto;padding:10px 16px;margin-top:0;flex-shrink:0;">+ Adicionar</button>
+    </div>
+    <button class="btn-salvar-nomes" onclick="salvarNomesAdmin()">💾 Salvar alterações</button>`;
+  });
+}
+
+function atualizarNomeAdmin(idx, novoNome){
+  if(novoNome && novoNome.trim()){
+    nomesEditaveis[idx]=novoNome.trim();
+  }
+}
+
+function removerNomeAdmin(idx){
+  if(confirm(`Remover "${nomesEditaveis[idx]}" da convocação?`)){
+    nomesEditaveis.splice(idx,1);
+    renderizarNomesAdmin(eventoAtualMod);
+  }
+}
+
+function adicionarNomeAdmin(){
+  const input=document.getElementById('input-novo-nome');
+  const nome=input.value.trim();
+  if(!nome){mostrarToast('Digite um nome');return;}
+  nomesEditaveis.push(nome);
+  input.value='';
+  renderizarNomesAdmin(eventoAtualMod);
+  mostrarToast(`✅ "${nome}" adicionado à lista`);
+}
+
+async function salvarNomesAdmin(){
+  if(!eventoAtualMod) return;
+  try{
+    await db.collection('eventos').doc(eventoAtualMod.id).update({
+      lista_convocados: nomesEditaveis
+    });
+    eventoAtualMod.lista_convocados=[...nomesEditaveis];
+    mostrarToast('✅ Lista de convocados atualizada!');
+    carregarEventos();
+  }catch(e){
+    console.error(e);
+    alert('Erro ao salvar: '+e.message);
+  }
+}
+
 async function abrirMod(ev){
+  eventoAtualMod=ev;
   const dt=new Date(ev.data_hora);
   document.getElementById('mod-tit').textContent=ev.titulo_evento||'Evento';
-  document.getElementById('mod-sub').textContent=fD(dt)+' às '+fH(dt)+(ev.local?' · '+ev.local : '');
+  document.getElementById('mod-sub').textContent=fD(dt)+' às '+fH(dt)+(ev.local?' · '+ev.local:'');
   
-  const snap=await db.collection('usuarios').where('grupo_id','==',grupoId).get();
-  const users=snap.docs.map(d=>d.data());
-  const norm=s=>s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9\s]/g,'').trim();
+  const adminBadge=document.getElementById('admin-badge-conv');
+  
+  if(eu.is_admin){
+    adminBadge.style.display='inline-block';
+    renderizarNomesAdmin(ev);
+  } else {
+    adminBadge.style.display='none';
+    const snap=await db.collection('usuarios').where('grupo_id','==',grupoId).get();
+    const users=snap.docs.map(d=>d.data());
+    const norm=s=>s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9\s]/g,'').trim();
 
-  document.getElementById('mod-conv').innerHTML=(ev.lista_convocados||[]).map(nome=>{
-    const nn=norm(nome);
-    let myUid = null;
-    for(const u of users){
-      const todos=[u.nome_completo,...(u.nomes_conhecidos||[])];
-      if(todos.some(n=>norm(n)===nn)){ myUid = u.uid; break; }
-    }
-    
-    let avisoHTML = '';
-    if(myUid) {
-      const isAusente = verificarStatusAusencia(myUid, ev.data_hora);
-      if(isAusente) {
-         let icon = isAusente.tipo === 'ferias' ? '🏖️' : (isAusente.tipo === 'licenca' ? '🏥' : '⏱️');
-         let label = isAusente.tipo.charAt(0).toUpperCase() + isAusente.tipo.slice(1);
-         avisoHTML = `<div class="aviso-ferias">${icon} Atenção: Convocado está de ${label} neste dia!</div>`;
+    document.getElementById('mod-conv').innerHTML=(ev.lista_convocados||[]).map(nome=>{
+      const nn=norm(nome);
+      let myUid=null;
+      for(const u of users){
+        const todos=[u.nome_completo,...(u.nomes_conhecidos||[])];
+        if(todos.some(n=>norm(n)===nn)){myUid=u.uid;break;}
       }
-    }
+      
+      let avisoHTML='';
+      if(myUid){
+        const isAusente=verificarStatusAusencia(myUid,ev.data_hora);
+        if(isAusente){
+          let icon=isAusente.tipo==='ferias'?'🏖️':(isAusente.tipo==='licenca'?'🏥':'⏱️');
+          let label=isAusente.tipo.charAt(0).toUpperCase()+isAusente.tipo.slice(1);
+          avisoHTML=`<div class="aviso-ferias">${icon} Atenção: Convocado está de ${label} neste dia!</div>`;
+        }
+      }
+      
+      return `<div class="conv-linha">
+        <div style="display:flex;align-items:center;gap:10px;width:100%">
+          <div class="conv-icon"><svg viewBox="0 0 24 24"><path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/></svg></div>
+          <span class="conv-nome">${nome}</span>
+        </div>
+        ${avisoHTML}
+      </div>`;
+    }).join('');
+  }
 
-    return `<div class="conv-linha">
-      <div style="display:flex;align-items:center;gap:10px;width:100%">
-        <div class="conv-icon"><svg viewBox="0 0 24 24"><path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/></svg></div>
-        <span class="conv-nome">${nome}</span>
-      </div>
-      ${avisoHTML}
-    </div>`;
-  }).join('');
-
-  const agora = new Date(); const eventoNoFuturo = dt > agora; const euEstouConvocado = (ev.lista_convocados || []).some(n => euSouConvocadoNome(n));
-  const btnTrocar = document.getElementById('mod-trocar');
-  if (euEstouConvocado && eventoNoFuturo) { btnTrocar.style.display = 'block'; btnTrocar.onclick = () => abrirTrocar(ev); } else { btnTrocar.style.display = 'none'; }
+  const agora=new Date(); const eventoNoFuturo=dt>agora; const euEstouConvocado=(ev.lista_convocados||[]).some(n=>euSouConvocadoNome(n));
+  const btnTrocar=document.getElementById('mod-trocar');
+  if(euEstouConvocado&&eventoNoFuturo){btnTrocar.style.display='block';btnTrocar.onclick=()=>abrirTrocar(ev);}else{btnTrocar.style.display='none';}
   document.getElementById('mod-ag').onclick=()=>ics(ev);
   
-  document.getElementById('mod-del').style.display = eu.is_admin ? 'block' : 'none';
+  document.getElementById('mod-del').style.display=eu.is_admin?'block':'none';
   document.getElementById('mod-del').onclick=()=>{
-    if(!eu.is_admin) return;
-    if(confirm('Excluir esta convocação?')){ db.collection('eventos').doc(ev.id).delete().then(()=>{ fecharMod(); carregarEventos(); }); }
+    if(!eu.is_admin)return;
+    if(confirm('Excluir esta convocação?')){db.collection('eventos').doc(ev.id).delete().then(()=>{fecharMod();carregarEventos();mostrarToast('🗑 Convocação excluída');});}
   };
   document.getElementById('mod-ev').classList.add('on');
 }
 
-function fecharMod(){ document.getElementById('mod-ev').classList.remove('on'); }
+function fecharMod(){document.getElementById('mod-ev').classList.remove('on');eventoAtualMod=null;nomesEditaveis=[];}
 
 // ── TROCAR ─────────────────────────────────────────────────────────────
 async function abrirTrocar(ev){
-  eventoTroca=ev; substitutoSelecionado=null; document.getElementById('mod-ev').classList.remove('on');
+  eventoTroca=ev;substitutoSelecionado=null;document.getElementById('mod-ev').classList.remove('on');
   const snap=await db.collection('usuarios').where('grupo_id','==',grupoId).get();
-  const lista=document.getElementById('trocar-lista'); lista.innerHTML='';
+  const lista=document.getElementById('trocar-lista');lista.innerHTML='';
   snap.forEach(d=>{
-    const m=d.data(); if(m.uid===eu.uid)return;
-    const div=document.createElement('div'); div.className='trocar-membro';
+    const m=d.data();if(m.uid===eu.uid)return;
+    const div=document.createElement('div');div.className='trocar-membro';
     div.innerHTML=`<span style="font-size:20px">👤</span><div><div style="font-weight:500">${m.nome_completo}</div><div style="font-size:12px;color:var(--light)">${m.cargo||''}</div></div>`;
-    div.onclick=()=>{ lista.querySelectorAll('.trocar-membro').forEach(el=>el.classList.remove('selecionado')); div.classList.add('selecionado'); substitutoSelecionado=m; };
+    div.onclick=()=>{lista.querySelectorAll('.trocar-membro').forEach(el=>el.classList.remove('selecionado'));div.classList.add('selecionado');substitutoSelecionado=m;};
     lista.appendChild(div);
   });
   document.getElementById('trocar-ov').classList.add('on');
 }
 
-function fecharTrocar(){ 
-  document.getElementById('trocar-ov').classList.remove('on'); 
-  eventoTroca=null; 
-  substitutoSelecionado=null; 
-}
+function fecharTrocar(){document.getElementById('trocar-ov').classList.remove('on');eventoTroca=null;substitutoSelecionado=null;}
 
 async function confirmarTroca(){
-  if(!substitutoSelecionado || !eventoTroca) { alert('Selecione um substituto.'); return; }
-  
-  try {
-    const evRef = db.collection('eventos').doc(eventoTroca.id);
-    const ev = (await evRef.get()).data();
-    const substitutos = ev.substitutos || [];
-    
-    const jaSubstituido = substitutos.findIndex(s => s.substituindo === eu.nome_completo);
-    
-    const novaSubstituicao = {
-      uid: substitutoSelecionado.uid,
-      nome: substitutoSelecionado.nome_completo,
-      substituindo: eu.nome_completo,
-      data: new Date().toISOString()
-    };
-    
-    if(jaSubstituido >= 0) {
-      substitutos[jaSubstituido] = novaSubstituicao;
-    } else {
-      substitutos.push(novaSubstituicao);
-    }
-    
-    await evRef.update({ substitutos });
-    
-    await db.collection('notificacoes').add({
-      uid: substitutoSelecionado.uid,
-      tipo: 'substituicao',
-      titulo_evento: eventoTroca.titulo_evento,
-      data_hora: eventoTroca.data_hora,
-      substituindo: eu.nome_completo,
-      grupo_id: grupoId,
-      respondido: false,
-      criado_em: firebase.firestore.FieldValue.serverTimestamp()
-    });
-    
-    alert('✅ Substituição solicitada com sucesso!');
-    fecharTrocar();
-    carregarEventos();
-  } catch(e) {
-    console.error(e);
-    alert('Erro ao processar troca: ' + e.message);
-  }
+  if(!substitutoSelecionado||!eventoTroca){alert('Selecione um substituto.');return;}
+  try{
+    const evRef=db.collection('eventos').doc(eventoTroca.id);
+    const ev=(await evRef.get()).data();
+    const substitutos=ev.substitutos||[];
+    const jaSubstituido=substitutos.findIndex(s=>s.substituindo===eu.nome_completo);
+    const novaSubstituicao={uid:substitutoSelecionado.uid,nome:substitutoSelecionado.nome_completo,substituindo:eu.nome_completo,data:new Date().toISOString()};
+    if(jaSubstituido>=0){substitutos[jaSubstituido]=novaSubstituicao;}else{substitutos.push(novaSubstituicao);}
+    await evRef.update({substitutos});
+    await db.collection('notificacoes').add({uid:substitutoSelecionado.uid,tipo:'substituicao',titulo_evento:eventoTroca.titulo_evento,data_hora:eventoTroca.data_hora,substituindo:eu.nome_completo,grupo_id:grupoId,respondido:false,criado_em:firebase.firestore.FieldValue.serverTimestamp()});
+    mostrarToast('✅ Substituição solicitada com sucesso!');
+    fecharTrocar();carregarEventos();
+  }catch(e){console.error(e);alert('Erro ao processar troca: '+e.message);}
 }
 
 // ── SCANNER E OCR ─────────────────────────────────────────────────────
 async function abrirScanner(){
-  if(!grupoId){alert('Entre em um grupo primeiro.');return;} document.getElementById('scan-ov').classList.add('on');
-  try{ 
-    if(camStream) fecharScanner();
-    const constraints = { video: { facingMode: { exact: "environment" } } };
-    try {
-      camStream = await navigator.mediaDevices.getUserMedia(constraints);
-    } catch(e) {
-      camStream = await navigator.mediaDevices.getUserMedia({ video: true });
-    }
-    const v = document.getElementById('video');
-    v.srcObject = camStream;
-    v.setAttribute('playsinline', true);
-    v.play();
-  } catch(e) {
-    alert('Câmera não disponível ou permissão negada. Use a galeria.');
-    console.error(e);
-  }
+  if(!grupoId){alert('Entre em um grupo primeiro.');return;}document.getElementById('scan-ov').classList.add('on');
+  try{
+    if(camStream)fecharScanner();
+    const constraints={video:{facingMode:{exact:"environment"}}};
+    try{camStream=await navigator.mediaDevices.getUserMedia(constraints);}catch(e){camStream=await navigator.mediaDevices.getUserMedia({video:true});}
+    const v=document.getElementById('video');v.srcObject=camStream;v.setAttribute('playsinline',true);v.play();
+  }catch(e){alert('Câmera não disponível ou permissão negada. Use a galeria.');console.error(e);}
 }
 
-function fecharScanner(){ document.getElementById('scan-ov').classList.remove('on'); if(camStream){camStream.getTracks().forEach(t=>t.stop());camStream=null;} }
+function fecharScanner(){document.getElementById('scan-ov').classList.remove('on');if(camStream){camStream.getTracks().forEach(t=>t.stop());camStream=null;}}
 
 function capturar(){
-  const v=document.getElementById('video'); const c=document.createElement('canvas'); c.width=v.videoWidth;c.height=v.videoHeight;
-  c.getContext('2d').drawImage(v,0,0); c.toBlob(b=>processarFoto(b),'image/jpeg',.9);
+  const v=document.getElementById('video');const c=document.createElement('canvas');c.width=v.videoWidth;c.height=v.videoHeight;
+  c.getContext('2d').drawImage(v,0,0);c.toBlob(b=>processarFoto(b),'image/jpeg',.9);
 }
 
 async function processarFoto(file){
-  if(!file) return;
-  
+  if(!file)return;
   fecharScanner();
-  
-  const ocrOv = document.getElementById('ocr-ov');
-  const ocrTexto = document.getElementById('ocr-texto');
-  const ocrSubtexto = document.getElementById('ocr-subtexto');
-  const ocrPreenchimento = document.getElementById('ocr-preenchimento');
-  
-  ocrOv.classList.add('on');
-  ocrPreenchimento.style.width = '10%';
-  ocrTexto.textContent = '📸 Preparando imagem...';
-  ocrSubtexto.textContent = 'Otimizando qualidade para leitura';
-  
+  const ocrOv=document.getElementById('ocr-ov');const ocrTexto=document.getElementById('ocr-texto');const ocrSubtexto=document.getElementById('ocr-subtexto');const ocrPreenchimento=document.getElementById('ocr-preenchimento');
+  ocrOv.classList.add('on');ocrPreenchimento.style.width='10%';ocrTexto.textContent='📸 Preparando imagem...';ocrSubtexto.textContent='Otimizando qualidade para leitura';
   try{
-    const progressoInterval = setInterval(() => {
-      const currentWidth = parseFloat(ocrPreenchimento.style.width);
-      if (currentWidth < 80) {
-        ocrPreenchimento.style.width = (currentWidth + 5) + '%';
-      }
-      if (currentWidth > 30 && currentWidth < 50) {
-        ocrTexto.textContent = '🔍 Enviando para IA...';
-        ocrSubtexto.textContent = 'Conectando ao servidor de análise';
-      }
-      if (currentWidth > 50 && currentWidth < 70) {
-        ocrTexto.textContent = '🤖 Processando com IA...';
-        ocrSubtexto.textContent = 'Identificando texto e nomes';
-      }
-    }, 800);
-    
-    const base64 = await new Promise((res, rej) => {
-      const img = new Image();
-      const url = URL.createObjectURL(file);
-      img.onload = () => {
-        const MAX = 1600;
-        let w = img.width, h = img.height;
-        if (w > MAX || h > MAX) {
-          if (w > h) { h = Math.round(h * MAX / w); w = MAX; }
-          else { w = Math.round(w * MAX / h); h = MAX; }
-        }
-        const c = document.createElement('canvas');
-        c.width = w;
-        c.height = h;
-        c.getContext('2d').drawImage(img, 0, 0, w, h);
-        URL.revokeObjectURL(url);
-        res(c.toDataURL('image/jpeg', 0.9).split(',')[1]);
-      };
-      img.onerror = () => rej(new Error('Erro ao carregar imagem'));
-      img.src = url;
-    });
-
-    clearInterval(progressoInterval);
-    ocrPreenchimento.style.width = '80%';
-    ocrTexto.textContent = '🔎 Lendo documento...';
-    ocrSubtexto.textContent = 'IA analisando texto da convocação';
-
-    const resp = await fetch('https://api.mistral.ai/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer zQVzmFaX904lqaFwzt40BHXHfGoqSJca'
-      },
-      body: JSON.stringify({
-        model: 'pixtral-12b-2409',
-        max_tokens: 800,
-        temperature: 0.1,
-        messages: [{
-          role: 'user',
-          content: [
-            {
-              type: 'image_url',
-              image_url: {
-                url: 'data:image/jpeg;base64,' + base64
-              }
-            },
-            {
-              type: 'text',
-              text: `Analise esta convocação oficial brasileira com MÁXIMA precisão. 
-
-REGRAS CRÍTICAS:
-1. NUNCA junte dois nomes em uma única string. Se houver "Eduardo Faria e Gilmar Squive", retorne ["Eduardo Faria", "Gilmar Squive"]
-2. Se houver "Eduardo Faria / Gilmar Squive", retorne ["Eduardo Faria", "Gilmar Squive"]
-3. Separe nomes por vírgulas, "e", "/", quebras de linha, ou quando começar com letra maiúscula após um sobrenome
-4. NÃO invente nomes nem complete nomes parciais
-5. Mantenha exatamente como está escrito no documento
-6. Se houver CARGO junto ao nome (ex: "Operador Eduardo"), separe: ["Eduardo"]
-
-Retorne APENAS JSON válido neste formato exato:
-{
-  "titulo": "TIPO - Tema",
-  "data": "YYYY-MM-DD",
-  "hora": "HH:MM",
-  "local": "local ou null",
-  "nomes": ["Nome Completo 1", "Nome Completo 2"]
-}
-
-IMPORTANTE: Se não conseguir ler com clareza, use "null" para o campo.`
-            }
-          ]
-        }]
-      })
-    });
-
-    ocrPreenchimento.style.width = '90%';
-    ocrTexto.textContent = '✅ Processando resultado...';
-    ocrSubtexto.textContent = 'Organizando dados encontrados';
-
-    const data = await resp.json();
-    const txtRaw = data.choices?.[0]?.message?.content || '';
-    
-    let parsed;
-    try {
-      parsed = JSON.parse(txtRaw.replace(/```json|```/g, '').trim());
-    } catch {
-      const match = txtRaw.match(/\{[\s\S]*\}/);
-      if (match) {
-        parsed = JSON.parse(match[0]);
-      } else {
-        throw new Error('Formato inválido na resposta da IA');
-      }
-    }
-
-    // PÓS-PROCESSAMENTO: Separar nomes que possam estar grudados
-    if (parsed.nomes && Array.isArray(parsed.nomes)) {
-      parsed.nomes = parsed.nomes.flatMap(nome => {
-        // Se contém " e " ou " / ", separar
-        if (nome.includes(' e ') || nome.includes(' / ')) {
-          return nome.split(/\s+e\s+|\s+\/\s+/).filter(n => n.trim().length > 2);
-        }
-        
-        // Verificar padrões comuns de nomes grudados
-        // Ex: "Eduardo FariaGilmar Squive" -> separar quando detectar camelCase
-        const nomesSeparados = nome.split(/(?<=[a-záéíóúãõç])(?=[A-Z])/);
-        if (nomesSeparados.length > 1) {
-          const nomesValidos = [];
-          let nomeAtual = '';
-          
-          for (let i = 0; i < nomesSeparados.length; i++) {
-            nomeAtual += nomesSeparados[i];
-            const palavras = nomeAtual.trim().split(/\s+/);
-            
-            if (palavras.length >= 2 && i < nomesSeparados.length - 1) {
-              nomesValidos.push(nomeAtual.trim());
-              nomeAtual = '';
-            }
-          }
-          
-          if (nomeAtual.trim()) {
-            nomesValidos.push(nomeAtual.trim());
-          }
-          
-          return nomesValidos.length > 1 ? nomesValidos : [nome];
-        }
-        
-        return [nome];
-      });
-    }
-
-    ocrPreenchimento.style.width = '100%';
-    ocrTexto.textContent = '✨ Análise concluída!';
-    ocrSubtexto.textContent = 'Verifique os dados encontrados';
-
-    ocrDados = {
-      titulo: parsed.titulo || null,
-      data_hora: (parsed.data && parsed.hora) ? `${parsed.data}T${parsed.hora}:00` : (parsed.data ? `${parsed.data}T00:00:00` : null),
-      local: parsed.local || null,
-      nomes: Array.isArray(parsed.nomes) ? parsed.nomes.filter(n => n && n.trim().length > 2) : [],
-      id_ver: null
-    };
-
-    if (parsed.data && parsed.hora && parsed.titulo) {
-      ocrDados.id_ver = parsed.data.replace(/-/g, '') + parsed.hora.replace(':', '') + parsed.titulo.toUpperCase().replace(/[^A-Z0-9]/g, '').substring(0, 10);
-    }
-
-    await new Promise(resolve => setTimeout(resolve, 800));
-
-  } catch(e) {
-    console.error('Erro OCR:', e);
-    ocrOv.classList.remove('on');
-    alert('❌ Erro ao analisar imagem: ' + e.message + '\n\nTente novamente com uma foto mais nítida.');
-    return;
-  }
-
+    const progressoInterval=setInterval(()=>{const currentWidth=parseFloat(ocrPreenchimento.style.width);if(currentWidth<80){ocrPreenchimento.style.width=(currentWidth+5)+'%';}if(currentWidth>30&&currentWidth<50){ocrTexto.textContent='🔍 Enviando para IA...';ocrSubtexto.textContent='Conectando ao servidor de análise';}if(currentWidth>50&&currentWidth<70){ocrTexto.textContent='🤖 Processando com IA...';ocrSubtexto.textContent='Identificando texto e nomes';}},800);
+    const base64=await new Promise((res,rej)=>{const img=new Image();const url=URL.createObjectURL(file);img.onload=()=>{const MAX=1600;let w=img.width,h=img.height;if(w>MAX||h>MAX){if(w>h){h=Math.round(h*MAX/w);w=MAX;}else{w=Math.round(w*MAX/h);h=MAX;}}const c=document.createElement('canvas');c.width=w;c.height=h;c.getContext('2d').drawImage(img,0,0,w,h);URL.revokeObjectURL(url);res(c.toDataURL('image/jpeg',0.9).split(',')[1]);};img.onerror=()=>rej(new Error('Erro ao carregar imagem'));img.src=url;});
+    clearInterval(progressoInterval);ocrPreenchimento.style.width='80%';ocrTexto.textContent='🔎 Lendo documento...';ocrSubtexto.textContent='IA analisando texto da convocação';
+    const resp=await fetch('https://api.mistral.ai/v1/chat/completions',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer zQVzmFaX904lqaFwzt40BHXHfGoqSJca'},body:JSON.stringify({model:'pixtral-12b-2409',max_tokens:800,temperature:0.1,messages:[{role:'user',content:[{type:'image_url',image_url:{url:'data:image/jpeg;base64,'+base64}},{type:'text',text:`Analise esta convocação oficial brasileira com MÁXIMA precisão. REGRAS CRÍTICAS: 1. NUNCA junte dois nomes. Separe por vírgulas, "e", "/" ou quebras de linha. 2. Retorne APENAS JSON: {"titulo":"TIPO - Tema","data":"YYYY-MM-DD","hora":"HH:MM","local":"local ou null","nomes":["Nome 1","Nome 2"]}`}]}]})});
+    ocrPreenchimento.style.width='90%';ocrTexto.textContent='✅ Processando resultado...';ocrSubtexto.textContent='Organizando dados encontrados';
+    const data=await resp.json();const txtRaw=data.choices?.[0]?.message?.content||'';let parsed;try{parsed=JSON.parse(txtRaw.replace(/```json|```/g,'').trim());}catch{const match=txtRaw.match(/\{[\s\S]*\}/);if(match){parsed=JSON.parse(match[0]);}else{throw new Error('Formato inválido na resposta da IA');}}
+    if(parsed.nomes&&Array.isArray(parsed.nomes)){parsed.nomes=parsed.nomes.flatMap(nome=>{if(nome.includes(' e ')||nome.includes(' / ')){return nome.split(/\s+e\s+|\s+\/\s+/).filter(n=>n.trim().length>2);}const nomesSeparados=nome.split(/(?<=[a-záéíóúãõç])(?=[A-Z])/);if(nomesSeparados.length>1){const nomesValidos=[];let nomeAtual='';for(let i=0;i<nomesSeparados.length;i++){nomeAtual+=nomesSeparados[i];const palavras=nomeAtual.trim().split(/\s+/);if(palavras.length>=2&&i<nomesSeparados.length-1){nomesValidos.push(nomeAtual.trim());nomeAtual='';}}if(nomeAtual.trim()){nomesValidos.push(nomeAtual.trim());}return nomesValidos.length>1?nomesValidos:[nome];}return[nome];});}
+    ocrPreenchimento.style.width='100%';ocrTexto.textContent='✨ Análise concluída!';ocrSubtexto.textContent='Verifique os dados encontrados';
+    ocrDados={titulo:parsed.titulo||null,data_hora:(parsed.data&&parsed.hora)?`${parsed.data}T${parsed.hora}:00`:(parsed.data?`${parsed.data}T00:00:00`:null),local:parsed.local||null,nomes:Array.isArray(parsed.nomes)?parsed.nomes.filter(n=>n&&n.trim().length>2):[],id_ver:null};
+    if(parsed.data&&parsed.hora&&parsed.titulo){ocrDados.id_ver=parsed.data.replace(/-/g,'')+parsed.hora.replace(':','')+parsed.titulo.toUpperCase().replace(/[^A-Z0-9]/g,'').substring(0,10);}
+    await new Promise(resolve=>setTimeout(resolve,800));
+  }catch(e){console.error('Erro OCR:',e);ocrOv.classList.remove('on');alert('❌ Erro ao analisar imagem: '+e.message+'\n\nTente novamente com uma foto mais nítida.');return;}
   ocrOv.classList.remove('on');
-
-  if (ocrDados.id_ver) {
-    const dup = await db.collection('eventos')
-      .where('id_verificacao', '==', ocrDados.id_ver)
-      .where('grupo_id', '==', grupoId)
-      .get();
-    
-    if (!dup.empty) {
-      alert('⚠️ Esta convocação já foi cadastrada anteriormente!');
-      return;
-    }
-  }
-
-  matches = await cruzar(ocrDados.nomes);
-  
-  document.getElementById('rv-tit').value = ocrDados.titulo || '';
-  document.getElementById('rv-data').value = ocrDados.data_hora ? ocrDados.data_hora.substring(0, 16) : '';
-  document.getElementById('rv-loc').value = ocrDados.local || '';
-  
-  renderMatches();
-  document.getElementById('rv-ov').classList.add('on');
+  if(ocrDados.id_ver){const dup=await db.collection('eventos').where('id_verificacao','==',ocrDados.id_ver).where('grupo_id','==',grupoId).get();if(!dup.empty){alert('⚠️ Esta convocação já foi cadastrada anteriormente!');return;}}
+  matches=await cruzar(ocrDados.nomes);
+  document.getElementById('rv-tit').value=ocrDados.titulo||'';document.getElementById('rv-data').value=ocrDados.data_hora?ocrDados.data_hora.substring(0,16):'';document.getElementById('rv-loc').value=ocrDados.local||'';
+  renderMatches();document.getElementById('rv-ov').classList.add('on');
 }
 
 async function cruzar(nomes){
-  const snap = await db.collection('usuarios').where('grupo_id', '==', grupoId).get();
-  const users = snap.docs.map(d => d.data());
-  const norm = s => s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9\s]/g, '').trim();
-  const stopwords = new Set(['de', 'da', 'do', 'das', 'dos', 'e', 'a', 'o', 'as', 'os']);
-  const pwSig = s => norm(s).split(/\s+/).filter(p => p.length > 1 && !stopwords.has(p));
-
-  return nomes.map(nome => {
-    const nn = norm(nome);
-    const pwNome = pwSig(nome);
-
-    // 1. Busca exata
-    for (const u of users) {
-      const todosNomes = [u.nome_completo, ...(u.nomes_conhecidos || [])];
-      if (todosNomes.some(n => norm(n) === nn)) {
-        return { tipo: 'exato', nome, usuario: u };
-      }
-    }
-
-    // 2. Busca por similaridade (MAIS RIGOROSA)
-    let melhorUser = null;
-    let melhorScore = 0;
-    
-    for (const u of users) {
-      const pwUser = pwSig(u.nome_completo);
-      
-      const palavrasBatem = pwNome.filter(p => 
-        pwUser.some(pu => palavrasSimilares(p, pu))
-      );
-      
-      const scoreOcr = palavrasBatem.length / Math.max(pwNome.length, 1);
-      const scoreUser = palavrasBatem.length / Math.max(pwUser.length, 1);
-      
-      const scoreFinal = (scoreOcr * 0.6) + (scoreUser * 0.4);
-      
-      if (scoreFinal > melhorScore && scoreOcr >= 0.6) {
-        melhorScore = scoreFinal;
-        melhorUser = u;
-      }
-    }
-    
-    if (melhorUser && melhorScore >= 0.75) {
-      return { tipo: 'parcial', nome, usuario: melhorUser, score: melhorScore };
-    }
-
-    if (pwNome.length >= 2 && melhorUser && melhorScore < 0.75) {
-      console.log(`⚠️ Baixa similaridade: "${nome}" vs "${melhorUser.nome_completo}" (score: ${melhorScore.toFixed(2)})`);
-    }
-
-    return { tipo: 'nao_encontrado', nome, sugestao: melhorUser && melhorScore >= 0.5 ? melhorUser : null };
-  });
+  const snap=await db.collection('usuarios').where('grupo_id','==',grupoId).get();const users=snap.docs.map(d=>d.data());const norm=s=>s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9\s]/g,'').trim();const stopwords=new Set(['de','da','do','das','dos','e','a','o','as','os']);const pwSig=s=>norm(s).split(/\s+/).filter(p=>p.length>1&&!stopwords.has(p));
+  return nomes.map(nome=>{const nn=norm(nome);const pwNome=pwSig(nome);for(const u of users){const todosNomes=[u.nome_completo,...(u.nomes_conhecidos||[])];if(todosNomes.some(n=>norm(n)===nn)){return{tipo:'exato',nome,usuario:u};}}let melhorUser=null;let melhorScore=0;for(const u of users){const pwUser=pwSig(u.nome_completo);const palavrasBatem=pwNome.filter(p=>pwUser.some(pu=>palavrasSimilares(p,pu)));const scoreOcr=palavrasBatem.length/Math.max(pwNome.length,1);const scoreUser=palavrasBatem.length/Math.max(pwUser.length,1);const scoreFinal=(scoreOcr*0.6)+(scoreUser*0.4);if(scoreFinal>melhorScore&&scoreOcr>=0.6){melhorScore=scoreFinal;melhorUser=u;}}if(melhorUser&&melhorScore>=0.75){return{tipo:'parcial',nome,usuario:melhorUser,score:melhorScore};}if(pwNome.length>=2&&melhorUser&&melhorScore<0.75){console.log(`⚠️ Baixa similaridade: "${nome}" vs "${melhorUser.nome_completo}" (score: ${melhorScore.toFixed(2)})`);}return{tipo:'nao_encontrado',nome,sugestao:melhorUser&&melhorScore>=0.5?melhorUser:null};});
 }
 
 function renderMatches(){
-  document.getElementById('rv-matches').innerHTML = matches.length === 0 
-    ? '<p style="color:var(--light);font-size:13px;padding:12px;background:#fff;border-radius:10px;">Nenhum nome identificado.</p>'
-    : matches.map((m, i) => {
-        let cor = m.tipo === 'exato' ? 'ok' : (m.tipo === 'nao_encontrado' ? 'no' : 'av');
-        let status = m.tipo === 'exato' ? '✅' : (m.tipo === 'nao_encontrado' ? '❓ Não identificado' : '⚠️ Verificar');
-        let sub = '';
-        
-        if (m.tipo === 'exato') {
-          sub = `→ ${m.usuario.nome_completo}`;
-        } else if (m.tipo === 'nao_encontrado') {
-          if (m.sugestao) {
-            sub = `Talvez seja ${m.sugestao.nome_completo}?`;
-          } else {
-            sub = 'Nenhum usuário similar encontrado';
-          }
-        } else if (m.tipo === 'parcial') {
-          sub = `Provável: ${m.usuario.nome_completo} (${Math.round(m.score * 100)}%)`;
-        }
-        
-        const mostrarBotoes = (m.tipo === 'parcial' || (m.tipo === 'nao_encontrado' && m.sugestao));
-        const usuarioSugerido = m.tipo === 'parcial' ? m.usuario : (m.sugestao || null);
-        
-        return `<div class="mi ${cor}">
-          <div class="mi-top">
-            <span style="font-size:18px">${status}</span>
-            <div style="flex:1">
-              <input 
-                type="text" 
-                class="mi-nome" 
-                value="${m.nome}" 
-                onchange="editarNome(${i}, this.value)" 
-                style="width:100%;border:none;background:transparent;font-weight:600;font-family:inherit;font-size:14px;color:inherit;outline:none;border-bottom:1px dashed var(--light);padding:4px 0;"
-              >
-              <div class="mi-sub">${sub}</div>
-            </div>
-          </div>
-          ${mostrarBotoes ? `
-            <div class="mi-btns">
-              <button class="btn-sim" onclick="confirmar(${i}, true)">✓ Confirmar ${usuarioSugerido ? usuarioSugerido.nome_completo.split(' ')[0] : ''}</button>
-              <button class="btn-nao" onclick="confirmar(${i}, false)">✗ Não é</button>
-            </div>
-          ` : ''}
-          ${m.tipo === 'nao_encontrado' && !m.sugestao ? `
-            <div class="mi-btns">
-              <input type="text" placeholder="Nome manual" id="manual-${i}" style="flex:1;padding:6px;border:1px solid #ddd;border-radius:6px;font-size:12px;">
-              <button class="btn-sim" onclick="vincularManual(${i})" style="font-size:11px;">🔗 Vincular</button>
-            </div>
-          ` : ''}
-        </div>`;
-      }).join('');
+  document.getElementById('rv-matches').innerHTML=matches.length===0?'<p style="color:var(--light);font-size:13px;padding:12px;background:#fff;border-radius:10px;">Nenhum nome identificado.</p>':matches.map((m,i)=>{let cor=m.tipo==='exato'?'ok':(m.tipo==='nao_encontrado'?'no':'av');let status=m.tipo==='exato'?'✅':(m.tipo==='nao_encontrado'?'❓ Não identificado':'⚠️ Verificar');let sub='';if(m.tipo==='exato'){sub=`→ ${m.usuario.nome_completo}`;}else if(m.tipo==='nao_encontrado'){if(m.sugestao){sub=`Talvez seja ${m.sugestao.nome_completo}?`;}else{sub='Nenhum usuário similar encontrado';}}else if(m.tipo==='parcial'){sub=`Provável: ${m.usuario.nome_completo} (${Math.round(m.score*100)}%)`;}const mostrarBotoes=(m.tipo==='parcial'||(m.tipo==='nao_encontrado'&&m.sugestao));const usuarioSugerido=m.tipo==='parcial'?m.usuario:(m.sugestao||null);return`<div class="mi ${cor}"><div class="mi-top"><span style="font-size:18px">${status}</span><div style="flex:1"><input type="text" class="mi-nome" value="${m.nome}" onchange="editarNome(${i},this.value)" style="width:100%;border:none;background:transparent;font-weight:600;font-family:inherit;font-size:14px;color:inherit;outline:none;border-bottom:1px dashed var(--light);padding:4px 0;"><div class="mi-sub">${sub}</div></div></div>${mostrarBotoes?`<div class="mi-btns"><button class="btn-sim" onclick="confirmar(${i},true)">✓ Confirmar ${usuarioSugerido?usuarioSugerido.nome_completo.split(' ')[0]:''}</button><button class="btn-nao" onclick="confirmar(${i},false)">✗ Não é</button></div>`:''}${m.tipo==='nao_encontrado'&&!m.sugestao?`<div class="mi-btns"><input type="text" placeholder="Nome manual" id="manual-${i}" style="flex:1;padding:6px;border:1px solid #ddd;border-radius:6px;font-size:12px;"><button class="btn-sim" onclick="vincularManual(${i})" style="font-size:11px;">🔗 Vincular</button></div>`:''}</div>`;}).join('');
 }
 
-function editarNome(i, novoNome){
-  matches[i].nome = novoNome;
-  cruzar([novoNome]).then(res => {
-    matches[i] = res[0];
-    renderMatches();
-  });
-}
+function editarNome(i,novoNome){matches[i].nome=novoNome;cruzar([novoNome]).then(res=>{matches[i]=res[0];renderMatches();});}
+function confirmar(i,sim){if(sim){matches[i].tipo='exato';const usuario=matches[i].usuario||matches[i].sugestao;if(usuario){db.collection('usuarios').doc(usuario.uid).update({nomes_conhecidos:firebase.firestore.FieldValue.arrayUnion(matches[i].nome)});}}else{matches[i].tipo='nao_encontrado';matches[i].sugestao=null;}renderMatches();}
 
-function confirmar(i, sim){
-  if(sim){ 
-    matches[i].tipo = 'exato'; 
-    const usuario = matches[i].usuario || matches[i].sugestao;
-    if(usuario) {
-      db.collection('usuarios').doc(usuario.uid).update({
-        nomes_conhecidos: firebase.firestore.FieldValue.arrayUnion(matches[i].nome)
-      });
-    }
-  } else { 
-    matches[i].tipo = 'nao_encontrado'; 
-    matches[i].sugestao = null;
-  } 
-  renderMatches();
-}
-
-async function vincularManual(i) {
-  const inputManual = document.getElementById('manual-' + i);
-  if (!inputManual || !inputManual.value.trim()) {
-    alert('Digite um nome para vincular');
-    return;
-  }
-  
-  const nomeManual = inputManual.value.trim();
-  matches[i].nome = nomeManual;
-  
-  const snap = await db.collection('usuarios').where('grupo_id', '==', grupoId).get();
-  const users = snap.docs.map(d => d.data());
-  const norm = s => s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9\s]/g, '').trim();
-  const userEncontrado = users.find(u => norm(u.nome_completo) === norm(nomeManual));
-  
-  if (userEncontrado) {
-    matches[i].usuario = userEncontrado;
-    matches[i].tipo = 'exato';
-  } else {
-    matches[i].tipo = 'nao_encontrado';
-    matches[i].sugestao = null;
-  }
-  
-  renderMatches();
-}
+async function vincularManual(i){const inputManual=document.getElementById('manual-'+i);if(!inputManual||!inputManual.value.trim()){alert('Digite um nome para vincular');return;}const nomeManual=inputManual.value.trim();matches[i].nome=nomeManual;const snap=await db.collection('usuarios').where('grupo_id','==',grupoId).get();const users=snap.docs.map(d=>d.data());const norm=s=>s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9\s]/g,'').trim();const userEncontrado=users.find(u=>norm(u.nome_completo)===norm(nomeManual));if(userEncontrado){matches[i].usuario=userEncontrado;matches[i].tipo='exato';}else{matches[i].tipo='nao_encontrado';matches[i].sugestao=null;}renderMatches();}
 
 async function salvar(){
-  if(isProcessingSave) return;
-  const titulo=document.getElementById('rv-tit').value.trim();
-  const dataVal=document.getElementById('rv-data').value;
-  if(!titulo||!dataVal){alert('Preencha título e data.');return;}
-  isProcessingSave = true;
-  const btnSalvar = document.getElementById('rv-btn-salvar');
-  if(btnSalvar) { btnSalvar.textContent = "Salvando..."; btnSalvar.disabled = true; }
-
-  try {
-    let idVerificacao = ocrDados?.id_ver || (titulo.replace(/\s/g,'').toUpperCase().substring(0,10) + dataVal.replace(/[-:T]/g,''));
-    const dup = await db.collection('eventos').where('id_verificacao','==',idVerificacao).where('grupo_id','==',grupoId).get();
-    if(!dup.empty){ alert('⚠️ Este evento já foi adicionado!'); fecharRv(); return; }
-
-    await db.collection('eventos').add({ 
-      id_verificacao: idVerificacao, titulo_evento: titulo, data_hora: dataVal+':00', 
-      local: document.getElementById('rv-loc').value.trim(), 
-      lista_convocados: matches.map(m=>m.nome), 
-      grupo_id: grupoId, criado_por: eu.uid, criado_em: firebase.firestore.FieldValue.serverTimestamp() 
-    });
-    
-    for(const m of matches){
-      if(m.usuario){
-        await db.collection('notificacoes').add({ 
-          uid:m.usuario.uid, tipo: m.tipo==='exato'?'convocado':'confirmar', 
-          nome_convocacao:m.nome, titulo_evento:titulo, data_hora:dataVal+':00', 
-          grupo_id:grupoId, respondido:false, criado_em:firebase.firestore.FieldValue.serverTimestamp() 
-        });
-      }
-    }
-    alert('✅ Convocação salva com sucesso!'); fecharRv(); carregarEventos();
-  } catch(e) {
-    console.error(e); alert('Erro ao salvar: '+e.message);
-    isProcessingSave = false; if(btnSalvar) { btnSalvar.textContent = "✓ Salvar"; btnSalvar.disabled = false; }
-  }
+  if(isProcessingSave)return;const titulo=document.getElementById('rv-tit').value.trim();const dataVal=document.getElementById('rv-data').value;if(!titulo||!dataVal){alert('Preencha título e data.');return;}isProcessingSave=true;const btnSalvar=document.getElementById('rv-btn-salvar');if(btnSalvar){btnSalvar.textContent="Salvando...";btnSalvar.disabled=true;}
+  try{let idVerificacao=ocrDados?.id_ver||(titulo.replace(/\s/g,'').toUpperCase().substring(0,10)+dataVal.replace(/[-:T]/g,''));const dup=await db.collection('eventos').where('id_verificacao','==',idVerificacao).where('grupo_id','==',grupoId).get();if(!dup.empty){alert('⚠️ Este evento já foi adicionado!');fecharRv();return;}await db.collection('eventos').add({id_verificacao:idVerificacao,titulo_evento:titulo,data_hora:dataVal+':00',local:document.getElementById('rv-loc').value.trim(),lista_convocados:matches.map(m=>m.nome),grupo_id:grupoId,criado_por:eu.uid,criado_em:firebase.firestore.FieldValue.serverTimestamp()});for(const m of matches){if(m.usuario){await db.collection('notificacoes').add({uid:m.usuario.uid,tipo:m.tipo==='exato'?'convocado':'confirmar',nome_convocacao:m.nome,titulo_evento:titulo,data_hora:dataVal+':00',grupo_id:grupoId,respondido:false,criado_em:firebase.firestore.FieldValue.serverTimestamp()});}}mostrarToast('✅ Convocação salva com sucesso!');fecharRv();carregarEventos();}catch(e){console.error(e);alert('Erro ao salvar: '+e.message);isProcessingSave=false;if(btnSalvar){btnSalvar.textContent="✓ Salvar";btnSalvar.disabled=false;}}
 }
 
-function fecharRv(){ document.getElementById('rv-ov').classList.remove('on'); ocrDados=null; matches=[]; isProcessingSave = false; }
-function euSouConvocadoNome(nome){ const norm=s=>s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9\s]/g,'').trim(); const euNomes=[eu.nome_completo,...(eu.nomes_conhecidos||[])]; return euNomes.some(en=>norm(en)===norm(nome)); }
+function fecharRv(){document.getElementById('rv-ov').classList.remove('on');ocrDados=null;matches=[];isProcessingSave=false;}
+function euSouConvocadoNome(nome){const norm=s=>s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9\s]/g,'').trim();const euNomes=[eu.nome_completo,...(eu.nomes_conhecidos||[])];return euNomes.some(en=>norm(en)===norm(nome));}
 
-function ics(ev){
-  const ini=new Date(ev.data_hora); const fim=new Date(ini.getTime()+2*60*60*1000); 
-  const f=d=>d.toISOString().replace(/[-:]/g,'').split('.')[0]+'Z';
-  const c=['BEGIN:VCALENDAR','VERSION:2.0','BEGIN:VEVENT','SUMMARY:'+(ev.titulo_evento||'Convocação'),'DTSTART:'+f(ini),'DTEND:'+f(fim),'END:VEVENT','END:VCALENDAR'].join('\r\n');
-  const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([c],{type:'text/calendar'})); a.download='conv.ics'; a.click();
-}
+function ics(ev){const ini=new Date(ev.data_hora);const fim=new Date(ini.getTime()+2*60*60*1000);const f=d=>d.toISOString().replace(/[-:]/g,'').split('.')[0]+'Z';const c=['BEGIN:VCALENDAR','VERSION:2.0','BEGIN:VEVENT','SUMMARY:'+(ev.titulo_evento||'Convocação'),'DTSTART:'+f(ini),'DTEND:'+f(fim),'END:VEVENT','END:VCALENDAR'].join('\r\n');const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([c],{type:'text/calendar'}));a.download='conv.ics';a.click();}
 
 function fD(d){return d.toLocaleDateString('pt-BR',{day:'2-digit',month:'short'});}
 function fH(d){return d.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});}
