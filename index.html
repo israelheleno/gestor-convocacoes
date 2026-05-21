@@ -197,7 +197,7 @@
 <header>
   <div class="h-top">
     <div class="h-logo">
-      <svg viewBox="0 0 24 24"><path d="M17 3H7C5.9 3 5 3.9 5 5v16l7-3 7 3V5c0-1.1-.9-2-2-2zm0 15l-5-2.18L7 18V5h10v13z"/></svg>
+      <svg viewBox="0 0 24 24"><path d="M17 3H7C5.9 3 5 3.9(5) 5v16l7-3 7 3V5c0-1.1-.9-2-2-2zm0 15l-5-2.18L7 18V5h10v13z"/></svg>
       <span>Gestor de Convocações</span>
     </div>
     <button class="btn-sair" onclick="sair()">Sair</button>
@@ -257,7 +257,7 @@
 <footer>
   &copy; 2026 Gestor de Convocações. Todos os direitos reservados.
   <span>Desenvolvido por Israel Heleno de Castro</span>
-  <span style="font-size:10px; opacity:0.7">Versão 1.2.0</span>
+  <span style="font-size:10px; opacity:0.7">Versão 1.3.0</span>
 </footer>
 
 <!-- ================= MODAIS ================= -->
@@ -479,9 +479,18 @@ auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL).then(()=>{
     if(!user){ clearTimeout(T); window.location.replace('login.html'); return; }
     try{
       const snap=await db.collection('usuarios').doc(user.uid).get();
-      if(!snap.exists||!snap.data().nome_completo){
-        clearTimeout(T); window.location.replace('login.html'); return;
+      
+      // SOLUÇÃO CRÍTICA ANTI-LOOP DE REDIRECIONAMENTO:
+      // Se o usuário está autenticado mas o documento no Firestore sumiu ou está quebrado,
+      // nós mantemos o usuário no Dashboard e abrimos forçadamente o modal de completar o perfil!
+      if(!snap.exists || !snap.data().nome_completo){
+        authOk=true; clearTimeout(T);
+        eu={uid:user.uid, nome_completo:"", cargo:"", grupo_id:null};
+        document.getElementById('h-user').textContent='Completar Perfil...';
+        abrirPerfil();
+        return;
       }
+      
       authOk=true; clearTimeout(T);
       eu={uid:user.uid,...snap.data()};
       document.getElementById('h-user').textContent=eu.nome_completo+' · '+eu.cargo;
@@ -670,20 +679,29 @@ async function verificarAprovacoes(){
     lst.appendChild(el);
   });
 }
-async function aprovar(uid,nome){
-  await db.collection('usuarios').doc(uid).update({grupo_id:grupoId,solicitacoes:[]});
-  const snap=await db.collection('grupos').doc(grupoId).get();
-  const s=snap.data().solicitacoes||{};delete s[uid];
-  await db.collection('grupos').doc(grupoId).update({solicitacoes:s,membros:(snap.data().membros||1)+1});
-  verificarAprovacoes();alert(nome+' aprovado(a)!');
+async function abrirTrocar(ev){
+  eventoTroca=ev; substitutoSelecionado=null; document.getElementById('mod-ev').classList.remove('on');
+  const snap=await db.collection('usuarios').where('grupo_id','==',grupoId).get();
+  const lista=document.getElementById('trocar-lista'); lista.innerHTML='';
+  snap.forEach(d=>{
+    const m=d.data(); if(m.uid===eu.uid)return;
+    const div=document.createElement('div'); div.className='trocar-membro';
+    div.innerHTML=`<span style="font-size:20px">👤</span><div><div style="font-weight:500">${m.nome_completo}</div><div style="font-size:12px;color:var(--light)">${m.cargo||''}</div></div>`;
+    div.onclick=()=>{ lista.querySelectorAll('.trocar-membro').forEach(el=>el.classList.remove('selecionado')); div.classList.add('selecionado'); substitutoSelecionado=m; };
+    lista.appendChild(div);
+  });
+  document.getElementById('trocar-confirmar').onclick=async()=>{
+    if(!substitutoSelecionado){alert('Selecione um substituto.');return;}
+    if(!confirm(`Confirmar troca: ${eu.nome_completo} → ${substitutoSelecionado.nome_completo}?`))return;
+    const substitutos=[...(eventoTroca.substitutos||[]),{ uid:substitutoSelecionado.uid, nome:substitutoSelecionado.nome_completo, substituindo:eu.nome_completo, em:new Date().toISOString() }];
+    await db.collection('eventos').doc(eventoTroca.id).update({ substitutos, lista_convocados: (eventoTroca.lista_convocados||[]).filter(n => !euSouConvocadoNome(n)) });
+    await db.collection('notificacoes').add({ uid:substitutoSelecionado.uid, tipo:'substituicao', nome_convocacao:substitutoSelecionado.nome_completo, titulo_evento:eventoTroca.titulo_evento||'Evento', data_hora:eventoTroca.data_hora, substituindo:eu.nome_completo, respondido:false, criado_em:firebase.firestore.FieldValue.serverTimestamp() });
+    document.getElementById('trocar-ov').classList.remove('on'); alert(`✅ Troca confirmada!`); carregarEventos();
+  };
+  document.getElementById('trocar-ov').classList.add('on');
 }
-async function recusar(uid){
-  const snap=await db.collection('grupos').doc(grupoId).get();
-  const s=snap.data().solicitacoes||{};delete s[uid];
-  await db.collection('grupos').doc(grupoId).update({solicitacoes:s});
-  await db.collection('usuarios').doc(uid).update({solicitacoes:[]});
-  verificarAprovacoes();
-}
+function fecharTrocar(){ document.getElementById('trocar-ov').classList.remove('on'); }
+function euSouConvocadoNome(nome){ const norm=s=>s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9\s]/g,'').trim(); const euNomes=[eu.nome_completo,...(eu.nomes_conhecidos||[])]; return euNomes.some(en=>norm(en)===norm(nome)); }
 
 // ── FÉRIAS & AUSÊNCIAS ────────────────────────────────────────────────
 async function fetchAusencias() {
@@ -825,7 +843,6 @@ async function carregarEventos(){
   const minhasProximas=evs.filter(e=>new Date(e.data_hora)>agora&&euSouConvocado(e.lista_convocados));
   const minhasSubstituicoes=evs.filter(e=>new Date(e.data_hora)>agora&&(e.substitutos||[]).some(s=>s.uid===eu.uid));
 
-  // Roda a verificação de push automático (Frontend smart check)
   checarLembreteVinteQuatarHoras(minhasProximas);
 
   const el=document.getElementById('prox');
@@ -869,22 +886,18 @@ async function carregarEventos(){
   [...futuros,...passados].forEach(ev=>lst.appendChild(criarCard(ev)));
 }
 
-// Smart Frontend Push Engine (Dispara lembrete 1 dia antes às 9h se o app estiver em background ou aberto)
 function checarLembreteVinteQuatarHoras(proximos) {
   const agora = new Date();
   const horaAtual = agora.getHours();
-  
-  if (horaAtual < 9) return; // Só dispara após as 9h da manhã
+  if (horaAtual < 9) return; 
 
   proximos.forEach(ev => {
     const dtEv = new Date(ev.data_hora);
-    
-    // Calcula a diferença em dias corridos
     const dataHojeZero = new Date(agora.getFullYear(), agora.getMonth(), agora.getDate());
     const dataEvZero = new Date(dtEv.getFullYear(), dtEv.getMonth(), dtEv.getDate());
     const diffDias = Math.round((dataEvZero - dataHojeZero) / (1000 * 60 * 60 * 24));
 
-    if (diffDias === 1) { // É amanhã!
+    if (diffDias === 1) { 
       const cacheKey = `rem_9am_${ev.id}`;
       if (!localStorage.getItem(cacheKey)) {
         const horaFmt = dtEv.toLocaleTimeString('pt-BR', {hour: '2-digit', minute: '2-digit'});
@@ -893,7 +906,7 @@ function checarLembreteVinteQuatarHoras(proximos) {
           `Você está convocado para o evento "${ev.titulo_evento}" amanhã às ${horaFmt}.`,
           `lembrete-${ev.id}`
         );
-        localStorage.setItem(cacheKey, 'true'); // Evita duplicar
+        localStorage.setItem(cacheKey, 'true'); 
       }
     }
   });
@@ -1046,7 +1059,16 @@ async function cruzar(nomes){
   });
 }
 
-function fecharRv(){document.getElementById('rv-ov').classList.remove('on');ocrDados=null;matches=[];}
+function renderMatches(){
+  document.getElementById('rv-matches').innerHTML=matches.length===0?'<p style="color:var(--light);font-size:13px;padding:12px;background:#fff;border-radius:10px;">Nenhum nome identificado.</p>':matches.map((m,i)=>{
+      if(m.tipo==='exato')return`<div class="mi ok"><div class="mi-top"><span style="font-size:18px">✅</span><div><div class="mi-nome">${m.nome}</div><div class="mi-sub">→ ${m.usuario.nome_completo}</div></div></div></div>`;
+      if(m.tipo==='parcial' || m.tipo==='por_cargo')return`<div class="mi av"><div class="mi-top"><span style="font-size:18px">⚠️</span><div><div class="mi-nome">${m.nome}</div><div class="mi-sub">É ${m.usuario.nome_completo}?</div></div></div><div class="mi-btns"><button class="btn-sim" onclick="confirmar(${i},true)">✓ Sim</button><button class="btn-nao" onclick="confirmar(${i},false)">✗ Não</button></div></div>`;
+      return`<div class="mi no"><div class="mi-top"><span style="font-size:18px">❓</span><div><div class="mi-nome">${m.nome}</div><div class="mi-sub">Não encontrado</div></div></div></div>`;
+    }).join('');
+}
+function confirmar(i,sim){
+  if(sim){ matches[i].tipo='exato'; db.collection('usuarios').doc(matches[i].usuario.uid).update({nomes_conhecidos:firebase.firestore.FieldValue.arrayUnion(matches[i].nome)}); } else { matches[i].tipo='nao_encontrado'; } renderMatches();
+}
 
 async function salvar(){
   const titulo=document.getElementById('rv-tit').value.trim(); const dataVal=document.getElementById('rv-data').value;
@@ -1062,7 +1084,7 @@ async function salvar(){
   const parciais=matches.filter(m=>m.tipo==='parcial' || m.tipo==='por_cargo');
   for(const m of parciais){
     await db.collection('notificacoes').add({ uid:m.usuario.uid, tipo:'confirmar', nome_convocacao:m.nome, titulo_evento:titulo, data_hora:dataVal+':00', grupo_id:grupoId, respondido:false, criado_em:firebase.firestore.FieldValue.serverTimestamp() });
-    if(m.usuario.uid===eu.uid) enviarNotificacaoPush('❓ Você foi convocado?',`"${m.nome}" aparece em: ${titulo}`,'conf-'+Date.now());
+    if(m.usuario.uid===eu.uid) enviarNotificacaoPush('❓ Você foi convocado?',`"${m.nome}" aparece in: ${titulo}`,'conf-'+Date.now());
   }
   alert('✅ Convocação salva!'); carregarEventos(); verificarNotificacoesPendentes();
 }
@@ -1105,34 +1127,45 @@ async function responderNotif(sim) {
 }
 
 // ── UTILS ─────────────────────────────────────────────────────────────
-async function abrirTrocar(ev){
-  eventoTroca=ev; substitutoSelecionado=null; document.getElementById('mod-ev').classList.remove('on');
-  const snap=await db.collection('usuarios').where('grupo_id','==',grupoId).get();
-  const lista=document.getElementById('trocar-lista'); lista.innerHTML='';
-  snap.forEach(d=>{
-    const m=d.data(); if(m.uid===eu.uid)return;
-    const div=document.createElement('div'); div.className='trocar-membro';
-    div.innerHTML=`<span style="font-size:20px">👤</span><div><div style="font-weight:500">${m.nome_completo}</div><div style="font-size:12px;color:var(--light)">${m.cargo||''}</div></div>`;
-    div.onclick=()=>{ lista.querySelectorAll('.trocar-membro').forEach(el=>el.classList.remove('selecionado')); div.classList.add('selecionado'); substitutoSelecionado=m; };
-    lista.appendChild(div);
-  });
-  document.getElementById('trocar-confirmar').onclick=async()=>{
-    if(!substitutoSelecionado){alert('Selecione um substituto.');return;}
-    if(!confirm(`Confirmar troca: ${eu.nome_completo} → ${substitutoSelecionado.nome_completo}?`))return;
-    const substitutos=[...(eventoTroca.substitutos||[]),{ uid:substitutoSelecionado.uid, nome:substitutoSelecionado.nome_completo, substituindo:eu.nome_completo, em:new Date().toISOString() }];
-    await db.collection('eventos').doc(eventoTroca.id).update({ substitutos, lista_convocados: (eventoTroca.lista_convocados||[]).filter(n => !euSouConvocadoNome(n)) });
-    await db.collection('notificacoes').add({ uid:substitutoSelecionado.uid, tipo:'substituicao', nome_convocacao:substitutoSelecionado.nome_completo, titulo_evento:eventoTroca.titulo_evento||'Evento', data_hora:eventoTroca.data_hora, substituindo:eu.nome_completo, respondido:false, criado_em:firebase.firestore.FieldValue.serverTimestamp() });
-    document.getElementById('trocar-ov').classList.remove('on'); alert(`✅ Troca confirmada!`); carregarEventos();
-  };
-  document.getElementById('trocar-ov').classList.add('on');
+function abrirPerfil(){ 
+  document.getElementById('perf-nome').value=eu.nome_completo||''; 
+  document.getElementById('perf-cargo').value=eu.cargo||''; 
+  
+  const btnCancel = document.querySelector('#perfil-ov .btn-cancel');
+  if(!eu.nome_completo){
+    btnCancel.style.display = 'none';
+  } else {
+    btnCancel.style.display = 'block';
+  }
+  document.getElementById('perfil-ov').classList.add('on'); 
 }
-function fecharTrocar(){ document.getElementById('trocar-ov').classList.remove('on'); }
-function euSouConvocadoNome(nome){ const norm=s=>s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9\s]/g,'').trim(); const euNomes=[eu.nome_completo,...(eu.nomes_conhecidos||[])]; return euNomes.some(en=>norm(en)===norm(nome)); }
-function abrirPerfil(){ document.getElementById('perf-nome').value=eu.nome_completo||''; document.getElementById('perf-cargo').value=eu.cargo||''; document.getElementById('perfil-ov').classList.add('on'); }
 async function salvarPerfil(){
-  const nome=document.getElementById('perf-nome').value.trim(); const cargo=document.getElementById('perf-cargo').value.trim(); if(!nome||!cargo)return;
-  await db.collection('usuarios').doc(eu.uid).update({nome_completo:nome,cargo,nomes_conhecidos:firebase.firestore.FieldValue.arrayUnion(nome)});
-  eu.nome_completo=nome; eu.cargo=cargo; document.getElementById('h-user').textContent=nome+' · '+cargo; document.getElementById('perfil-ov').classList.remove('on'); alert('✅ Perfil atualizado!'); carregarEventos();
+  const nome=document.getElementById('perf-nome').value.trim(); 
+  const cargo=document.getElementById('perf-cargo').value.trim(); 
+  if(!nome||!cargo){ alert('Por favor, preencha todos os campos.'); return; }
+  
+  await db.collection('usuarios').doc(eu.uid).set({
+    uid: eu.uid,
+    nome_completo: nome,
+    cargo: cargo,
+    nomes_conhecidos: firebase.firestore.FieldValue.arrayUnion(nome),
+    grupo_id: eu.grupo_id || null
+  }, { merge: true });
+  
+  eu.nome_completo=nome; eu.cargo=cargo; 
+  document.getElementById('h-user').textContent=nome+' · '+cargo; 
+  document.getElementById('perfil-ov').classList.remove('on'); 
+  alert('✅ Perfil atualizado!'); 
+  
+  if(eu.grupo_id){
+    grupoId = eu.grupo_id;
+    await fetchAusencias();
+    carregarEventos();
+    verificarAprovacoes();
+    verificarNotificacoesPendentes();
+  } else {
+    carregarGrupos();
+  }
 }
 function ics(ev){
   const ini=new Date(ev.data_hora); const fim=new Date(ini.getTime()+2*60*60*1000); const f=d=>d.toISOString().replace(/[-:]/g,'').split('.')[0]+'Z';
@@ -1142,6 +1175,12 @@ function ics(ev){
 function fD(d){return d.toLocaleDateString('pt-BR',{day:'2-digit',month:'short'});}
 function fH(d){return d.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});}
 function sair(){auth.signOut().then(()=>window.location.replace('login.html'));}
+function verificarInstalacao(){ if(!window.matchMedia('(display-mode: standalone)').matches) document.getElementById('banner-instalar').style.display='block'; }
+function abrirModalInstalar(){document.getElementById('modal-instalar').style.display='flex';instGuia('os');}
+function fecharModalInstalar(){document.getElementById('modal-instalar').style.display='none';}
+function instGuia(os){
+  document.getElementById('inst-os').style.display=os==='os'?'flex':'none'; document.getElementById('inst-android').style.display=os==='android'?'block':'none'; document.getElementById('inst-ios').style.display=os==='ios'?'block':'none';
+}
 </script>
 </body>
 </html>
