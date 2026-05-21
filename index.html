@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
   <title>Gestor de Convocações</title>
   <meta name="apple-mobile-web-app-capable" content="yes"/>
   <meta name="apple-mobile-web-app-title" content="Convocações"/>
@@ -71,11 +71,6 @@
     .conv-nome{font-size:14px;font-weight:500;flex:1}
     .btn-ag{width:100%;padding:12px;background:var(--green);color:#fff;border:none;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;margin-top:16px;font-family:'Sora',sans-serif}
     .btn-del{width:100%;padding:11px;background:#fee2e2;color:var(--red);border:none;border-radius:10px;font-size:14px;cursor:pointer;margin-top:8px}
-
-    /* Card de substituição - cor âmbar/laranja */
-    .card-prox-sub{background:linear-gradient(135deg,#92400e,#b45309);border-radius:18px;padding:18px;margin-bottom:10px;color:#fff;position:relative;overflow:hidden}
-    .card-prox-sub::after{content:'';position:absolute;right:-15px;top:-15px;width:80px;height:80px;background:rgba(255,255,255,.07);border-radius:50%}
-    .sub-badge{display:inline-block;background:rgba(255,255,255,.2);border-radius:20px;padding:2px 10px;font-size:10px;font-weight:700;letter-spacing:1px;margin-bottom:6px}
 
     /* Modal Genérico Centro */
     .ov-center{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:750;display:none;align-items:center;justify-content:center;padding:20px}
@@ -203,7 +198,7 @@
   </div>
 </main>
 
-<!-- MODAL EVENTO - CORRIGIDO PARA FECHAR AO CLICAR FORA OU NO HANDLE -->
+<!-- MODAL EVENTO -->
 <div class="overlay" id="mod-ev" onclick="if(event.target===this) fecharMod()">
   <div class="sheet">
     <div class="handle" onclick="fecharMod()"></div>
@@ -267,7 +262,7 @@
     <span>Scanner de Convocação</span>
   </div>
   <div class="cam-wrap">
-    <video id="video"></video>
+    <video id="video" autoplay playsinline muted></video>
     <div class="cam-mask">
       <div class="cam-box">
         <div class="c-bl"></div>
@@ -303,7 +298,7 @@
     <div class="rv-val"><input type="datetime-local" id="rv-data"/></div>
     <div class="rv-lbl">Local</div>
     <div class="rv-val"><input type="text" id="rv-loc" placeholder="Local do evento..."/></div>
-    <div class="rv-lbl" style="margin-bottom:8px">Convocados identificados</div>
+    <div class="rv-lbl" style="margin-bottom:8px">Convocados (Clique para editar)</div>
     <div id="rv-matches"></div>
   </div>
   <div class="rv-btns">
@@ -628,7 +623,22 @@ function fecharMod(){ document.getElementById('mod-ev').classList.remove('on'); 
 // ── SCANNER E OCR ─────────────────────────────────────────────────────
 async function abrirScanner(){
   if(!grupoId){alert('Entre em um grupo primeiro.');return;} document.getElementById('scan-ov').classList.add('on');
-  try{ camStream=await navigator.mediaDevices.getUserMedia({video:{facingMode:'environment'}}); document.getElementById('video').srcObject=camStream; }catch{alert('Câmera não disponível. Use a galeria.');}
+  try{ 
+    if(camStream) fecharScanner();
+    const constraints = { video: { facingMode: { exact: "environment" } } };
+    try {
+      camStream = await navigator.mediaDevices.getUserMedia(constraints);
+    } catch(e) {
+      camStream = await navigator.mediaDevices.getUserMedia({ video: true });
+    }
+    const v = document.getElementById('video');
+    v.srcObject = camStream;
+    v.setAttribute('playsinline', true);
+    v.play();
+  } catch(e) {
+    alert('Câmera não disponível ou permissão negada. Use a galeria.');
+    console.error(e);
+  }
 }
 
 function fecharScanner(){ document.getElementById('scan-ov').classList.remove('on'); if(camStream){camStream.getTracks().forEach(t=>t.stop());camStream=null;} }
@@ -680,7 +690,6 @@ async function processarFoto(file){
   document.getElementById('rv-ov').classList.add('on');
 }
 
-// ── MATCHING COM LEVENSHTEIN MELHORADO - CORRIGIDO PARA SEPARAR NOMES ────
 async function cruzar(nomes){
   const snap=await db.collection('usuarios').where('grupo_id','==',grupoId).get(); 
   const users=snap.docs.map(d=>d.data());
@@ -694,73 +703,37 @@ async function cruzar(nomes){
   for(const nome of nomes) {
     const nn = norm(nome);
     const palavras = nn.split(/\s+/).filter(p => p.length > 0);
-    
     if(palavras.length >= 4) {
       let encontrouCombinacao = false;
       for(let i = 1; i < palavras.length; i++) {
         const parte1 = palavras.slice(0, i).join(' ');
         const parte2 = palavras.slice(i).join(' ');
-        
-        const user1 = users.find(u => {
-          const todos = [u.nome_completo, ...(u.nomes_conhecidos||[])];
-          return todos.some(n => norm(n).includes(parte1) || parte1.includes(norm(n)));
-        });
-        const user2 = users.find(u => {
-          const todos = [u.nome_completo, ...(u.nomes_conhecidos||[])];
-          return todos.some(n => norm(n).includes(parte2) || parte2.includes(norm(n)));
-        });
-        
-        if(user1 && user2 && user1.uid !== user2.uid) {
-          nomesProcessados.push(parte1, parte2);
-          encontrouCombinacao = true;
-          break;
-        }
+        const user1 = users.find(u => [u.nome_completo, ...(u.nomes_conhecidos||[])].some(n => norm(n).includes(parte1) || parte1.includes(norm(n))));
+        const user2 = users.find(u => [u.nome_completo, ...(u.nomes_conhecidos||[])].some(n => norm(n).includes(parte2) || parte2.includes(norm(n))));
+        if(user1 && user2 && user1.uid !== user2.uid) { nomesProcessados.push(parte1, parte2); encontrouCombinacao = true; break; }
       }
       if(!encontrouCombinacao) nomesProcessados.push(nome);
-    } else {
-      nomesProcessados.push(nome);
-    }
+    } else { nomesProcessados.push(nome); }
   }
   
   return nomesProcessados.map(nome=>{
-    const nn=norm(nome); 
-    const pwNome=pwSig(nome); 
-    const primeiroNome=pwNome[0];
-    
-    for(const u of users){ 
-      const todos=[u.nome_completo,...(u.nomes_conhecidos||[])]; 
-      if(todos.some(n=>norm(n)===nn)) return {tipo:'exato',nome,usuario:u}; 
-    }
-    
-    let melhorUser = null; 
-    let melhorScore = 0;
+    const nn=norm(nome); const pwNome=pwSig(nome); 
+    for(const u of users){ if([u.nome_completo,...(u.nomes_conhecidos||[])].some(n=>norm(n)===nn)) return {tipo:'exato',nome,usuario:u}; }
+    let melhorUser = null; let melhorScore = 0;
     for(const u of users){
-      const pwUser=pwSig(u.nome_completo); 
-      const emComum=pwNome.filter(p=>pwUser.some(pu=>palavrasSimilares(p,pu)));
-      const score=emComum.length/Math.max(pwNome.length,1); 
-      const recall=emComum.length/Math.max(pwUser.length,1); 
-      const finalScore=score+(recall*0.1);
+      const pwUser=pwSig(u.nome_completo); const emComum=pwNome.filter(p=>pwUser.some(pu=>palavrasSimilares(p,pu)));
+      const score=emComum.length/Math.max(pwNome.length,1); const recall=emComum.length/Math.max(pwUser.length,1); const finalScore=score+(recall*0.1);
       if(score>=0.70 && finalScore>melhorScore){ melhorScore=finalScore; melhorUser=u; }
     }
     if (melhorUser) return {tipo:'parcial',nome,usuario:melhorUser,score:melhorScore};
-    
-    if(primeiroNome&&primeiroNome.length>=5){
-      let possiveis = []; 
-      for(const u of users){ 
-        const pwUser=pwSig(u.nome_completo); 
-        if(pwUser.length>0 && palavrasSimilares(primeiroNome,pwUser[0])) possiveis.push(u); 
-      }
+    if(pwNome[0]&&pwNome[0].length>=5){
+      let possiveis = users.filter(u=>pwSig(u.nome_completo).length>0 && palavrasSimilares(pwNome[0],pwSig(u.nome_completo)[0]));
       if(possiveis.length === 1) return {tipo:'parcial',nome,usuario:possiveis[0],score:0.4};
     }
-    
     if(regCargo.test(nome)){
-      const pwNomeCargo=pwSig(nome);
       for(const u of users){
-        if(!u.cargo)continue; 
-        const pwCargo=pwSig(u.cargo); 
-        const emComum=pwNomeCargo.filter(p=>pwCargo.some(pc=>palavrasSimilares(p,pc)));
-        const score=emComum.length/Math.max(Math.min(pwNomeCargo.length,pwCargo.length),1); 
-        if(score>=0.6) return {tipo:'por_cargo',nome,usuario:u,score,cargo:u.cargo};
+        if(!u.cargo)continue; const pwCargo=pwSig(u.cargo); const emComum=pwSig(nome).filter(p=>pwCargo.some(pc=>palavrasSimilares(p,pc)));
+        if(emComum.length/Math.max(Math.min(pwSig(nome).length,pwCargo.length),1)>=0.6) return {tipo:'por_cargo',nome,usuario:u,score:0.6,cargo:u.cargo};
       }
     }
     return {tipo:'nao_encontrado',nome};
@@ -769,113 +742,76 @@ async function cruzar(nomes){
 
 function renderMatches(){
   document.getElementById('rv-matches').innerHTML=matches.length===0?'<p style="color:var(--light);font-size:13px;padding:12px;background:#fff;border-radius:10px;">Nenhum nome identificado.</p>':matches.map((m,i)=>{
-      if(m.tipo==='exato')return`<div class="mi ok"><div class="mi-top"><span style="font-size:18px">✅</span><div><div class="mi-nome">${m.nome}</div><div class="mi-sub">→ ${m.usuario.nome_completo}</div></div></div></div>`;
-      if(m.tipo==='parcial' || m.tipo==='por_cargo')return`<div class="mi av"><div class="mi-top"><span style="font-size:18px">⚠️</span><div><div class="mi-nome">${m.nome}</div><div class="mi-sub">É ${m.usuario.nome_completo}?</div></div></div><div class="mi-btns"><button class="btn-sim" onclick="confirmar(${i},true)">✓ Sim</button><button class="btn-nao" onclick="confirmar(${i},false)">✗ Não</button></div></div>`;
-      return`<div class="mi no"><div class="mi-top"><span style="font-size:18px">❓</span><div><div class="mi-nome">${m.nome}</div><div class="mi-sub">Não encontrado</div></div></div></div>`;
+      let cor = m.tipo==='exato'?'ok':(m.tipo==='nao_encontrado'?'no':'av');
+      let status = m.tipo==='exato'?'✅':(m.tipo==='nao_encontrado'?'❓':'⚠️');
+      let sub = m.tipo==='exato' ? `→ ${m.usuario.nome_completo}` : (m.tipo==='nao_encontrado' ? 'Não encontrado' : `É ${m.usuario.nome_completo}?`);
+      
+      return `<div class="mi ${cor}">
+        <div class="mi-top">
+          <span style="font-size:18px">${status}</span>
+          <div style="flex:1">
+            <input type="text" class="mi-nome" value="${m.nome}" onchange="editarNome(${i}, this.value)" style="width:100%; border:none; background:transparent; font-weight:600; font-family:inherit; font-size:14px; color:inherit; outline:none; border-bottom:1px dashed var(--light)">
+            <div class="mi-sub">${sub}</div>
+          </div>
+        </div>
+        ${(m.tipo==='parcial'||m.tipo==='por_cargo') ? `<div class="mi-btns"><button class="btn-sim" onclick="confirmar(${i},true)">✓ Sim</button><button class="btn-nao" onclick="confirmar(${i},false)">✗ Não</button></div>` : ''}
+      </div>`;
     }).join('');
+}
+
+function editarNome(i, novoNome){
+  matches[i].nome = novoNome;
+  // Recalcular match para o novo nome
+  cruzar([novoNome]).then(res => {
+    matches[i] = res[0];
+    renderMatches();
+  });
 }
 
 function confirmar(i,sim){
   if(sim){ matches[i].tipo='exato'; db.collection('usuarios').doc(matches[i].usuario.uid).update({nomes_conhecidos:firebase.firestore.FieldValue.arrayUnion(matches[i].nome)}); } else { matches[i].tipo='nao_encontrado'; } renderMatches();
 }
 
-// ── SALVAR COM PROTEÇÃO CONTRA DUPLICATAS E TRAVAMENTOS ────────────────
 async function salvar(){
   if(isProcessingSave) return;
-  
   const titulo=document.getElementById('rv-tit').value.trim();
   const dataVal=document.getElementById('rv-data').value;
   if(!titulo||!dataVal){alert('Preencha título e data.');return;}
-  
   isProcessingSave = true;
   const btnSalvar = document.getElementById('rv-btn-salvar');
   if(btnSalvar) { btnSalvar.textContent = "Salvando..."; btnSalvar.disabled = true; }
 
   try {
-    let idVerificacao = ocrDados?.id_ver || null;
-    if(!idVerificacao) idVerificacao = titulo.replace(/\s/g,'').toUpperCase().substring(0,10) + dataVal.replace(/[-:T]/g,'');
-
-    const dup = await db.collection('eventos')
-      .where('id_verificacao','==',idVerificacao)
-      .where('grupo_id','==',grupoId)
-      .get();
-    
-    if(!dup.empty){
-      alert('⚠️ Este evento já foi adicionado! Não é possível duplicar.');
-      fecharRv();
-      return; 
-    }
+    let idVerificacao = ocrDados?.id_ver || (titulo.replace(/\s/g,'').toUpperCase().substring(0,10) + dataVal.replace(/[-:T]/g,''));
+    const dup = await db.collection('eventos').where('id_verificacao','==',idVerificacao).where('grupo_id','==',grupoId).get();
+    if(!dup.empty){ alert('⚠️ Este evento já foi adicionado!'); fecharRv(); return; }
 
     await db.collection('eventos').add({ 
-      id_verificacao: idVerificacao, 
-      titulo_evento: titulo, 
-      data_hora: dataVal+':00', 
+      id_verificacao: idVerificacao, titulo_evento: titulo, data_hora: dataVal+':00', 
       local: document.getElementById('rv-loc').value.trim(), 
-      lista_convocados: ocrDados?.nomes||[], 
-      grupo_id: grupoId, 
-      criado_por: eu.uid, 
-      criado_em: firebase.firestore.FieldValue.serverTimestamp() 
+      lista_convocados: matches.map(m=>m.nome), 
+      grupo_id: grupoId, criado_por: eu.uid, criado_em: firebase.firestore.FieldValue.serverTimestamp() 
     });
     
-    const exatos=matches.filter(m=>m.tipo==='exato');
-    for(const m of exatos){
-      await db.collection('notificacoes').add({ 
-        uid:m.usuario.uid, 
-        tipo:'convocado', 
-        nome_convocacao:m.nome, 
-        titulo_evento:titulo, 
-        data_hora:dataVal+':00', 
-        grupo_id:grupoId, 
-        respondido:false, 
-        criado_em:firebase.firestore.FieldValue.serverTimestamp() 
-      });
+    for(const m of matches){
+      if(m.usuario){
+        await db.collection('notificacoes').add({ 
+          uid:m.usuario.uid, tipo: m.tipo==='exato'?'convocado':'confirmar', 
+          nome_convocacao:m.nome, titulo_evento:titulo, data_hora:dataVal+':00', 
+          grupo_id:grupoId, respondido:false, criado_em:firebase.firestore.FieldValue.serverTimestamp() 
+        });
+      }
     }
-    
-    const parciais=matches.filter(m=>m.tipo==='parcial' || m.tipo==='por_cargo');
-    for(const m of parciais){
-      await db.collection('notificacoes').add({ 
-        uid:m.usuario.uid, 
-        tipo:'confirmar', 
-        nome_convocacao:m.nome, 
-        titulo_evento:titulo, 
-        data_hora:dataVal+':00', 
-        grupo_id:grupoId, 
-        respondido:false, 
-        criado_em:firebase.firestore.FieldValue.serverTimestamp() 
-      });
-    }
-    
-    alert('✅ Convocação salva com sucesso!'); 
-    fecharRv();
-    carregarEventos();
-    
+    alert('✅ Convocação salva com sucesso!'); fecharRv(); carregarEventos();
   } catch(e) {
-    console.error(e);
-    alert('Erro ao salvar no servidor: '+e.message);
-    isProcessingSave = false;
-    if(btnSalvar) { btnSalvar.textContent = "✓ Salvar"; btnSalvar.disabled = false; }
+    console.error(e); alert('Erro ao salvar: '+e.message);
+    isProcessingSave = false; if(btnSalvar) { btnSalvar.textContent = "✓ Salvar"; btnSalvar.disabled = false; }
   }
 }
 
-// ── FECHAR REVIEW MODAL - CORRIGIDO PARA NÃO TRAVAR ────────────────────
-function fecharRv(){
-  document.getElementById('rv-ov').classList.remove('on');
-  ocrDados=null;
-  matches=[];
-  isProcessingSave = false;
-  const btnSalvar = document.getElementById('rv-btn-salvar');
-  if(btnSalvar) { 
-    btnSalvar.textContent = "✓ Salvar"; 
-    btnSalvar.disabled = false; 
-  }
-  document.getElementById('rv-tit').value = '';
-  document.getElementById('rv-data').value = '';
-  document.getElementById('rv-loc').value = '';
-  document.getElementById('rv-matches').innerHTML = '';
-}
-
+function fecharRv(){ document.getElementById('rv-ov').classList.remove('on'); ocrDados=null; matches=[]; isProcessingSave = false; }
 function fecharScanner(){ document.getElementById('scan-ov').classList.remove('on'); if(camStream){camStream.getTracks().forEach(t=>t.stop());camStream=null;} }
-function fecharTrocar(){ document.getElementById('trocar-ov').classList.remove('on'); }
+function fecharMod(){ document.getElementById('mod-ev').classList.remove('on'); }
 function euSouConvocadoNome(nome){ const norm=s=>s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9\s]/g,'').trim(); const euNomes=[eu.nome_completo,...(eu.nomes_conhecidos||[])]; return euNomes.some(en=>norm(en)===norm(nome)); }
 
 async function abrirTrocar(ev){
@@ -889,26 +825,14 @@ async function abrirTrocar(ev){
     div.onclick=()=>{ lista.querySelectorAll('.trocar-membro').forEach(el=>el.classList.remove('selecionado')); div.classList.add('selecionado'); substitutoSelecionado=m; };
     lista.appendChild(div);
   });
-  document.getElementById('trocar-confirmar').onclick=async()=>{
-    if(!substitutoSelecionado){alert('Selecione um substituto.');return;}
-    if(!confirm(`Confirmar troca: ${eu.nome_completo} → ${substitutoSelecionado.nome_completo}?`))return;
-    const substitutos=[...(eventoTroca.substitutos||[]),{ uid:substitutoSelecionado.uid, nome:substitutoSelecionado.nome_completo, substituindo:eu.nome_completo, em:new Date().toISOString() }];
-    await db.collection('eventos').doc(eventoTroca.id).update({ substitutos, lista_convocados: (eventoTroca.lista_convocados||[]).filter(n => !euSouConvocadoNome(n)) });
-    await db.collection('notificacoes').add({ uid:substitutoSelecionado.uid, tipo:'substituicao', nome_convocacao:substitutoSelecionado.nome_completo, titulo_evento:eventoTroca.titulo_evento||'Evento', data_hora:eventoTroca.data_hora, substituindo:eu.nome_completo, respondido:false, criado_em:firebase.firestore.FieldValue.serverTimestamp() });
-    document.getElementById('trocar-ov').classList.remove('on'); alert(`✅ Troca confirmada!`); carregarEventos();
-  };
   document.getElementById('trocar-ov').classList.add('on');
 }
 
 function ics(ev){
-  const ini=new Date(ev.data_hora); 
-  const fim=new Date(ini.getTime()+2*60*60*1000); 
+  const ini=new Date(ev.data_hora); const fim=new Date(ini.getTime()+2*60*60*1000); 
   const f=d=>d.toISOString().replace(/[-:]/g,'').split('.')[0]+'Z';
   const c=['BEGIN:VCALENDAR','VERSION:2.0','BEGIN:VEVENT','SUMMARY:'+(ev.titulo_evento||'Convocação'),'DTSTART:'+f(ini),'DTEND:'+f(fim),'END:VEVENT','END:VCALENDAR'].join('\r\n');
-  const a=document.createElement('a'); 
-  a.href=URL.createObjectURL(new Blob([c],{type:'text/calendar'})); 
-  a.download='conv.ics'; 
-  a.click();
+  const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([c],{type:'text/calendar'})); a.download='conv.ics'; a.click();
 }
 
 function fD(d){return d.toLocaleDateString('pt-BR',{day:'2-digit',month:'short'});}
