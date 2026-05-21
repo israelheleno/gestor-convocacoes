@@ -419,6 +419,7 @@
     <p>Informe seu nome completo exatamente como aparece nos documentos oficiais.</p>
     <div class="perfil-field"><label>Nome completo</label><input type="text" id="perf-nome" placeholder="Ex: Israel Heleno de Castro"/></div>
     <div class="perfil-field"><label>Cargo</label><input type="text" id="perf-cargo" placeholder="Ex: Operador de Áudio"/></div>
+    <div class="perfil-field"><label>Email para notificações</label><input type="email" id="perf-email" placeholder="seu@email.com"/></div>
     <div class="perfil-btns"><button class="btn-cancel" onclick="fecharPerfil()">Cancelar</button><button class="btn-salvar" onclick="salvarPerfil()">✓ Salvar</button></div>
   </div>
 </div>
@@ -476,6 +477,9 @@
   </div>
 </div>
 
+<!-- EmailJS -->
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
@@ -485,6 +489,15 @@ if('serviceWorker' in navigator){navigator.serviceWorker.getRegistrations().then
 firebase.initializeApp({apiKey:"AIzaSyAOpV5NFydHWwUwQKg0MANqMHVcXVDDqpQ",authDomain:"gestor-convocacoes-89823.firebaseapp.com",projectId:"gestor-convocacoes-89823",storageBucket:"gestor-convocacoes-89823.firebasestorage.app",messagingSenderId:"212389113483",appId:"1:212389113483:web:eb97eefe621df0cba66e8e"});
 const auth=firebase.auth();const db=firebase.firestore();
 
+// ══════════════════════════════════════════════════════════════
+// CONFIGURAÇÃO EMAILJS
+// ══════════════════════════════════════════════════════════════
+const EMAIL_CONFIG = {
+  publicKey: 'mXZPykI5Nr2COjWr0',
+  serviceId: 'service_pam1xgd',
+  templateId: 'template_3926tbq'
+};
+
 let eu=null,grupoId=null,ocrDados=null,matches=[],camStream=null,eventoTroca=null,substitutoSelecionado=null,eventoAtualMod=null,nomesEditaveis=[];
 let notifAtual=null,filaNotifs=[],listaAusencias=[];
 let toastTimeout;
@@ -492,6 +505,11 @@ let toastTimeout;
 function mostrarToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');clearTimeout(toastTimeout);toastTimeout=setTimeout(()=>t.classList.remove('show'),2500);}
 function lev(a,b){if(a===b)return 0;const m=a.length,n=b.length;const dp=Array.from({length:m+1},(_,i)=>[i,...Array(n).fill(0)]);for(let j=0;j<=n;j++)dp[0][j]=j;for(let i=1;i<=m;i++)for(let j=1;j<=n;j++)dp[i][j]=a[i-1]===b[j-1]?dp[i-1][j-1]:1+Math.min(dp[i-1][j],dp[i][j-1],dp[i-1][j-1]);return dp[m][n];}
 function mostrarAba(aba,el){document.querySelectorAll('.aba-content').forEach(e=>e.style.display='none');document.getElementById('aba-'+aba).style.display='block';document.querySelectorAll('.nav-tab').forEach(e=>e.classList.remove('active'));if(el)el.classList.add('active');if(aba==='ferias')carregarFerias();}
+
+// Inicializar EmailJS
+(function() {
+  emailjs.init(EMAIL_CONFIG.publicKey);
+})();
 
 auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL).then(()=>{
   let authOk=false;const T=setTimeout(()=>{if(!authOk)window.location.replace('login.html');},10000);
@@ -502,13 +520,89 @@ auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL).then(()=>{
       document.getElementById('h-user').textContent=eu.nome_completo+' · '+eu.cargo;
       if(eu.is_admin)document.getElementById('btn-fab-admin').classList.add('on');
       verificarInstalacao();iniciarNotificacoes();carregarGrupos();
-      if(eu.grupo_id){grupoId=eu.grupo_id;carregarEventos();verificarAprovacoes();verificarNotificacoesPendentes();fetchAusencias();}
+      if(eu.grupo_id){grupoId=eu.grupo_id;carregarEventos();verificarAprovacoes();verificarNotificacoesPendentes();fetchAusencias();iniciarVerificacaoLembretes();}
       else{document.getElementById('lst-ev').innerHTML='<p style="color:var(--light);font-size:14px;padding:20px;text-align:center">Entre em um grupo para ver convocações.</p>';document.getElementById('prox').innerHTML='<div class="card-vazio">Entre em um grupo para ver suas convocações.</div>';}
     }catch(err){console.error(err);clearTimeout(T);window.location.replace('login.html');}
   });
 }).catch(e=>console.error('Persistence:',e));
 
-// ── FÉRIAS & AUSÊNCIAS ──
+// ── EMAILJS: ENVIAR LEMBRETES ────────────────────────────────────────
+async function enviarEmailLembrete(usuario, evento) {
+  if (!usuario.email) return false;
+  
+  const dt = new Date(evento.data_hora);
+  
+  const params = {
+    to_email: usuario.email,
+    nome_usuario: usuario.nome_completo,
+    titulo_evento: evento.titulo_evento || 'Evento',
+    data_evento: dt.toLocaleDateString('pt-BR'),
+    hora_evento: dt.toLocaleTimeString('pt-BR', {hour:'2-digit', minute:'2-digit'}),
+    local_evento: evento.local || 'A definir'
+  };
+  
+  try {
+    await emailjs.send(EMAIL_CONFIG.serviceId, EMAIL_CONFIG.templateId, params);
+    console.log(`Email enviado para ${usuario.nome_completo}`);
+    return true;
+  } catch (error) {
+    console.error('Erro ao enviar email:', error);
+    return false;
+  }
+}
+
+async function verificarLembretesAmanha() {
+  if (!grupoId) return;
+  
+  const amanha = new Date();
+  amanha.setDate(amanha.getDate() + 1);
+  const amanhaStr = amanha.toISOString().split('T')[0];
+  
+  const hoje = new Date().toISOString().split('T')[0];
+  const jaEnviou = localStorage.getItem(`lembretes_${hoje}`);
+  if (jaEnviou) return;
+  
+  try {
+    const eventosSnap = await db.collection('eventos').where('grupo_id', '==', grupoId).get();
+    const eventosAmanha = eventosSnap.docs.map(d => ({id: d.id, ...d.data()})).filter(ev => ev.data_hora && ev.data_hora.startsWith(amanhaStr));
+    if (eventosAmanha.length === 0) return;
+    
+    const usuariosSnap = await db.collection('usuarios').where('grupo_id', '==', grupoId).get();
+    const usuarios = usuariosSnap.docs.map(d => ({uid: d.id, ...d.data()}));
+    
+    let enviados = 0;
+    for (const evento of eventosAmanha) {
+      for (const nome of (evento.lista_convocados || [])) {
+        const usuario = encontrarUsuarioPorNome(usuarios, nome);
+        if (usuario && usuario.email) {
+          const sucesso = await enviarEmailLembrete(usuario, evento);
+          if (sucesso) enviados++;
+        }
+      }
+    }
+    
+    localStorage.setItem(`lembretes_${hoje}`, 'true');
+    console.log(`${enviados} lembretes enviados`);
+  } catch (error) {
+    console.error('Erro ao verificar lembretes:', error);
+  }
+}
+
+function encontrarUsuarioPorNome(usuarios, nomeConvocado) {
+  const norm = s => s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9\s]/g, '').trim();
+  const nomeNorm = norm(nomeConvocado);
+  return usuarios.find(u => {
+    const nomes = [u.nome_completo, ...(u.nomes_conhecidos || [])];
+    return nomes.some(n => norm(n) === nomeNorm);
+  });
+}
+
+function iniciarVerificacaoLembretes() {
+  verificarLembretesAmanha();
+  setInterval(verificarLembretesAmanha, 60 * 60 * 1000);
+}
+
+// ── FÉRIAS & AUSÊNCIAS ────────────────────────────────────────────────
 async function fetchAusencias(){if(!grupoId)return;const hojeStr=new Date().toISOString().split('T')[0];const snap=await db.collection('ausencias').where('grupo_id','==',grupoId).where('data_fim','>=',hojeStr).get();listaAusencias=snap.docs.map(d=>({id:d.id,...d.data()}));}
 async function carregarFerias(){await fetchAusencias();const lst=document.getElementById('lst-ausencias');lst.innerHTML='';const ordenados=listaAusencias.sort((a,b)=>new Date(a.data_inicio)-new Date(b.data_inicio));if(ordenados.length===0){lst.innerHTML='<p style="color:var(--light);font-size:14px;padding:20px;text-align:center">Nenhum período registrado para os próximos dias.</p>';return;}
   ordenados.forEach(aus=>{let dtIni=new Date(aus.data_inicio+"T12:00:00");let dtFim=new Date(aus.data_fim+"T12:00:00");let icone=aus.tipo==='ferias'?'🏖️':(aus.tipo==='licenca'?'🏥':'⏱️');const div=document.createElement('div');div.className=`aus-card tipo-${aus.tipo}`;div.innerHTML=`<div class="aus-icon">${icone}</div><div class="aus-info"><div class="aus-nome">${aus.nome_completo}</div><div class="aus-detalhe">De ${dtIni.toLocaleDateString('pt-BR')} a ${dtFim.toLocaleDateString('pt-BR')}</div><div class="aus-tipo">${aus.tipo}</div></div>${(eu.is_admin||eu.uid===aus.uid)?`<button class="btn-cancel" style="border:none;color:var(--red);padding:5px;max-width:40px;" onclick="excluirFerias('${aus.id}')">🗑️</button>`:''}`;lst.appendChild(div);});}
@@ -518,7 +612,7 @@ async function salvarFerias(){const tipo=document.getElementById('ferias-tipo').
 async function excluirFerias(id){if(!confirm("Deseja apagar este registro?"))return;await db.collection('ausencias').doc(id).delete();carregarFerias();}
 function verificarStatusAusencia(uid,dataEvento){if(!uid||!dataEvento)return null;const dataStr=dataEvento.split('T')[0];return listaAusencias.find(aus=>aus.uid===uid&&aus.data_inicio<=dataStr&&aus.data_fim>=dataStr)||null;}
 
-// ── GRUPOS ──
+// ── GRUPOS ────────────────────────────────────────────────────────────
 async function carregarGrupos(){const snap=await db.collection('grupos').get();const lst=document.getElementById('lst-grp');lst.innerHTML='';if(snap.empty){lst.innerHTML='<p style="color:var(--light);font-size:14px;text-align:center">Nenhum grupo ainda.</p>';return;}
   for(const d of snap.docs){const g={id:d.id,...d.data()};const membrosSnap=await db.collection('usuarios').where('grupo_id','==',g.id).get();const totalMembros=membrosSnap.size;if(totalMembros!==(g.membros||0)){db.collection('grupos').doc(g.id).update({membros:totalMembros});}
     if(g.id===grupoId){const admins=g.admins||[g.criado_por];if(admins.includes(eu.uid)||g.criado_por===eu.uid){eu.is_admin=true;document.getElementById('btn-fab-admin').classList.add('on');}}
@@ -527,7 +621,7 @@ async function carregarGrupos(){const snap=await db.collection('grupos').get();c
 function solicitarEntrada(gId,gNome){document.getElementById('ms-tit').textContent='Entrar em "'+gNome+'"';document.getElementById('ms-ov').classList.add('on');document.getElementById('ms-ok').onclick=async()=>{await db.collection('usuarios').doc(eu.uid).update({grupo_id:gId});const snap=await db.collection('grupos').doc(gId).get();await db.collection('grupos').doc(gId).update({membros:(snap.data().membros||0)+1});document.getElementById('ms-ov').classList.remove('on');eu.grupo_id=gId;grupoId=gId;carregarGrupos();carregarEventos();verificarAprovacoes();};}
 async function criarGrupo(){const nome=prompt('Nome do novo grupo:');if(!nome)return;const ref=await db.collection('grupos').add({nome:nome.trim(),criado_por:eu.uid,criado_em:firebase.firestore.FieldValue.serverTimestamp(),membros:1,admins:[eu.uid]});await db.collection('usuarios').doc(eu.uid).update({grupo_id:ref.id,is_admin:true});eu.grupo_id=ref.id;eu.is_admin=true;grupoId=ref.id;carregarGrupos();carregarEventos();document.getElementById('btn-fab-admin').classList.add('on');}
 
-// ── ADMIN ──
+// ── ADMIN ─────────────────────────────────────────────────────────────
 function abrirAdmin(){document.getElementById('admin-ov').classList.add('on');carregarMembrosAdmin();}
 function fecharAdmin(){document.getElementById('admin-ov').classList.remove('on');}
 async function carregarMembrosAdmin(){const lst=document.getElementById('admin-membros');lst.innerHTML='<div class="skel"></div><div class="skel"></div>';const grupoSnap=await db.collection('grupos').doc(grupoId).get();const admins=grupoSnap.data().admins||[grupoSnap.data().criado_por];const snap=await db.collection('usuarios').where('grupo_id','==',grupoId).get();const membros=snap.docs.map(d=>({id:d.id,...d.data()}));document.getElementById('admin-total').textContent=membros.length+' membro(s)';lst.innerHTML='';
@@ -537,12 +631,12 @@ async function promoverAdmin(uid,nome){if(!confirm('Promover '+nome+' a admin?')
 async function rebaixarAdmin(uid,nome){const snap=await db.collection('grupos').doc(grupoId).get();const data=snap.data();if(uid===data.criado_por){alert("O criador do grupo não pode perder o status de Admin.");return;}if(!confirm('Remover privilégio de admin de '+nome+'?'))return;const admins=(data.admins||[data.criado_por]).filter(a=>a!==uid);await db.collection('grupos').doc(grupoId).update({admins});await db.collection('usuarios').doc(uid).update({is_admin:false});if(uid===eu.uid){eu.is_admin=false;document.getElementById('btn-fab-admin').classList.remove('on');fecharAdmin();}carregarMembrosAdmin();}
 async function expulsarMembro(uid,nome){if(!confirm('Expulsar '+nome+' do grupo?'))return;await db.collection('usuarios').doc(uid).update({grupo_id:null,is_admin:false});const snap=await db.collection('grupos').doc(grupoId).get();const membros=Math.max(0,(snap.data().membros||1)-1);await db.collection('grupos').doc(grupoId).update({membros});carregarMembrosAdmin();carregarGrupos();}
 
-// ── APROVAÇÕES ──
+// ── APROVAÇÕES ────────────────────────────────────────────────────────
 async function verificarAprovacoes(){if(!grupoId)return;const snap=await db.collection('grupos').doc(grupoId).get();const solic=snap.data().solicitacoes||{};const entries=Object.entries(solic);if(!entries.length)return;document.getElementById('sec-apv').style.display='block';const lst=document.getElementById('lst-apv');lst.innerHTML='';entries.forEach(([uid,d])=>{const el=document.createElement('div');el.className='apv';el.innerHTML=`<div class="apv-nome">${d.nome}</div><div class="apv-cargo">${d.cargo}</div><div class="apv-btns"><button class="btn-apr" onclick="aprovar('${uid}','${d.nome}')">✓ Aprovar</button><button class="btn-rec" onclick="recusar('${uid}')">✗ Recusar</button></div>`;lst.appendChild(el);});}
 async function aprovar(uid,nome){await db.collection('usuarios').doc(uid).update({grupo_id:grupoId,solicitacoes:[]});const snap=await db.collection('grupos').doc(grupoId).get();const s=snap.data().solicitacoes||{};delete s[uid];await db.collection('grupos').doc(grupoId).update({solicitacoes:s,membros:(snap.data().membros||1)+1});verificarAprovacoes();mostrarToast(nome+' aprovado(a)!');}
 async function recusar(uid){const snap=await db.collection('grupos').doc(grupoId).get();const s=snap.data().solicitacoes||{};delete s[uid];await db.collection('grupos').doc(grupoId).update({solicitacoes:s});await db.collection('usuarios').doc(uid).update({solicitacoes:[]});verificarAprovacoes();}
 
-// ── EVENTOS ──
+// ── EVENTOS ───────────────────────────────────────────────────────────
 async function carregarEventos(){if(!grupoId)return;const snap=await db.collection('eventos').where('grupo_id','==',grupoId).get();const agora=new Date();const evs=snap.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>new Date(a.data_hora)-new Date(b.data_hora));document.getElementById('total').textContent=evs.length+' total';
   const norm=s=>s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9\s]/g,'').trim();const stopwords=new Set(['de','da','do','das','dos','e','a','o','as','os']);const pwSig=s=>norm(s).split(/\s+/).filter(p=>p.length>1&&!stopwords.has(p));const euNomes=[eu.nome_completo,...(eu.nomes_conhecidos||[])];const euPalavras=pwSig(eu.nome_completo);
   function euSouConvocado(lista){return(lista||[]).some(n=>{if(euNomes.some(en=>norm(en)===norm(n)))return true;const pwN=pwSig(n);const emComum=pwN.filter(p=>euPalavras.some(pe=>p===pe||(p.length>=5&&lev(p,pe)<=1)));return emComum.length/Math.max(pwN.length,1)>=0.55;});}
@@ -565,7 +659,7 @@ function removerNomeAdmin(idx){if(confirm(`Remover "${nomesEditaveis[idx]}" da c
 function adicionarNomeAdmin(){const input=document.getElementById('input-novo-nome');const nome=input.value.trim();if(!nome){mostrarToast('Digite um nome');return;}nomesEditaveis.push(nome);input.value='';renderizarNomesAdmin(eventoAtualMod);mostrarToast(`✅ "${nome}" adicionado à lista`);}
 async function salvarNomesAdmin(){if(!eventoAtualMod)return;try{await db.collection('eventos').doc(eventoAtualMod.id).update({lista_convocados:nomesEditaveis});eventoAtualMod.lista_convocados=[...nomesEditaveis];mostrarToast('✅ Lista de convocados atualizada!');carregarEventos();}catch(e){console.error(e);alert('Erro ao salvar: '+e.message);}}
 
-// ── SCANNER E OCR ──
+// ── SCANNER E OCR ─────────────────────────────────────────────────────
 async function abrirScanner(){if(!grupoId){alert('Entre em um grupo primeiro.');return;}document.getElementById('scan-ov').classList.add('on');try{camStream=await navigator.mediaDevices.getUserMedia({video:{facingMode:'environment'}});document.getElementById('video').srcObject=camStream;}catch{alert('Câmera não disponível. Use a galeria.');}}
 function fecharScanner(){document.getElementById('scan-ov').classList.remove('on');if(camStream){camStream.getTracks().forEach(t=>t.stop());camStream=null;}}
 function capturar(){const v=document.getElementById('video');const c=document.createElement('canvas');c.width=v.videoWidth;c.height=v.videoHeight;c.getContext('2d').drawImage(v,0,0);c.toBlob(b=>processarFoto(b),'image/jpeg',.9);}
@@ -588,26 +682,26 @@ function confirmar(i,sim){if(sim){const m=matches[i];matches[i].tipo='exato';db.
 function fecharRv(){document.getElementById('rv-ov').classList.remove('on');ocrDados=null;matches=[];}
 async function salvar(){const titulo=document.getElementById('rv-tit').value.trim();const dataVal=document.getElementById('rv-data').value;if(!titulo||!dataVal){alert('Preencha título e data.');return;}await db.collection('eventos').add({id_verificacao:ocrDados?.id_ver||null,titulo_evento:titulo,data_hora:dataVal+':00',local:document.getElementById('rv-loc').value.trim(),lista_convocados:ocrDados?.nomes||[],grupo_id:grupoId,criado_por:eu.uid,criado_em:firebase.firestore.FieldValue.serverTimestamp()});fecharRv();const dtFmt=new Date(dataVal+':00').toLocaleDateString('pt-BR',{day:'2-digit',month:'short',year:'numeric'});const exatos=matches.filter(m=>m.tipo==='exato');for(const m of exatos){await db.collection('notificacoes').add({uid:m.usuario.uid,tipo:'convocado',nome_convocacao:m.nome,titulo_evento:titulo,data_hora:dataVal+':00',grupo_id:grupoId,respondido:false,criado_em:firebase.firestore.FieldValue.serverTimestamp()});if(m.usuario.uid===eu.uid){enviarNotificacaoPush('📋 Você foi convocado!',`${titulo} — ${dtFmt}`,'conv-'+Date.now());}}const parciais=matches.filter(m=>m.tipo==='parcial'||m.tipo==='por_cargo');for(const m of parciais){await db.collection('notificacoes').add({uid:m.usuario.uid,tipo:'confirmar',nome_convocacao:m.nome,titulo_evento:titulo,data_hora:dataVal+':00',grupo_id:grupoId,respondido:false,criado_em:firebase.firestore.FieldValue.serverTimestamp()});if(m.usuario.uid===eu.uid){enviarNotificacaoPush('❓ Você foi convocado?',`"${m.nome}" aparece em: ${titulo}`,'conf-'+Date.now());}}mostrarToast('✅ Convocação salva!');carregarEventos();verificarNotificacoesPendentes();}
 
-// ── NOTIFICAÇÕES ──
+// ── NOTIFICAÇÕES ──────────────────────────────────────────────────────
 async function iniciarNotificacoes(){if(!('serviceWorker' in navigator)||!('Notification' in window))return;await navigator.serviceWorker.register('/gestor-convocacoes/sw.js');await Notification.requestPermission();}
 function enviarNotificacaoPush(titulo,corpo,tag){if(Notification.permission==='granted'){new Notification(titulo,{body:corpo,tag:tag||'conv'});}}
 function verificarNotificacoesPendentes(){db.collection('notificacoes').where('uid','==',eu.uid).where('respondido','==',false).onSnapshot(snap=>{const docs=snap.docs;if(docs.length===0)return;snap.docChanges().forEach(async change=>{if(change.type==='added'){const n=change.doc.data();if(n.tipo==='substituicao'){enviarNotificacaoPush('🔄 Substituição escalada',`Você substitui ${n.substituindo} em ${n.titulo_evento}`);await change.doc.ref.update({respondido:true});carregarEventos();}}});const pendentes=docs.filter(d=>d.data().tipo==='confirmar'||d.data().tipo==='convocado');if(pendentes.length>0&&!document.getElementById('notif-ov').classList.contains('on')){mostrarProximaNotif();}});}
 async function mostrarProximaNotif(){const snap=await db.collection('notificacoes').where('uid','==',eu.uid).where('respondido','==',false).where('tipo','in',['confirmar','convocado']).get();filaNotifs=snap.docs.map(d=>({id:d.id,...d.data()}));if(filaNotifs.length===0){document.getElementById('notif-ov').classList.remove('on');return;}notifAtual=filaNotifs[0];document.getElementById('notif-ov').classList.add('on');document.getElementById('notif-titulo').textContent=notifAtual.tipo==='convocado'?'Você foi convocado!':'Você foi convocado?';document.getElementById('notif-desc').textContent=notifAtual.tipo==='convocado'?'Você está na lista deste evento:':`O nome "${notifAtual.nome_convocacao}" apareceu nesta convocação. É você?`;document.getElementById('notif-ev-titulo').textContent=notifAtual.titulo_evento||'Evento';try{const dt=new Date(notifAtual.data_hora);document.getElementById('notif-ev-data').textContent=fD(dt)+' às '+fH(dt);}catch(e){document.getElementById('notif-ev-data').textContent="";}}
 async function responderNotif(sim){if(!notifAtual)return;document.getElementById('notif-ov').classList.remove('on');await db.collection('notificacoes').doc(notifAtual.id).update({respondido:true});if(sim&&notifAtual.tipo==='confirmar'){await db.collection('usuarios').doc(eu.uid).update({nomes_conhecidos:firebase.firestore.FieldValue.arrayUnion(notifAtual.nome_convocacao)});eu.nomes_conhecidos=[...(eu.nomes_conhecidos||[]),notifAtual.nome_convocacao];mostrarToast(`✅ Anotado! O nome "${notifAtual.nome_convocacao}" agora te identifica automaticamente.`);carregarEventos();}notifAtual=null;setTimeout(mostrarProximaNotif,500);}
 
-// ── TROCAR ──
+// ── TROCAR ─────────────────────────────────────────────────────────────
 async function abrirTrocar(ev){eventoTroca=ev;substitutoSelecionado=null;document.getElementById('mod-ev').classList.remove('on');document.getElementById('trocar-desc').textContent=`Trocar sua escala em "${ev.titulo_evento}". Escolha quem vai te substituir:`;const snap=await db.collection('usuarios').where('grupo_id','==',grupoId).get();const lista=document.getElementById('trocar-lista');lista.innerHTML='';snap.forEach(d=>{const m=d.data();if(m.uid===eu.uid)return;const div=document.createElement('div');div.className='trocar-membro';div.innerHTML=`<span style="font-size:20px">👤</span><div><div style="font-weight:500">${m.nome_completo}</div><div style="font-size:12px;color:var(--light)">${m.cargo||''}</div></div>`;div.onclick=()=>{lista.querySelectorAll('.trocar-membro').forEach(el=>el.classList.remove('selecionado'));div.classList.add('selecionado');substitutoSelecionado=m;};lista.appendChild(div);});document.getElementById('trocar-confirmar').onclick=async()=>{if(!substitutoSelecionado){alert('Selecione um substituto.');return;}if(!confirm(`Confirmar troca: ${eu.nome_completo} → ${substitutoSelecionado.nome_completo}?`))return;const substitutos=[...(eventoTroca.substitutos||[]),{uid:substitutoSelecionado.uid,nome:substitutoSelecionado.nome_completo,substituindo:eu.nome_completo,em:new Date().toISOString()}];await db.collection('eventos').doc(eventoTroca.id).update({substitutos,lista_convocados:(eventoTroca.lista_convocados||[]).filter(n=>!euSouConvocadoNome(n))});await db.collection('notificacoes').add({uid:substitutoSelecionado.uid,tipo:'substituicao',nome_convocacao:substitutoSelecionado.nome_completo,titulo_evento:eventoTroca.titulo_evento||'Evento',data_hora:eventoTroca.data_hora,substituindo:eu.nome_completo,respondido:false,criado_em:firebase.firestore.FieldValue.serverTimestamp()});fecharTrocar();mostrarToast('✅ Troca confirmada!');carregarEventos();};document.getElementById('trocar-ov').classList.add('on');}
 function fecharTrocar(){document.getElementById('trocar-ov').classList.remove('on');eventoTroca=null;substitutoSelecionado=null;}
 function euSouConvocadoNome(nome){const norm=s=>s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9\s]/g,'').trim();const euNomes=[eu.nome_completo,...(eu.nomes_conhecidos||[])];return euNomes.some(en=>norm(en)===norm(nome));}
 
-// ── PERFIL ──
+// ── PERFIL ─────────────────────────────────────────────────────────────
 function verificarInstalacao(){if(!window.matchMedia('(display-mode: standalone)').matches)document.getElementById('banner-instalar').style.display='block';}
 function abrirModalInstalar(){alert('📱 Android: Chrome → 3 pontinhos → Adicionar à tela inicial\n🍎 iPhone: Safari → Compartilhar → Adicionar à Tela de Início');}
-function abrirPerfil(){document.getElementById('perf-nome').value=eu.nome_completo||'';document.getElementById('perf-cargo').value=eu.cargo||'';document.getElementById('perfil-ov').classList.add('on');}
+function abrirPerfil(){document.getElementById('perf-nome').value=eu.nome_completo||'';document.getElementById('perf-cargo').value=eu.cargo||'';document.getElementById('perf-email').value=eu.email||'';document.getElementById('perfil-ov').classList.add('on');}
 function fecharPerfil(){document.getElementById('perfil-ov').classList.remove('on');}
-async function salvarPerfil(){const nome=document.getElementById('perf-nome').value.trim();const cargo=document.getElementById('perf-cargo').value.trim();if(!nome||!cargo)return;await db.collection('usuarios').doc(eu.uid).update({nome_completo:nome,cargo,nomes_conhecidos:firebase.firestore.FieldValue.arrayUnion(nome)});eu.nome_completo=nome;eu.cargo=cargo;document.getElementById('h-user').textContent=nome+' · '+cargo;fecharPerfil();mostrarToast('✅ Perfil atualizado!');carregarEventos();}
+async function salvarPerfil(){const nome=document.getElementById('perf-nome').value.trim();const cargo=document.getElementById('perf-cargo').value.trim();const email=document.getElementById('perf-email').value.trim();if(!nome||!cargo)return;await db.collection('usuarios').doc(eu.uid).update({nome_completo:nome,cargo,email,nomes_conhecidos:firebase.firestore.FieldValue.arrayUnion(nome)});eu.nome_completo=nome;eu.cargo=cargo;eu.email=email;document.getElementById('h-user').textContent=nome+' · '+cargo;fecharPerfil();mostrarToast('✅ Perfil atualizado!');carregarEventos();}
 
-// ── UTILS ──
+// ── UTILS ──────────────────────────────────────────────────────────────
 function ics(ev){const ini=new Date(ev.data_hora);const fim=new Date(ini.getTime()+2*60*60*1000);const f=d=>d.toISOString().replace(/[-:]/g,'').split('.')[0]+'Z';const c=['BEGIN:VCALENDAR','VERSION:2.0','BEGIN:VEVENT','SUMMARY:'+(ev.titulo_evento||'Convocação'),'DTSTART:'+f(ini),'DTEND:'+f(fim),'END:VEVENT','END:VCALENDAR'].join('\r\n');const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([c],{type:'text/calendar'}));a.download='conv.ics';a.click();}
 function fD(d){return d.toLocaleDateString('pt-BR',{day:'2-digit',month:'short'});}
 function fH(d){return d.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});}
