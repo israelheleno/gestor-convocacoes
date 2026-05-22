@@ -22,7 +22,7 @@
     .h-sub{font-size:12px;opacity:.7;cursor:pointer;text-decoration:underline dotted rgba(255,255,255,.4)}
 
     .nav-tabs{display:flex;background:var(--w);box-shadow:0 2px 8px rgba(0,0,0,.05);margin-bottom:16px;position:sticky;top:60px;z-index:90}
-    .nav-tab{flex:1;text-align:center;padding:14px 8px;font-family:'Sora',sans-serif;font-size:12px;font-weight:700;color:var(--light);border-bottom:3px solid transparent;cursor:pointer;transition:all .2s}
+    .nav-tab{flex:1;text-align:center;padding:14px 6px;font-family:'Sora',sans-serif;font-size:12px;font-weight:700;color:var(--light);border-bottom:3px solid transparent;cursor:pointer;transition:all .2s}
     .nav-tab.active{color:var(--blue);border-bottom-color:var(--blue)}
 
     main{padding:16px;max-width:480px;margin:0 auto}
@@ -49,6 +49,7 @@
     .prox-titulo{font-family:'Sora',sans-serif;font-size:15px;font-weight:700;margin-bottom:10px;line-height:1.3;cursor:pointer;text-decoration:underline dotted rgba(255,255,255,.3)}
     .prox-meta{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:14px;font-size:12px;opacity:.85}
     .btn-agenda{background:var(--green);color:#fff;border:none;padding:10px;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;width:100%;font-family:'Sora',sans-serif}
+    .btn-trocar-prox{background:#fff7ed;color:#c2410c;border:1.5px solid #fed7aa;padding:10px;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;width:100%;font-family:'Sora',sans-serif}
     .card-vazio{background:var(--w);border-radius:18px;padding:28px 16px;text-align:center;margin-bottom:16px;box-shadow:0 2px 10px rgba(30,58,138,.06);color:var(--light);font-size:14px}
 
     .sec-titulo{font-family:'Sora',sans-serif;font-size:13px;font-weight:700;color:var(--blue);margin-bottom:10px;display:flex;align-items:center;justify-content:space-between}
@@ -85,21 +86,16 @@
     .conv-icon{width:30px;height:30px;background:#eff6ff;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
     .conv-icon svg{width:15px;height:15px;fill:var(--blue)}
     .conv-nome{font-size:14px;font-weight:500;flex:1}
-    .conv-nome.editable{border-bottom:1px dashed var(--blue);cursor:text;padding:2px 4px;border-radius:4px;transition:background .2s}
-    .conv-nome.editable:hover{background:#f0f4ff}
-    .conv-nome.editable:focus{background:#eff6ff;outline:none;border-bottom:2px solid var(--blue)}
-    .btn-remover-nome{background:transparent;border:1px solid #fee2e2;color:var(--red);padding:4px 10px;border-radius:6px;font-size:11px;cursor:pointer;font-weight:600;white-space:nowrap}
-    .input-novo-nome{width:100%;padding:10px;border:1.5px solid var(--blue);border-radius:10px;font-family:'DM Sans',sans-serif;font-size:14px;margin-top:8px;outline:none}
-    .btn-salvar-nomes{width:100%;padding:10px;background:var(--blue);color:#fff;border:none;border-radius:10px;font-size:14px;cursor:pointer;margin-top:8px;font-family:'Sora',sans-serif;font-weight:600}
-    .admin-badge{display:inline-block;background:#fef3c7;color:#92400e;font-size:9px;padding:2px 6px;border-radius:4px;margin-left:6px;font-weight:700;text-transform:uppercase;letter-spacing:.5px}
+    .conv-nome.editable{border-bottom:1px dashed var(--blue);cursor:text;padding:2px 4px;border-radius:4px}
+    .btn-remover-nome{background:transparent;border:1px solid #fee2e2;color:var(--red);padding:4px 10px;border-radius:6px;font-size:11px;cursor:pointer;font-weight:600}
+    .admin-badge{display:inline-block;background:#fef3c7;color:#92400e;font-size:9px;padding:2px 6px;border-radius:4px;margin-left:6px;font-weight:700}
     .btn-ag{width:100%;padding:12px;background:var(--green);color:#fff;border:none;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;margin-top:16px;font-family:'Sora',sans-serif}
     .btn-del{width:100%;padding:11px;background:#fee2e2;color:var(--red);border:none;border-radius:10px;font-size:14px;cursor:pointer;margin-top:8px}
 
     .ov-center{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:750;display:none;align-items:center;justify-content:center;padding:20px}
     .ov-center.on{display:flex}
-    .box-center{background:#fff;border-radius:24px;padding:28px 22px;width:100%;max-width:360px;animation:fu .3s ease;position:relative}
+    .box-center{background:#fff;border-radius:24px;padding:28px 22px;width:100%;max-width:360px;animation:fu .3s ease}
     .box-center h3{font-family:'Sora',sans-serif;font-size:17px;font-weight:700;color:var(--blue);margin-bottom:6px}
-    .box-center p{font-size:13px;color:var(--light);margin-bottom:16px;line-height:1.5}
     .field{margin-bottom:14px}
     .field label{display:block;font-size:12px;font-weight:600;color:var(--text);margin-bottom:5px;text-transform:uppercase;letter-spacing:.5px}
     .field input,.field select{width:100%;padding:11px 13px;border:1.5px solid var(--border);border-radius:12px;font-family:'DM Sans',sans-serif;font-size:15px;color:var(--text);outline:none;background:#fff}
@@ -111,68 +107,54 @@
 
     #scan-ov{position:fixed;inset:0;background:#000;z-index:300;display:none;flex-direction:column}
     #scan-ov.on{display:flex}
-    .scan-hd{padding:14px 16px;display:flex;align-items:center;gap:10px;background:rgba(0,0,0,.8);flex-shrink:0}
+    .scan-hd{padding:14px 16px;display:flex;align-items:center;gap:10px;background:rgba(0,0,0,.8)}
     .btn-x{background:rgba(255,255,255,.15);border:none;color:#fff;width:34px;height:34px;border-radius:50%;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center}
-    .scan-hd span{color:#fff;font-family:'Sora',sans-serif;font-size:14px;font-weight:600}
-    #video{width:100%;height:100%;object-fit:cover;display:block}
+    #video{width:100%;height:100%;object-fit:cover}
     .cam-wrap{flex:1;position:relative;overflow:hidden;max-height:calc(100dvh - 200px)}
-    .cam-mask{position:absolute;inset:0;display:flex;align-items:center;justify-content:center}
-    .cam-box{width:85%;height:75%;border:2px solid rgba(255,255,255,.6);border-radius:12px;position:relative}
-    .cam-box::before{content:'';position:absolute;top:-2px;left:-2px;width:20px;height:20px;border:3px solid #fff;border-right:none;border-bottom:none;border-radius:8px 0 0 0}
-    .cam-box::after{content:'';position:absolute;top:-2px;right:-2px;width:20px;height:20px;border:3px solid #fff;border-left:none;border-bottom:none;border-radius:0 8px 0 0}
-    .c-bl{position:absolute;bottom:-2px;left:-2px;width:20px;height:20px;border:3px solid #fff;border-right:none;border-top:none;border-radius:0 0 0 8px}
-    .c-br{position:absolute;bottom:-2px;right:-2px;width:20px;height:20px;border:3px solid #fff;border-left:none;border-top:none;border-radius:0 0 8px 0}
-    .cam-hint{position:absolute;bottom:12px;left:50%;transform:translateX(-50%);color:rgba(255,255,255,.8);font-size:12px;white-space:nowrap}
-    .scan-ctrl{height:160px;flex-shrink:0;padding:16px;background:rgba(0,0,0,.9);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px}
-    .btn-cap{width:60px;height:60px;border-radius:50%;background:#fff;border:4px solid rgba(255,255,255,.4);cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+    .cam-box{width:85%;height:75%;border:2px solid rgba(255,255,255,.6);border-radius:12px;position:absolute;inset:0;margin:auto}
+    .btn-cap{width:60px;height:60px;border-radius:50%;background:#fff;border:4px solid rgba(255,255,255,.4);cursor:pointer}
     .btn-cap svg{width:26px;height:26px;fill:var(--blue)}
-    .btn-gal{background:rgba(255,255,255,.15);border:none;color:#fff;padding:10px 24px;border-radius:12px;font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;width:100%;flex-shrink:0}
+    .btn-gal{background:rgba(255,255,255,.15);border:none;color:#fff;padding:10px 24px;border-radius:12px;font-size:14px;cursor:pointer;width:100%}
 
     #ocr-ov{position:fixed;inset:0;background:rgba(0,0,0,.7);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);z-index:500;display:none;flex-direction:column;align-items:center;justify-content:center;gap:20px}
     #ocr-ov.on{display:flex}
     .ocr-spinner{width:60px;height:60px;border:4px solid rgba(255,255,255,.2);border-top:4px solid #fff;border-radius:50%;animation:spin 1s linear infinite}
     @keyframes spin{0%{transform:rotate(0deg)}100%{transform:rotate(360deg)}}
-    .ocr-texto{color:#fff;font-family:'Sora',sans-serif;font-size:16px;font-weight:700;text-align:center;line-height:1.5}
-    .ocr-subtexto{color:rgba(255,255,255,.7);font-size:13px;text-align:center;line-height:1.5;padding:0 32px}
+    .ocr-texto{color:#fff;font-family:'Sora',sans-serif;font-size:16px;font-weight:700}
     .ocr-barra{width:200px;height:4px;background:rgba(255,255,255,.2);border-radius:2px;overflow:hidden}
     .ocr-preenchimento{height:100%;background:#fff;border-radius:2px;transition:width .5s ease;width:0%}
-    .ocr-dica{position:absolute;bottom:40px;color:rgba(255,255,255,.5);font-size:11px;text-align:center;padding:0 24px}
+    .ocr-dica{position:absolute;bottom:40px;color:rgba(255,255,255,.5);font-size:11px}
 
     #rv-ov{position:fixed;inset:0;background:var(--bg);z-index:400;display:none;flex-direction:column;overflow-y:auto}
     #rv-ov.on{display:flex}
-    .rv-hd{background:var(--blue);color:#fff;padding:18px 16px;display:flex;align-items:center;gap:10px;flex-shrink:0}
+    .rv-hd{background:var(--blue);color:#fff;padding:18px 16px;display:flex;align-items:center;gap:10px}
     .rv-hd h2{font-family:'Sora',sans-serif;font-size:15px;font-weight:700;flex:1}
     .rv-body{padding:16px;flex:1}
     .rv-lbl{font-size:11px;text-transform:uppercase;letter-spacing:1px;color:var(--light);margin-bottom:6px}
     .rv-val{background:var(--w);border-radius:12px;padding:11px 13px;border:1.5px solid var(--border);margin-bottom:14px}
-    .rv-val input{width:100%;border:none;outline:none;font-family:'DM Sans',sans-serif;font-size:15px;color:var(--text);background:transparent}
-    .mi{background:var(--w);border-radius:12px;padding:11px 13px;margin-bottom:8px;border:1.5px solid var(--border);display:flex;flex-direction:column;gap:6px}
+    .rv-val input{width:100%;border:none;outline:none;font-family:'DM Sans',sans-serif;font-size:15px;background:transparent}
+    .mi{background:var(--w);border-radius:12px;padding:11px 13px;margin-bottom:8px;border:1.5px solid var(--border)}
     .mi.ok{border-color:#d1fae5;background:#f0fdf4}
     .mi.av{border-color:#fef3c7;background:#fffbeb}
     .mi.no{border-color:#fee2e2;background:#fff5f5}
     .mi-top{display:flex;align-items:center;gap:8px}
-    .mi-nome{font-size:14px;font-weight:500;flex:1}
-    .mi-sub{font-size:12px;color:var(--light)}
     .mi-btns{display:flex;gap:8px;padding-left:28px}
     .btn-sim{flex:1;padding:7px;background:var(--green);color:#fff;border:none;border-radius:8px;font-size:12px;cursor:pointer;font-weight:600}
     .btn-nao{flex:1;padding:7px;background:#fee2e2;color:var(--red);border:none;border-radius:8px;font-size:12px;cursor:pointer}
-    .rv-btns{display:flex;gap:10px;margin:16px;flex-shrink:0}
+    .rv-btns{display:flex;gap:10px;margin:16px}
 
     #fab{position:fixed;bottom:22px;right:18px;width:58px;height:58px;background:var(--blue);border:none;border-radius:50%;box-shadow:0 4px 18px rgba(30,58,138,.4);cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:50}
     #fab svg{width:24px;height:24px;fill:#fff}
 
     .apv{background:var(--w);border-radius:12px;padding:13px 15px;margin-bottom:8px;border-left:3px solid var(--yellow)}
     .apv-nome{font-weight:600;font-size:14px}
-    .apv-cargo{font-size:12px;color:var(--light);margin-bottom:8px}
     .apv-btns{display:flex;gap:8px}
-    .btn-apr{flex:1;padding:8px;background:var(--green);color:#fff;border:none;border-radius:8px;font-size:13px;cursor:pointer;font-weight:600}
-    .btn-rec{flex:1;padding:8px;background:#fee2e2;color:var(--red);border:none;border-radius:8px;font-size:13px;cursor:pointer}
+    .btn-apr{flex:1;padding:8px;background:var(--green);color:#fff;border:none;border-radius:8px;cursor:pointer;font-weight:600}
+    .btn-rec{flex:1;padding:8px;background:#fee2e2;color:var(--red);border:none;border-radius:8px;cursor:pointer}
 
     #ms-ov{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:600;display:none;align-items:center;justify-content:center;padding:16px}
     #ms-ov.on{display:flex}
     .ms-box{background:var(--w);border-radius:20px;padding:26px 22px;width:100%;max-width:340px}
-    .ms-box h3{font-family:'Sora',sans-serif;font-size:16px;font-weight:700;margin-bottom:6px;color:var(--blue)}
-    .ms-box p{font-size:13px;color:var(--light);margin-bottom:18px}
     .ms-btns{display:flex;gap:10px}
 
     .skel{background:linear-gradient(90deg,#e2e8f0 25%,#f1f5f9 50%,#e2e8f0 75%);background-size:200% 100%;animation:sh 1.5s infinite;border-radius:10px;height:76px;margin-bottom:10px}
@@ -181,19 +163,18 @@
 
     #admin-ov{position:fixed;inset:0;background:var(--bg);z-index:400;display:none;flex-direction:column;overflow-y:auto}
     #admin-ov.on{display:flex}
-    .admin-hd{background:var(--blue);color:#fff;padding:18px 16px;display:flex;align-items:center;gap:10px;flex-shrink:0}
-    .admin-hd h2{font-family:'Sora',sans-serif;font-size:15px;font-weight:700;flex:1}
+    .admin-hd{background:var(--blue);color:#fff;padding:18px 16px;display:flex;align-items:center;gap:10px}
     .admin-body{padding:16px}
     .membro-card{background:#fff;border-radius:12px;padding:13px 15px;margin-bottom:10px;display:flex;align-items:center;gap:12px;box-shadow:0 2px 8px rgba(30,58,138,.06)}
-    .membro-avatar{width:38px;height:38px;background:#eff6ff;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
-    .membro-info{flex:1;min-width:0}
-    .membro-nome{font-size:14px;font-weight:600;color:var(--text)}
+    .membro-avatar{width:38px;height:38px;background:#eff6ff;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:16px}
+    .membro-info{flex:1}
+    .membro-nome{font-size:14px;font-weight:600}
     .membro-cargo{font-size:12px;color:var(--light)}
-    .membro-badge{font-size:10px;padding:2px 8px;border-radius:20px;font-weight:600;margin-top:3px;display:inline-block}
+    .membro-badge{font-size:10px;padding:2px 8px;border-radius:20px;font-weight:600;display:inline-block}
     .badge-admin{background:#eff6ff;color:var(--blue)}
     .badge-membro{background:#f1f5f9;color:var(--light)}
-    .membro-acoes{display:flex;flex-direction:column;gap:6px;flex-shrink:0}
-    .btn-admin-sm{padding:5px 10px;border:none;border-radius:7px;font-size:11px;cursor:pointer;font-weight:600;white-space:nowrap}
+    .membro-acoes{display:flex;flex-direction:column;gap:6px}
+    .btn-admin-sm{padding:5px 10px;border:none;border-radius:7px;font-size:11px;cursor:pointer;font-weight:600}
     .btn-promover{background:#eff6ff;color:var(--blue)}
     .btn-rebaixar{background:#fef3c7;color:#92400e}
     .btn-expulsar{background:#fee2e2;color:var(--red)}
@@ -203,35 +184,26 @@
 
     #perfil-ov,#editar-nome-ov{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:700;display:none;align-items:center;justify-content:center;padding:20px}
     #perfil-ov.on,#editar-nome-ov.on{display:flex}
-    .perfil-box,.editar-nome-box{background:#fff;border-radius:24px;padding:28px 22px;width:100%;max-width:360px;animation:fu .3s ease}
-    .perfil-box h3,.editar-nome-box h3{font-family:'Sora',sans-serif;font-size:17px;font-weight:700;color:var(--blue);margin-bottom:6px}
-    .perfil-box p,.editar-nome-box p{font-size:13px;color:var(--light);margin-bottom:18px}
+    .perfil-box,.editar-nome-box{background:#fff;border-radius:24px;padding:28px 22px;width:100%;max-width:360px}
     .perfil-field{margin-bottom:14px}
     .perfil-field label{display:block;font-size:12px;font-weight:600;color:var(--text);margin-bottom:5px;text-transform:uppercase;letter-spacing:.5px}
-    .perfil-field input{width:100%;padding:11px 13px;border:1.5px solid var(--border);border-radius:12px;font-family:'DM Sans',sans-serif;font-size:15px;color:var(--text);outline:none}
-    .perfil-field input:focus{border-color:var(--blue)}
+    .perfil-field input{width:100%;padding:11px 13px;border:1.5px solid var(--border);border-radius:12px;font-family:'DM Sans',sans-serif;font-size:15px;outline:none}
     .perfil-btns{display:flex;gap:10px;margin-top:6px}
 
     #notif-ov{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:800;display:none;align-items:center;justify-content:center;padding:20px}
     #notif-ov.on{display:flex}
-    .notif-box{background:#fff;border-radius:24px;padding:28px 22px;width:100%;max-width:360px;animation:fu .3s ease}
+    .notif-box{background:#fff;border-radius:24px;padding:28px 22px;width:100%;max-width:360px}
     .notif-emoji{font-size:44px;text-align:center;margin-bottom:12px}
     .notif-titulo{font-family:'Sora',sans-serif;font-size:17px;font-weight:700;color:var(--blue);margin-bottom:8px;text-align:center}
-    .notif-desc{font-size:14px;color:var(--light);text-align:center;margin-bottom:20px;line-height:1.5}
+    .notif-desc{font-size:14px;color:var(--light);text-align:center;margin-bottom:20px}
     .notif-evento{background:#eff6ff;border-radius:12px;padding:12px;margin-bottom:20px;text-align:center}
-    .notif-evento-titulo{font-weight:600;font-size:14px;color:var(--blue)}
-    .notif-evento-data{font-size:12px;color:var(--light);margin-top:3px}
     .notif-btns{display:flex;gap:10px}
 
     #trocar-ov{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:750;display:none;align-items:center;justify-content:center;padding:20px}
     #trocar-ov.on{display:flex}
-    .trocar-box{background:#fff;border-radius:24px;padding:28px 22px;width:100%;max-width:360px;animation:fu .3s ease}
-    .trocar-box h3{font-family:'Sora',sans-serif;font-size:17px;font-weight:700;color:#c2410c;margin-bottom:6px}
-    .trocar-box p{font-size:13px;color:var(--light);margin-bottom:16px;line-height:1.5}
+    .trocar-box{background:#fff;border-radius:24px;padding:28px 22px;width:100%;max-width:360px}
     .trocar-membros{max-height:180px;overflow-y:auto;border:1.5px solid var(--border);border-radius:12px;margin-bottom:14px}
-    .trocar-membro{padding:12px 14px;border-bottom:1px solid var(--border);cursor:pointer;display:flex;align-items:center;gap:10px;font-size:14px;transition:background .15s}
-    .trocar-membro:last-child{border-bottom:none}
-    .trocar-membro:hover{background:#fff7ed}
+    .trocar-membro{padding:12px 14px;border-bottom:1px solid var(--border);cursor:pointer;display:flex;align-items:center;gap:10px}
     .trocar-membro.selecionado{background:#fff7ed;font-weight:600;color:#c2410c}
     .trocar-btns{display:flex;gap:10px}
 
@@ -265,6 +237,7 @@
     .uso-info{flex:1}
     .uso-periodo{font-size:12px;color:var(--light)}
     .btn-config-saldo{width:100%;padding:10px;background:transparent;border:1.5px dashed var(--blue);color:var(--blue);border-radius:10px;font-size:13px;cursor:pointer;margin-top:8px}
+    .btn-excluir-ausencia{background:transparent;border:none;color:var(--red);cursor:pointer;font-size:18px;padding:4px 8px}
 
     footer{text-align:center;padding:16px;color:var(--light);font-size:11px;border-top:1px solid var(--border);margin-top:20px}
     footer strong{color:var(--blue)}
@@ -273,20 +246,12 @@
 <body>
 
 <header>
-  <div class="h-top">
-    <div class="h-logo">
-      <svg viewBox="0 0 24 24"><path d="M17 3H7C5.9 3 5 3.9 5 5v16l7-3 7 3V5c0-1.1-.9-2-2-2zm0 15l-5-2.18L7 18V5h10v13z"/></svg>
-      <span>Gestor de Convocações</span>
-    </div>
-    <button class="btn-sair" onclick="sair()">Sair</button>
-  </div>
+  <div class="h-top"><div class="h-logo"><svg viewBox="0 0 24 24"><path d="M17 3H7C5.9 3 5 3.9 5 5v16l7-3 7 3V5c0-1.1-.9-2-2-2zm0 15l-5-2.18L7 18V5h10v13z"/></svg><span>Gestor de Convocações</span></div><button class="btn-sair" onclick="sair()">Sair</button></div>
   <div class="h-sub" id="h-user" onclick="abrirPerfil()" style="cursor:pointer">Carregando...</div>
 </header>
 
 <div id="banner-instalar" style="display:none;background:#EFF6FF;border-bottom:1px solid #BFDBFE;padding:10px 16px;">
-  <button onclick="abrirModalInstalar()" style="width:100%;padding:11px;background:var(--blue);color:white;border:none;border-radius:12px;font-family:'Sora',sans-serif;font-size:14px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width:17px;height:17px;"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> 📱 Instalar App no Celular
-  </button>
+  <button onclick="abrirModalInstalar()" style="width:100%;padding:11px;background:var(--blue);color:white;border:none;border-radius:12px;font-family:'Sora',sans-serif;font-size:14px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;">📱 Instalar App no Celular</button>
 </div>
 
 <div class="nav-tabs">
@@ -305,7 +270,7 @@
     <div class="sec-titulo" style="margin-top:20px">Todas <span style="font-size:12px;color:var(--light)" id="total"></span></div><div id="lst-ev"><div class="skel"></div></div>
   </div>
   <div id="aba-ferias" class="aba-content" style="display:none">
-    <div class="card"><div class="card-titulo">Minhas Ausências</div><button class="btn-criar-ausencia" onclick="iniciarAddFerias()">+ Adicionar Período</button></div>
+    <div class="card"><div class="card-titulo">📋 Meus Períodos</div><button class="btn-criar-ausencia" onclick="iniciarAddFerias()">+ Adicionar Período</button></div>
     <div id="lst-ausencias"></div>
   </div>
   <div id="aba-saldo" class="aba-content" style="display:none">
@@ -318,13 +283,11 @@
 
 <footer>
   <p>Desenvolvido por <strong>Israel Heleno de Castro</strong></p>
-  <p>© 2024 Gestor de Convocações — v17.0</p>
+  <p>© 2025 Gestor de Convocações — v17.0</p>
 </footer>
 
-<!-- MODAIS (mantidos os mesmos) -->
-<div class="overlay" id="mod-ev" onclick="if(event.target===this) fecharMod()">
-  <div class="sheet"><div class="handle" onclick="fecharMod()"></div><div class="mod-titulo" id="mod-tit"></div><div class="mod-sub" id="mod-sub"></div><div class="mod-sec"><h3>Convocados <span id="admin-badge-conv" style="display:none" class="admin-badge">Admin</span></h3><div id="mod-conv"></div></div><div style="display:flex;gap:8px;margin-top:16px"><button class="btn-ag" id="mod-ag" style="flex:1;margin-top:0">📅 Agenda</button><button id="mod-trocar" style="flex:1;padding:12px;background:#fff7ed;color:#c2410c;border:1.5px solid #fed7aa;border-radius:10px;font-size:14px;cursor:pointer;font-weight:600;display:none;">🔄 Trocar</button></div><button class="btn-del" id="mod-del" style="display:none">🗑 Excluir</button><button class="btn-cancel" style="margin-top:10px;width:100%" onclick="fecharMod()">Fechar</button></div>
-</div>
+<!-- MODAIS -->
+<div class="overlay" id="mod-ev" onclick="if(event.target===this) fecharMod()"><div class="sheet"><div class="handle" onclick="fecharMod()"></div><div class="mod-titulo" id="mod-tit"></div><div class="mod-sub" id="mod-sub"></div><div class="mod-sec"><h3>Convocados <span id="admin-badge-conv" style="display:none" class="admin-badge">Admin</span></h3><div id="mod-conv"></div></div><div style="display:flex;gap:8px;margin-top:16px"><button class="btn-ag" id="mod-ag" style="flex:1;margin-top:0">📅 Agenda</button><button id="mod-trocar" style="flex:1;padding:12px;background:#fff7ed;color:#c2410c;border:1.5px solid #fed7aa;border-radius:10px;font-size:14px;cursor:pointer;font-weight:600;display:none;">🔄 Trocar</button></div><button class="btn-del" id="mod-del" style="display:none">🗑 Excluir</button><button class="btn-cancel" style="margin-top:10px;width:100%" onclick="fecharMod()">Fechar</button></div></div>
 
 <div id="trocar-ov"><div class="trocar-box"><h3>🔄 Trocar escala</h3><p id="trocar-desc"></p><div class="trocar-membros" id="trocar-lista"></div><div class="trocar-btns"><button class="btn-cancel" onclick="fecharTrocar()">Cancelar</button><button class="btn-salvar" style="background:#c2410c" id="trocar-confirmar">Confirmar</button></div></div></div>
 <div class="ov-center" id="ferias-consent-ov"><div class="box-center"><h3>Registrar Período</h3><p>Registrar férias, licença ou abono.</p><div class="btns-row"><button class="btn-cancel" onclick="document.getElementById('ferias-consent-ov').classList.remove('on')">Cancelar</button><button class="btn-salvar" onclick="abrirFormFerias()">Continuar</button></div></div></div>
@@ -335,30 +298,17 @@
 <div id="completar-cadastro-ov"><div style="background:#fff;border-radius:24px;padding:28px 22px;width:100%;max-width:360px;animation:fu .3s ease;"><h3 style="font-family:'Sora',sans-serif;font-size:17px;font-weight:700;color:var(--blue);margin-bottom:6px;">👋 Complete seu cadastro</h3><p style="font-size:13px;color:var(--light);margin-bottom:18px;">Precisamos do seu nome completo e cargo.</p><div class="field"><label>Nome completo</label><input type="text" id="cadastro-nome"/></div><div class="field"><label>Cargo</label><input type="text" id="cadastro-cargo"/></div><div class="field"><label>Email</label><input type="email" id="cadastro-email"/></div><p style="font-size:11px;color:var(--red);margin-bottom:12px;display:none;" id="cadastro-erro"></p><button class="btn-salvar" onclick="completarCadastro()" style="width:100%">✓ Salvar</button></div></div>
 <div id="notif-ov"><div class="notif-box"><div class="notif-emoji">🔔</div><div class="notif-titulo" id="notif-titulo"></div><div class="notif-desc" id="notif-desc"></div><div class="notif-evento"><div class="notif-evento-titulo" id="notif-ev-titulo"></div><div class="notif-evento-data" id="notif-ev-data"></div></div><div class="notif-btns"><button class="btn-cancel" onclick="responderNotif(false)">✗ Não sou eu</button><button class="btn-salvar" onclick="responderNotif(true)">✓ Sim, sou eu!</button></div></div></div>
 <div id="admin-ov"><div class="admin-hd"><button class="btn-x" onclick="fecharAdmin()">✕</button><h2>🛡️ Painel Admin</h2></div><div class="admin-body"><div class="sec-titulo">Membros <span id="admin-total"></span></div><div id="admin-membros"></div></div></div>
-<div id="scan-ov"><div class="scan-hd"><button class="btn-x" onclick="fecharScanner()">✕</button><span>Escanear</span></div><div class="cam-wrap"><video id="video" autoplay playsinline muted></video><div class="cam-mask"><div class="cam-box"><div class="c-bl"></div><div class="c-br"></div><div class="cam-hint">Enquadre o documento</div></div></div></div><div class="scan-ctrl"><button class="btn-cap" onclick="capturar()"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3.2"/><path d="M9 2L7.17 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2h-3.17L15 2H9zm3 15c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5z"/></svg></button><input type="file" id="file-foto" accept="image/*" style="display:none" onchange="processarFoto(this.files[0])"/><button class="btn-gal" onclick="document.getElementById('file-foto').click()">🖼️ Galeria</button></div></div>
+<div id="scan-ov"><div class="scan-hd"><button class="btn-x" onclick="fecharScanner()">✕</button><span>Escanear</span></div><div class="cam-wrap"><video id="video" autoplay playsinline muted></video><div class="cam-mask"><div class="cam-box"><div class="cam-hint">Enquadre o documento</div></div></div></div><div class="scan-ctrl"><button class="btn-cap" onclick="capturar()"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3.2"/></svg></button><input type="file" id="file-foto" accept="image/*" style="display:none" onchange="processarFoto(this.files[0])"/><button class="btn-gal" onclick="document.getElementById('file-foto').click()">🖼️ Galeria</button></div></div>
 <div id="ocr-ov"><div class="ocr-spinner"></div><div class="ocr-texto" id="ocr-texto">📸 Analisando...</div><div class="ocr-barra"><div class="ocr-preenchimento" id="ocr-preenchimento"></div></div><div class="ocr-subtexto" id="ocr-subtexto"></div><div class="ocr-dica">Não feche o app</div></div>
 <div id="rv-ov"><div class="rv-hd"><button class="btn-x" onclick="fecharRv()">✕</button><h2>Conferir dados</h2></div><div class="rv-body"><div class="rv-lbl">Título</div><div class="rv-val"><input type="text" id="rv-tit"/></div><div class="rv-lbl">Data/hora</div><div class="rv-val"><input type="datetime-local" id="rv-data"/></div><div class="rv-lbl">Local</div><div class="rv-val"><input type="text" id="rv-loc"/></div><div class="rv-lbl">Convocados</div><div id="rv-matches"></div><div class="rv-btns"><button class="btn-cancel" onclick="fecharRv()">Cancelar</button><button class="btn-salvar" onclick="salvar()">✓ Salvar</button></div></div></div>
 
-<!-- MODAL CONFIGURAR SALDO -->
-<div class="ov-center" id="saldo-config-ov">
-  <div class="box-center">
-    <h3>⚙️ Configurar Saldo</h3>
-    <p>Informe seu saldo atual de dias para cada tipo.</p>
-    <div class="field"><label>Dias de Férias disponíveis</label><input type="number" id="saldo-ferias" min="0" max="30" value="30"/></div>
-    <div class="field"><label>Abonos disponíveis</label><input type="number" id="saldo-abono" min="0" max="6" value="6"/></div>
-    <div class="field"><label>Dias de Licença (90 dias a cada 5 anos)</label><input type="number" id="saldo-licenca" min="0" max="90" value="90"/></div>
-    <div class="btns-row"><button class="btn-cancel" onclick="document.getElementById('saldo-config-ov').classList.remove('on')">Cancelar</button><button class="btn-salvar" onclick="salvarConfigSaldo()">✓ Salvar</button></div>
-  </div>
-</div>
+<div class="ov-center" id="saldo-config-ov"><div class="box-center"><h3>⚙️ Configurar Saldo</h3><p>Informe seu saldo atual de dias.</p><div class="field"><label>Férias (dias)</label><input type="number" id="saldo-ferias" min="0" max="30" value="30"/></div><div class="field"><label>Abonos (dias)</label><input type="number" id="saldo-abono" min="0" max="6" value="6"/></div><div class="field"><label>Licença (dias)</label><input type="number" id="saldo-licenca" min="0" max="90" value="90"/></div><div class="btns-row"><button class="btn-cancel" onclick="document.getElementById('saldo-config-ov').classList.remove('on')">Cancelar</button><button class="btn-salvar" onclick="salvarConfigSaldo()">✓ Salvar</button></div></div></div>
 
 <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 <script>
-// ══════════════════════════════════════════════════════════════
-// CONFIGURAÇÕES E INICIALIZAÇÃO
-// ══════════════════════════════════════════════════════════════
 if('serviceWorker' in navigator){navigator.serviceWorker.getRegistrations().then(rs=>rs.forEach(r=>r.unregister()));if(window.caches)caches.keys().then(ks=>ks.forEach(k=>caches.delete(k)));}
 
 firebase.initializeApp({apiKey:"AIzaSyAOpV5NFydHWwUwQKg0MANqMHVcXVDDqpQ",authDomain:"gestor-convocacoes-89823.firebaseapp.com",projectId:"gestor-convocacoes-89823",storageBucket:"gestor-convocacoes-89823.firebasestorage.app",messagingSenderId:"212389113483",appId:"1:212389113483:web:eb97eefe621df0cba66e8e"});
@@ -392,76 +342,28 @@ auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL).then(()=>{
   });
 }).catch(e=>console.error('Persistence:',e));
 
-// ── SALDO DE FÉRIAS ──────────────────────────────────────────────────
+// ── SALDO ───────────────────────────────────────────────────────────
 async function carregarSaldo(){
   const container=document.getElementById('saldo-container');
   container.innerHTML='<div class="skel"></div>';
-  
   const snap=await db.collection('usuarios').doc(eu.uid).get();
   const data=snap.data();
   saldoUsuario=data.saldo||{ferias:30,abono:6,licenca:90,usos:[]};
   
   const usos=saldoUsuario.usos||[];
-  const usosAtivos=usos.filter(u=>!u.data_fim||new Date(u.data_fim+"T23:59:59")>=new Date());
-  const usosPassados=usos.filter(u=>u.data_fim&&new Date(u.data_fim+"T23:59:59")<new Date());
-  
-  const totalFerias=saldoUsuario.ferias||30;
-  const totalAbono=saldoUsuario.abono||6;
-  const totalLicenca=saldoUsuario.licenca||90;
-  
-  const usadoFerias=usosAtivos.filter(u=>u.tipo==='ferias').reduce((s,u)=>s+(u.dias||0),0);
-  const usadoAbono=usosAtivos.filter(u=>u.tipo==='abono').reduce((s,u)=>s+(u.dias||0),0);
-  const usadoLicenca=usosAtivos.filter(u=>u.tipo==='licenca').reduce((s,u)=>s+(u.dias||0),0);
-  
-  const restanteFerias=Math.max(0,totalFerias-usadoFerias);
-  const restanteAbono=Math.max(0,totalAbono-usadoAbono);
-  const restanteLicenca=Math.max(0,totalLicenca-usadoLicenca);
-  
+  const totalF=saldoUsuario.ferias||30,totalA=saldoUsuario.abono||6,totalL=saldoUsuario.licenca||90;
+  const usadoF=usos.filter(u=>u.tipo==='ferias').reduce((s,u)=>s+(u.dias||0),0);
+  const usadoA=usos.filter(u=>u.tipo==='abono').length;
+  const usadoL=usos.filter(u=>u.tipo==='licenca').reduce((s,u)=>s+(u.dias||0),0);
+  const restF=Math.max(0,totalF-usadoF),restA=Math.max(0,totalA-usadoA),restL=Math.max(0,totalL-usadoL);
+
   container.innerHTML=`
-    <div class="card"><div class="card-titulo">💰 Meu Saldo <span class="badge">Uso Pessoal</span></div>
-    
-    <div class="saldo-card">
-      <div class="saldo-header">
-        <div class="saldo-icon ferias">🏖️</div>
-        <div class="saldo-info"><div class="saldo-tipo">Férias</div><div class="saldo-dias" style="color:#ec4899">${restanteFerias} / ${totalFerias} dias</div></div>
-      </div>
-      <div class="saldo-bar"><div class="saldo-bar-fill ferias" style="width:${(restanteFerias/totalFerias)*100}%"></div></div>
-    </div>
-    
-    <div class="saldo-card">
-      <div class="saldo-header">
-        <div class="saldo-icon abono">⏱️</div>
-        <div class="saldo-info"><div class="saldo-tipo">Abonos</div><div class="saldo-dias" style="color:#06b6d4">${restanteAbono} / ${totalAbono} disponíveis</div></div>
-      </div>
-      <div class="saldo-bar"><div class="saldo-bar-fill abono" style="width:${(restanteAbono/totalAbono)*100}%"></div></div>
-    </div>
-    
-    <div class="saldo-card">
-      <div class="saldo-header">
-        <div class="saldo-icon licenca">🏥</div>
-        <div class="saldo-info"><div class="saldo-tipo">Licença (5 anos)</div><div class="saldo-dias" style="color:#f59e0b">${restanteLicenca} / ${totalLicenca} dias</div></div>
-      </div>
-      <div class="saldo-bar"><div class="saldo-bar-fill licenca" style="width:${(restanteLicenca/totalLicenca)*100}%"></div></div>
-    </div>
-    
-    <button class="btn-config-saldo" onclick="abrirConfigSaldo()">⚙️ Ajustar saldo inicial</button>
-    </div>
-    
-    ${usosAtivos.length>0?`
-    <div class="card"><div class="card-titulo">📋 Períodos em Aberto</div>
-      ${usosAtivos.map(u=>{
-        let icone=u.tipo==='ferias'?'🏖️':(u.tipo==='licenca'?'🏥':'⏱️');
-        return`<div class="uso-item ${u.tipo}"><div class="uso-dias">${u.dias}d</div><div class="uso-info"><div style="font-weight:600;font-size:13px">${icone} ${u.tipo.charAt(0).toUpperCase()+u.tipo.slice(1)}</div><div class="uso-periodo">${u.data_inicio?new Date(u.data_inicio+'T12:00:00').toLocaleDateString('pt-BR'):'?'} → ${u.data_fim?new Date(u.data_fim+'T12:00:00').toLocaleDateString('pt-BR'):'?'}</div></div></div>`;
-      }).join('')}
-    </div>`:''}
-    
-    ${usosPassados.length>0?`
-    <div class="card"><div class="card-titulo">📜 Histórico de Uso</div>
-      ${usosPassados.map(u=>{
-        let icone=u.tipo==='ferias'?'🏖️':(u.tipo==='licenca'?'🏥':'⏱️');
-        return`<div class="uso-item ${u.tipo}" style="opacity:.7"><div class="uso-dias">${u.dias}d</div><div class="uso-info"><div style="font-weight:600;font-size:13px">${icone} ${u.tipo.charAt(0).toUpperCase()+u.tipo.slice(1)}</div><div class="uso-periodo">${u.data_inicio?new Date(u.data_inicio+'T12:00:00').toLocaleDateString('pt-BR'):'?'} → ${u.data_fim?new Date(u.data_fim+'T12:00:00').toLocaleDateString('pt-BR'):'?'}</div></div></div>`;
-      }).join('')}
-    </div>`:''}
+    <div class="card"><div class="card-titulo">💰 Meu Saldo <span class="badge">Individual</span></div>
+    <div class="saldo-card"><div class="saldo-header"><div class="saldo-icon ferias">🏖️</div><div class="saldo-info"><div class="saldo-tipo">Férias</div><div class="saldo-dias" style="color:#ec4899">${restF} / ${totalF} dias</div></div></div><div class="saldo-bar"><div class="saldo-bar-fill ferias" style="width:${totalF>0?(restF/totalF)*100:0}%"></div></div></div>
+    <div class="saldo-card"><div class="saldo-header"><div class="saldo-icon abono">⏱️</div><div class="saldo-info"><div class="saldo-tipo">Abonos</div><div class="saldo-dias" style="color:#06b6d4">${restA} / ${totalA}</div></div></div><div class="saldo-bar"><div class="saldo-bar-fill abono" style="width:${totalA>0?(restA/totalA)*100:0}%"></div></div></div>
+    <div class="saldo-card"><div class="saldo-header"><div class="saldo-icon licenca">🏥</div><div class="saldo-info"><div class="saldo-tipo">Licença</div><div class="saldo-dias" style="color:#f59e0b">${restL} / ${totalL} dias</div></div></div><div class="saldo-bar"><div class="saldo-bar-fill licenca" style="width:${totalL>0?(restL/totalL)*100:0}%"></div></div></div>
+    <button class="btn-config-saldo" onclick="abrirConfigSaldo()">⚙️ Ajustar saldo inicial</button></div>
+    ${usos.length>0?`<div class="card"><div class="card-titulo">📋 Períodos Registrados</div>${usos.map((u,i)=>{let icone=u.tipo==='ferias'?'🏖️':(u.tipo==='licenca'?'🏥':'⏱️');return`<div class="uso-item ${u.tipo}"><div class="uso-dias">${u.dias}d</div><div class="uso-info"><div style="font-weight:600;font-size:13px">${icone} ${u.tipo.charAt(0).toUpperCase()+u.tipo.slice(1)}</div><div class="uso-periodo">${u.data_inicio?new Date(u.data_inicio+'T12:00:00').toLocaleDateString('pt-BR'):'?'} → ${u.data_fim?new Date(u.data_fim+'T12:00:00').toLocaleDateString('pt-BR'):'?'}</div></div></div>`;}).join('')}</div>`:''}
   `;
 }
 
@@ -473,61 +375,113 @@ function abrirConfigSaldo(){
 }
 
 async function salvarConfigSaldo(){
-  const ferias=parseInt(document.getElementById('saldo-ferias').value)||30;
-  const abono=parseInt(document.getElementById('saldo-abono').value)||6;
-  const licenca=parseInt(document.getElementById('saldo-licenca').value)||90;
-  
-  saldoUsuario.ferias=ferias;
-  saldoUsuario.abono=abono;
-  saldoUsuario.licenca=licenca;
-  
+  saldoUsuario.ferias=parseInt(document.getElementById('saldo-ferias').value)||30;
+  saldoUsuario.abono=parseInt(document.getElementById('saldo-abono').value)||6;
+  saldoUsuario.licenca=parseInt(document.getElementById('saldo-licenca').value)||90;
   await db.collection('usuarios').doc(eu.uid).update({saldo:saldoUsuario});
   document.getElementById('saldo-config-ov').classList.remove('on');
-  mostrarToast('✅ Saldo atualizado!');
-  carregarSaldo();
+  mostrarToast('✅ Saldo atualizado!');carregarSaldo();
 }
 
-// ── FÉRIAS (ATUALIZADO PARA AFETAR SALDO) ───────────────────────────
+// ── FÉRIAS (com exclusão e retorno ao saldo) ────────────────────────
+async function fetchAusencias(){if(!grupoId)return;const hojeStr=new Date().toISOString().split('T')[0];const snap=await db.collection('ausencias').where('grupo_id','==',grupoId).where('data_fim','>=',hojeStr).get();listaAusencias=snap.docs.map(d=>({id:d.id,...d.data()}));}
+
+async function carregarFerias(){
+  await fetchAusencias();
+  // Carregar também os usos do saldo
+  const snap=await db.collection('usuarios').doc(eu.uid).get();
+  const data=snap.data();
+  saldoUsuario=data.saldo||{ferias:30,abono:6,licenca:90,usos:[]};
+  const usos=saldoUsuario.usos||[];
+  
+  const lst=document.getElementById('lst-ausencias');
+  lst.innerHTML='';
+  
+  if(usos.length===0){
+    lst.innerHTML='<p style="color:var(--light);padding:20px;text-align:center">Nenhum período registrado.</p>';
+    return;
+  }
+  
+  usos.sort((a,b)=>new Date(a.data_inicio)-new Date(b.data_inicio)).forEach((u,i)=>{
+    let dtIni=new Date(u.data_inicio+"T12:00:00"),dtFim=new Date(u.data_fim+"T12:00:00");
+    let icone=u.tipo==='ferias'?'🏖️':(u.tipo==='licenca'?'🏥':'⏱️');
+    const div=document.createElement('div');
+    div.className=`aus-card tipo-${u.tipo}`;
+    div.innerHTML=`
+      <div class="aus-icon">${icone}</div>
+      <div class="aus-info">
+        <div class="aus-nome">${u.tipo.charAt(0).toUpperCase()+u.tipo.slice(1)} - ${u.dias} dia(s)</div>
+        <div class="aus-detalhe">${dtIni.toLocaleDateString('pt-BR')} → ${dtFim.toLocaleDateString('pt-BR')}</div>
+        <div class="aus-tipo">${u.tipo}</div>
+      </div>
+      <button class="btn-excluir-ausencia" onclick="excluirUsoFerias(${i})" title="Excluir e retornar saldo">🗑️</button>
+    `;
+    lst.appendChild(div);
+  });
+}
+
+async function excluirUsoFerias(index){
+  const uso=saldoUsuario.usos[index];
+  if(!uso)return;
+  if(!confirm(`Excluir ${uso.tipo} de ${uso.dias} dia(s)? O saldo será restituído.`))return;
+  
+  saldoUsuario.usos.splice(index,1);
+  await db.collection('usuarios').doc(eu.uid).update({saldo:saldoUsuario});
+  
+  // Remover também da coleção ausencias se existir
+  const snap=await db.collection('ausencias')
+    .where('uid','==',eu.uid)
+    .where('data_inicio','==',uso.data_inicio)
+    .where('data_fim','==',uso.data_fim)
+    .where('tipo','==',uso.tipo).get();
+  snap.forEach(async d=>await d.ref.delete());
+  
+  mostrarToast('✅ Período excluído. Saldo restituído!');
+  carregarFerias();
+}
+
+function iniciarAddFerias(){document.getElementById('ferias-consent-ov').classList.add('on');}
+function abrirFormFerias(){document.getElementById('ferias-consent-ov').classList.remove('on');document.getElementById('ferias-form-ov').classList.add('on');document.getElementById('ferias-ini').value="";document.getElementById('ferias-fim').value="";document.getElementById('ferias-tipo').value="abono";}
+
 async function salvarFerias(){
   const tipo=document.getElementById('ferias-tipo').value;
   const iniStr=document.getElementById('ferias-ini').value;
   const fimStr=document.getElementById('ferias-fim').value;
   if(!iniStr||!fimStr){alert("Preencha ambas as datas.");return;}
-  const dtIni=new Date(iniStr+"T12:00:00");
-  const dtFim=new Date(fimStr+"T12:00:00");
-  if(dtIni>dtFim){alert("A data de término não pode ser anterior ao início.");return;}
-  const diffTime=Math.abs(dtFim-dtIni);
-  const diffDays=Math.ceil(diffTime/(1000*60*60*24))+1;
-  
-  if(tipo==='abono'&&diffDays<1){alert("Abono requer no mínimo 1 dia.");return;}
-  if(tipo==='licenca'&&diffDays<2){alert("Licença requer no mínimo 2 dias.");return;}
-  if(tipo==='ferias'&&diffDays<5){alert("Férias requer no mínimo 5 dias.");return;}
-  
-  // Verificar saldo
+  const dtIni=new Date(iniStr+"T12:00:00"),dtFim=new Date(fimStr+"T12:00:00");
+  if(dtIni>dtFim){alert("Data de término anterior ao início.");return;}
+  const diffDays=Math.ceil(Math.abs(dtFim-dtIni)/(1000*60*60*24))+1;
+  if(tipo==='abono'&&diffDays<1){alert("Abono: mínimo 1 dia.");return;}
+  if(tipo==='licenca'&&diffDays<2){alert("Licença: mínimo 2 dias.");return;}
+  if(tipo==='ferias'&&diffDays<5){alert("Férias: mínimo 5 dias.");return;}
+
+  // Recarregar saldo mais recente
   const snap=await db.collection('usuarios').doc(eu.uid).get();
   const data=snap.data();
   saldoUsuario=data.saldo||{ferias:30,abono:6,licenca:90,usos:[]};
   const usos=saldoUsuario.usos||[];
-  const usosAtivos=usos.filter(u=>!u.data_fim||new Date(u.data_fim+"T23:59:59")>=new Date());
-  const usado=tipo==='ferias'?usosAtivos.filter(u=>u.tipo==='ferias').reduce((s,u)=>s+(u.dias||0),0):tipo==='abono'?usosAtivos.filter(u=>u.tipo==='abono').length:usosAtivos.filter(u=>u.tipo==='licenca').reduce((s,u)=>s+(u.dias||0),0);
+
   const total=tipo==='ferias'?saldoUsuario.ferias||30:tipo==='abono'?saldoUsuario.abono||6:saldoUsuario.licenca||90;
-  
+  const usado=tipo==='ferias'?usos.filter(u=>u.tipo==='ferias').reduce((s,u)=>s+(u.dias||0),0):tipo==='abono'?usos.filter(u=>u.tipo==='abono').length:usos.filter(u=>u.tipo==='licenca').reduce((s,u)=>s+(u.dias||0),0);
+
   if(tipo==='abono'&&usado>=total){alert(`Você já usou todos os ${total} abonos.`);return;}
-  if((tipo==='ferias'||tipo==='licenca')&&(usado+diffDays)>total){alert(`Saldo insuficiente! Restam apenas ${total-usado} dias.`);return;}
-  
-  // Adicionar uso
-  const novoUso={tipo,dias:diffDays,data_inicio:iniStr,data_fim:fimStr,adicionado_em:new Date().toISOString()};
-  usos.push(novoUso);
+  if((tipo==='ferias'||tipo==='licenca')&&(usado+diffDays)>total){alert(`Saldo insuficiente! Restam ${total-usado} dias.`);return;}
+
+  usos.push({tipo,dias:diffDays,data_inicio:iniStr,data_fim:fimStr,adicionado_em:new Date().toISOString()});
   saldoUsuario.usos=usos;
   await db.collection('usuarios').doc(eu.uid).update({saldo:saldoUsuario});
-  
+
+  // Também salvar na coleção ausencias
   await db.collection('ausencias').add({uid:eu.uid,nome_completo:eu.nome_completo,grupo_id:grupoId,tipo,data_inicio:iniStr,data_fim:fimStr,criado_em:firebase.firestore.FieldValue.serverTimestamp()});
+
   document.getElementById('ferias-form-ov').classList.remove('on');
   mostrarToast("✅ Período registrado!");
   carregarFerias();
 }
 
-// ── DEMAIS FUNÇÕES (MANTIDAS IGUAIS) ─────────────────────────────────
+function verificarStatusAusencia(uid,dataEvento){if(!uid||!dataEvento)return null;const dataStr=dataEvento.split('T')[0];return listaAusencias.find(aus=>aus.uid===uid&&aus.data_inicio<=dataStr&&aus.data_fim>=dataStr)||null;}
+
+// ── DEMAIS FUNÇÕES ──────────────────────────────────────────────────
 function verificarCadastroCompleto(){
   if(!eu.nome_completo||eu.nome_completo.trim().length<5||!eu.cargo){
     document.getElementById('cadastro-nome').value=eu.nome_completo||'';document.getElementById('cadastro-cargo').value=eu.cargo||'';document.getElementById('cadastro-email').value=eu.email||'';
@@ -541,7 +495,7 @@ function verificarCadastroCompleto(){
 }
 
 async function completarCadastro(){
-  const nome=document.getElementById('cadastro-nome').value.trim();const cargo=document.getElementById('cadastro-cargo').value.trim();const email=document.getElementById('cadastro-email').value.trim();
+  const nome=document.getElementById('cadastro-nome').value.trim(),cargo=document.getElementById('cadastro-cargo').value.trim(),email=document.getElementById('cadastro-email').value.trim();
   if(!nome||nome.length<3||nome.split(/\s+/).length<2||!cargo||cargo.length<2){document.getElementById('cadastro-erro').textContent='⚠️ Preencha nome completo e cargo';document.getElementById('cadastro-erro').style.display='block';return;}
   await db.collection('usuarios').doc(eu.uid).update({nome_completo:nome,cargo,email:email||null,nomes_conhecidos:firebase.firestore.FieldValue.arrayUnion(nome)});
   eu.nome_completo=nome;eu.cargo=cargo;eu.email=email;
@@ -556,7 +510,7 @@ function abrirEditarNome(uid,nomeAtual,cargoAtual,isSelf){
 }
 function fecharEditarNome(){document.getElementById('editar-nome-ov').classList.remove('on');membroEditando=null;}
 async function salvarEdicaoNome(){
-  const n=document.getElementById('editar-nome-input').value.trim();const c=document.getElementById('editar-cargo-input').value.trim();
+  const n=document.getElementById('editar-nome-input').value.trim(),c=document.getElementById('editar-cargo-input').value.trim();
   if(!n||n.length<3||!c){alert('Preencha nome e cargo');return;}
   await db.collection('usuarios').doc(membroEditando.uid).update({nome_completo:n,cargo:c,nomes_conhecidos:firebase.firestore.FieldValue.arrayUnion(n)});
   if(membroEditando.uid===eu.uid){eu.nome_completo=n;eu.cargo=c;document.getElementById('h-user').textContent=n+' · '+c;}
@@ -568,30 +522,19 @@ async function salvarPerfil(){await salvarEdicaoNome();}
 
 async function enviarEmailLembrete(usuario,evento){
   if(!usuario.email)return false;const dt=new Date(evento.data_hora);
-  const params={to_email:usuario.email,nome_usuario:usuario.nome_completo,titulo_evento:evento.titulo_evento||'Evento',data_evento:dt.toLocaleDateString('pt-BR'),hora_evento:dt.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'}),local_evento:evento.local||'A definir'};
-  try{await emailjs.send(EMAIL_CONFIG.serviceId,EMAIL_CONFIG.templateId,params);return true;}catch(error){return false;}
+  try{await emailjs.send(EMAIL_CONFIG.serviceId,EMAIL_CONFIG.templateId,{to_email:usuario.email,nome_usuario:usuario.nome_completo,titulo_evento:evento.titulo_evento||'Evento',data_evento:dt.toLocaleDateString('pt-BR'),hora_evento:dt.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'}),local_evento:evento.local||'A definir'});return true;}catch(e){return false;}
 }
 async function verificarLembretesAmanha(){
   if(!grupoId)return;const amanha=new Date();amanha.setDate(amanha.getDate()+1);const amanhaStr=amanha.toISOString().split('T')[0];
-  const hoje=new Date().toISOString().split('T')[0];if(localStorage.getItem(`lembretes_${hoje}`))return;
-  try{const eventosSnap=await db.collection('eventos').where('grupo_id','==',grupoId).get();const eventosAmanha=eventosSnap.docs.map(d=>({id:d.id,...d.data()})).filter(ev=>ev.data_hora&&ev.data_hora.startsWith(amanhaStr));if(!eventosAmanha.length)return;
-    const usuariosSnap=await db.collection('usuarios').where('grupo_id','==',grupoId).get();const usuarios=usuariosSnap.docs.map(d=>({uid:d.id,...d.data()}));let enviados=0;
-    for(const ev of eventosAmanha)for(const nome of(ev.lista_convocados||[])){const u=encontrarUsuarioPorNome(usuarios,nome);if(u&&u.email&&await enviarEmailLembrete(u,ev))enviados++;}
-    localStorage.setItem(`lembretes_${hoje}`,'true');
+  if(localStorage.getItem(`lembretes_${new Date().toISOString().split('T')[0]}`))return;
+  try{const evs=await db.collection('eventos').where('grupo_id','==',grupoId).get();const evAmanha=evs.docs.map(d=>({id:d.id,...d.data()})).filter(e=>e.data_hora&&e.data_hora.startsWith(amanhaStr));if(!evAmanha.length)return;
+    const us=await db.collection('usuarios').where('grupo_id','==',grupoId).get();const usuarios=us.docs.map(d=>({uid:d.id,...d.data()}));let env=0;
+    for(const ev of evAmanha)for(const n of(ev.lista_convocados||[])){const u=encontrarUsuarioPorNome(usuarios,n);if(u&&u.email&&await enviarEmailLembrete(u,ev))env++;}
+    localStorage.setItem(`lembretes_${new Date().toISOString().split('T')[0]}`,'true');
   }catch(e){}
 }
 function encontrarUsuarioPorNome(usuarios,nome){const norm=s=>s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9\s]/g,'').trim();return usuarios.find(u=>(u.nomes_conhecidos||[u.nome_completo]).some(n=>norm(n)===norm(nome)));}
 function iniciarVerificacaoLembretes(){verificarLembretesAmanha();setInterval(verificarLembretesAmanha,3600000);}
-
-async function fetchAusencias(){if(!grupoId)return;const hojeStr=new Date().toISOString().split('T')[0];const snap=await db.collection('ausencias').where('grupo_id','==',grupoId).where('data_fim','>=',hojeStr).get();listaAusencias=snap.docs.map(d=>({id:d.id,...d.data()}));}
-async function carregarFerias(){await fetchAusencias();const lst=document.getElementById('lst-ausencias');lst.innerHTML='';const ord=listaAusencias.sort((a,b)=>new Date(a.data_inicio)-new Date(b.data_inicio));if(!ord.length){lst.innerHTML='<p style="color:var(--light);padding:20px;text-align:center">Nenhum período.</p>';return;}
-  ord.forEach(aus=>{let i=new Date(aus.data_inicio+"T12:00:00"),f=new Date(aus.data_fim+"T12:00:00");let icone=aus.tipo==='ferias'?'🏖️':(aus.tipo==='licenca'?'🏥':'⏱️');
-    const d=document.createElement('div');d.className=`aus-card tipo-${aus.tipo}`;d.innerHTML=`<div class="aus-icon">${icone}</div><div class="aus-info"><div class="aus-nome">${aus.nome_completo}</div><div class="aus-detalhe">${i.toLocaleDateString('pt-BR')} → ${f.toLocaleDateString('pt-BR')}</div><div class="aus-tipo">${aus.tipo}</div></div>${(eu.is_admin||eu.uid===aus.uid)?`<button class="btn-cancel" style="border:none;color:var(--red);padding:5px;max-width:40px;" onclick="excluirFerias('${aus.id}')">🗑️</button>`:''}`;lst.appendChild(d);});
-}
-function iniciarAddFerias(){document.getElementById('ferias-consent-ov').classList.add('on');}
-function abrirFormFerias(){document.getElementById('ferias-consent-ov').classList.remove('on');document.getElementById('ferias-form-ov').classList.add('on');document.getElementById('ferias-ini').value="";document.getElementById('ferias-fim').value="";document.getElementById('ferias-tipo').value="abono";}
-async function excluirFerias(id){if(!confirm("Apagar?"))return;await db.collection('ausencias').doc(id).delete();carregarFerias();}
-function verificarStatusAusencia(uid,dataEvento){if(!uid||!dataEvento)return null;const dataStr=dataEvento.split('T')[0];return listaAusencias.find(aus=>aus.uid===uid&&aus.data_inicio<=dataStr&&aus.data_fim>=dataStr)||null;}
 
 async function carregarGrupos(){const snap=await db.collection('grupos').get();const lst=document.getElementById('lst-grp');lst.innerHTML='';if(snap.empty){lst.innerHTML='<p style="color:var(--light);text-align:center">Nenhum grupo.</p>';return;}
   for(const d of snap.docs){const g={id:d.id,...d.data()};const ms=await db.collection('usuarios').where('grupo_id','==',g.id).get();const tm=ms.size;if(tm!==(g.membros||0))db.collection('grupos').doc(g.id).update({membros:tm});
@@ -604,15 +547,15 @@ async function criarGrupo(){const n=prompt('Nome do grupo:');if(!n)return;const 
 function abrirAdmin(){document.getElementById('admin-ov').classList.add('on');carregarMembrosAdmin();}
 function fecharAdmin(){document.getElementById('admin-ov').classList.remove('on');}
 async function carregarMembrosAdmin(){const lst=document.getElementById('admin-membros');lst.innerHTML='<div class="skel"></div>';const gs=await db.collection('grupos').doc(grupoId).get();const adm=gs.data().admins||[gs.data().criado_por];const s=await db.collection('usuarios').where('grupo_id','==',grupoId).get();const mb=s.docs.map(d=>({id:d.id,...d.data()}));document.getElementById('admin-total').textContent=mb.length+' membro(s)';lst.innerHTML='';
-  mb.forEach(m=>{const isA=adm.includes(m.uid);const isS=m.uid===eu.uid;const c=document.createElement('div');c.className='membro-card';
+  mb.forEach(m=>{const isA=adm.includes(m.uid),isS=m.uid===eu.uid;const c=document.createElement('div');c.className='membro-card';
     c.innerHTML=`<div class="membro-avatar">${isA?'🛡️':'👤'}</div><div class="membro-info"><div class="membro-nome">${m.nome_completo}</div><div class="membro-cargo">${m.cargo||'Sem cargo'}</div><span class="membro-badge ${isA?'badge-admin':'badge-membro'}">${isA?'Admin':'Membro'}</span></div>
-    ${!isS?`<div class="membro-acoes"><button class="btn-admin-sm btn-editar-membro" onclick="abrirEditarNome('${m.uid}','${m.nome_completo.replace(/'/g,"\\'")}','${(m.cargo||'').replace(/'/g,"\\'")}',false)">✏️</button>${!isA?`<button class="btn-admin-sm btn-promover" onclick="promoverAdmin('${m.uid}','${m.nome_completo}')">⬆</button>`:''}${isA?`<button class="btn-admin-sm btn-rebaixar" onclick="rebaixarAdmin('${m.uid}','${m.nome_completo}')">⬇</button>`:''}<button class="btn-admin-sm btn-expulsar" onclick="expulsarMembro('${m.uid}','${m.nome_completo}')">✕</button></div>`
+    ${!isS?`<div class="membro-acoes"><button class="btn-admin-sm btn-editar-membro" onclick="abrirEditarNome('${m.uid}','${m.nome_completo.replace(/'/g,"\\'")}','${(m.cargo||'').replace(/'/g,"\\'")}',false)">✏️</button>${!isA?`<button class="btn-admin-sm btn-promover" onclick="promoverAdmin('${m.uid}')">⬆</button>`:''}${isA?`<button class="btn-admin-sm btn-rebaixar" onclick="rebaixarAdmin('${m.uid}')">⬇</button>`:''}<button class="btn-admin-sm btn-expulsar" onclick="expulsarMembro('${m.uid}')">✕</button></div>`
     :`<div style="display:flex;flex-direction:column;gap:6px"><button class="btn-admin-sm btn-editar-membro" onclick="abrirEditarNome('${m.uid}','${m.nome_completo.replace(/'/g,"\\'")}','${(m.cargo||'').replace(/'/g,"\\'")}',true)">✏️</button><div style="font-size:11px;color:var(--light)">Você</div></div>`}`;lst.appendChild(c);});}
-async function promoverAdmin(uid,nome){if(!confirm('Promover '+nome+'?'))return;const s=await db.collection('grupos').doc(grupoId).get();const d=s.data();let admins=d.admins||[d.criado_por];if(!admins.includes(uid))admins.push(uid);if(!admins.includes(d.criado_por))admins.push(d.criado_por);await db.collection('grupos').doc(grupoId).update({admins});await db.collection('usuarios').doc(uid).update({is_admin:true});if(uid===eu.uid)eu.is_admin=true;carregarMembrosAdmin();}
-async function rebaixarAdmin(uid,nome){const s=await db.collection('grupos').doc(grupoId).get();const d=s.data();if(uid===d.criado_por){alert("Criador não pode ser rebaixado.");return;}if(!confirm('Rebaixar '+nome+'?'))return;const admins=(d.admins||[d.criado_por]).filter(a=>a!==uid);await db.collection('grupos').doc(grupoId).update({admins});await db.collection('usuarios').doc(uid).update({is_admin:false});if(uid===eu.uid){eu.is_admin=false;document.getElementById('btn-fab-admin').classList.remove('on');fecharAdmin();}carregarMembrosAdmin();}
-async function expulsarMembro(uid,nome){if(!confirm('Expulsar '+nome+'?'))return;await db.collection('usuarios').doc(uid).update({grupo_id:null,is_admin:false});const s=await db.collection('grupos').doc(grupoId).get();await db.collection('grupos').doc(grupoId).update({membros:Math.max(0,(s.data().membros||1)-1)});carregarMembrosAdmin();carregarGrupos();}
+async function promoverAdmin(uid){const s=await db.collection('grupos').doc(grupoId).get();const d=s.data();let admins=d.admins||[d.criado_por];if(!admins.includes(uid))admins.push(uid);if(!admins.includes(d.criado_por))admins.push(d.criado_por);await db.collection('grupos').doc(grupoId).update({admins});await db.collection('usuarios').doc(uid).update({is_admin:true});if(uid===eu.uid)eu.is_admin=true;carregarMembrosAdmin();}
+async function rebaixarAdmin(uid){const s=await db.collection('grupos').doc(grupoId).get();const d=s.data();if(uid===d.criado_por){alert("Criador não pode ser rebaixado.");return;}const admins=(d.admins||[d.criado_por]).filter(a=>a!==uid);await db.collection('grupos').doc(grupoId).update({admins});await db.collection('usuarios').doc(uid).update({is_admin:false});if(uid===eu.uid){eu.is_admin=false;document.getElementById('btn-fab-admin').classList.remove('on');fecharAdmin();}carregarMembrosAdmin();}
+async function expulsarMembro(uid){if(!confirm('Expulsar?'))return;await db.collection('usuarios').doc(uid).update({grupo_id:null,is_admin:false});const s=await db.collection('grupos').doc(grupoId).get();await db.collection('grupos').doc(grupoId).update({membros:Math.max(0,(s.data().membros||1)-1)});carregarMembrosAdmin();carregarGrupos();}
 
-async function verificarAprovacoes(){if(!grupoId)return;const s=await db.collection('grupos').doc(grupoId).get();const sol=s.data().solicitacoes||{};const ent=Object.entries(sol);if(!ent.length)return;document.getElementById('sec-apv').style.display='block';const lst=document.getElementById('lst-apv');lst.innerHTML='';ent.forEach(([uid,d])=>{const el=document.createElement('div');el.className='apv';el.innerHTML=`<div class="apv-nome">${d.nome}</div><div class="apv-cargo">${d.cargo}</div><div class="apv-btns"><button class="btn-apr" onclick="aprovar('${uid}','${d.nome}')">✓</button><button class="btn-rec" onclick="recusar('${uid}')">✗</button></div>`;lst.appendChild(el);});}
+async function verificarAprovacoes(){if(!grupoId)return;const s=await db.collection('grupos').doc(grupoId).get();const sol=s.data().solicitacoes||{};const ent=Object.entries(sol);if(!ent.length)return;document.getElementById('sec-apv').style.display='block';const lst=document.getElementById('lst-apv');lst.innerHTML='';ent.forEach(([uid,d])=>{const el=document.createElement('div');el.className='apv';el.innerHTML=`<div class="apv-nome">${d.nome}</div><div class="apv-btns"><button class="btn-apr" onclick="aprovar('${uid}','${d.nome}')">✓</button><button class="btn-rec" onclick="recusar('${uid}')">✗</button></div>`;lst.appendChild(el);});}
 async function aprovar(uid,nome){await db.collection('usuarios').doc(uid).update({grupo_id:grupoId,solicitacoes:[]});const s=await db.collection('grupos').doc(grupoId).get();const sol=s.data().solicitacoes||{};delete sol[uid];await db.collection('grupos').doc(grupoId).update({solicitacoes:sol,membros:(s.data().membros||1)+1});verificarAprovacoes();mostrarToast(nome+' aprovado!');}
 async function recusar(uid){const s=await db.collection('grupos').doc(grupoId).get();const sol=s.data().solicitacoes||{};delete sol[uid];await db.collection('grupos').doc(grupoId).update({solicitacoes:sol});await db.collection('usuarios').doc(uid).update({solicitacoes:[]});verificarAprovacoes();}
 
@@ -620,7 +563,7 @@ async function carregarEventos(){if(!grupoId)return;const snap=await db.collecti
   const norm=s=>s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9\s]/g,'').trim();const st=new Set(['de','da','do','das','dos','e','a','o','as','os']);const pw=s=>norm(s).split(/\s+/).filter(p=>p.length>1&&!st.has(p));const euN=[eu.nome_completo,...(eu.nomes_conhecidos||[])];const euPw=pw(eu.nome_completo);
   function euSou(l){return(l||[]).some(n=>{if(euN.some(en=>norm(en)===norm(n)))return true;const pn=pw(n);const ec=pn.filter(p=>euPw.some(pe=>p===pe||(p.length>=5&&lev(p,pe)<=1)));return ec.length/Math.max(pn.length,1)>=0.55;});}
   const mp=evs.filter(e=>new Date(e.data_hora)>agora&&euSou(e.lista_convocados));const ms=evs.filter(e=>new Date(e.data_hora)>agora&&(e.substitutos||[]).some(s=>s.uid===eu.uid));
-  const el=document.getElementById('prox');if(!mp.length&&!ms.length){el.innerHTML='<div class="card-vazio">Sem convocações próximas.</div>';}else{el.innerHTML=[...mp.map((ev,i)=>{const dt=new Date(ev.data_hora);const es=JSON.stringify(ev).replace(/'/g,"&#39;");return`<div class="card-prox" style="margin-bottom:10px"><div class="prox-label">${i===0?'SUA PRÓXIMA':'TAMBÉM CONVOCADO'}</div><div class="prox-titulo" onclick='abrirMod(${es})'>${ev.titulo_evento||'Evento'}</div><div class="prox-meta"><span>📅 ${fD(dt)}</span><span>🕐 ${fH(dt)}</span></div><div style="display:flex;gap:8px;"><button class="btn-agenda" style="flex:1" onclick='ics(${es})'>📅</button><button class="btn-agenda" style="flex:1;background:#fff7ed;color:#c2410c" onclick='abrirTrocar(${es})'>🔄</button></div></div>`;}),...ms.map(ev=>{const dt=new Date(ev.data_hora);const es=JSON.stringify(ev).replace(/'/g,"&#39;");const sub=ev.substitutos.find(s=>s.uid===eu.uid);return`<div class="card-prox-sub" style="margin-bottom:10px"><div class="sub-badge">🔄 SUBSTITUIÇÃO</div><div class="prox-titulo" onclick='abrirMod(${es})'>${ev.titulo_evento||'Evento'}</div><div style="font-size:12px;opacity:.8">Substituindo: ${sub.substituindo}</div><div class="prox-meta"><span>📅 ${fD(dt)}</span><span>🕐 ${fH(dt)}</span></div><div style="display:flex;gap:8px;"><button class="btn-agenda" style="flex:1;background:#d97706" onclick='ics(${es})'>📅</button><button class="btn-agenda" style="flex:1;background:#fff7ed;color:#c2410c" onclick='abrirTrocar(${es})'>🔄</button></div></div>`;})].join('');}
+  const el=document.getElementById('prox');if(!mp.length&&!ms.length){el.innerHTML='<div class="card-vazio">Sem convocações próximas.</div>';}else{el.innerHTML=[...mp.map((ev,i)=>{const dt=new Date(ev.data_hora);const es=JSON.stringify(ev).replace(/'/g,"&#39;");return`<div class="card-prox"><div class="prox-label">${i===0?'SUA PRÓXIMA':'TAMBÉM CONVOCADO'}</div><div class="prox-titulo" onclick='abrirMod(${es})'>${ev.titulo_evento||'Evento'}</div><div class="prox-meta"><span>📅 ${fD(dt)}</span><span>🕐 ${fH(dt)}</span></div><div style="display:flex;gap:8px;"><button class="btn-agenda" style="flex:1" onclick='ics(${es})'>📅 Agendar</button><button class="btn-trocar-prox" style="flex:1" onclick='abrirTrocar(${es})'>🔄 Trocar</button></div></div>`;}),...ms.map(ev=>{const dt=new Date(ev.data_hora);const es=JSON.stringify(ev).replace(/'/g,"&#39;");const sub=ev.substitutos.find(s=>s.uid===eu.uid);return`<div class="card-prox-sub"><div class="sub-badge">🔄 SUBSTITUIÇÃO</div><div class="prox-titulo" onclick='abrirMod(${es})'>${ev.titulo_evento||'Evento'}</div><div style="font-size:12px;opacity:.8;margin-bottom:10px">Substituindo: ${sub.substituindo}</div><div class="prox-meta"><span>📅 ${fD(dt)}</span><span>🕐 ${fH(dt)}</span></div><div style="display:flex;gap:8px;"><button class="btn-agenda" style="flex:1;background:#d97706" onclick='ics(${es})'>📅 Agendar</button><button class="btn-trocar-prox" style="flex:1" onclick='abrirTrocar(${es})'>🔄 Trocar</button></div></div>`;})].join('');}
   const lst=document.getElementById('lst-ev');if(!evs.length){lst.innerHTML='<p style="color:var(--light);padding:20px;text-align:center">Nenhuma convocação.</p>';return;}lst.innerHTML='';const fut=evs.filter(e=>new Date(e.data_hora)>agora);const pas=evs.filter(e=>new Date(e.data_hora)<=agora).reverse();[...fut,...pas].forEach(ev=>lst.appendChild(criarCard(ev)));}
 function criarCard(ev){const dt=new Date(ev.data_hora);const pa=dt<=new Date();const w=document.createElement('div');w.className='ev-wrap';w.innerHTML=`<div class="ev-bg"><div class="ev-bg-l"><span>👁</span></div>${eu.is_admin?'<div class="ev-bg-r"><span>🗑</span></div>':''}</div><div class="ev-card" style="border-left-color:${pa?'#94a3b8':'var(--blue)'};opacity:${pa?'.7':'1'}"><div class="ev-titulo">${ev.titulo_evento||'Sem título'}${pa?' <span style="font-size:11px;color:#94a3b8">(encerrado)</span>':''}</div><div class="ev-meta"><span>📅 ${fD(dt)}</span><span>🕐 ${fH(dt)}</span></div><div class="ev-conv">${(ev.lista_convocados||[]).length} convocado(s)</div></div>`;const card=w.querySelector('.ev-card');let sx=0,dx=0,mov=false;card.addEventListener('touchstart',e=>{sx=e.touches[0].clientX;mov=false},{passive:true});card.addEventListener('touchmove',e=>{dx=e.touches[0].clientX-sx;mov=true;if(!eu.is_admin&&dx<0)dx=0;if(Math.abs(dx)>8){card.style.transition='none';card.style.transform=`translateX(${Math.max(-100,Math.min(100,dx))}px)`;}},{passive:true});card.addEventListener('touchend',()=>{card.style.transition='transform .2s ease';if(dx<-60&&eu.is_admin){if(confirm('Excluir?'))db.collection('eventos').doc(ev.id).delete().then(()=>carregarEventos());else card.style.transform='translateX(0)';}else if(dx>60){card.style.transform='translateX(0)';abrirMod(ev);}else{card.style.transform='translateX(0)';if(!mov)abrirMod(ev);}dx=0;});card.addEventListener('click',()=>{if(!mov)abrirMod(ev);});return w;}
 function abrirMod(ev){eventoAtualMod=ev;const dt=new Date(ev.data_hora);document.getElementById('mod-tit').textContent=ev.titulo_evento||'Evento';document.getElementById('mod-sub').textContent=fD(dt)+' às '+fH(dt)+(ev.local?' · '+ev.local:'');const ab=document.getElementById('admin-badge-conv');if(eu.is_admin){ab.style.display='inline-block';renderizarNomesAdmin(ev);}else{ab.style.display='none';
