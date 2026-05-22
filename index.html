@@ -215,29 +215,19 @@
     #completar-cadastro-ov{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:900;display:none;align-items:center;justify-content:center;padding:20px;}
     #completar-cadastro-ov.on{display:flex}
 
-    /* SALDO VISUAL */
-    .saldo-card{background:var(--w);border-radius:16px;padding:16px;margin-bottom:12px;box-shadow:0 2px 8px rgba(30,58,138,.06)}
-    .saldo-header{display:flex;align-items:center;gap:12px;margin-bottom:10px}
-    .saldo-icon{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px}
-    .saldo-icon.ferias{background:#fdf2f8;color:#ec4899}
-    .saldo-icon.abono{background:#ecfeff;color:#06b6d4}
-    .saldo-icon.licenca{background:#fffbeb;color:#f59e0b}
-    .saldo-info{flex:1}
-    .saldo-tipo{font-family:'Sora',sans-serif;font-size:13px;font-weight:700}
-    .saldo-dias{font-size:22px;font-weight:700;margin-top:2px}
-    .saldo-bar{height:8px;border-radius:4px;background:#f1f5f9;overflow:hidden;margin-top:8px}
-    .saldo-bar-fill{height:100%;border-radius:4px;transition:width .5s}
-    .saldo-bar-fill.ferias{background:linear-gradient(90deg,#ec4899,#f472b6)}
-    .saldo-bar-fill.abono{background:linear-gradient(90deg,#06b6d4,#22d3ee)}
-    .saldo-bar-fill.licenca{background:linear-gradient(90deg,#f59e0b,#fbbf24)}
-    .uso-item{background:var(--w);border-radius:12px;padding:12px 14px;margin-bottom:8px;display:flex;align-items:center;gap:12px;border-left:3px solid #e2e8f0}
-    .uso-item.ferias{border-left-color:#ec4899}
-    .uso-item.abono{border-left-color:#06b6d4}
-    .uso-item.licenca{border-left-color:#f59e0b}
-    .uso-dias{font-weight:700;font-size:15px;min-width:45px;text-align:center}
-    .uso-info{flex:1}
-    .uso-periodo{font-size:12px;color:var(--light)}
-    .btn-config-saldo{width:100%;padding:10px;background:transparent;border:1.5px dashed var(--blue);color:var(--blue);border-radius:10px;font-size:13px;cursor:pointer;margin-top:8px}
+    /* SALDO */
+    .periodo-aquisitivo{background:var(--w);border-radius:14px;padding:14px;margin-bottom:10px;border:1.5px solid var(--border);box-shadow:0 1px 4px rgba(0,0,0,.03)}
+    .periodo-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+    .periodo-titulo{font-family:'Sora',sans-serif;font-size:14px;font-weight:700;color:var(--blue)}
+    .periodo-badge{font-size:11px;padding:3px 8px;border-radius:12px;font-weight:600}
+    .periodo-badge.ferias{background:#fdf2f8;color:#be185d}
+    .periodo-badge.abono{background:#ecfeff;color:#0e7490}
+    .periodo-badge.licenca{background:#fffbeb;color:#b45309}
+    .periodo-dias{display:flex;gap:8px;align-items:center;margin-top:6px}
+    .periodo-dias input{width:60px;padding:6px 8px;border:1.5px solid var(--border);border-radius:8px;text-align:center;font-weight:600;font-size:14px}
+    .periodo-usado{font-size:12px;color:var(--light)}
+    .btn-add-periodo{width:100%;padding:12px;background:transparent;border:1.5px dashed var(--blue);color:var(--blue);border-radius:12px;font-size:14px;cursor:pointer;margin-top:8px;font-family:'Sora',sans-serif;font-weight:600}
+    .btn-remover-periodo{background:transparent;border:none;color:var(--red);cursor:pointer;font-size:14px;padding:4px}
 
     footer{text-align:center;padding:16px;color:var(--light);font-size:11px;border-top:1px solid var(--border);margin-top:20px}
     footer strong{color:var(--blue)}
@@ -286,15 +276,14 @@
   <p>© 2026 Gestor de Convocações — v17.7</p>
 </footer>
 
-<!-- MODAIS (mantidos) -->
+<!-- MODAIS -->
 <div class="overlay" id="mod-ev" onclick="if(event.target===this) fecharMod()"><div class="sheet"><div class="handle" onclick="fecharMod()"></div><div class="mod-titulo" id="mod-tit"></div><div class="mod-sub" id="mod-sub"></div><div class="mod-sec"><h3>Convocados <span id="admin-badge-conv" style="display:none" class="admin-badge">Admin</span></h3><div id="mod-conv"></div></div><div style="display:flex;gap:8px;margin-top:16px"><button class="btn-ag" id="mod-ag" style="flex:1;margin-top:0">📅 Agenda</button><button id="mod-trocar" style="flex:1;padding:12px;background:#fff7ed;color:#c2410c;border:1.5px solid #fed7aa;border-radius:10px;font-size:14px;cursor:pointer;font-weight:600;display:none;">🔄 Trocar</button></div><button class="btn-del" id="mod-del" style="display:none">🗑 Excluir</button><button class="btn-cancel" style="margin-top:10px;width:100%" onclick="fecharMod()">Fechar</button></div></div>
 
 <div id="trocar-ov"><div class="trocar-box"><h3>🔄 Trocar escala</h3><p id="trocar-desc"></p><div class="trocar-membros" id="trocar-lista"></div><div class="trocar-btns"><button class="btn-cancel" onclick="fecharTrocar()">Cancelar</button><button class="btn-salvar" style="background:#c2410c" id="trocar-confirmar">Confirmar</button></div></div></div>
 
-<!-- MODAL FÉRIAS (COM PERÍODO VISUAL) -->
 <div class="ov-center" id="ferias-consent-ov"><div class="box-center"><h3>Registrar Período</h3><p>Escolha o tipo de ausência.</p><div class="btns-row"><button class="btn-cancel" onclick="document.getElementById('ferias-consent-ov').classList.remove('on')">Cancelar</button><button class="btn-salvar" onclick="abrirFormFerias()">Continuar</button></div></div></div>
 <div class="ov-center" id="ferias-form-ov"><div class="box-center"><h3>📅 Período</h3>
-    <div class="field"><label>Tipo</label><select id="ferias-tipo" onchange="atualizarPlaceholderPeriodo()"><option value="abono">Abono (ano vigente)</option><option value="licenca">Licença</option><option value="ferias">Férias</option></select></div>
+    <div class="field"><label>Tipo</label><select id="ferias-tipo"><option value="abono">Abono (ano vigente)</option><option value="licenca">Licença</option><option value="ferias">Férias</option></select></div>
     <div class="field"><label>Período (ex: 23/24, 2025, jan/25)</label><input type="text" id="ferias-periodo" placeholder="Ex: 24/25"/></div>
     <div class="field"><label>Quantos dias?</label><input type="number" id="ferias-dias" min="1" max="90" value="1"/></div>
     <div class="field"><label>Data de início</label><input type="date" id="ferias-ini"/></div>
@@ -313,8 +302,6 @@
 <div id="ocr-ov"><div class="ocr-spinner"></div><div class="ocr-texto" id="ocr-texto">📸 Analisando...</div><div class="ocr-barra"><div class="ocr-preenchimento" id="ocr-preenchimento"></div></div><div class="ocr-subtexto" id="ocr-subtexto"></div><div class="ocr-dica">Não feche o app</div></div>
 <div id="rv-ov"><div class="rv-hd"><button class="btn-x" onclick="fecharRv()">✕</button><h2>Conferir dados</h2></div><div class="rv-body"><div class="rv-lbl">Título</div><div class="rv-val"><input type="text" id="rv-tit"/></div><div class="rv-lbl">Data/hora</div><div class="rv-val"><input type="datetime-local" id="rv-data"/></div><div class="rv-lbl">Local</div><div class="rv-val"><input type="text" id="rv-loc"/></div><div class="rv-lbl">Convocados</div><div id="rv-matches"></div><div class="rv-btns"><button class="btn-cancel" onclick="fecharRv()">Cancelar</button><button class="btn-salvar" onclick="salvar()">✓ Salvar</button></div></div></div>
 
-<div class="ov-center" id="saldo-config-ov"><div class="box-center"><h3>⚙️ Configurar Saldo</h3><p>Informe seu saldo atual de dias.</p><div class="field"><label>Férias (dias totais)</label><input type="number" id="saldo-ferias" min="0" max="60" value="30"/></div><div class="field"><label>Abonos (quantidade)</label><input type="number" id="saldo-abono" min="0" max="12" value="6"/></div><div class="field"><label>Licença (dias totais)</label><input type="number" id="saldo-licenca" min="0" max="180" value="90"/></div><div class="btns-row"><button class="btn-cancel" onclick="document.getElementById('saldo-config-ov').classList.remove('on')">Cancelar</button><button class="btn-salvar" onclick="salvarConfigSaldo()">✓ Salvar</button></div></div></div>
-
 <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
@@ -328,7 +315,7 @@ const auth=firebase.auth();const db=firebase.firestore();
 const EMAIL_CONFIG={publicKey:'mXZPykI5Nr2COjWr0',serviceId:'service_pam1xgd',templateId:'template_3926tbq'};
 
 let eu=null,grupoId=null,ocrDados=null,matches=[],camStream=null,eventoTroca=null,substitutoSelecionado=null,eventoAtualMod=null,nomesEditaveis=[];
-let notifAtual=null,filaNotifs=[],listaAusencias=[],membroEditando=null,saldoUsuario={ferias:30,abono:6,licenca:90,usos:[]};
+let notifAtual=null,filaNotifs=[],listaAusencias=[],membroEditando=null,saldoUsuario={ferias:[],abono:6,licenca:90,usos:[]};
 let toastTimeout;
 
 function mostrarToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');clearTimeout(toastTimeout);toastTimeout=setTimeout(()=>t.classList.remove('show'),2500);}
@@ -353,62 +340,134 @@ auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL).then(()=>{
   });
 }).catch(e=>console.error('Persistence:',e));
 
-// ── SALDO ───────────────────────────────────────────────────────────
+// ── SALDO (NOVO: PERÍODOS AQUISITIVOS) ──────────────────────────────
 async function carregarSaldo(){
   const container=document.getElementById('saldo-container');
   container.innerHTML='<div class="skel"></div>';
   const snap=await db.collection('usuarios').doc(eu.uid).get();
   const data=snap.data();
-  saldoUsuario=data.saldo||{ferias:30,abono:6,licenca:90,usos:[]};
+  saldoUsuario=data.saldo||{ferias:[],abono:6,licenca:90,usos:[]};
+  
+  // Garantir formato antigo -> novo
+  if(typeof saldoUsuario.ferias==='number'){
+    saldoUsuario.ferias=[{periodo:'Total',total:saldoUsuario.ferias,usado:0}];
+  }
+  if(!Array.isArray(saldoUsuario.ferias)||saldoUsuario.ferias.length===0){
+    saldoUsuario.ferias=[{periodo:'Período atual',total:30,usado:0}];
+  }
+  
+  const periodosFerias=saldoUsuario.ferias||[];
+  const totalAbono=saldoUsuario.abono||6;
+  const totalLicenca=saldoUsuario.licenca||90;
   
   const usos=saldoUsuario.usos||[];
-  const totalF=saldoUsuario.ferias||30,totalA=saldoUsuario.abono||6,totalL=saldoUsuario.licenca||90;
-  const usadoF=usos.filter(u=>u.tipo==='ferias').reduce((s,u)=>s+(u.dias||0),0);
-  const usadoA=usos.filter(u=>u.tipo==='abono').length;
-  const usadoL=usos.filter(u=>u.tipo==='licenca').reduce((s,u)=>s+(u.dias||0),0);
-  const restF=Math.max(0,totalF-usadoF),restA=Math.max(0,totalA-usadoA),restL=Math.max(0,totalL-usadoL);
+  const usadoAbono=usos.filter(u=>u.tipo==='abono').length;
+  const usadoLicenca=usos.filter(u=>u.tipo==='licenca').reduce((s,u)=>s+(u.dias||0),0);
 
-  container.innerHTML=`
+  let html=`
     <div class="card"><div class="card-titulo">💰 Meu Saldo <span class="badge">Individual</span></div>
-    <div class="saldo-card"><div class="saldo-header"><div class="saldo-icon ferias">🏖️</div><div class="saldo-info"><div class="saldo-tipo">Férias</div><div class="saldo-dias" style="color:#ec4899">${restF} / ${totalF} dias</div></div></div><div class="saldo-bar"><div class="saldo-bar-fill ferias" style="width:${totalF>0?(restF/totalF)*100:0}%"></div></div></div>
-    <div class="saldo-card"><div class="saldo-header"><div class="saldo-icon abono">⏱️</div><div class="saldo-info"><div class="saldo-tipo">Abonos</div><div class="saldo-dias" style="color:#06b6d4">${restA} / ${totalA}</div></div></div><div class="saldo-bar"><div class="saldo-bar-fill abono" style="width:${totalA>0?(restA/totalA)*100:0}%"></div></div></div>
-    <div class="saldo-card"><div class="saldo-header"><div class="saldo-icon licenca">🏥</div><div class="saldo-info"><div class="saldo-tipo">Licença</div><div class="saldo-dias" style="color:#f59e0b">${restL} / ${totalL} dias</div></div></div><div class="saldo-bar"><div class="saldo-bar-fill licenca" style="width:${totalL>0?(restL/totalL)*100:0}%"></div></div></div>
-    <button class="btn-config-saldo" onclick="abrirConfigSaldo()">⚙️ Ajustar saldo inicial</button></div>
-    ${usos.length>0?`<div class="card"><div class="card-titulo">📋 Períodos Registrados</div>${usos.map((u,i)=>{let icone=u.tipo==='ferias'?'🏖️':(u.tipo==='licenca'?'🏥':'⏱️');return`<div class="uso-item ${u.tipo}"><div class="uso-dias">${u.dias}d</div><div class="uso-info"><div style="font-weight:600;font-size:13px">${icone} ${u.periodo||u.tipo}</div><div class="uso-periodo">${u.data_inicio?new Date(u.data_inicio+'T12:00:00').toLocaleDateString('pt-BR'):'?'} → ${u.data_fim?new Date(u.data_fim+'T12:00:00').toLocaleDateString('pt-BR'):'?'}</div></div></div>`;}).join('')}</div>`:''}
-  `;
+    
+    <div style="margin-bottom:16px">
+      <div class="sec-titulo">🏖️ Períodos Aquisitivos de Férias</div>`;
+  
+  periodosFerias.forEach((p,i)=>{
+    const usadoPeriodo=usos.filter(u=>u.tipo==='ferias'&&u.periodo===p.periodo).reduce((s,u)=>s+(u.dias||0),0);
+    const restante=Math.max(0,(p.total||30)-usadoPeriodo);
+    html+=`
+      <div class="periodo-aquisitivo">
+        <div class="periodo-header">
+          <span class="periodo-titulo">📅 ${p.periodo||'Sem nome'}</span>
+          <span class="periodo-badge ferias">${restante} / ${p.total||30} dias</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--light)">
+          <span>Total:</span>
+          <input type="number" value="${p.total||30}" min="0" max="60" style="width:60px;padding:4px 6px;border:1px solid var(--border);border-radius:6px;text-align:center;font-size:13px" onchange="atualizarPeriodoFerias(${i},'total',this.value)">
+          <span>dias</span>
+          <span style="margin-left:8px">Usado: ${usadoPeriodo} dias</span>
+          <button class="btn-remover-periodo" onclick="removerPeriodoFerias(${i})" title="Remover período">🗑</button>
+        </div>
+      </div>`;
+  });
+  
+  html+=`<button class="btn-add-periodo" onclick="adicionarPeriodoFerias()">+ Adicionar período aquisitivo</button></div>`;
+  
+  // Abonos
+  html+=`
+    <div style="margin-bottom:16px">
+      <div class="sec-titulo">⏱️ Abonos <span style="font-size:12px;color:var(--light)">${totalAbono-usadoAbono} / ${totalAbono} disponíveis</span></div>
+      <div style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--light);padding:8px 0">
+        <span>Total de abonos:</span>
+        <input type="number" value="${totalAbono}" min="0" max="12" style="width:60px;padding:4px 6px;border:1px solid var(--border);border-radius:6px;text-align:center;font-size:13px" onchange="atualizarSaldoGeral('abono',this.value)">
+      </div>
+    </div>`;
+  
+  // Licença
+  html+=`
+    <div style="margin-bottom:16px">
+      <div class="sec-titulo">🏥 Licença <span style="font-size:12px;color:var(--light)">${Math.max(0,totalLicenca-usadoLicenca)} / ${totalLicenca} dias</span></div>
+      <div style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--light);padding:8px 0">
+        <span>Total de dias:</span>
+        <input type="number" value="${totalLicenca}" min="0" max="180" style="width:60px;padding:4px 6px;border:1px solid var(--border);border-radius:6px;text-align:center;font-size:13px" onchange="atualizarSaldoGeral('licenca',this.value)">
+      </div>
+    </div>`;
+  
+  // Períodos registrados (usos)
+  if(usos.length>0){
+    html+=`<div class="card"><div class="card-titulo">📋 Períodos Registrados</div>`;
+    usos.sort((a,b)=>new Date(a.data_inicio)-new Date(b.data_inicio)).forEach((u,i)=>{
+      let icone=u.tipo==='ferias'?'🏖️':(u.tipo==='licenca'?'🏥':'⏱️');
+      html+=`<div class="uso-item ${u.tipo}"><div class="uso-dias">${u.dias}d</div><div class="uso-info"><div style="font-weight:600;font-size:13px">${icone} ${u.periodo||u.tipo}</div><div class="uso-periodo">${u.data_inicio?new Date(u.data_inicio+'T12:00:00').toLocaleDateString('pt-BR'):'?'} → ${u.data_fim?new Date(u.data_fim+'T12:00:00').toLocaleDateString('pt-BR'):'?'}</div></div></div>`;
+    });
+    html+=`</div>`;
+  }
+  
+  container.innerHTML=html;
 }
 
-function abrirConfigSaldo(){
-  document.getElementById('saldo-ferias').value=saldoUsuario.ferias||30;
-  document.getElementById('saldo-abono').value=saldoUsuario.abono||6;
-  document.getElementById('saldo-licenca').value=saldoUsuario.licenca||90;
-  document.getElementById('saldo-config-ov').classList.add('on');
+function adicionarPeriodoFerias(){
+  if(!saldoUsuario.ferias)saldoUsuario.ferias=[];
+  const periodo=prompt('Nome do período aquisitivo (ex: 23/24, 24/25):');
+  if(!periodo)return;
+  const dias=parseInt(prompt('Total de dias deste período:', '30'))||30;
+  saldoUsuario.ferias.push({periodo,total:dias,usado:0});
+  salvarSaldoFirestore();
+  carregarSaldo();
+  mostrarToast(`✅ Período "${periodo}" adicionado!`);
 }
 
-async function salvarConfigSaldo(){
-  saldoUsuario.ferias=parseInt(document.getElementById('saldo-ferias').value)||30;
-  saldoUsuario.abono=parseInt(document.getElementById('saldo-abono').value)||6;
-  saldoUsuario.licenca=parseInt(document.getElementById('saldo-licenca').value)||90;
+function removerPeriodoFerias(index){
+  if(!confirm('Remover este período aquisitivo?'))return;
+  saldoUsuario.ferias.splice(index,1);
+  salvarSaldoFirestore();
+  carregarSaldo();
+  mostrarToast('✅ Período removido!');
+}
+
+function atualizarPeriodoFerias(index, campo, valor){
+  const v=parseInt(valor)||0;
+  if(!saldoUsuario.ferias[index])return;
+  saldoUsuario.ferias[index][campo]=v;
+  salvarSaldoFirestore();
+}
+
+function atualizarSaldoGeral(tipo, valor){
+  const v=parseInt(valor)||0;
+  saldoUsuario[tipo]=v;
+  salvarSaldoFirestore();
+}
+
+async function salvarSaldoFirestore(){
   await db.collection('usuarios').doc(eu.uid).update({saldo:saldoUsuario});
-  document.getElementById('saldo-config-ov').classList.remove('on');
-  mostrarToast('✅ Saldo atualizado!');carregarSaldo();
 }
 
-// ── FÉRIAS (COM PERÍODO) ────────────────────────────────────────────
-function atualizarPlaceholderPeriodo(){
-  const tipo=document.getElementById('ferias-tipo').value;
-  const inp=document.getElementById('ferias-periodo');
-  if(tipo==='abono'){inp.placeholder='Ex: 2026';}
-  else if(tipo==='licenca'){inp.placeholder='Ex: 2026';}
-  else{inp.placeholder='Ex: 24/25';}
-}
-
+// ── FÉRIAS ──────────────────────────────────────────────────────────
 async function carregarFerias(){
   const snap=await db.collection('usuarios').doc(eu.uid).get();
   const data=snap.data();
-  saldoUsuario=data.saldo||{ferias:30,abono:6,licenca:90,usos:[]};
-  const usos=saldoUsuario.usos||[];
+  saldoUsuario=data.saldo||{ferias:[],abono:6,licenca:90,usos:[]};
+  if(typeof saldoUsuario.ferias==='number')saldoUsuario.ferias=[{periodo:'Total',total:saldoUsuario.ferias,usado:0}];
   
+  const usos=saldoUsuario.usos||[];
   const lst=document.getElementById('lst-ausencias');
   lst.innerHTML='';
   
@@ -466,7 +525,6 @@ function abrirFormFerias(){
   document.getElementById('ferias-periodo').value="";
   document.getElementById('ferias-tipo').value="abono";
   document.getElementById('ferias-erro').style.display='none';
-  atualizarPlaceholderPeriodo();
 }
 
 async function salvarFerias(){
@@ -478,30 +536,40 @@ async function salvarFerias(){
   const erroEl=document.getElementById('ferias-erro');
   
   if(!periodo){erroEl.textContent='⚠️ Informe o período (ex: 24/25)';erroEl.style.display='block';return;}
-  if(!iniStr||!fimStr){erroEl.textContent='⚠️ Preencha as datas de início e término.';erroEl.style.display='block';return;}
+  if(!iniStr||!fimStr){erroEl.textContent='⚠️ Preencha as datas.';erroEl.style.display='block';return;}
   if(dias<1){erroEl.textContent='⚠️ Informe a quantidade de dias.';erroEl.style.display='block';return;}
   
   const dtIni=new Date(iniStr+"T12:00:00"),dtFim=new Date(fimStr+"T12:00:00");
   if(dtIni>dtFim){erroEl.textContent='⚠️ Data de término anterior ao início.';erroEl.style.display='block';return;}
   
-  // Recarregar saldo mais recente
   const snap=await db.collection('usuarios').doc(eu.uid).get();
   const data=snap.data();
-  saldoUsuario=data.saldo||{ferias:30,abono:6,licenca:90,usos:[]};
+  saldoUsuario=data.saldo||{ferias:[],abono:6,licenca:90,usos:[]};
+  if(typeof saldoUsuario.ferias==='number')saldoUsuario.ferias=[{periodo:'Total',total:saldoUsuario.ferias,usado:0}];
+  
   const usos=saldoUsuario.usos||[];
-
-  const total=tipo==='ferias'?saldoUsuario.ferias||30:tipo==='abono'?saldoUsuario.abono||6:saldoUsuario.licenca||90;
-  const usado=tipo==='ferias'?usos.filter(u=>u.tipo==='ferias').reduce((s,u)=>s+(u.dias||0),0):tipo==='abono'?usos.filter(u=>u.tipo==='abono').length:usos.filter(u=>u.tipo==='licenca').reduce((s,u)=>s+(u.dias||0),0);
-
-  if(tipo==='abono'&&usado>=total){erroEl.textContent=`Você já usou todos os ${total} abonos.`;erroEl.style.display='block';return;}
-  if((tipo==='ferias'||tipo==='licenca')&&(usado+dias)>total){erroEl.textContent=`Saldo insuficiente! Restam ${total-usado} dias.`;erroEl.style.display='block';return;}
-
+  
+  // Verificar saldo
+  if(tipo==='abono'){
+    const usado=usos.filter(u=>u.tipo==='abono').length;
+    if(usado>= (saldoUsuario.abono||6)){erroEl.textContent='⚠️ Todos os abonos já foram usados.';erroEl.style.display='block';return;}
+  } else if(tipo==='licenca'){
+    const usado=usos.filter(u=>u.tipo==='licenca').reduce((s,u)=>s+(u.dias||0),0);
+    if(usado+dias>(saldoUsuario.licenca||90)){erroEl.textContent=`⚠️ Saldo insuficiente. Restam ${(saldoUsuario.licenca||90)-usado} dias.`;erroEl.style.display='block';return;}
+  } else if(tipo==='ferias'){
+    const periodoObj=saldoUsuario.ferias.find(p=>p.periodo===periodo);
+    if(periodoObj){
+      const usadoPeriodo=usos.filter(u=>u.tipo==='ferias'&&u.periodo===periodo).reduce((s,u)=>s+(u.dias||0),0);
+      if(usadoPeriodo+dias>(periodoObj.total||30)){erroEl.textContent=`⚠️ Saldo insuficiente para o período "${periodo}". Restam ${(periodoObj.total||30)-usadoPeriodo} dias.`;erroEl.style.display='block';return;}
+    }
+  }
+  
   usos.push({tipo,periodo,dias,data_inicio:iniStr,data_fim:fimStr,adicionado_em:new Date().toISOString()});
   saldoUsuario.usos=usos;
   await db.collection('usuarios').doc(eu.uid).update({saldo:saldoUsuario});
-
+  
   await db.collection('ausencias').add({uid:eu.uid,nome_completo:eu.nome_completo,grupo_id:grupoId,tipo,data_inicio:iniStr,data_fim:fimStr,periodo,dias,criado_em:firebase.firestore.FieldValue.serverTimestamp()});
-
+  
   document.getElementById('ferias-form-ov').classList.remove('on');
   mostrarToast("✅ Período registrado!");
   carregarFerias();
@@ -510,7 +578,7 @@ async function salvarFerias(){
 async function fetchAusencias(){if(!grupoId)return;const hojeStr=new Date().toISOString().split('T')[0];const snap=await db.collection('ausencias').where('grupo_id','==',grupoId).where('data_fim','>=',hojeStr).get();listaAusencias=snap.docs.map(d=>({id:d.id,...d.data()}));}
 function verificarStatusAusencia(uid,dataEvento){if(!uid||!dataEvento)return null;const dataStr=dataEvento.split('T')[0];return listaAusencias.find(aus=>aus.uid===uid&&aus.data_inicio<=dataStr&&aus.data_fim>=dataStr)||null;}
 
-// ── DEMAIS FUNÇÕES ──────────────────────────────────────────────────
+// ── DEMAIS FUNÇÕES (COMPACTADAS) ────────────────────────────────────
 function verificarCadastroCompleto(){
   if(!eu.nome_completo||eu.nome_completo.trim().length<5||!eu.cargo){
     document.getElementById('cadastro-nome').value=eu.nome_completo||'';document.getElementById('cadastro-cargo').value=eu.cargo||'';document.getElementById('cadastro-email').value=eu.email||'';
@@ -522,7 +590,6 @@ function verificarCadastroCompleto(){
   }
   return true;
 }
-
 async function completarCadastro(){
   const nome=document.getElementById('cadastro-nome').value.trim(),cargo=document.getElementById('cadastro-cargo').value.trim(),email=document.getElementById('cadastro-email').value.trim();
   if(!nome||nome.length<3||nome.split(/\s+/).length<2||!cargo||cargo.length<2){document.getElementById('cadastro-erro').textContent='⚠️ Preencha nome completo e cargo';document.getElementById('cadastro-erro').style.display='block';return;}
@@ -531,7 +598,6 @@ async function completarCadastro(){
   document.getElementById('h-user').textContent=nome+' · '+cargo;document.getElementById('completar-cadastro-ov').classList.remove('on');
   mostrarToast('✅ Cadastro atualizado!');if(grupoId)carregarEventos();carregarGrupos();
 }
-
 function abrirEditarNome(uid,nomeAtual,cargoAtual,isSelf){
   membroEditando={uid,isSelf};document.getElementById('editar-nome-titulo').textContent=isSelf?'✏️ Corrigir Meu Nome':'✏️ Editar Membro';
   document.getElementById('editar-nome-desc').textContent=isSelf?'Corrija seu nome.':'Edite nome e cargo.';
