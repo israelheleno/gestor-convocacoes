@@ -137,6 +137,7 @@
     .mi-btns{display:flex;gap:8px;padding-left:28px}
     .btn-sim{flex:1;padding:7px;background:var(--green);color:#fff;border:none;border-radius:8px;font-size:12px;cursor:pointer;font-weight:600}
     .btn-nao{flex:1;padding:7px;background:#fee2e2;color:var(--red);border:none;border-radius:8px;font-size:12px;cursor:pointer}
+    .btn-desvincular{padding:5px 10px;background:#fff;border:1px solid #fee2e2;color:var(--red);border-radius:6px;font-size:10px;cursor:pointer;font-weight:600;white-space:nowrap}
     .rv-btns{display:flex;gap:10px;margin:16px}
 
     #fab{position:fixed;bottom:22px;right:18px;width:58px;height:58px;background:var(--blue);border:none;border-radius:50%;box-shadow:0 4px 18px rgba(30,58,138,.4);cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:50}
@@ -235,7 +236,6 @@
     .uso-periodo{font-size:12px;color:var(--light)}
     .btn-ajustar-saldo{width:100%;padding:10px;background:transparent;border:1.5px solid var(--blue);color:var(--blue);border-radius:10px;font-size:13px;cursor:pointer;margin-top:8px;font-weight:600}
     
-    /* Modal de ajuste */
     .ajuste-bloco{margin-bottom:16px;padding:14px;background:#f8fafc;border-radius:12px;border:1px solid var(--border)}
     .ajuste-bloco h4{font-size:13px;font-weight:700;color:var(--blue);margin-bottom:10px}
     .ajuste-periodo{display:flex;gap:8px;align-items:center;margin-bottom:6px}
@@ -287,7 +287,7 @@
 
 <footer>
   <p>Desenvolvido por <strong>Israel Heleno de Castro</strong></p>
-  <p>© 2026 Gestor de Convocações — v17.7</p>
+  <p>© 2026 Gestor de Convocações — v17.8</p>
 </footer>
 
 <!-- MODAIS -->
@@ -310,33 +310,10 @@
   <div class="box-center">
     <h3>⚙️ Ajustar Saldo</h3>
     <p style="font-size:13px;color:var(--light);margin-bottom:16px">Configure seus saldos e períodos aquisitivos.</p>
-    
-    <div class="ajuste-bloco">
-      <h4>🏖️ Períodos Aquisitivos de Férias</h4>
-      <div id="ajuste-periodos-ferias"></div>
-      <button class="btn-add-ajuste" onclick="adicionarPeriodoNoAjuste()">+ Adicionar período</button>
-    </div>
-    
-    <div class="ajuste-bloco">
-      <h4>⏱️ Abonos</h4>
-      <div class="field" style="margin-bottom:0">
-        <label>Total de abonos disponíveis</label>
-        <input type="number" id="ajuste-abono" min="0" max="12" value="6"/>
-      </div>
-    </div>
-    
-    <div class="ajuste-bloco">
-      <h4>🏥 Licença</h4>
-      <div class="field" style="margin-bottom:0">
-        <label>Total de dias de licença</label>
-        <input type="number" id="ajuste-licenca" min="0" max="180" value="90"/>
-      </div>
-    </div>
-    
-    <div class="btns-row">
-      <button class="btn-cancel" onclick="fecharAjusteSaldo()">Cancelar</button>
-      <button class="btn-salvar" onclick="salvarAjusteSaldo()">💾 Salvar</button>
-    </div>
+    <div class="ajuste-bloco"><h4>🏖️ Períodos Aquisitivos de Férias</h4><div id="ajuste-periodos-ferias"></div><button class="btn-add-ajuste" onclick="adicionarPeriodoNoAjuste()">+ Adicionar período</button></div>
+    <div class="ajuste-bloco"><h4>⏱️ Abonos</h4><div class="field" style="margin-bottom:0"><label>Total de abonos disponíveis</label><input type="number" id="ajuste-abono" min="0" max="12" value="6"/></div></div>
+    <div class="ajuste-bloco"><h4>🏥 Licença</h4><div class="field" style="margin-bottom:0"><label>Total de dias de licença</label><input type="number" id="ajuste-licenca" min="0" max="180" value="90"/></div></div>
+    <div class="btns-row"><button class="btn-cancel" onclick="fecharAjusteSaldo()">Cancelar</button><button class="btn-salvar" onclick="salvarAjusteSaldo()">💾 Salvar</button></div>
   </div>
 </div>
 
@@ -376,7 +353,7 @@ auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL).then(()=>{
   });
 }).catch(e=>console.error('Persistence:',e));
 
-// ── SALDO (VISUAL + MODAL DE AJUSTE) ────────────────────────────────
+// ── SALDO ───────────────────────────────────────────────────────────
 async function carregarSaldo(){
   const container=document.getElementById('saldo-container');
   container.innerHTML='<div class="skel"></div>';
@@ -385,7 +362,6 @@ async function carregarSaldo(){
   saldoUsuario=data.saldo||{ferias:[],abono:6,licenca:90,usos:[]};
   if(typeof saldoUsuario.ferias==='number')saldoUsuario.ferias=[{periodo:'Total',total:saldoUsuario.ferias,usado:0}];
   if(!Array.isArray(saldoUsuario.ferias)||saldoUsuario.ferias.length===0)saldoUsuario.ferias=[{periodo:'Período atual',total:30,usado:0}];
-  
   const periodosFerias=saldoUsuario.ferias||[];
   const usos=saldoUsuario.usos||[];
   const totalFerias=periodosFerias.reduce((s,p)=>s+(p.total||0),0);
@@ -393,13 +369,8 @@ async function carregarSaldo(){
   const restanteFerias=Math.max(0,totalFerias-usadoFerias);
   const totalAbono=saldoUsuario.abono||6,usadoAbono=usos.filter(u=>u.tipo==='abono').length,restanteAbono=Math.max(0,totalAbono-usadoAbono);
   const totalLicenca=saldoUsuario.licenca||90,usadoLicenca=usos.filter(u=>u.tipo==='licenca').reduce((s,u)=>s+(u.dias||0),0),restanteLicenca=Math.max(0,totalLicenca-usadoLicenca);
-
   let periodosHtml='';
-  periodosFerias.forEach(p=>{
-    const usado=usos.filter(u=>u.tipo==='ferias'&&u.periodo===p.periodo).reduce((s,u)=>s+(u.dias||0),0);
-    periodosHtml+=`<span style="display:inline-block;margin-right:8px;font-size:11px;background:#fdf2f8;padding:2px 6px;border-radius:4px;">${p.periodo}: ${Math.max(0,(p.total||30)-usado)}/${p.total||30}d</span>`;
-  });
-
+  periodosFerias.forEach(p=>{const usado=usos.filter(u=>u.tipo==='ferias'&&u.periodo===p.periodo).reduce((s,u)=>s+(u.dias||0),0);periodosHtml+=`<span style="display:inline-block;margin-right:8px;font-size:11px;background:#fdf2f8;padding:2px 6px;border-radius:4px;">${p.periodo}: ${Math.max(0,(p.total||30)-usado)}/${p.total||30}d</span>`;});
   container.innerHTML=`
     <div class="card"><div class="card-titulo">💰 Meu Saldo <span class="badge">Individual</span></div>
     <div class="saldo-card"><div class="saldo-header"><div class="saldo-icon ferias">🏖️</div><div class="saldo-info"><div class="saldo-tipo">Férias</div><div class="saldo-dias" style="color:#ec4899">${restanteFerias} / ${totalFerias} dias</div><div class="saldo-sub">${periodosHtml}</div></div></div><div class="saldo-bar"><div class="saldo-bar-fill ferias" style="width:${totalFerias>0?(restanteFerias/totalFerias)*100:0}%"></div></div></div>
@@ -409,99 +380,153 @@ async function carregarSaldo(){
     ${usos.length>0?`<div class="card"><div class="card-titulo">📋 Períodos Registrados</div>${usos.sort((a,b)=>new Date(a.data_inicio)-new Date(b.data_inicio)).map(u=>{let icone=u.tipo==='ferias'?'🏖️':(u.tipo==='licenca'?'🏥':'⏱️');return`<div class="uso-item ${u.tipo}"><div class="uso-dias">${u.dias}d</div><div class="uso-info"><div style="font-weight:600;font-size:13px">${icone} ${u.periodo||u.tipo}</div><div class="uso-periodo">${u.data_inicio?new Date(u.data_inicio+'T12:00:00').toLocaleDateString('pt-BR'):'?'} → ${u.data_fim?new Date(u.data_fim+'T12:00:00').toLocaleDateString('pt-BR'):'?'}</div></div></div>`;}).join('')}</div>`:''}
   `;
 }
-
-function abrirAjusteSaldo(){
-  periodosAjuste=JSON.parse(JSON.stringify(saldoUsuario.ferias||[{periodo:'Período atual',total:30}]));
-  document.getElementById('ajuste-abono').value=saldoUsuario.abono||6;
-  document.getElementById('ajuste-licenca').value=saldoUsuario.licenca||90;
-  renderizarPeriodosAjuste();
-  document.getElementById('saldo-ajuste-ov').classList.add('on');
-}
-
+function abrirAjusteSaldo(){periodosAjuste=JSON.parse(JSON.stringify(saldoUsuario.ferias||[{periodo:'Período atual',total:30}]));document.getElementById('ajuste-abono').value=saldoUsuario.abono||6;document.getElementById('ajuste-licenca').value=saldoUsuario.licenca||90;renderizarPeriodosAjuste();document.getElementById('saldo-ajuste-ov').classList.add('on');}
 function fecharAjusteSaldo(){document.getElementById('saldo-ajuste-ov').classList.remove('on');}
-
-function renderizarPeriodosAjuste(){
-  const container=document.getElementById('ajuste-periodos-ferias');
-  container.innerHTML=periodosAjuste.map((p,i)=>`
-    <div class="ajuste-periodo">
-      <input type="text" value="${p.periodo||''}" placeholder="Nome (ex: 24/25)" onchange="periodosAjuste[${i}].periodo=this.value" style="flex:2">
-      <input type="number" value="${p.total||30}" min="0" max="60" placeholder="Dias" onchange="periodosAjuste[${i}].total=parseInt(this.value)||0" style="flex:1">
-      <button class="btn-remover" onclick="removerPeriodoAjuste(${i})">🗑</button>
-    </div>
-  `).join('');
-}
-
-function adicionarPeriodoNoAjuste(){
-  periodosAjuste.push({periodo:'Novo período',total:30});
-  renderizarPeriodosAjuste();
-}
-
-function removerPeriodoAjuste(index){
-  if(periodosAjuste.length<=1){mostrarToast('⚠️ Mantenha pelo menos 1 período');return;}
-  periodosAjuste.splice(index,1);
-  renderizarPeriodosAjuste();
-}
-
-async function salvarAjusteSaldo(){
-  saldoUsuario.ferias=periodosAjuste;
-  saldoUsuario.abono=parseInt(document.getElementById('ajuste-abono').value)||6;
-  saldoUsuario.licenca=parseInt(document.getElementById('ajuste-licenca').value)||90;
-  await db.collection('usuarios').doc(eu.uid).update({saldo:saldoUsuario});
-  fecharAjusteSaldo();
-  mostrarToast('✅ Saldo atualizado!');
-  carregarSaldo();
-}
+function renderizarPeriodosAjuste(){const c=document.getElementById('ajuste-periodos-ferias');c.innerHTML=periodosAjuste.map((p,i)=>`<div class="ajuste-periodo"><input type="text" value="${p.periodo||''}" placeholder="Nome (ex: 24/25)" onchange="periodosAjuste[${i}].periodo=this.value" style="flex:2"><input type="number" value="${p.total||30}" min="0" max="60" placeholder="Dias" onchange="periodosAjuste[${i}].total=parseInt(this.value)||0" style="flex:1"><button class="btn-remover" onclick="removerPeriodoAjuste(${i})">🗑</button></div>`).join('');}
+function adicionarPeriodoNoAjuste(){periodosAjuste.push({periodo:'Novo período',total:30});renderizarPeriodosAjuste();}
+function removerPeriodoAjuste(index){if(periodosAjuste.length<=1){mostrarToast('⚠️ Mantenha pelo menos 1 período');return;}periodosAjuste.splice(index,1);renderizarPeriodosAjuste();}
+async function salvarAjusteSaldo(){saldoUsuario.ferias=periodosAjuste;saldoUsuario.abono=parseInt(document.getElementById('ajuste-abono').value)||6;saldoUsuario.licenca=parseInt(document.getElementById('ajuste-licenca').value)||90;await db.collection('usuarios').doc(eu.uid).update({saldo:saldoUsuario});fecharAjusteSaldo();mostrarToast('✅ Saldo atualizado!');carregarSaldo();}
 
 // ── FÉRIAS ──────────────────────────────────────────────────────────
-async function carregarFerias(){
-  const snap=await db.collection('usuarios').doc(eu.uid).get();
-  const data=snap.data();
-  saldoUsuario=data.saldo||{ferias:[],abono:6,licenca:90,usos:[]};
-  if(typeof saldoUsuario.ferias==='number')saldoUsuario.ferias=[{periodo:'Total',total:saldoUsuario.ferias,usado:0}];
-  const usos=saldoUsuario.usos||[];
-  const lst=document.getElementById('lst-ausencias');lst.innerHTML='';
-  if(usos.length===0){lst.innerHTML='<p style="color:var(--light);padding:20px;text-align:center">Nenhum período registrado.</p>';return;}
-  usos.sort((a,b)=>new Date(a.data_inicio)-new Date(b.data_inicio)).forEach((u,i)=>{
-    let dtIni=new Date(u.data_inicio+"T12:00:00"),dtFim=new Date(u.data_fim+"T12:00:00");
-    let icone=u.tipo==='ferias'?'🏖️':(u.tipo==='licenca'?'🏥':'⏱️');
-    const div=document.createElement('div');div.className=`aus-card tipo-${u.tipo}`;
-    div.innerHTML=`<div class="aus-icon">${icone}</div><div class="aus-info"><div class="aus-nome">${u.periodo||u.tipo} - ${u.dias} dia(s)</div><div class="aus-detalhe">${dtIni.toLocaleDateString('pt-BR')} → ${dtFim.toLocaleDateString('pt-BR')}</div><div class="aus-tipo">${u.tipo}</div></div><button class="btn-excluir-ausencia" onclick="excluirUsoFerias(${i})">🗑️</button>`;
-    lst.appendChild(div);
+async function carregarFerias(){const snap=await db.collection('usuarios').doc(eu.uid).get();const data=snap.data();saldoUsuario=data.saldo||{ferias:[],abono:6,licenca:90,usos:[]};if(typeof saldoUsuario.ferias==='number')saldoUsuario.ferias=[{periodo:'Total',total:saldoUsuario.ferias,usado:0}];const usos=saldoUsuario.usos||[];const lst=document.getElementById('lst-ausencias');lst.innerHTML='';if(usos.length===0){lst.innerHTML='<p style="color:var(--light);padding:20px;text-align:center">Nenhum período registrado.</p>';return;}usos.sort((a,b)=>new Date(a.data_inicio)-new Date(b.data_inicio)).forEach((u,i)=>{let dtIni=new Date(u.data_inicio+"T12:00:00"),dtFim=new Date(u.data_fim+"T12:00:00");let icone=u.tipo==='ferias'?'🏖️':(u.tipo==='licenca'?'🏥':'⏱️');const div=document.createElement('div');div.className=`aus-card tipo-${u.tipo}`;div.innerHTML=`<div class="aus-icon">${icone}</div><div class="aus-info"><div class="aus-nome">${u.periodo||u.tipo} - ${u.dias} dia(s)</div><div class="aus-detalhe">${dtIni.toLocaleDateString('pt-BR')} → ${dtFim.toLocaleDateString('pt-BR')}</div><div class="aus-tipo">${u.tipo}</div></div><button class="btn-excluir-ausencia" onclick="excluirUsoFerias(${i})">🗑️</button>`;lst.appendChild(div);});}
+async function excluirUsoFerias(index){const uso=saldoUsuario.usos[index];if(!uso)return;if(!confirm(`Excluir ${uso.tipo} "${uso.periodo}" de ${uso.dias} dia(s)? Saldo restituído.`))return;saldoUsuario.usos.splice(index,1);await db.collection('usuarios').doc(eu.uid).update({saldo:saldoUsuario});try{const snap=await db.collection('ausencias').where('uid','==',eu.uid).where('data_inicio','==',uso.data_inicio).where('data_fim','==',uso.data_fim).where('tipo','==',uso.tipo).get();snap.forEach(async d=>await d.ref.delete());}catch(e){}mostrarToast('✅ Excluído!');carregarFerias();}
+function iniciarAddFerias(){document.getElementById('ferias-consent-ov').classList.add('on');}
+function abrirFormFerias(){document.getElementById('ferias-consent-ov').classList.remove('on');document.getElementById('ferias-form-ov').classList.add('on');document.getElementById('ferias-ini').value="";document.getElementById('ferias-fim').value="";document.getElementById('ferias-dias').value="1";document.getElementById('ferias-periodo').value="";document.getElementById('ferias-tipo').value="abono";document.getElementById('ferias-erro').style.display='none';}
+async function salvarFerias(){const tipo=document.getElementById('ferias-tipo').value,periodo=document.getElementById('ferias-periodo').value.trim();const dias=parseInt(document.getElementById('ferias-dias').value)||1,iniStr=document.getElementById('ferias-ini').value,fimStr=document.getElementById('ferias-fim').value;const erroEl=document.getElementById('ferias-erro');if(!periodo){erroEl.textContent='⚠️ Informe o período';erroEl.style.display='block';return;}if(!iniStr||!fimStr){erroEl.textContent='⚠️ Preencha as datas';erroEl.style.display='block';return;}if(new Date(iniStr+"T12:00:00")>new Date(fimStr+"T12:00:00")){erroEl.textContent='⚠️ Data inválida';erroEl.style.display='block';return;}const snap=await db.collection('usuarios').doc(eu.uid).get();const data=snap.data();saldoUsuario=data.saldo||{ferias:[],abono:6,licenca:90,usos:[]};if(typeof saldoUsuario.ferias==='number')saldoUsuario.ferias=[{periodo:'Total',total:saldoUsuario.ferias,usado:0}];const usos=saldoUsuario.usos||[];if(tipo==='abono'){if(usos.filter(u=>u.tipo==='abono').length>=(saldoUsuario.abono||6)){erroEl.textContent='⚠️ Abonos esgotados';erroEl.style.display='block';return;}}else if(tipo==='licenca'){const u=usos.filter(u=>u.tipo==='licenca').reduce((s,u)=>s+(u.dias||0),0);if(u+dias>(saldoUsuario.licenca||90)){erroEl.textContent='⚠️ Saldo insuficiente';erroEl.style.display='block';return;}}else if(tipo==='ferias'){const p=saldoUsuario.ferias.find(p=>p.periodo===periodo);if(p){const u=usos.filter(u=>u.tipo==='ferias'&&u.periodo===periodo).reduce((s,u)=>s+(u.dias||0),0);if(u+dias>(p.total||30)){erroEl.textContent='⚠️ Saldo insuficiente';erroEl.style.display='block';return;}}}usos.push({tipo,periodo,dias,data_inicio:iniStr,data_fim:fimStr,adicionado_em:new Date().toISOString()});saldoUsuario.usos=usos;await db.collection('usuarios').doc(eu.uid).update({saldo:saldoUsuario});await db.collection('ausencias').add({uid:eu.uid,nome_completo:eu.nome_completo,grupo_id:grupoId,tipo,data_inicio:iniStr,data_fim:fimStr,periodo,dias,criado_em:firebase.firestore.FieldValue.serverTimestamp()});document.getElementById('ferias-form-ov').classList.remove('on');mostrarToast("✅ Registrado!");carregarFerias();}
+async function fetchAusencias(){if(!grupoId)return;const hojeStr=new Date().toISOString().split('T')[0];const snap=await db.collection('ausencias').where('grupo_id','==',grupoId).where('data_fim','>=',hojeStr).get();listaAusencias=snap.docs.map(d=>({id:d.id,...d.data()}));}
+function verificarStatusAusencia(uid,dataEvento){if(!uid||!dataEvento)return null;const dataStr=dataEvento.split('T')[0];return listaAusencias.find(aus=>aus.uid===uid&&aus.data_inicio<=dataStr&&aus.data_fim>=dataStr)||null;}
+
+// ── MATCH DE NOMES (CORRIGIDO) ──────────────────────────────────────
+async function cruzar(nomes){
+  const snap=await db.collection('usuarios').where('grupo_id','==',grupoId).get();
+  const users=snap.docs.map(d=>d.data());
+  const norm=s=>s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9\s]/g,'').trim();
+  const st=new Set(['de','da','do','das','dos','e','a','o','as','os']);
+  const pwSig=s=>norm(s).split(/\s+/).filter(p=>p.length>1&&!st.has(p));
+  
+  function palavrasSimilares(a,b){
+    if(a===b)return true;
+    if(a.length<5||b.length<5)return false;
+    if(Math.abs(a.length-b.length)>1)return false;
+    return lev(a,b)<=1;
+  }
+
+  return nomes.map(nome=>{
+    const nn=norm(nome);
+    const pwNome=pwSig(nome);
+    
+    // 1. Busca EXATA
+    for(const u of users){
+      const todos=[u.nome_completo,...(u.nomes_conhecidos||[])];
+      if(todos.some(n=>norm(n)===nn)) return {tipo:'exato',nome,usuario:u};
+    }
+    
+    // 2. Busca por similaridade (MAIS RIGOROSA)
+    let melhorUser=null,melhorScore=0;
+    for(const u of users){
+      const pwUser=pwSig(u.nome_completo);
+      const palavrasBatem=pwNome.filter(p=>pwUser.some(pu=>palavrasSimilares(p,pu)));
+      const scoreOcr=palavrasBatem.length/Math.max(pwNome.length,1);
+      const scoreUser=palavrasBatem.length/Math.max(pwUser.length,1);
+      const scoreFinal=(scoreOcr*0.5)+(scoreUser*0.5);
+      if(scoreOcr>=0.7&&scoreUser>=0.5&&scoreFinal>melhorScore){melhorScore=scoreFinal;melhorUser=u;}
+    }
+    
+    // AGORA: sempre marca como 'parcial' (NUNCA confirma automático)
+    if(melhorUser&&melhorScore>=0.8) return {tipo:'parcial',nome,usuario:melhorUser,score:melhorScore};
+    
+    // Score baixo: sugestão com alerta
+    if(melhorUser&&melhorScore>=0.5) return {tipo:'baixa_confianca',nome,usuario:melhorUser,score:melhorScore};
+    
+    return {tipo:'nao_encontrado',nome};
   });
 }
 
-async function excluirUsoFerias(index){
-  const uso=saldoUsuario.usos[index];if(!uso)return;
-  if(!confirm(`Excluir ${uso.tipo} "${uso.periodo}" de ${uso.dias} dia(s)? Saldo restituído.`))return;
-  saldoUsuario.usos.splice(index,1);
-  await db.collection('usuarios').doc(eu.uid).update({saldo:saldoUsuario});
-  try{const snap=await db.collection('ausencias').where('uid','==',eu.uid).where('data_inicio','==',uso.data_inicio).where('data_fim','==',uso.data_fim).where('tipo','==',uso.tipo).get();snap.forEach(async d=>await d.ref.delete());}catch(e){}
-  mostrarToast('✅ Excluído!');carregarFerias();
+function renderMatches(){
+  document.getElementById('rv-matches').innerHTML=matches.length===0
+    ?'<p style="color:var(--light);padding:12px;background:#fff;border-radius:10px;">Nenhum nome identificado.</p>'
+    :matches.map((m,i)=>{
+      if(m.tipo==='exato'){
+        return `<div class="mi ok"><div class="mi-top"><span style="font-size:18px">✅</span><div><div class="mi-nome">${m.nome}</div><div class="mi-sub">→ ${m.usuario.nome_completo} (confirmado)</div></div></div><div class="mi-btns" style="padding-left:0"><button class="btn-desvincular" onclick="desvincularMatch(${i})">⚠️ Não é ${m.usuario.nome_completo.split(' ')[0]}</button></div></div>`;
+      }
+      if(m.tipo==='parcial'){
+        return `<div class="mi av"><div class="mi-top"><span style="font-size:18px">⚠️</span><div><div class="mi-nome">${m.nome}</div><div class="mi-sub">Provável: ${m.usuario.nome_completo} (${Math.round(m.score*100)}%)</div></div></div><div class="mi-btns"><button class="btn-sim" onclick="confirmar(${i},true)">✓ Confirmar</button><button class="btn-nao" onclick="confirmar(${i},false)">✗ Não é</button></div></div>`;
+      }
+      if(m.tipo==='baixa_confianca'){
+        return `<div class="mi no"><div class="mi-top"><span style="font-size:18px">❓</span><div><div class="mi-nome">${m.nome}</div><div class="mi-sub">Baixa confiança: Talvez ${m.usuario.nome_completo}? (${Math.round(m.score*100)}%)</div></div></div><div class="mi-btns"><button class="btn-sim" onclick="confirmar(${i},true)" style="font-size:11px">✓ É ${m.usuario.nome_completo.split(' ')[0]}</button><button class="btn-nao" onclick="confirmar(${i},false)">✗ Não é</button></div></div>`;
+      }
+      return `<div class="mi no"><div class="mi-top"><span style="font-size:18px">❓</span><div><div class="mi-nome">${m.nome}</div><div class="mi-sub">Não encontrado no grupo</div></div></div></div>`;
+    }).join('');
 }
 
-function iniciarAddFerias(){document.getElementById('ferias-consent-ov').classList.add('on');}
-function abrirFormFerias(){document.getElementById('ferias-consent-ov').classList.remove('on');document.getElementById('ferias-form-ov').classList.add('on');document.getElementById('ferias-ini').value="";document.getElementById('ferias-fim').value="";document.getElementById('ferias-dias').value="1";document.getElementById('ferias-periodo').value="";document.getElementById('ferias-tipo').value="abono";document.getElementById('ferias-erro').style.display='none';}
-async function salvarFerias(){
-  const tipo=document.getElementById('ferias-tipo').value,periodo=document.getElementById('ferias-periodo').value.trim();
-  const dias=parseInt(document.getElementById('ferias-dias').value)||1,iniStr=document.getElementById('ferias-ini').value,fimStr=document.getElementById('ferias-fim').value;
-  const erroEl=document.getElementById('ferias-erro');
-  if(!periodo){erroEl.textContent='⚠️ Informe o período';erroEl.style.display='block';return;}
-  if(!iniStr||!fimStr){erroEl.textContent='⚠️ Preencha as datas';erroEl.style.display='block';return;}
-  if(new Date(iniStr+"T12:00:00")>new Date(fimStr+"T12:00:00")){erroEl.textContent='⚠️ Data inválida';erroEl.style.display='block';return;}
-  const snap=await db.collection('usuarios').doc(eu.uid).get();const data=snap.data();saldoUsuario=data.saldo||{ferias:[],abono:6,licenca:90,usos:[]};
-  if(typeof saldoUsuario.ferias==='number')saldoUsuario.ferias=[{periodo:'Total',total:saldoUsuario.ferias,usado:0}];
-  const usos=saldoUsuario.usos||[];
-  if(tipo==='abono'){if(usos.filter(u=>u.tipo==='abono').length>=(saldoUsuario.abono||6)){erroEl.textContent='⚠️ Abonos esgotados';erroEl.style.display='block';return;}}
-  else if(tipo==='licenca'){const u=usos.filter(u=>u.tipo==='licenca').reduce((s,u)=>s+(u.dias||0),0);if(u+dias>(saldoUsuario.licenca||90)){erroEl.textContent='⚠️ Saldo insuficiente';erroEl.style.display='block';return;}}
-  else if(tipo==='ferias'){const p=saldoUsuario.ferias.find(p=>p.periodo===periodo);if(p){const u=usos.filter(u=>u.tipo==='ferias'&&u.periodo===periodo).reduce((s,u)=>s+(u.dias||0),0);if(u+dias>(p.total||30)){erroEl.textContent='⚠️ Saldo insuficiente';erroEl.style.display='block';return;}}}
-  usos.push({tipo,periodo,dias,data_inicio:iniStr,data_fim:fimStr,adicionado_em:new Date().toISOString()});saldoUsuario.usos=usos;
-  await db.collection('usuarios').doc(eu.uid).update({saldo:saldoUsuario});
-  await db.collection('ausencias').add({uid:eu.uid,nome_completo:eu.nome_completo,grupo_id:grupoId,tipo,data_inicio:iniStr,data_fim:fimStr,periodo,dias,criado_em:firebase.firestore.FieldValue.serverTimestamp()});
-  document.getElementById('ferias-form-ov').classList.remove('on');mostrarToast("✅ Registrado!");carregarFerias();
+function confirmar(i,sim){
+  if(sim){
+    const m=matches[i];
+    matches[i].tipo='exato';
+    if(m.usuario){db.collection('usuarios').doc(m.usuario.uid).update({nomes_conhecidos:firebase.firestore.FieldValue.arrayUnion(m.nome)});}
+    mostrarToast(`✅ "${m.nome}" confirmado como ${m.usuario.nome_completo}`);
+  }else{
+    matches[i].tipo='nao_encontrado';
+    matches[i].usuario=null;
+    matches[i].sugestao=null;
+  }
+  renderMatches();
 }
 
-async function fetchAusencias(){if(!grupoId)return;const hojeStr=new Date().toISOString().split('T')[0];const snap=await db.collection('ausencias').where('grupo_id','==',grupoId).where('data_fim','>=',hojeStr).get();listaAusencias=snap.docs.map(d=>({id:d.id,...d.data()}));}
-function verificarStatusAusencia(uid,dataEvento){if(!uid||!dataEvento)return null;const dataStr=dataEvento.split('T')[0];return listaAusencias.find(aus=>aus.uid===uid&&aus.data_inicio<=dataStr&&aus.data_fim>=dataStr)||null;}
+function desvincularMatch(i){
+  if(!confirm(`Desvincular "${matches[i].nome}" de ${matches[i].usuario.nome_completo}?\n\nIsso removerá a associação e não notificará a pessoa errada.`))return;
+  const usuario=matches[i].usuario;
+  if(usuario&&usuario.nomes_conhecidos){
+    const novosNomes=usuario.nomes_conhecidos.filter(n=>{
+      const norm=s=>s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9\s]/g,'').trim();
+      return norm(n)!==norm(matches[i].nome);
+    });
+    db.collection('usuarios').doc(usuario.uid).update({nomes_conhecidos:novosNomes});
+  }
+  matches[i].tipo='nao_encontrado';
+  matches[i].usuario=null;
+  matches[i].sugestao=null;
+  renderMatches();
+  mostrarToast(`✅ "${matches[i].nome}" desvinculado!`);
+}
+
+function fecharRv(){document.getElementById('rv-ov').classList.remove('on');ocrDados=null;matches=[];}
+
+async function salvar(){
+  const t=document.getElementById('rv-tit').value.trim();
+  const d=document.getElementById('rv-data').value;
+  if(!t||!d){alert('Preencha título e data.');return;}
+  
+  await db.collection('eventos').add({
+    id_verificacao:ocrDados?.id_ver||null,
+    titulo_evento:t,
+    data_hora:d+':00',
+    local:document.getElementById('rv-loc').value.trim(),
+    lista_convocados:ocrDados?.nomes||[],
+    grupo_id:grupoId,
+    criado_por:eu.uid,
+    criado_em:firebase.firestore.FieldValue.serverTimestamp()
+  });
+  fecharRv();
+  const dtF=new Date(d+':00').toLocaleDateString('pt-BR',{day:'2-digit',month:'short',year:'numeric'});
+  
+  // SÓ NOTIFICAR MATCHES EXATOS
+  const exatos=matches.filter(m=>m.tipo==='exato');
+  for(const m of exatos){
+    await db.collection('notificacoes').add({uid:m.usuario.uid,tipo:'convocado',nome_convocacao:m.nome,titulo_evento:t,data_hora:d+':00',grupo_id:grupoId,respondido:false,criado_em:firebase.firestore.FieldValue.serverTimestamp()});
+    if(m.usuario.uid===eu.uid)enviarNotificacaoPush('📋 Convocado!',`${t} — ${dtF}`);
+  }
+  
+  // Para matches parciais, notificar como "confirmar" (NÃO como convocado)
+  const parciais=matches.filter(m=>m.tipo==='parcial'||m.tipo==='baixa_confianca');
+  for(const m of parciais){
+    await db.collection('notificacoes').add({uid:m.usuario.uid,tipo:'confirmar',nome_convocacao:m.nome,titulo_evento:t,data_hora:d+':00',grupo_id:grupoId,respondido:false,criado_em:firebase.firestore.FieldValue.serverTimestamp()});
+  }
+  
+  mostrarToast('✅ Salvo!');
+  carregarEventos();
+  verificarNotificacoesPendentes();
+}
 
 // ── DEMAIS FUNÇÕES ──────────────────────────────────────────────────
 function verificarCadastroCompleto(){if(!eu.nome_completo||eu.nome_completo.trim().length<5||!eu.cargo){document.getElementById('cadastro-nome').value=eu.nome_completo||'';document.getElementById('cadastro-cargo').value=eu.cargo||'';document.getElementById('cadastro-email').value=eu.email||'';document.getElementById('completar-cadastro-ov').classList.add('on');return false;}if(eu.nome_completo.trim().split(/\s+/).length<2){document.getElementById('cadastro-erro').textContent='⚠️ Informe nome e sobrenome';document.getElementById('cadastro-erro').style.display='block';document.getElementById('completar-cadastro-ov').classList.add('on');return false;}return true;}
@@ -512,6 +537,7 @@ async function salvarEdicaoNome(){const n=document.getElementById('editar-nome-i
 function abrirPerfil(){abrirEditarNome(eu.uid,eu.nome_completo||'',eu.cargo||'',true);}
 function fecharPerfil(){fecharEditarNome();}
 async function salvarPerfil(){await salvarEdicaoNome();}
+
 async function enviarEmailLembrete(usuario,evento){if(!usuario.email)return false;const dt=new Date(evento.data_hora);try{await emailjs.send(EMAIL_CONFIG.serviceId,EMAIL_CONFIG.templateId,{to_email:usuario.email,nome_usuario:usuario.nome_completo,titulo_evento:evento.titulo_evento||'Evento',data_evento:dt.toLocaleDateString('pt-BR'),hora_evento:dt.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'}),local_evento:evento.local||'A definir'});return true;}catch(e){return false;}}
 async function verificarLembretesAmanha(){if(!grupoId)return;const amanha=new Date();amanha.setDate(amanha.getDate()+1);const amanhaStr=amanha.toISOString().split('T')[0];if(localStorage.getItem(`lembretes_${new Date().toISOString().split('T')[0]}`))return;try{const evs=await db.collection('eventos').where('grupo_id','==',grupoId).get();const evAmanha=evs.docs.map(d=>({id:d.id,...d.data()})).filter(e=>e.data_hora&&e.data_hora.startsWith(amanhaStr));if(!evAmanha.length)return;const us=await db.collection('usuarios').where('grupo_id','==',grupoId).get();const usuarios=us.docs.map(d=>({uid:d.id,...d.data()}));let env=0;for(const ev of evAmanha)for(const n of(ev.lista_convocados||[])){const u=encontrarUsuarioPorNome(usuarios,n);if(u&&u.email&&await enviarEmailLembrete(u,ev))env++;}localStorage.setItem(`lembretes_${new Date().toISOString().split('T')[0]}`,'true');}catch(e){}}
 function encontrarUsuarioPorNome(usuarios,nome){const norm=s=>s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9\s]/g,'').trim();return usuarios.find(u=>(u.nomes_conhecidos||[u.nome_completo]).some(n=>norm(n)===norm(nome)));}
@@ -545,12 +571,7 @@ async function salvarNomesAdmin(){if(!eventoAtualMod)return;await db.collection(
 async function abrirScanner(){if(!grupoId){alert('Entre em um grupo.');return;}document.getElementById('scan-ov').classList.add('on');try{camStream=await navigator.mediaDevices.getUserMedia({video:{facingMode:'environment'}});document.getElementById('video').srcObject=camStream;}catch{alert('Câmera indisponível.');}}
 function fecharScanner(){document.getElementById('scan-ov').classList.remove('on');if(camStream){camStream.getTracks().forEach(t=>t.stop());camStream=null;}}
 function capturar(){const v=document.getElementById('video');const c=document.createElement('canvas');c.width=v.videoWidth;c.height=v.videoHeight;c.getContext('2d').drawImage(v,0,0);c.toBlob(b=>processarFoto(b),'image/jpeg',.9);}
-async function processarFoto(file){if(!file)return;fecharScanner();const oo=document.getElementById('ocr-ov');const ot=document.getElementById('ocr-texto');const os=document.getElementById('ocr-subtexto');const op=document.getElementById('ocr-preenchimento');oo.classList.add('on');op.style.width='10%';ot.textContent='📸 Preparando...';os.textContent='Otimizando imagem';try{const pi=setInterval(()=>{const cw=parseFloat(op.style.width);if(cw<80)op.style.width=(cw+5)+'%';if(cw>30&&cw<50){ot.textContent='🔍 Enviando...';os.textContent='Conectando ao servidor';}if(cw>50&&cw<70){ot.textContent='🤖 Processando...';os.textContent='IA analisando texto';}},800);const b64=await new Promise((res,rej)=>{const img=new Image();const url=URL.createObjectURL(file);img.onload=()=>{const MAX=1600;let w=img.width,h=img.height;if(w>MAX||h>MAX){if(w>h){h=Math.round(h*MAX/w);w=MAX;}else{w=Math.round(w*MAX/h);h=MAX;}}const c=document.createElement('canvas');c.width=w;c.height=h;c.getContext('2d').drawImage(img,0,0,w,h);URL.revokeObjectURL(url);res(c.toDataURL('image/jpeg',0.9).split(',')[1]);};img.onerror=()=>rej(new Error('Erro'));img.src=url;});clearInterval(pi);op.style.width='80%';ot.textContent='🔎 Lendo...';os.textContent='IA analisando';const resp=await fetch('https://api.mistral.ai/v1/chat/completions',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer zQVzmFaX904lqaFwzt40BHXHfGoqSJca'},body:JSON.stringify({model:'pixtral-12b-2409',max_tokens:800,temperature:0.1,messages:[{role:'user',content:[{type:'image_url',image_url:{url:'data:image/jpeg;base64,'+b64}},{type:'text',text:'Analise esta convocação. Retorne APENAS JSON: {"titulo":"TIPO - Tema","data":"YYYY-MM-DD","hora":"HH:MM","local":"local ou null","nomes":["Nome 1","Nome 2"]}. NUNCA junte nomes.'}]}]})});op.style.width='90%';ot.textContent='✅ Processando...';os.textContent='Organizando dados';const data=await resp.json();const txtRaw=data.choices?.[0]?.message?.content||'';let parsed;try{parsed=JSON.parse(txtRaw.replace(/```json|```/g,'').trim());}catch{const match=txtRaw.match(/\{[\s\S]*\}/);if(match)parsed=JSON.parse(match[0]);else throw new Error('Formato inválido');}if(parsed.nomes&&Array.isArray(parsed.nomes)){parsed.nomes=parsed.nomes.flatMap(nome=>{if(nome.includes(' e ')||nome.includes(' / '))return nome.split(/\s+e\s+|\s+\/\s+/).filter(n=>n.trim().length>2);const ns=nome.split(/(?<=[a-záéíóúãõç])(?=[A-Z])/);if(ns.length>1){const nv=[];let na='';for(let i=0;i<ns.length;i++){na+=ns[i];if(na.trim().split(/\s+/).length>=2&&i<ns.length-1){nv.push(na.trim());na='';}}if(na.trim())nv.push(na.trim());return nv.length>1?nv:[nome];}return[nome];});}op.style.width='100%';ot.textContent='✨ Concluído!';os.textContent='Verifique os dados';ocrDados={titulo:parsed.titulo||null,data_hora:(parsed.data&&parsed.hora)?`${parsed.data}T${parsed.hora}:00`:(parsed.data?`${parsed.data}T00:00:00`:null),local:parsed.local||null,nomes:Array.isArray(parsed.nomes)?parsed.nomes.filter(n=>n&&n.trim().length>2):[],id_ver:null};if(parsed.data&&parsed.hora&&parsed.titulo)ocrDados.id_ver=parsed.data.replace(/-/g,'')+parsed.hora.replace(':','')+parsed.titulo.toUpperCase().replace(/[^A-Z0-9]/g,'').substring(0,10);await new Promise(r=>setTimeout(r,800));}catch(e){oo.classList.remove('on');alert('Erro: '+e.message);return;}oo.classList.remove('on');if(ocrDados.id_ver){const dup=await db.collection('eventos').where('id_verificacao','==',ocrDados.id_ver).where('grupo_id','==',grupoId).get();if(!dup.empty){alert('⚠️ Já cadastrado!');return;}}matches=await cruzar(ocrDados.nomes);document.getElementById('rv-tit').value=ocrDados.titulo||'';document.getElementById('rv-data').value=ocrDados.data_hora?ocrDados.data_hora.substring(0,16):'';document.getElementById('rv-loc').value=ocrDados.local||'';renderMatches();document.getElementById('rv-ov').classList.add('on');}
-async function cruzar(nomes){const snap=await db.collection('usuarios').where('grupo_id','==',grupoId).get();const users=snap.docs.map(d=>d.data());const norm=s=>s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9\s]/g,'').trim();const st=new Set(['de','da','do','das','dos','e','a','o','as','os']);const pw=s=>norm(s).split(/\s+/).filter(p=>p.length>1&&!st.has(p));function ps(a,b){return a===b||(a.length>=5&&Math.abs(a.length-b.length)<=1&&lev(a,b)<=1);}const rc=/operador|responsável|reporter|repórter|diretor|coordenador|técnico|editor|produtor|cinegrafista|apresentador|locutor|caracteres|caracter|transmiss|câmera|camera|áudio|audio|plenário|plenario|DTV|controle|mestre/i;return nomes.map(nome=>{const nn=norm(nome);const pn=pw(nome);const p1=pn[0];for(const u of users){if([u.nome_completo,...(u.nomes_conhecidos||[])].some(n=>norm(n)===nn))return{tipo:'exato',nome,usuario:u};}let mu=null,ms=0;for(const u of users){const pu=pw(u.nome_completo);const ec=pn.filter(p=>pu.some(pu=>ps(p,pu)));const sc=ec.length/Math.max(pn.length,1);const rc2=ec.length/Math.max(pu.length,1);const fs=sc+(rc2*0.1);if(sc>=0.55&&fs>ms){ms=fs;mu=u;}}if(mu)return{tipo:'parcial',nome,usuario:mu,score:ms};if(p1&&p1.length>=5){let pos=[];for(const u of users){const pu=pw(u.nome_completo);if(pu.length>0&&ps(p1,pu[0]))pos.push(u);}if(pos.length===1)return{tipo:'parcial',nome,usuario:pos[0],score:0.4};}if(rc.test(nome)){const pnc=pw(nome);for(const u of users){if(!u.cargo)continue;const pc=pw(u.cargo);const ec=pnc.filter(p=>pc.some(pc=>ps(p,pc)));const sc=ec.length/Math.max(Math.min(pnc.length,pc.length),1);if(sc>=0.6)return{tipo:'por_cargo',nome,usuario:u,score:sc,cargo:u.cargo};}}return{tipo:'nao_encontrado',nome};});}
-function renderMatches(){document.getElementById('rv-matches').innerHTML=matches.length===0?'<p style="color:var(--light);padding:12px;background:#fff;border-radius:10px;">Nenhum nome.</p>':matches.map((m,i)=>{if(m.tipo==='exato')return`<div class="mi ok"><div class="mi-top"><span>✅</span><div><div class="mi-nome">${m.nome}</div><div class="mi-sub">→ ${m.usuario.nome_completo}</div></div></div></div>`;if(m.tipo==='parcial'||m.tipo==='por_cargo')return`<div class="mi av"><div class="mi-top"><span>⚠️</span><div><div class="mi-nome">${m.nome}</div><div class="mi-sub">É ${m.usuario.nome_completo}?</div></div></div><div class="mi-btns"><button class="btn-sim" onclick="confirmar(${i},true)">✓</button><button class="btn-nao" onclick="confirmar(${i},false)">✗</button></div></div>`;return`<div class="mi no"><div class="mi-top"><span>❓</span><div><div class="mi-nome">${m.nome}</div><div class="mi-sub">Não encontrado</div></div></div></div>`;}).join('');}
-function confirmar(i,sim){if(sim){matches[i].tipo='exato';db.collection('usuarios').doc(matches[i].usuario.uid).update({nomes_conhecidos:firebase.firestore.FieldValue.arrayUnion(matches[i].nome)});}else{matches[i].tipo='nao_encontrado';}renderMatches();}
-function fecharRv(){document.getElementById('rv-ov').classList.remove('on');ocrDados=null;matches=[];}
-async function salvar(){const t=document.getElementById('rv-tit').value.trim();const d=document.getElementById('rv-data').value;if(!t||!d){alert('Preencha título e data.');return;}await db.collection('eventos').add({id_verificacao:ocrDados?.id_ver||null,titulo_evento:t,data_hora:d+':00',local:document.getElementById('rv-loc').value.trim(),lista_convocados:ocrDados?.nomes||[],grupo_id:grupoId,criado_por:eu.uid,criado_em:firebase.firestore.FieldValue.serverTimestamp()});fecharRv();const dtF=new Date(d+':00').toLocaleDateString('pt-BR',{day:'2-digit',month:'short',year:'numeric'});const ex=matches.filter(m=>m.tipo==='exato');for(const m of ex){await db.collection('notificacoes').add({uid:m.usuario.uid,tipo:'convocado',nome_convocacao:m.nome,titulo_evento:t,data_hora:d+':00',grupo_id:grupoId,respondido:false,criado_em:firebase.firestore.FieldValue.serverTimestamp()});if(m.usuario.uid===eu.uid)enviarNotificacaoPush('📋 Convocado!',`${t} — ${dtF}`);}const pa=matches.filter(m=>m.tipo==='parcial'||m.tipo==='por_cargo');for(const m of pa){await db.collection('notificacoes').add({uid:m.usuario.uid,tipo:'confirmar',nome_convocacao:m.nome,titulo_evento:t,data_hora:d+':00',grupo_id:grupoId,respondido:false,criado_em:firebase.firestore.FieldValue.serverTimestamp()});}mostrarToast('✅ Salvo!');carregarEventos();verificarNotificacoesPendentes();}
+async function processarFoto(file){if(!file)return;fecharScanner();const oo=document.getElementById('ocr-ov');const ot=document.getElementById('ocr-texto');const os=document.getElementById('ocr-subtexto');const op=document.getElementById('ocr-preenchimento');oo.classList.add('on');op.style.width='10%';ot.textContent='📸 Preparando...';os.textContent='Otimizando imagem';try{const pi=setInterval(()=>{const cw=parseFloat(op.style.width);if(cw<80)op.style.width=(cw+5)+'%';if(cw>30&&cw<50){ot.textContent='🔍 Enviando...';os.textContent='Conectando ao servidor';}if(cw>50&&cw<70){ot.textContent='🤖 Processando...';os.textContent='IA analisando texto';}},800);const b64=await new Promise((res,rej)=>{const img=new Image();const url=URL.createObjectURL(file);img.onload=()=>{const MAX=1600;let w=img.width,h=img.height;if(w>MAX||h>MAX){if(w>h){h=Math.round(h*MAX/w);w=MAX;}else{w=Math.round(w*MAX/h);h=MAX;}}const c=document.createElement('canvas');c.width=w;c.height=h;c.getContext('2d').drawImage(img,0,0,w,h);URL.revokeObjectURL(url);res(c.toDataURL('image/jpeg',0.9).split(',')[1]);};img.onerror=()=>rej(new Error('Erro'));img.src=url;});clearInterval(pi);op.style.width='80%';ot.textContent='🔎 Lendo...';os.textContent='IA analisando';const resp=await fetch('https://api.mistral.ai/v1/chat/completions',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer zQVzmFaX904lqaFwzt40BHXHfGoqSJca'},body:JSON.stringify({model:'pixtral-12b-2409',max_tokens:800,temperature:0.1,messages:[{role:'user',content:[{type:'image_url',image_url:{url:'data:image/jpeg;base64,'+b64}},{type:'text',text:'Analise esta convocação. Retorne APENAS JSON: {"titulo":"TIPO - Tema","data":"YYYY-MM-DD","hora":"HH:MM","local":"local ou null","nomes":["Nome 1","Nome 2"]}. NUNCA junte nomes. Separe por vírgulas, "e", "/".'}]}]})});op.style.width='90%';ot.textContent='✅ Processando...';os.textContent='Organizando dados';const data=await resp.json();const txtRaw=data.choices?.[0]?.message?.content||'';let parsed;try{parsed=JSON.parse(txtRaw.replace(/```json|```/g,'').trim());}catch{const match=txtRaw.match(/\{[\s\S]*\}/);if(match)parsed=JSON.parse(match[0]);else throw new Error('Formato inválido');}if(parsed.nomes&&Array.isArray(parsed.nomes)){parsed.nomes=parsed.nomes.flatMap(nome=>{if(nome.includes(' e ')||nome.includes(' / '))return nome.split(/\s+e\s+|\s+\/\s+/).filter(n=>n.trim().length>2);const ns=nome.split(/(?<=[a-záéíóúãõç])(?=[A-Z])/);if(ns.length>1){const nv=[];let na='';for(let i=0;i<ns.length;i++){na+=ns[i];if(na.trim().split(/\s+/).length>=2&&i<ns.length-1){nv.push(na.trim());na='';}}if(na.trim())nv.push(na.trim());return nv.length>1?nv:[nome];}return[nome];});}op.style.width='100%';ot.textContent='✨ Concluído!';os.textContent='Verifique os dados';ocrDados={titulo:parsed.titulo||null,data_hora:(parsed.data&&parsed.hora)?`${parsed.data}T${parsed.hora}:00`:(parsed.data?`${parsed.data}T00:00:00`:null),local:parsed.local||null,nomes:Array.isArray(parsed.nomes)?parsed.nomes.filter(n=>n&&n.trim().length>2):[],id_ver:null};if(parsed.data&&parsed.hora&&parsed.titulo)ocrDados.id_ver=parsed.data.replace(/-/g,'')+parsed.hora.replace(':','')+parsed.titulo.toUpperCase().replace(/[^A-Z0-9]/g,'').substring(0,10);await new Promise(r=>setTimeout(r,800));}catch(e){oo.classList.remove('on');alert('Erro: '+e.message);return;}oo.classList.remove('on');if(ocrDados.id_ver){const dup=await db.collection('eventos').where('id_verificacao','==',ocrDados.id_ver).where('grupo_id','==',grupoId).get();if(!dup.empty){alert('⚠️ Já cadastrado!');return;}}matches=await cruzar(ocrDados.nomes);document.getElementById('rv-tit').value=ocrDados.titulo||'';document.getElementById('rv-data').value=ocrDados.data_hora?ocrDados.data_hora.substring(0,16):'';document.getElementById('rv-loc').value=ocrDados.local||'';renderMatches();document.getElementById('rv-ov').classList.add('on');}
 
 async function iniciarNotificacoes(){if(!('serviceWorker' in navigator)||!('Notification' in window))return;await navigator.serviceWorker.register('/gestor-convocacoes/sw.js');await Notification.requestPermission();}
 function enviarNotificacaoPush(titulo,corpo,tag){if(Notification.permission==='granted')new Notification(titulo,{body:corpo,tag:tag||'conv'});}
