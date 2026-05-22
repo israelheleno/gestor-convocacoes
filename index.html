@@ -13,7 +13,6 @@
     :root{--blue:#1E3A8A;--green:#10B981;--red:#ef4444;--yellow:#f59e0b;--bg:#F0F4FF;--text:#334155;--light:#94a3b8;--border:#e2e8f0;--w:#fff}
     body{font-family:'DM Sans',sans-serif;background:var(--bg);min-height:100dvh;color:var(--text);padding-bottom:90px}
 
-    /* HEADER */
     header{background:var(--blue);color:#fff;padding:18px 16px 14px;position:sticky;top:0;z-index:100;box-shadow:0 2px 12px rgba(30,58,138,.3)}
     .h-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:3px}
     .h-logo{display:flex;align-items:center;gap:9px}
@@ -22,19 +21,16 @@
     .btn-sair{background:rgba(255,255,255,.15);border:none;color:#fff;padding:6px 12px;border-radius:8px;font-size:13px;cursor:pointer}
     .h-sub{font-size:12px;opacity:.7;cursor:pointer;text-decoration:underline dotted rgba(255,255,255,.4)}
 
-    /* NAV TABS */
     .nav-tabs{display:flex;background:var(--w);box-shadow:0 2px 8px rgba(0,0,0,.05);margin-bottom:16px;position:sticky;top:60px;z-index:90}
     .nav-tab{flex:1;text-align:center;padding:14px;font-family:'Sora',sans-serif;font-size:13px;font-weight:700;color:var(--light);border-bottom:3px solid transparent;cursor:pointer;transition:all .2s}
     .nav-tab.active{color:var(--blue);border-bottom-color:var(--blue)}
 
     main{padding:16px;max-width:480px;margin:0 auto}
 
-    /* CARDS */
     .card{background:var(--w);border-radius:16px;padding:18px;margin-bottom:16px;box-shadow:0 2px 10px rgba(30,58,138,.06)}
     .card-titulo{font-family:'Sora',sans-serif;font-size:14px;font-weight:700;color:var(--blue);margin-bottom:12px;display:flex;align-items:center;justify-content:space-between}
     .badge{background:var(--blue);color:#fff;font-size:11px;padding:3px 9px;border-radius:20px;font-weight:600}
 
-    /* GRUPOS */
     .grupo-item{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border)}
     .grupo-item:last-child{border-bottom:none}
     .grupo-nome{font-size:14px;font-weight:500}
@@ -44,7 +40,6 @@
     .btn-criar{width:100%;padding:11px;margin-top:12px;background:transparent;border:1.5px dashed var(--blue);color:var(--blue);border-radius:12px;font-size:14px;cursor:pointer}
     .btn-criar-ausencia{background:var(--blue);color:#fff;border:none;padding:10px 16px;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;font-family:'Sora',sans-serif;width:100%}
 
-    /* PRÓXIMO */
     .card-prox{background:linear-gradient(135deg,var(--blue),#2563eb);border-radius:18px;padding:18px;margin-bottom:16px;color:#fff;position:relative;overflow:hidden}
     .card-prox::after{content:'';position:absolute;right:-15px;top:-15px;width:80px;height:80px;background:rgba(255,255,255,.07);border-radius:50%}
     .card-prox-sub{background:linear-gradient(135deg,#92400e,#b45309);border-radius:18px;padding:18px;margin-bottom:10px;color:#fff;position:relative;overflow:hidden}
@@ -56,7 +51,6 @@
     .btn-agenda{background:var(--green);color:#fff;border:none;padding:10px;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;width:100%;font-family:'Sora',sans-serif}
     .card-vazio{background:var(--w);border-radius:18px;padding:28px 16px;text-align:center;margin-bottom:16px;box-shadow:0 2px 10px rgba(30,58,138,.06);color:var(--light);font-size:14px}
 
-    /* EVENTOS */
     .sec-titulo{font-family:'Sora',sans-serif;font-size:13px;font-weight:700;color:var(--blue);margin-bottom:10px;display:flex;align-items:center;justify-content:space-between}
     .ev-wrap{position:relative;margin-bottom:10px;border-radius:14px;overflow:hidden}
     .ev-bg{position:absolute;inset:0;display:flex;border-radius:14px}
@@ -69,7 +63,6 @@
     .ev-conv{margin-top:6px;font-size:12px;color:var(--blue);font-weight:500}
     .aviso-ferias{background:#fee2e2;color:#991b1b;font-size:11px;padding:6px 10px;border-radius:6px;margin-top:8px;font-weight:600;display:flex;align-items:center;gap:6px}
 
-    /* AUSÊNCIAS */
     .aus-card{background:var(--w);border-radius:12px;padding:13px 15px;margin-bottom:10px;display:flex;align-items:center;gap:12px;border-left:3px solid var(--blue);box-shadow:0 2px 8px rgba(30,58,138,.06)}
     .aus-card.tipo-ferias{border-left-color:#ec4899}
     .aus-card.tipo-licenca{border-left-color:#f59e0b}
@@ -80,7 +73,6 @@
     .aus-detalhe{font-size:12px;color:var(--light)}
     .aus-tipo{font-size:10px;text-transform:uppercase;letter-spacing:.5px;color:var(--light);margin-top:4px}
 
-    /* MODAL EVENTO */
     .overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:200;display:none;align-items:flex-end}
     .overlay.on{display:flex}
     .sheet{background:var(--w);border-radius:24px 24px 0 0;width:100%;max-height:90dvh;overflow-y:auto;padding:22px 18px 48px;animation:sup .3s ease}
@@ -103,7 +95,6 @@
     .btn-ag{width:100%;padding:12px;background:var(--green);color:#fff;border:none;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;margin-top:16px;font-family:'Sora',sans-serif}
     .btn-del{width:100%;padding:11px;background:#fee2e2;color:var(--red);border:none;border-radius:10px;font-size:14px;cursor:pointer;margin-top:8px}
 
-    /* Modal Genérico Centro */
     .ov-center{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:750;display:none;align-items:center;justify-content:center;padding:20px}
     .ov-center.on{display:flex}
     .box-center{background:#fff;border-radius:24px;padding:28px 22px;width:100%;max-width:360px;animation:fu .3s ease;position:relative}
@@ -111,14 +102,13 @@
     .box-center p{font-size:13px;color:var(--light);margin-bottom:16px;line-height:1.5}
     .field{margin-bottom:14px}
     .field label{display:block;font-size:12px;font-weight:600;color:var(--text);margin-bottom:5px;text-transform:uppercase;letter-spacing:.5px}
-    .field input, .field select{width:100%;padding:11px 13px;border:1.5px solid var(--border);border-radius:12px;font-family:'DM Sans',sans-serif;font-size:15px;color:var(--text);outline:none;background:#fff}
-    .field input:focus, .field select:focus{border-color:var(--blue)}
+    .field input,.field select{width:100%;padding:11px 13px;border:1.5px solid var(--border);border-radius:12px;font-family:'DM Sans',sans-serif;font-size:15px;color:var(--text);outline:none;background:#fff}
+    .field input:focus,.field select:focus{border-color:var(--blue)}
     .btns-row{display:flex;gap:10px;margin-top:20px}
     .btn-cancel{flex:1;padding:12px;background:transparent;border:1.5px solid var(--border);border-radius:12px;font-size:14px;cursor:pointer;color:var(--text);font-weight:500}
     .btn-salvar{flex:1;padding:12px;background:var(--blue);border:none;border-radius:12px;color:#fff;font-size:14px;cursor:pointer;font-family:'Sora',sans-serif;font-weight:600}
     .btn-salvar:disabled{opacity:0.6;cursor:not-allowed}
 
-    /* SCANNER */
     #scan-ov{position:fixed;inset:0;background:#000;z-index:300;display:none;flex-direction:column}
     #scan-ov.on{display:flex}
     .scan-hd{padding:14px 16px;display:flex;align-items:center;gap:10px;background:rgba(0,0,0,.8);flex-shrink:0}
@@ -138,7 +128,6 @@
     .btn-cap svg{width:26px;height:26px;fill:var(--blue)}
     .btn-gal{background:rgba(255,255,255,.15);border:none;color:#fff;padding:10px 24px;border-radius:12px;font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;width:100%;flex-shrink:0}
 
-    /* OCR LOADING */
     #ocr-ov{position:fixed;inset:0;background:rgba(0,0,0,.7);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);z-index:500;display:none;flex-direction:column;align-items:center;justify-content:center;gap:20px}
     #ocr-ov.on{display:flex}
     .ocr-spinner{width:60px;height:60px;border:4px solid rgba(255,255,255,.2);border-top:4px solid #fff;border-radius:50%;animation:spin 1s linear infinite}
@@ -149,7 +138,6 @@
     .ocr-preenchimento{height:100%;background:#fff;border-radius:2px;transition:width .5s ease;width:0%}
     .ocr-dica{position:absolute;bottom:40px;color:rgba(255,255,255,.5);font-size:11px;text-align:center;padding:0 24px}
 
-    /* REVIEW */
     #rv-ov{position:fixed;inset:0;background:var(--bg);z-index:400;display:none;flex-direction:column;overflow-y:auto}
     #rv-ov.on{display:flex}
     .rv-hd{background:var(--blue);color:#fff;padding:18px 16px;display:flex;align-items:center;gap:10px;flex-shrink:0}
@@ -170,11 +158,9 @@
     .btn-nao{flex:1;padding:7px;background:#fee2e2;color:var(--red);border:none;border-radius:8px;font-size:12px;cursor:pointer}
     .rv-btns{display:flex;gap:10px;margin:16px;flex-shrink:0}
 
-    /* FAB */
     #fab{position:fixed;bottom:22px;right:18px;width:58px;height:58px;background:var(--blue);border:none;border-radius:50%;box-shadow:0 4px 18px rgba(30,58,138,.4);cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:50}
     #fab svg{width:24px;height:24px;fill:#fff}
 
-    /* APROVAÇÕES */
     .apv{background:var(--w);border-radius:12px;padding:13px 15px;margin-bottom:8px;border-left:3px solid var(--yellow)}
     .apv-nome{font-weight:600;font-size:14px}
     .apv-cargo{font-size:12px;color:var(--light);margin-bottom:8px}
@@ -182,7 +168,6 @@
     .btn-apr{flex:1;padding:8px;background:var(--green);color:#fff;border:none;border-radius:8px;font-size:13px;cursor:pointer;font-weight:600}
     .btn-rec{flex:1;padding:8px;background:#fee2e2;color:var(--red);border:none;border-radius:8px;font-size:13px;cursor:pointer}
 
-    /* MODAL SOLIC */
     #ms-ov{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:600;display:none;align-items:center;justify-content:center;padding:16px}
     #ms-ov.on{display:flex}
     .ms-box{background:var(--w);border-radius:20px;padding:26px 22px;width:100%;max-width:340px}
@@ -194,7 +179,6 @@
     @keyframes sh{0%{background-position:200% 0}100%{background-position:-200% 0}}
     @keyframes fu{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
 
-    /* ADMIN */
     #admin-ov{position:fixed;inset:0;background:var(--bg);z-index:400;display:none;flex-direction:column;overflow-y:auto}
     #admin-ov.on{display:flex}
     .admin-hd{background:var(--blue);color:#fff;padding:18px 16px;display:flex;align-items:center;gap:10px;flex-shrink:0}
@@ -213,20 +197,21 @@
     .btn-promover{background:#eff6ff;color:var(--blue)}
     .btn-rebaixar{background:#fef3c7;color:#92400e}
     .btn-expulsar{background:#fee2e2;color:var(--red)}
+    .btn-editar-membro{background:#e0e7ff;color:#3730a3}
     .btn-fab-admin{position:fixed;bottom:92px;right:18px;width:44px;height:44px;background:#fff;border:2px solid var(--blue);border-radius:50%;box-shadow:0 2px 10px rgba(30,58,138,.2);cursor:pointer;display:none;align-items:center;justify-content:center;z-index:50;font-size:20px}
     .btn-fab-admin.on{display:flex}
 
-    /* PERFIL */
-    #perfil-ov{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:700;display:none;align-items:center;justify-content:center;padding:20px}
-    #perfil-ov.on{display:flex}
-    .perfil-box{background:#fff;border-radius:24px;padding:28px 22px;width:100%;max-width:360px;animation:fu .3s ease}
-    .perfil-box h3{font-family:'Sora',sans-serif;font-size:17px;font-weight:700;color:var(--blue);margin-bottom:6px}
-    .perfil-box p{font-size:13px;color:var(--light);margin-bottom:18px}
+    #perfil-ov,#editar-nome-ov{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:700;display:none;align-items:center;justify-content:center;padding:20px}
+    #perfil-ov.on,#editar-nome-ov.on{display:flex}
+    .perfil-box,.editar-nome-box{background:#fff;border-radius:24px;padding:28px 22px;width:100%;max-width:360px;animation:fu .3s ease}
+    .perfil-box h3,.editar-nome-box h3{font-family:'Sora',sans-serif;font-size:17px;font-weight:700;color:var(--blue);margin-bottom:6px}
+    .perfil-box p,.editar-nome-box p{font-size:13px;color:var(--light);margin-bottom:18px}
     .perfil-field{margin-bottom:14px}
     .perfil-field label{display:block;font-size:12px;font-weight:600;color:var(--text);margin-bottom:5px;text-transform:uppercase;letter-spacing:.5px}
     .perfil-field input{width:100%;padding:11px 13px;border:1.5px solid var(--border);border-radius:12px;font-family:'DM Sans',sans-serif;font-size:15px;color:var(--text);outline:none}
     .perfil-field input:focus{border-color:var(--blue)}
     .perfil-btns{display:flex;gap:10px;margin-top:6px}
+
     #notif-ov{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:800;display:none;align-items:center;justify-content:center;padding:20px}
     #notif-ov.on{display:flex}
     .notif-box{background:#fff;border-radius:24px;padding:28px 22px;width:100%;max-width:360px;animation:fu .3s ease}
@@ -238,7 +223,6 @@
     .notif-evento-data{font-size:12px;color:var(--light);margin-top:3px}
     .notif-btns{display:flex;gap:10px}
 
-    /* TROCAR */
     #trocar-ov{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:750;display:none;align-items:center;justify-content:center;padding:20px}
     #trocar-ov.on{display:flex}
     .trocar-box{background:#fff;border-radius:24px;padding:28px 22px;width:100%;max-width:360px;animation:fu .3s ease}
@@ -251,12 +235,13 @@
     .trocar-membro.selecionado{background:#fff7ed;font-weight:600;color:#c2410c}
     .trocar-btns{display:flex;gap:10px}
 
-    /* TOAST */
     .toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:#1e293b;color:#fff;padding:12px 24px;border-radius:12px;font-size:14px;z-index:999;opacity:0;transition:opacity .3s;pointer-events:none;white-space:nowrap}
     .toast.show{opacity:1}
 
-    /* BANNER INSTALAR */
     #banner-instalar{display:none;background:#EFF6FF;border-bottom:1px solid #BFDBFE;padding:10px 16px;}
+
+    #completar-cadastro-ov{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:900;display:none;align-items:center;justify-content:center;padding:20px;}
+    #completar-cadastro-ov.on{display:flex}
   </style>
 </head>
 <body>
@@ -272,7 +257,6 @@
   <div class="h-sub" id="h-user" onclick="abrirPerfil()" style="cursor:pointer;text-decoration:underline dotted rgba(255,255,255,.4)">Carregando...</div>
 </header>
 
-<!-- BANNER INSTALAR -->
 <div id="banner-instalar" style="display:none;background:#EFF6FF;border-bottom:1px solid #BFDBFE;padding:10px 16px;">
   <button onclick="abrirModalInstalar()" style="width:100%;padding:11px;background:var(--blue);color:white;border:none;border-radius:12px;font-family:'Sora',sans-serif;font-size:14px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width:17px;height:17px;"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
@@ -280,40 +264,29 @@
   </button>
 </div>
 
-<!-- NAV TABS -->
 <div class="nav-tabs">
   <div class="nav-tab active" onclick="mostrarAba('convocacoes', this)">📋 Convocações</div>
   <div class="nav-tab" onclick="mostrarAba('ferias', this)">🏖️ Férias</div>
 </div>
 
-<!-- TOAST -->
 <div class="toast" id="toast"></div>
 
 <main>
-  <!-- ABA CONVOCAÇÕES -->
   <div id="aba-convocacoes" class="aba-content">
     <div id="sec-apv" style="display:none;margin-bottom:16px">
       <div class="sec-titulo">🔔 Solicitações de entrada</div>
       <div id="lst-apv"></div>
     </div>
-
     <div class="card">
       <div class="card-titulo">Meu Grupo <span class="badge" id="grp-badge">—</span></div>
       <ul id="lst-grp" style="list-style:none"><div class="skel"></div></ul>
       <button class="btn-criar" onclick="criarGrupo()">+ Criar novo grupo</button>
     </div>
-
     <div class="sec-titulo" style="margin-bottom:10px">Minha próxima convocação</div>
     <div id="prox"></div>
-
-    <div class="sec-titulo" style="margin-top:20px">
-      Todas as convocações
-      <span style="font-size:12px;font-weight:400;color:var(--light)" id="total"></span>
-    </div>
+    <div class="sec-titulo" style="margin-top:20px">Todas as convocações <span style="font-size:12px;font-weight:400;color:var(--light)" id="total"></span></div>
     <div id="lst-ev"><div class="skel"></div><div class="skel"></div></div>
   </div>
-
-  <!-- ABA FÉRIAS -->
   <div id="aba-ferias" class="aba-content" style="display:none">
     <div class="card">
       <div class="card-titulo">Minhas Ausências</div>
@@ -323,10 +296,7 @@
   </div>
 </main>
 
-<button id="fab" onclick="abrirScanner()">
-  <svg viewBox="0 0 24 24"><path d="M9 3H5a2 2 0 00-2 2v4m6-6h10a2 2 0 012 2v4M9 3v18m0 0h10a2 2 0 002-2V9M9 21H5a2 2 0 01-2-2V9m0 0h18"/></svg>
-</button>
-
+<button id="fab" onclick="abrirScanner()"><svg viewBox="0 0 24 24"><path d="M9 3H5a2 2 0 00-2 2v4m6-6h10a2 2 0 012 2v4M9 3v18m0 0h10a2 2 0 002-2V9M9 21H5a2 2 0 01-2-2V9m0 0h18"/></svg></button>
 <button class="btn-fab-admin" id="btn-fab-admin" onclick="abrirAdmin()" title="Painel Admin">🛡️</button>
 
 <!-- MODAL EVENTO -->
@@ -335,10 +305,7 @@
     <div class="handle" onclick="fecharMod()"></div>
     <div class="mod-titulo" id="mod-tit">Evento</div>
     <div class="mod-sub" id="mod-sub">Data e hora</div>
-    <div class="mod-sec">
-      <h3>Convocados <span id="admin-badge-conv" style="display:none" class="admin-badge">Admin</span></h3>
-      <div id="mod-conv"></div>
-    </div>
+    <div class="mod-sec"><h3>Convocados <span id="admin-badge-conv" style="display:none" class="admin-badge">Admin</span></h3><div id="mod-conv"></div></div>
     <div style="display:flex;gap:8px;margin-top:16px">
       <button class="btn-ag" id="mod-ag" style="flex:1;margin-top:0">📅 Agenda</button>
       <button id="mod-trocar" style="flex:1;padding:12px;background:#fff7ed;color:#c2410c;border:1.5px solid #fed7aa;border-radius:10px;font-size:14px;cursor:pointer;font-weight:600;display:none;">🔄 Trocar</button>
@@ -352,12 +319,9 @@
 <div id="trocar-ov">
   <div class="trocar-box">
     <h3>🔄 Trocar escala</h3>
-    <p id="trocar-desc">Escolha quem vai te substituir. Essa pessoa será notificada.</p>
+    <p id="trocar-desc">Escolha quem vai te substituir.</p>
     <div class="trocar-membros" id="trocar-lista"></div>
-    <div class="trocar-btns">
-      <button class="btn-cancel" onclick="fecharTrocar()">Cancelar</button>
-      <button class="btn-salvar" style="background:#c2410c" id="trocar-confirmar">🔄 Confirmar troca</button>
-    </div>
+    <div class="trocar-btns"><button class="btn-cancel" onclick="fecharTrocar()">Cancelar</button><button class="btn-salvar" style="background:#c2410c" id="trocar-confirmar">🔄 Confirmar troca</button></div>
   </div>
 </div>
 
@@ -365,11 +329,8 @@
 <div class="ov-center" id="ferias-consent-ov">
   <div class="box-center">
     <h3>Registrar Período</h3>
-    <p>Você está prestes a registrar um período de férias, licença ou abono. Isso afetará suas convocações durante este período.</p>
-    <div class="btns-row">
-      <button class="btn-cancel" onclick="document.getElementById('ferias-consent-ov').classList.remove('on')">Cancelar</button>
-      <button class="btn-salvar" onclick="abrirFormFerias()">Continuar</button>
-    </div>
+    <p>Você está prestes a registrar um período de férias, licença ou abono.</p>
+    <div class="btns-row"><button class="btn-cancel" onclick="document.getElementById('ferias-consent-ov').classList.remove('on')">Cancelar</button><button class="btn-salvar" onclick="abrirFormFerias()">Continuar</button></div>
   </div>
 </div>
 
@@ -377,26 +338,10 @@
 <div class="ov-center" id="ferias-form-ov">
   <div class="box-center">
     <h3>Datas do Período</h3>
-    <div class="field">
-      <label>Tipo</label>
-      <select id="ferias-tipo">
-        <option value="abono">Abono</option>
-        <option value="licenca">Licença</option>
-        <option value="ferias">Férias</option>
-      </select>
-    </div>
-    <div class="field">
-      <label>Data de início</label>
-      <input type="date" id="ferias-ini"/>
-    </div>
-    <div class="field">
-      <label>Data de término</label>
-      <input type="date" id="ferias-fim"/>
-    </div>
-    <div class="btns-row">
-      <button class="btn-cancel" onclick="document.getElementById('ferias-form-ov').classList.remove('on')">Cancelar</button>
-      <button class="btn-salvar" onclick="salvarFerias()">✓ Salvar</button>
-    </div>
+    <div class="field"><label>Tipo</label><select id="ferias-tipo"><option value="abono">Abono</option><option value="licenca">Licença</option><option value="ferias">Férias</option></select></div>
+    <div class="field"><label>Data de início</label><input type="date" id="ferias-ini"/></div>
+    <div class="field"><label>Data de término</label><input type="date" id="ferias-fim"/></div>
+    <div class="btns-row"><button class="btn-cancel" onclick="document.getElementById('ferias-form-ov').classList.remove('on')">Cancelar</button><button class="btn-salvar" onclick="salvarFerias()">✓ Salvar</button></div>
   </div>
 </div>
 
@@ -405,22 +350,43 @@
   <div class="ms-box">
     <h3 id="ms-tit">Entrar no grupo</h3>
     <p>Você entrará no grupo imediatamente.</p>
-    <div class="ms-btns">
-      <button class="btn-cancel" onclick="document.getElementById('ms-ov').classList.remove('on')">Cancelar</button>
-      <button class="btn-salvar" id="ms-ok">Solicitar</button>
-    </div>
+    <div class="ms-btns"><button class="btn-cancel" onclick="document.getElementById('ms-ov').classList.remove('on')">Cancelar</button><button class="btn-salvar" id="ms-ok">Solicitar</button></div>
   </div>
 </div>
 
-<!-- PERFIL -->
+<!-- MODAL PERFIL (agora também edita nome) -->
 <div id="perfil-ov">
   <div class="perfil-box">
-    <h3>✏️ Editar perfil</h3>
-    <p>Informe seu nome completo exatamente como aparece nos documentos oficiais.</p>
+    <h3 id="perfil-titulo">✏️ Editar perfil</h3>
+    <p id="perfil-desc">Informe seu nome completo exatamente como aparece nos documentos oficiais.</p>
     <div class="perfil-field"><label>Nome completo</label><input type="text" id="perf-nome" placeholder="Ex: Israel Heleno de Castro"/></div>
     <div class="perfil-field"><label>Cargo</label><input type="text" id="perf-cargo" placeholder="Ex: Operador de Áudio"/></div>
     <div class="perfil-field"><label>Email para notificações</label><input type="email" id="perf-email" placeholder="seu@email.com"/></div>
     <div class="perfil-btns"><button class="btn-cancel" onclick="fecharPerfil()">Cancelar</button><button class="btn-salvar" onclick="salvarPerfil()">✓ Salvar</button></div>
+  </div>
+</div>
+
+<!-- MODAL EDITAR NOME (admin edita membro) -->
+<div id="editar-nome-ov">
+  <div class="editar-nome-box">
+    <h3 id="editar-nome-titulo">✏️ Corrigir Nome</h3>
+    <p id="editar-nome-desc">Corrija o nome do membro do grupo.</p>
+    <div class="field"><label>Nome completo</label><input type="text" id="editar-nome-input" placeholder="Nome completo"/></div>
+    <div class="field"><label>Cargo</label><input type="text" id="editar-cargo-input" placeholder="Cargo"/></div>
+    <div class="btns-row"><button class="btn-cancel" onclick="fecharEditarNome()">Cancelar</button><button class="btn-salvar" onclick="salvarEdicaoNome()">✓ Salvar</button></div>
+  </div>
+</div>
+
+<!-- MODAL COMPLETAR CADASTRO -->
+<div id="completar-cadastro-ov">
+  <div style="background:#fff;border-radius:24px;padding:28px 22px;width:100%;max-width:360px;animation:fu .3s ease;">
+    <h3 style="font-family:'Sora',sans-serif;font-size:17px;font-weight:700;color:var(--blue);margin-bottom:6px;">👋 Complete seu cadastro</h3>
+    <p style="font-size:13px;color:var(--light);margin-bottom:18px;">Para continuar, precisamos do seu nome completo e cargo.</p>
+    <div class="field"><label>Nome completo</label><input type="text" id="cadastro-nome" placeholder="Ex: Israel Heleno de Castro"/></div>
+    <div class="field"><label>Cargo</label><input type="text" id="cadastro-cargo" placeholder="Ex: Operador de Áudio"/></div>
+    <div class="field"><label>Email para notificações</label><input type="email" id="cadastro-email" placeholder="seu@email.com"/></div>
+    <p style="font-size:11px;color:var(--red);margin-bottom:12px;display:none;" id="cadastro-erro"></p>
+    <button class="btn-salvar" onclick="completarCadastro()" style="width:100%">✓ Salvar e continuar</button>
   </div>
 </div>
 
@@ -489,27 +455,17 @@ if('serviceWorker' in navigator){navigator.serviceWorker.getRegistrations().then
 firebase.initializeApp({apiKey:"AIzaSyAOpV5NFydHWwUwQKg0MANqMHVcXVDDqpQ",authDomain:"gestor-convocacoes-89823.firebaseapp.com",projectId:"gestor-convocacoes-89823",storageBucket:"gestor-convocacoes-89823.firebasestorage.app",messagingSenderId:"212389113483",appId:"1:212389113483:web:eb97eefe621df0cba66e8e"});
 const auth=firebase.auth();const db=firebase.firestore();
 
-// ══════════════════════════════════════════════════════════════
-// CONFIGURAÇÃO EMAILJS
-// ══════════════════════════════════════════════════════════════
-const EMAIL_CONFIG = {
-  publicKey: 'mXZPykI5Nr2COjWr0',
-  serviceId: 'service_pam1xgd',
-  templateId: 'template_3926tbq'
-};
+const EMAIL_CONFIG={publicKey:'mXZPykI5Nr2COjWr0',serviceId:'service_pam1xgd',templateId:'template_3926tbq'};
 
 let eu=null,grupoId=null,ocrDados=null,matches=[],camStream=null,eventoTroca=null,substitutoSelecionado=null,eventoAtualMod=null,nomesEditaveis=[];
-let notifAtual=null,filaNotifs=[],listaAusencias=[];
+let notifAtual=null,filaNotifs=[],listaAusencias=[],membroEditando=null;
 let toastTimeout;
 
 function mostrarToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');clearTimeout(toastTimeout);toastTimeout=setTimeout(()=>t.classList.remove('show'),2500);}
 function lev(a,b){if(a===b)return 0;const m=a.length,n=b.length;const dp=Array.from({length:m+1},(_,i)=>[i,...Array(n).fill(0)]);for(let j=0;j<=n;j++)dp[0][j]=j;for(let i=1;i<=m;i++)for(let j=1;j<=n;j++)dp[i][j]=a[i-1]===b[j-1]?dp[i-1][j-1]:1+Math.min(dp[i-1][j],dp[i][j-1],dp[i-1][j-1]);return dp[m][n];}
 function mostrarAba(aba,el){document.querySelectorAll('.aba-content').forEach(e=>e.style.display='none');document.getElementById('aba-'+aba).style.display='block';document.querySelectorAll('.nav-tab').forEach(e=>e.classList.remove('active'));if(el)el.classList.add('active');if(aba==='ferias')carregarFerias();}
 
-// Inicializar EmailJS
-(function() {
-  emailjs.init(EMAIL_CONFIG.publicKey);
-})();
+(function(){emailjs.init(EMAIL_CONFIG.publicKey);})();
 
 auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL).then(()=>{
   let authOk=false;const T=setTimeout(()=>{if(!authOk)window.location.replace('login.html');},10000);
@@ -522,97 +478,125 @@ auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL).then(()=>{
       verificarInstalacao();iniciarNotificacoes();carregarGrupos();
       if(eu.grupo_id){grupoId=eu.grupo_id;carregarEventos();verificarAprovacoes();verificarNotificacoesPendentes();fetchAusencias();iniciarVerificacaoLembretes();}
       else{document.getElementById('lst-ev').innerHTML='<p style="color:var(--light);font-size:14px;padding:20px;text-align:center">Entre em um grupo para ver convocações.</p>';document.getElementById('prox').innerHTML='<div class="card-vazio">Entre em um grupo para ver suas convocações.</div>';}
+      verificarCadastroCompleto();
     }catch(err){console.error(err);clearTimeout(T);window.location.replace('login.html');}
   });
 }).catch(e=>console.error('Persistence:',e));
 
-// ── EMAILJS: ENVIAR LEMBRETES ────────────────────────────────────────
-async function enviarEmailLembrete(usuario, evento) {
-  if (!usuario.email) return false;
-  
-  const dt = new Date(evento.data_hora);
-  
-  const params = {
-    to_email: usuario.email,
-    nome_usuario: usuario.nome_completo,
-    titulo_evento: evento.titulo_evento || 'Evento',
-    data_evento: dt.toLocaleDateString('pt-BR'),
-    hora_evento: dt.toLocaleTimeString('pt-BR', {hour:'2-digit', minute:'2-digit'}),
-    local_evento: evento.local || 'A definir'
-  };
-  
-  try {
-    await emailjs.send(EMAIL_CONFIG.serviceId, EMAIL_CONFIG.templateId, params);
-    console.log(`Email enviado para ${usuario.nome_completo}`);
-    return true;
-  } catch (error) {
-    console.error('Erro ao enviar email:', error);
+// ── VERIFICAR CADASTRO COMPLETO ────────────────────────────────────
+function verificarCadastroCompleto(){
+  if(!eu.nome_completo||eu.nome_completo.trim().length<5||!eu.cargo){
+    document.getElementById('cadastro-nome').value=eu.nome_completo||'';
+    document.getElementById('cadastro-cargo').value=eu.cargo||'';
+    document.getElementById('cadastro-email').value=eu.email||'';
+    document.getElementById('completar-cadastro-ov').classList.add('on');
     return false;
   }
-}
-
-async function verificarLembretesAmanha() {
-  if (!grupoId) return;
-  
-  const amanha = new Date();
-  amanha.setDate(amanha.getDate() + 1);
-  const amanhaStr = amanha.toISOString().split('T')[0];
-  
-  const hoje = new Date().toISOString().split('T')[0];
-  const jaEnviou = localStorage.getItem(`lembretes_${hoje}`);
-  if (jaEnviou) return;
-  
-  try {
-    const eventosSnap = await db.collection('eventos').where('grupo_id', '==', grupoId).get();
-    const eventosAmanha = eventosSnap.docs.map(d => ({id: d.id, ...d.data()})).filter(ev => ev.data_hora && ev.data_hora.startsWith(amanhaStr));
-    if (eventosAmanha.length === 0) return;
-    
-    const usuariosSnap = await db.collection('usuarios').where('grupo_id', '==', grupoId).get();
-    const usuarios = usuariosSnap.docs.map(d => ({uid: d.id, ...d.data()}));
-    
-    let enviados = 0;
-    for (const evento of eventosAmanha) {
-      for (const nome of (evento.lista_convocados || [])) {
-        const usuario = encontrarUsuarioPorNome(usuarios, nome);
-        if (usuario && usuario.email) {
-          const sucesso = await enviarEmailLembrete(usuario, evento);
-          if (sucesso) enviados++;
-        }
-      }
-    }
-    
-    localStorage.setItem(`lembretes_${hoje}`, 'true');
-    console.log(`${enviados} lembretes enviados`);
-  } catch (error) {
-    console.error('Erro ao verificar lembretes:', error);
+  const palavras=eu.nome_completo.trim().split(/\s+/);
+  if(palavras.length<2){
+    document.getElementById('cadastro-nome').value=eu.nome_completo||'';
+    document.getElementById('cadastro-cargo').value=eu.cargo||'';
+    document.getElementById('cadastro-email').value=eu.email||'';
+    document.getElementById('cadastro-erro').textContent='⚠️ Por favor, informe seu nome COMPLETO (nome e sobrenome)';
+    document.getElementById('cadastro-erro').style.display='block';
+    document.getElementById('completar-cadastro-ov').classList.add('on');
+    return false;
   }
+  return true;
 }
 
-function encontrarUsuarioPorNome(usuarios, nomeConvocado) {
-  const norm = s => s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9\s]/g, '').trim();
-  const nomeNorm = norm(nomeConvocado);
-  return usuarios.find(u => {
-    const nomes = [u.nome_completo, ...(u.nomes_conhecidos || [])];
-    return nomes.some(n => norm(n) === nomeNorm);
-  });
+async function completarCadastro(){
+  const nome=document.getElementById('cadastro-nome').value.trim();
+  const cargo=document.getElementById('cadastro-cargo').value.trim();
+  const email=document.getElementById('cadastro-email').value.trim();
+  const erroEl=document.getElementById('cadastro-erro');
+  if(!nome||nome.length<3){erroEl.textContent='⚠️ Informe seu nome completo';erroEl.style.display='block';return;}
+  if(nome.split(/\s+/).length<2){erroEl.textContent='⚠️ Por favor, informe nome e sobrenome';erroEl.style.display='block';return;}
+  if(!cargo||cargo.length<2){erroEl.textContent='⚠️ Informe seu cargo';erroEl.style.display='block';return;}
+  try{
+    await db.collection('usuarios').doc(eu.uid).update({nome_completo:nome,cargo:cargo,email:email||null,nomes_conhecidos:firebase.firestore.FieldValue.arrayUnion(nome)});
+    eu.nome_completo=nome;eu.cargo=cargo;eu.email=email;
+    document.getElementById('h-user').textContent=nome+' · '+cargo;
+    document.getElementById('completar-cadastro-ov').classList.remove('on');
+    mostrarToast('✅ Cadastro atualizado!');
+    if(grupoId){carregarEventos();}carregarGrupos();
+  }catch(error){console.error('Erro ao salvar:',error);alert('Erro ao salvar. Tente novamente.');}
 }
 
-function iniciarVerificacaoLembretes() {
-  verificarLembretesAmanha();
-  setInterval(verificarLembretesAmanha, 60 * 60 * 1000);
+// ── EDITAR NOME DE MEMBRO ──────────────────────────────────────────
+function abrirEditarNome(uid,nomeAtual,cargoAtual,isSelf){
+  membroEditando={uid,isSelf};
+  document.getElementById('editar-nome-titulo').textContent=isSelf?'✏️ Corrigir Meu Nome':'✏️ Editar Membro';
+  document.getElementById('editar-nome-desc').textContent=isSelf?'Corrija seu nome como aparece nos documentos.':'Edite o nome e cargo do membro.';
+  document.getElementById('editar-nome-input').value=nomeAtual||'';
+  document.getElementById('editar-cargo-input').value=cargoAtual||'';
+  document.getElementById('editar-nome-ov').classList.add('on');
+}
+function fecharEditarNome(){document.getElementById('editar-nome-ov').classList.remove('on');membroEditando=null;}
+
+async function salvarEdicaoNome(){
+  const novoNome=document.getElementById('editar-nome-input').value.trim();
+  const novoCargo=document.getElementById('editar-cargo-input').value.trim();
+  if(!novoNome||novoNome.length<3){alert('Informe um nome válido');return;}
+  if(!novoCargo||novoCargo.length<2){alert('Informe o cargo');return;}
+  try{
+    await db.collection('usuarios').doc(membroEditando.uid).update({nome_completo:novoNome,cargo:novoCargo,nomes_conhecidos:firebase.firestore.FieldValue.arrayUnion(novoNome)});
+    if(membroEditando.uid===eu.uid){eu.nome_completo=novoNome;eu.cargo=novoCargo;document.getElementById('h-user').textContent=novoNome+' · '+novoCargo;}
+    fecharEditarNome();mostrarToast('✅ Nome atualizado!');
+    if(grupoId){carregarEventos();if(eu.is_admin)carregarMembrosAdmin();}
+  }catch(error){console.error('Erro ao salvar:',error);alert('Erro ao salvar.');}
 }
 
-// ── FÉRIAS & AUSÊNCIAS ────────────────────────────────────────────────
+function abrirPerfil(){
+  abrirEditarNome(eu.uid,eu.nome_completo||'',eu.cargo||'',true);
+}
+function fecharPerfil(){fecharEditarNome();}
+async function salvarPerfil(){await salvarEdicaoNome();}
+
+// ── EMAILJS ────────────────────────────────────────────────────────
+async function enviarEmailLembrete(usuario,evento){
+  if(!usuario.email)return false;
+  const dt=new Date(evento.data_hora);
+  const params={to_email:usuario.email,nome_usuario:usuario.nome_completo,titulo_evento:evento.titulo_evento||'Evento',data_evento:dt.toLocaleDateString('pt-BR'),hora_evento:dt.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'}),local_evento:evento.local||'A definir'};
+  try{await emailjs.send(EMAIL_CONFIG.serviceId,EMAIL_CONFIG.templateId,params);console.log(`Email enviado para ${usuario.nome_completo}`);return true;}
+  catch(error){console.error('Erro ao enviar email:',error);return false;}
+}
+
+async function verificarLembretesAmanha(){
+  if(!grupoId)return;
+  const amanha=new Date();amanha.setDate(amanha.getDate()+1);const amanhaStr=amanha.toISOString().split('T')[0];
+  const hoje=new Date().toISOString().split('T')[0];
+  if(localStorage.getItem(`lembretes_${hoje}`))return;
+  try{
+    const eventosSnap=await db.collection('eventos').where('grupo_id','==',grupoId).get();
+    const eventosAmanha=eventosSnap.docs.map(d=>({id:d.id,...d.data()})).filter(ev=>ev.data_hora&&ev.data_hora.startsWith(amanhaStr));
+    if(eventosAmanha.length===0)return;
+    const usuariosSnap=await db.collection('usuarios').where('grupo_id','==',grupoId).get();
+    const usuarios=usuariosSnap.docs.map(d=>({uid:d.id,...d.data()}));
+    let enviados=0;
+    for(const evento of eventosAmanha){for(const nome of(evento.lista_convocados||[])){const usuario=encontrarUsuarioPorNome(usuarios,nome);if(usuario&&usuario.email){if(await enviarEmailLembrete(usuario,evento))enviados++;}}}
+    localStorage.setItem(`lembretes_${hoje}`,'true');console.log(`${enviados} lembretes enviados`);
+  }catch(error){console.error('Erro ao verificar lembretes:',error);}
+}
+
+function encontrarUsuarioPorNome(usuarios,nomeConvocado){
+  const norm=s=>s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9\s]/g,'').trim();
+  return usuarios.find(u=>{const nomes=[u.nome_completo,...(u.nomes_conhecidos||[])];return nomes.some(n=>norm(n)===norm(nomeConvocado));});
+}
+
+function iniciarVerificacaoLembretes(){verificarLembretesAmanha();setInterval(verificarLembretesAmanha,60*60*1000);}
+
+// ── FÉRIAS ─────────────────────────────────────────────────────────
 async function fetchAusencias(){if(!grupoId)return;const hojeStr=new Date().toISOString().split('T')[0];const snap=await db.collection('ausencias').where('grupo_id','==',grupoId).where('data_fim','>=',hojeStr).get();listaAusencias=snap.docs.map(d=>({id:d.id,...d.data()}));}
-async function carregarFerias(){await fetchAusencias();const lst=document.getElementById('lst-ausencias');lst.innerHTML='';const ordenados=listaAusencias.sort((a,b)=>new Date(a.data_inicio)-new Date(b.data_inicio));if(ordenados.length===0){lst.innerHTML='<p style="color:var(--light);font-size:14px;padding:20px;text-align:center">Nenhum período registrado para os próximos dias.</p>';return;}
+async function carregarFerias(){await fetchAusencias();const lst=document.getElementById('lst-ausencias');lst.innerHTML='';const ordenados=listaAusencias.sort((a,b)=>new Date(a.data_inicio)-new Date(b.data_inicio));if(ordenados.length===0){lst.innerHTML='<p style="color:var(--light);font-size:14px;padding:20px;text-align:center">Nenhum período registrado.</p>';return;}
   ordenados.forEach(aus=>{let dtIni=new Date(aus.data_inicio+"T12:00:00");let dtFim=new Date(aus.data_fim+"T12:00:00");let icone=aus.tipo==='ferias'?'🏖️':(aus.tipo==='licenca'?'🏥':'⏱️');const div=document.createElement('div');div.className=`aus-card tipo-${aus.tipo}`;div.innerHTML=`<div class="aus-icon">${icone}</div><div class="aus-info"><div class="aus-nome">${aus.nome_completo}</div><div class="aus-detalhe">De ${dtIni.toLocaleDateString('pt-BR')} a ${dtFim.toLocaleDateString('pt-BR')}</div><div class="aus-tipo">${aus.tipo}</div></div>${(eu.is_admin||eu.uid===aus.uid)?`<button class="btn-cancel" style="border:none;color:var(--red);padding:5px;max-width:40px;" onclick="excluirFerias('${aus.id}')">🗑️</button>`:''}`;lst.appendChild(div);});}
 function iniciarAddFerias(){document.getElementById('ferias-consent-ov').classList.add('on');}
 function abrirFormFerias(){document.getElementById('ferias-consent-ov').classList.remove('on');document.getElementById('ferias-form-ov').classList.add('on');document.getElementById('ferias-ini').value="";document.getElementById('ferias-fim').value="";document.getElementById('ferias-tipo').value="abono";}
-async function salvarFerias(){const tipo=document.getElementById('ferias-tipo').value;const iniStr=document.getElementById('ferias-ini').value;const fimStr=document.getElementById('ferias-fim').value;if(!iniStr||!fimStr){alert("Preencha ambas as datas.");return;}const dtIni=new Date(iniStr+"T12:00:00");const dtFim=new Date(fimStr+"T12:00:00");if(dtIni>dtFim){alert("A data de término não pode ser anterior ao início.");return;}const diffTime=Math.abs(dtFim-dtIni);const diffDays=Math.ceil(diffTime/(1000*60*60*24))+1;if(tipo==='abono'&&diffDays<1){alert("Abono requer no mínimo 1 dia.");return;}if(tipo==='licenca'&&diffDays<2){alert("Licença requer no mínimo 2 dias.");return;}if(tipo==='ferias'&&diffDays<5){alert("Férias requer no mínimo 5 dias.");return;}await db.collection('ausencias').add({uid:eu.uid,nome_completo:eu.nome_completo,grupo_id:grupoId,tipo:tipo,data_inicio:iniStr,data_fim:fimStr,criado_em:firebase.firestore.FieldValue.serverTimestamp()});document.getElementById('ferias-form-ov').classList.remove('on');mostrarToast("✅ Período registrado com sucesso!");carregarFerias();}
+async function salvarFerias(){const tipo=document.getElementById('ferias-tipo').value;const iniStr=document.getElementById('ferias-ini').value;const fimStr=document.getElementById('ferias-fim').value;if(!iniStr||!fimStr){alert("Preencha ambas as datas.");return;}const dtIni=new Date(iniStr+"T12:00:00");const dtFim=new Date(fimStr+"T12:00:00");if(dtIni>dtFim){alert("A data de término não pode ser anterior ao início.");return;}const diffTime=Math.abs(dtFim-dtIni);const diffDays=Math.ceil(diffTime/(1000*60*60*24))+1;if(tipo==='abono'&&diffDays<1){alert("Abono requer no mínimo 1 dia.");return;}if(tipo==='licenca'&&diffDays<2){alert("Licença requer no mínimo 2 dias.");return;}if(tipo==='ferias'&&diffDays<5){alert("Férias requer no mínimo 5 dias.");return;}await db.collection('ausencias').add({uid:eu.uid,nome_completo:eu.nome_completo,grupo_id:grupoId,tipo:tipo,data_inicio:iniStr,data_fim:fimStr,criado_em:firebase.firestore.FieldValue.serverTimestamp()});document.getElementById('ferias-form-ov').classList.remove('on');mostrarToast("✅ Período registrado!");carregarFerias();}
 async function excluirFerias(id){if(!confirm("Deseja apagar este registro?"))return;await db.collection('ausencias').doc(id).delete();carregarFerias();}
 function verificarStatusAusencia(uid,dataEvento){if(!uid||!dataEvento)return null;const dataStr=dataEvento.split('T')[0];return listaAusencias.find(aus=>aus.uid===uid&&aus.data_inicio<=dataStr&&aus.data_fim>=dataStr)||null;}
 
-// ── GRUPOS ────────────────────────────────────────────────────────────
+// ── GRUPOS ─────────────────────────────────────────────────────────
 async function carregarGrupos(){const snap=await db.collection('grupos').get();const lst=document.getElementById('lst-grp');lst.innerHTML='';if(snap.empty){lst.innerHTML='<p style="color:var(--light);font-size:14px;text-align:center">Nenhum grupo ainda.</p>';return;}
   for(const d of snap.docs){const g={id:d.id,...d.data()};const membrosSnap=await db.collection('usuarios').where('grupo_id','==',g.id).get();const totalMembros=membrosSnap.size;if(totalMembros!==(g.membros||0)){db.collection('grupos').doc(g.id).update({membros:totalMembros});}
     if(g.id===grupoId){const admins=g.admins||[g.criado_por];if(admins.includes(eu.uid)||g.criado_por===eu.uid){eu.is_admin=true;document.getElementById('btn-fab-admin').classList.add('on');}}
@@ -621,22 +605,25 @@ async function carregarGrupos(){const snap=await db.collection('grupos').get();c
 function solicitarEntrada(gId,gNome){document.getElementById('ms-tit').textContent='Entrar em "'+gNome+'"';document.getElementById('ms-ov').classList.add('on');document.getElementById('ms-ok').onclick=async()=>{await db.collection('usuarios').doc(eu.uid).update({grupo_id:gId});const snap=await db.collection('grupos').doc(gId).get();await db.collection('grupos').doc(gId).update({membros:(snap.data().membros||0)+1});document.getElementById('ms-ov').classList.remove('on');eu.grupo_id=gId;grupoId=gId;carregarGrupos();carregarEventos();verificarAprovacoes();};}
 async function criarGrupo(){const nome=prompt('Nome do novo grupo:');if(!nome)return;const ref=await db.collection('grupos').add({nome:nome.trim(),criado_por:eu.uid,criado_em:firebase.firestore.FieldValue.serverTimestamp(),membros:1,admins:[eu.uid]});await db.collection('usuarios').doc(eu.uid).update({grupo_id:ref.id,is_admin:true});eu.grupo_id=ref.id;eu.is_admin=true;grupoId=ref.id;carregarGrupos();carregarEventos();document.getElementById('btn-fab-admin').classList.add('on');}
 
-// ── ADMIN ─────────────────────────────────────────────────────────────
+// ── ADMIN ──────────────────────────────────────────────────────────
 function abrirAdmin(){document.getElementById('admin-ov').classList.add('on');carregarMembrosAdmin();}
 function fecharAdmin(){document.getElementById('admin-ov').classList.remove('on');}
 async function carregarMembrosAdmin(){const lst=document.getElementById('admin-membros');lst.innerHTML='<div class="skel"></div><div class="skel"></div>';const grupoSnap=await db.collection('grupos').doc(grupoId).get();const admins=grupoSnap.data().admins||[grupoSnap.data().criado_por];const snap=await db.collection('usuarios').where('grupo_id','==',grupoId).get();const membros=snap.docs.map(d=>({id:d.id,...d.data()}));document.getElementById('admin-total').textContent=membros.length+' membro(s)';lst.innerHTML='';
   membros.forEach(m=>{const isAdmin=admins.includes(m.uid);const isSelf=m.uid===eu.uid;const card=document.createElement('div');card.className='membro-card';
-    card.innerHTML=`<div class="membro-avatar">${isAdmin?'🛡️':'👤'}</div><div class="membro-info"><div class="membro-nome">${m.nome_completo}</div><div class="membro-cargo">${m.cargo||'Sem cargo'}</div><span class="membro-badge ${isAdmin?'badge-admin':'badge-membro'}">${isAdmin?'Admin':'Membro'}</span></div>${!isSelf?`<div class="membro-acoes">${!isAdmin?`<button class="btn-admin-sm btn-promover" onclick="promoverAdmin('${m.uid}','${m.nome_completo}')">⬆ Admin</button>`:''}${isAdmin?`<button class="btn-admin-sm btn-rebaixar" onclick="rebaixarAdmin('${m.uid}','${m.nome_completo}')">⬇ Membro</button>`:''}<button class="btn-admin-sm btn-expulsar" onclick="expulsarMembro('${m.uid}','${m.nome_completo}')">✕ Expulsar</button></div>`:'<div style="font-size:12px;color:var(--light)">Você</div>'}`;lst.appendChild(card);});}
+    card.innerHTML=`<div class="membro-avatar">${isAdmin?'🛡️':'👤'}</div><div class="membro-info"><div class="membro-nome">${m.nome_completo}</div><div class="membro-cargo">${m.cargo||'Sem cargo'}</div><span class="membro-badge ${isAdmin?'badge-admin':'badge-membro'}">${isAdmin?'Admin':'Membro'}</span></div>
+    ${!isSelf?`<div class="membro-acoes"><button class="btn-admin-sm btn-editar-membro" onclick="abrirEditarNome('${m.uid}','${m.nome_completo.replace(/'/g,"\\'")}','${(m.cargo||'').replace(/'/g,"\\'")}',false)">✏️ Editar</button>${!isAdmin?`<button class="btn-admin-sm btn-promover" onclick="promoverAdmin('${m.uid}','${m.nome_completo}')">⬆ Admin</button>`:''}${isAdmin?`<button class="btn-admin-sm btn-rebaixar" onclick="rebaixarAdmin('${m.uid}','${m.nome_completo}')">⬇ Membro</button>`:''}<button class="btn-admin-sm btn-expulsar" onclick="expulsarMembro('${m.uid}','${m.nome_completo}')">✕ Expulsar</button></div>`
+    :`<div style="display:flex;flex-direction:column;gap:6px;flex-shrink:0;"><button class="btn-admin-sm btn-editar-membro" onclick="abrirEditarNome('${m.uid}','${m.nome_completo.replace(/'/g,"\\'")}','${(m.cargo||'').replace(/'/g,"\\'")}',true)">✏️ Editar</button><div style="font-size:11px;color:var(--light);text-align:center;">Você</div></div>`}`;
+    lst.appendChild(card);});}
 async function promoverAdmin(uid,nome){if(!confirm('Promover '+nome+' a admin?'))return;const snap=await db.collection('grupos').doc(grupoId).get();const data=snap.data();let admins=data.admins||[data.criado_por];if(!admins.includes(uid))admins.push(uid);if(!admins.includes(data.criado_por))admins.push(data.criado_por);await db.collection('grupos').doc(grupoId).update({admins});await db.collection('usuarios').doc(uid).update({is_admin:true});if(uid===eu.uid)eu.is_admin=true;carregarMembrosAdmin();}
 async function rebaixarAdmin(uid,nome){const snap=await db.collection('grupos').doc(grupoId).get();const data=snap.data();if(uid===data.criado_por){alert("O criador do grupo não pode perder o status de Admin.");return;}if(!confirm('Remover privilégio de admin de '+nome+'?'))return;const admins=(data.admins||[data.criado_por]).filter(a=>a!==uid);await db.collection('grupos').doc(grupoId).update({admins});await db.collection('usuarios').doc(uid).update({is_admin:false});if(uid===eu.uid){eu.is_admin=false;document.getElementById('btn-fab-admin').classList.remove('on');fecharAdmin();}carregarMembrosAdmin();}
 async function expulsarMembro(uid,nome){if(!confirm('Expulsar '+nome+' do grupo?'))return;await db.collection('usuarios').doc(uid).update({grupo_id:null,is_admin:false});const snap=await db.collection('grupos').doc(grupoId).get();const membros=Math.max(0,(snap.data().membros||1)-1);await db.collection('grupos').doc(grupoId).update({membros});carregarMembrosAdmin();carregarGrupos();}
 
-// ── APROVAÇÕES ────────────────────────────────────────────────────────
+// ── APROVAÇÕES ────────────────────────────────────────────────────
 async function verificarAprovacoes(){if(!grupoId)return;const snap=await db.collection('grupos').doc(grupoId).get();const solic=snap.data().solicitacoes||{};const entries=Object.entries(solic);if(!entries.length)return;document.getElementById('sec-apv').style.display='block';const lst=document.getElementById('lst-apv');lst.innerHTML='';entries.forEach(([uid,d])=>{const el=document.createElement('div');el.className='apv';el.innerHTML=`<div class="apv-nome">${d.nome}</div><div class="apv-cargo">${d.cargo}</div><div class="apv-btns"><button class="btn-apr" onclick="aprovar('${uid}','${d.nome}')">✓ Aprovar</button><button class="btn-rec" onclick="recusar('${uid}')">✗ Recusar</button></div>`;lst.appendChild(el);});}
 async function aprovar(uid,nome){await db.collection('usuarios').doc(uid).update({grupo_id:grupoId,solicitacoes:[]});const snap=await db.collection('grupos').doc(grupoId).get();const s=snap.data().solicitacoes||{};delete s[uid];await db.collection('grupos').doc(grupoId).update({solicitacoes:s,membros:(snap.data().membros||1)+1});verificarAprovacoes();mostrarToast(nome+' aprovado(a)!');}
 async function recusar(uid){const snap=await db.collection('grupos').doc(grupoId).get();const s=snap.data().solicitacoes||{};delete s[uid];await db.collection('grupos').doc(grupoId).update({solicitacoes:s});await db.collection('usuarios').doc(uid).update({solicitacoes:[]});verificarAprovacoes();}
 
-// ── EVENTOS ───────────────────────────────────────────────────────────
+// ── EVENTOS ────────────────────────────────────────────────────────
 async function carregarEventos(){if(!grupoId)return;const snap=await db.collection('eventos').where('grupo_id','==',grupoId).get();const agora=new Date();const evs=snap.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>new Date(a.data_hora)-new Date(b.data_hora));document.getElementById('total').textContent=evs.length+' total';
   const norm=s=>s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9\s]/g,'').trim();const stopwords=new Set(['de','da','do','das','dos','e','a','o','as','os']);const pwSig=s=>norm(s).split(/\s+/).filter(p=>p.length>1&&!stopwords.has(p));const euNomes=[eu.nome_completo,...(eu.nomes_conhecidos||[])];const euPalavras=pwSig(eu.nome_completo);
   function euSouConvocado(lista){return(lista||[]).some(n=>{if(euNomes.some(en=>norm(en)===norm(n)))return true;const pwN=pwSig(n);const emComum=pwN.filter(p=>euPalavras.some(pe=>p===pe||(p.length>=5&&lev(p,pe)<=1)));return emComum.length/Math.max(pwN.length,1)>=0.55;});}
@@ -659,7 +646,7 @@ function removerNomeAdmin(idx){if(confirm(`Remover "${nomesEditaveis[idx]}" da c
 function adicionarNomeAdmin(){const input=document.getElementById('input-novo-nome');const nome=input.value.trim();if(!nome){mostrarToast('Digite um nome');return;}nomesEditaveis.push(nome);input.value='';renderizarNomesAdmin(eventoAtualMod);mostrarToast(`✅ "${nome}" adicionado à lista`);}
 async function salvarNomesAdmin(){if(!eventoAtualMod)return;try{await db.collection('eventos').doc(eventoAtualMod.id).update({lista_convocados:nomesEditaveis});eventoAtualMod.lista_convocados=[...nomesEditaveis];mostrarToast('✅ Lista de convocados atualizada!');carregarEventos();}catch(e){console.error(e);alert('Erro ao salvar: '+e.message);}}
 
-// ── SCANNER E OCR ─────────────────────────────────────────────────────
+// ── SCANNER E OCR ──────────────────────────────────────────────────
 async function abrirScanner(){if(!grupoId){alert('Entre em um grupo primeiro.');return;}document.getElementById('scan-ov').classList.add('on');try{camStream=await navigator.mediaDevices.getUserMedia({video:{facingMode:'environment'}});document.getElementById('video').srcObject=camStream;}catch{alert('Câmera não disponível. Use a galeria.');}}
 function fecharScanner(){document.getElementById('scan-ov').classList.remove('on');if(camStream){camStream.getTracks().forEach(t=>t.stop());camStream=null;}}
 function capturar(){const v=document.getElementById('video');const c=document.createElement('canvas');c.width=v.videoWidth;c.height=v.videoHeight;c.getContext('2d').drawImage(v,0,0);c.toBlob(b=>processarFoto(b),'image/jpeg',.9);}
@@ -682,26 +669,21 @@ function confirmar(i,sim){if(sim){const m=matches[i];matches[i].tipo='exato';db.
 function fecharRv(){document.getElementById('rv-ov').classList.remove('on');ocrDados=null;matches=[];}
 async function salvar(){const titulo=document.getElementById('rv-tit').value.trim();const dataVal=document.getElementById('rv-data').value;if(!titulo||!dataVal){alert('Preencha título e data.');return;}await db.collection('eventos').add({id_verificacao:ocrDados?.id_ver||null,titulo_evento:titulo,data_hora:dataVal+':00',local:document.getElementById('rv-loc').value.trim(),lista_convocados:ocrDados?.nomes||[],grupo_id:grupoId,criado_por:eu.uid,criado_em:firebase.firestore.FieldValue.serverTimestamp()});fecharRv();const dtFmt=new Date(dataVal+':00').toLocaleDateString('pt-BR',{day:'2-digit',month:'short',year:'numeric'});const exatos=matches.filter(m=>m.tipo==='exato');for(const m of exatos){await db.collection('notificacoes').add({uid:m.usuario.uid,tipo:'convocado',nome_convocacao:m.nome,titulo_evento:titulo,data_hora:dataVal+':00',grupo_id:grupoId,respondido:false,criado_em:firebase.firestore.FieldValue.serverTimestamp()});if(m.usuario.uid===eu.uid){enviarNotificacaoPush('📋 Você foi convocado!',`${titulo} — ${dtFmt}`,'conv-'+Date.now());}}const parciais=matches.filter(m=>m.tipo==='parcial'||m.tipo==='por_cargo');for(const m of parciais){await db.collection('notificacoes').add({uid:m.usuario.uid,tipo:'confirmar',nome_convocacao:m.nome,titulo_evento:titulo,data_hora:dataVal+':00',grupo_id:grupoId,respondido:false,criado_em:firebase.firestore.FieldValue.serverTimestamp()});if(m.usuario.uid===eu.uid){enviarNotificacaoPush('❓ Você foi convocado?',`"${m.nome}" aparece em: ${titulo}`,'conf-'+Date.now());}}mostrarToast('✅ Convocação salva!');carregarEventos();verificarNotificacoesPendentes();}
 
-// ── NOTIFICAÇÕES ──────────────────────────────────────────────────────
+// ── NOTIFICAÇÕES ───────────────────────────────────────────────────
 async function iniciarNotificacoes(){if(!('serviceWorker' in navigator)||!('Notification' in window))return;await navigator.serviceWorker.register('/gestor-convocacoes/sw.js');await Notification.requestPermission();}
 function enviarNotificacaoPush(titulo,corpo,tag){if(Notification.permission==='granted'){new Notification(titulo,{body:corpo,tag:tag||'conv'});}}
 function verificarNotificacoesPendentes(){db.collection('notificacoes').where('uid','==',eu.uid).where('respondido','==',false).onSnapshot(snap=>{const docs=snap.docs;if(docs.length===0)return;snap.docChanges().forEach(async change=>{if(change.type==='added'){const n=change.doc.data();if(n.tipo==='substituicao'){enviarNotificacaoPush('🔄 Substituição escalada',`Você substitui ${n.substituindo} em ${n.titulo_evento}`);await change.doc.ref.update({respondido:true});carregarEventos();}}});const pendentes=docs.filter(d=>d.data().tipo==='confirmar'||d.data().tipo==='convocado');if(pendentes.length>0&&!document.getElementById('notif-ov').classList.contains('on')){mostrarProximaNotif();}});}
 async function mostrarProximaNotif(){const snap=await db.collection('notificacoes').where('uid','==',eu.uid).where('respondido','==',false).where('tipo','in',['confirmar','convocado']).get();filaNotifs=snap.docs.map(d=>({id:d.id,...d.data()}));if(filaNotifs.length===0){document.getElementById('notif-ov').classList.remove('on');return;}notifAtual=filaNotifs[0];document.getElementById('notif-ov').classList.add('on');document.getElementById('notif-titulo').textContent=notifAtual.tipo==='convocado'?'Você foi convocado!':'Você foi convocado?';document.getElementById('notif-desc').textContent=notifAtual.tipo==='convocado'?'Você está na lista deste evento:':`O nome "${notifAtual.nome_convocacao}" apareceu nesta convocação. É você?`;document.getElementById('notif-ev-titulo').textContent=notifAtual.titulo_evento||'Evento';try{const dt=new Date(notifAtual.data_hora);document.getElementById('notif-ev-data').textContent=fD(dt)+' às '+fH(dt);}catch(e){document.getElementById('notif-ev-data').textContent="";}}
 async function responderNotif(sim){if(!notifAtual)return;document.getElementById('notif-ov').classList.remove('on');await db.collection('notificacoes').doc(notifAtual.id).update({respondido:true});if(sim&&notifAtual.tipo==='confirmar'){await db.collection('usuarios').doc(eu.uid).update({nomes_conhecidos:firebase.firestore.FieldValue.arrayUnion(notifAtual.nome_convocacao)});eu.nomes_conhecidos=[...(eu.nomes_conhecidos||[]),notifAtual.nome_convocacao];mostrarToast(`✅ Anotado! O nome "${notifAtual.nome_convocacao}" agora te identifica automaticamente.`);carregarEventos();}notifAtual=null;setTimeout(mostrarProximaNotif,500);}
 
-// ── TROCAR ─────────────────────────────────────────────────────────────
+// ── TROCAR ─────────────────────────────────────────────────────────
 async function abrirTrocar(ev){eventoTroca=ev;substitutoSelecionado=null;document.getElementById('mod-ev').classList.remove('on');document.getElementById('trocar-desc').textContent=`Trocar sua escala em "${ev.titulo_evento}". Escolha quem vai te substituir:`;const snap=await db.collection('usuarios').where('grupo_id','==',grupoId).get();const lista=document.getElementById('trocar-lista');lista.innerHTML='';snap.forEach(d=>{const m=d.data();if(m.uid===eu.uid)return;const div=document.createElement('div');div.className='trocar-membro';div.innerHTML=`<span style="font-size:20px">👤</span><div><div style="font-weight:500">${m.nome_completo}</div><div style="font-size:12px;color:var(--light)">${m.cargo||''}</div></div>`;div.onclick=()=>{lista.querySelectorAll('.trocar-membro').forEach(el=>el.classList.remove('selecionado'));div.classList.add('selecionado');substitutoSelecionado=m;};lista.appendChild(div);});document.getElementById('trocar-confirmar').onclick=async()=>{if(!substitutoSelecionado){alert('Selecione um substituto.');return;}if(!confirm(`Confirmar troca: ${eu.nome_completo} → ${substitutoSelecionado.nome_completo}?`))return;const substitutos=[...(eventoTroca.substitutos||[]),{uid:substitutoSelecionado.uid,nome:substitutoSelecionado.nome_completo,substituindo:eu.nome_completo,em:new Date().toISOString()}];await db.collection('eventos').doc(eventoTroca.id).update({substitutos,lista_convocados:(eventoTroca.lista_convocados||[]).filter(n=>!euSouConvocadoNome(n))});await db.collection('notificacoes').add({uid:substitutoSelecionado.uid,tipo:'substituicao',nome_convocacao:substitutoSelecionado.nome_completo,titulo_evento:eventoTroca.titulo_evento||'Evento',data_hora:eventoTroca.data_hora,substituindo:eu.nome_completo,respondido:false,criado_em:firebase.firestore.FieldValue.serverTimestamp()});fecharTrocar();mostrarToast('✅ Troca confirmada!');carregarEventos();};document.getElementById('trocar-ov').classList.add('on');}
 function fecharTrocar(){document.getElementById('trocar-ov').classList.remove('on');eventoTroca=null;substitutoSelecionado=null;}
 function euSouConvocadoNome(nome){const norm=s=>s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9\s]/g,'').trim();const euNomes=[eu.nome_completo,...(eu.nomes_conhecidos||[])];return euNomes.some(en=>norm(en)===norm(nome));}
 
-// ── PERFIL ─────────────────────────────────────────────────────────────
+// ── UTILS ──────────────────────────────────────────────────────────
 function verificarInstalacao(){if(!window.matchMedia('(display-mode: standalone)').matches)document.getElementById('banner-instalar').style.display='block';}
 function abrirModalInstalar(){alert('📱 Android: Chrome → 3 pontinhos → Adicionar à tela inicial\n🍎 iPhone: Safari → Compartilhar → Adicionar à Tela de Início');}
-function abrirPerfil(){document.getElementById('perf-nome').value=eu.nome_completo||'';document.getElementById('perf-cargo').value=eu.cargo||'';document.getElementById('perf-email').value=eu.email||'';document.getElementById('perfil-ov').classList.add('on');}
-function fecharPerfil(){document.getElementById('perfil-ov').classList.remove('on');}
-async function salvarPerfil(){const nome=document.getElementById('perf-nome').value.trim();const cargo=document.getElementById('perf-cargo').value.trim();const email=document.getElementById('perf-email').value.trim();if(!nome||!cargo)return;await db.collection('usuarios').doc(eu.uid).update({nome_completo:nome,cargo,email,nomes_conhecidos:firebase.firestore.FieldValue.arrayUnion(nome)});eu.nome_completo=nome;eu.cargo=cargo;eu.email=email;document.getElementById('h-user').textContent=nome+' · '+cargo;fecharPerfil();mostrarToast('✅ Perfil atualizado!');carregarEventos();}
-
-// ── UTILS ──────────────────────────────────────────────────────────────
 function ics(ev){const ini=new Date(ev.data_hora);const fim=new Date(ini.getTime()+2*60*60*1000);const f=d=>d.toISOString().replace(/[-:]/g,'').split('.')[0]+'Z';const c=['BEGIN:VCALENDAR','VERSION:2.0','BEGIN:VEVENT','SUMMARY:'+(ev.titulo_evento||'Convocação'),'DTSTART:'+f(ini),'DTEND:'+f(fim),'END:VEVENT','END:VCALENDAR'].join('\r\n');const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([c],{type:'text/calendar'}));a.download='conv.ics';a.click();}
 function fD(d){return d.toLocaleDateString('pt-BR',{day:'2-digit',month:'short'});}
 function fH(d){return d.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});}
