@@ -102,7 +102,7 @@
     .btn-salvar{flex:1;padding:12px;background:var(--blue);border:none;border-radius:12px;color:#fff;font-size:14px;cursor:pointer;font-family:'Sora',sans-serif;font-weight:600}
     .btn-salvar:disabled{opacity:0.6;cursor:not-allowed}
 
-    /* SCANNER CORRIGIDO */
+    /* SCANNER CORRIGIDO - CENTRALIZADO */
     #scan-ov{position:fixed;inset:0;background:#000;z-index:300;display:none;flex-direction:column}
     #scan-ov.on{display:flex}
     .scan-hd{padding:14px 16px;display:flex;align-items:center;gap:10px;background:rgba(0,0,0,.8);flex-shrink:0}
@@ -117,11 +117,11 @@
     .c-bl{position:absolute;bottom:-2px;left:-2px;width:20px;height:20px;border:3px solid #fff;border-right:none;border-top:none;border-radius:0 0 0 8px}
     .c-br{position:absolute;bottom:-2px;right:-2px;width:20px;height:20px;border:3px solid #fff;border-left:none;border-top:none;border-radius:0 0 8px 0}
     .cam-hint{position:absolute;bottom:12px;left:50%;transform:translateX(-50%);color:rgba(255,255,255,.8);font-size:12px;white-space:nowrap}
-    .scan-ctrl{flex-shrink:0;padding:20px 16px 30px;background:rgba(0,0,0,.9);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px}
-    .btn-cap{width:64px;height:64px;border-radius:50%;background:#fff;border:4px solid rgba(255,255,255,.4);cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+    .scan-ctrl{flex-shrink:0;padding:24px 20px 32px;background:rgba(0,0,0,.9);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px}
+    .btn-cap{width:64px;height:64px;border-radius:50%;background:#fff;border:4px solid rgba(255,255,255,.4);cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin:0 auto}
     .btn-cap:active{transform:scale(0.95);background:#e2e8f0}
     .btn-cap svg{width:28px;height:28px;fill:var(--blue)}
-    .btn-gal{background:rgba(255,255,255,.15);border:none;color:#fff;padding:12px 24px;border-radius:12px;font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;width:80%;max-width:280px;flex-shrink:0}
+    .btn-gal{background:rgba(255,255,255,.15);border:none;color:#fff;padding:12px 24px;border-radius:12px;font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;width:auto;min-width:200px;flex-shrink:0;margin:0 auto}
     .btn-gal:active{background:rgba(255,255,255,.25)}
 
     #ocr-ov{position:fixed;inset:0;background:rgba(0,0,0,.7);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);z-index:500;display:none;flex-direction:column;align-items:center;justify-content:center;gap:20px}
@@ -298,7 +298,7 @@
 
 <footer>
   <p>Desenvolvido por <strong>Israel Heleno de Castro</strong></p>
-  <p>© 2026 Gestor de Convocações — v17.8</p>
+  <p>© 2026 Gestor de Convocações — v17.9</p>
 </footer>
 
 <!-- MODAIS -->
@@ -315,25 +315,10 @@
 
 <!-- SCANNER CORRIGIDO -->
 <div id="scan-ov">
-  <div class="scan-hd">
-    <button class="btn-x" onclick="fecharScanner()">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:20px;height:20px"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
-    </button>
-    <span>Escanear Convocação</span>
-  </div>
-  <div class="cam-wrap">
-    <video id="video" autoplay playsinline muted></video>
-    <div class="cam-mask">
-      <div class="cam-box">
-        <div class="c-bl"></div><div class="c-br"></div>
-        <div class="cam-hint">Enquadre o documento aqui</div>
-      </div>
-    </div>
-  </div>
+  <div class="scan-hd"><button class="btn-x" onclick="fecharScanner()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:20px;height:20px"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button><span>Escanear Convocação</span></div>
+  <div class="cam-wrap"><video id="video" autoplay playsinline muted></video><div class="cam-mask"><div class="cam-box"><div class="c-bl"></div><div class="c-br"></div><div class="cam-hint">Enquadre o documento aqui</div></div></div></div>
   <div class="scan-ctrl">
-    <button class="btn-cap" onclick="capturar()">
-      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3.2"/><path d="M9 2L7.17 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2h-3.17L15 2H9zm3 15c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5z"/></svg>
-    </button>
+    <button class="btn-cap" onclick="capturar()"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3.2"/><path d="M9 2L7.17 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2h-3.17L15 2H9zm3 15c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5z"/></svg></button>
     <input type="file" id="file-foto" accept="image/*" style="display:none" onchange="processarFoto(this.files[0])"/>
     <button class="btn-gal" onclick="document.getElementById('file-foto').click()">🖼️ Escolher da galeria</button>
   </div>
@@ -343,16 +328,7 @@
 <div id="rv-ov"><div class="rv-hd"><button class="btn-x" onclick="fecharRv()">✕</button><h2>Conferir dados</h2></div><div class="rv-body"><div class="rv-lbl">Título</div><div class="rv-val"><input type="text" id="rv-tit"/></div><div class="rv-lbl">Data/hora</div><div class="rv-val"><input type="datetime-local" id="rv-data"/></div><div class="rv-lbl">Local</div><div class="rv-val"><input type="text" id="rv-loc"/></div><div class="rv-lbl">Convocados</div><div id="rv-matches"></div><div class="rv-btns"><button class="btn-cancel" onclick="fecharRv()">Cancelar</button><button class="btn-salvar" onclick="salvar()">✓ Salvar</button></div></div></div>
 
 <!-- MODAL AJUSTAR SALDO -->
-<div class="ov-center" id="saldo-ajuste-ov">
-  <div class="box-center">
-    <h3>⚙️ Ajustar Saldo</h3>
-    <p style="font-size:13px;color:var(--light);margin-bottom:16px">Configure seus saldos e períodos aquisitivos.</p>
-    <div class="ajuste-bloco"><h4>🏖️ Períodos Aquisitivos de Férias</h4><div id="ajuste-periodos-ferias"></div><button class="btn-add-ajuste" onclick="adicionarPeriodoNoAjuste()">+ Adicionar período</button></div>
-    <div class="ajuste-bloco"><h4>⏱️ Abonos</h4><div class="field" style="margin-bottom:0"><label>Total de abonos disponíveis</label><input type="number" id="ajuste-abono" min="0" max="12" value="6"/></div></div>
-    <div class="ajuste-bloco"><h4>🏥 Licença</h4><div class="field" style="margin-bottom:0"><label>Total de dias de licença</label><input type="number" id="ajuste-licenca" min="0" max="180" value="90"/></div></div>
-    <div class="btns-row"><button class="btn-cancel" onclick="fecharAjusteSaldo()">Cancelar</button><button class="btn-salvar" onclick="salvarAjusteSaldo()">💾 Salvar</button></div>
-  </div>
-</div>
+<div class="ov-center" id="saldo-ajuste-ov"><div class="box-center"><h3>⚙️ Ajustar Saldo</h3><p style="font-size:13px;color:var(--light);margin-bottom:16px">Configure seus saldos e períodos aquisitivos.</p><div class="ajuste-bloco"><h4>🏖️ Períodos Aquisitivos de Férias</h4><div id="ajuste-periodos-ferias"></div><button class="btn-add-ajuste" onclick="adicionarPeriodoNoAjuste()">+ Adicionar período</button></div><div class="ajuste-bloco"><h4>⏱️ Abonos</h4><div class="field" style="margin-bottom:0"><label>Total de abonos disponíveis</label><input type="number" id="ajuste-abono" min="0" max="12" value="6"/></div></div><div class="ajuste-bloco"><h4>🏥 Licença</h4><div class="field" style="margin-bottom:0"><label>Total de dias de licença</label><input type="number" id="ajuste-licenca" min="0" max="180" value="90"/></div></div><div class="btns-row"><button class="btn-cancel" onclick="fecharAjusteSaldo()">Cancelar</button><button class="btn-salvar" onclick="salvarAjusteSaldo()">💾 Salvar</button></div></div></div>
 
 <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
@@ -386,9 +362,39 @@ auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL).then(()=>{
       if(eu.grupo_id){grupoId=eu.grupo_id;carregarEventos();verificarAprovacoes();verificarNotificacoesPendentes();fetchAusencias();iniciarVerificacaoLembretes();}
       else{document.getElementById('lst-ev').innerHTML='<p style="color:var(--light);padding:20px;text-align:center">Entre em um grupo para ver convocações.</p>';document.getElementById('prox').innerHTML='<div class="card-vazio">Entre em um grupo para ver suas convocações.</div>';}
       verificarCadastroCompleto();
+      limparEventosAntigos();
     }catch(err){console.error(err);clearTimeout(T);window.location.replace('login.html');}
   });
 }).catch(e=>console.error('Persistence:',e));
+
+// ── LIMPAR EVENTOS ANTIGOS (7 dias após encerramento) ────────────────
+async function limparEventosAntigos(){
+  if(!grupoId)return;
+  const agora=new Date();
+  const seteDiasAtras=new Date(agora);
+  seteDiasAtras.setDate(seteDiasAtras.getDate()-7);
+  
+  try{
+    const snap=await db.collection('eventos')
+      .where('grupo_id','==',grupoId)
+      .get();
+    
+    const eventosParaExcluir=snap.docs.filter(d=>{
+      const ev=d.data();
+      if(!ev.data_hora)return false;
+      const dataEvento=new Date(ev.data_hora);
+      return dataEvento<seteDiasAtras;
+    });
+    
+    for(const ev of eventosParaExcluir){
+      await ev.ref.delete();
+    }
+    
+    if(eventosParaExcluir.length>0){
+      console.log(`${eventosParaExcluir.length} eventos antigos removidos`);
+    }
+  }catch(e){}
+}
 
 // ── SALDO ───────────────────────────────────────────────────────────
 async function carregarSaldo(){
@@ -433,129 +439,32 @@ async function salvarFerias(){const tipo=document.getElementById('ferias-tipo').
 async function fetchAusencias(){if(!grupoId)return;const hojeStr=new Date().toISOString().split('T')[0];const snap=await db.collection('ausencias').where('grupo_id','==',grupoId).where('data_fim','>=',hojeStr).get();listaAusencias=snap.docs.map(d=>({id:d.id,...d.data()}));}
 function verificarStatusAusencia(uid,dataEvento){if(!uid||!dataEvento)return null;const dataStr=dataEvento.split('T')[0];return listaAusencias.find(aus=>aus.uid===uid&&aus.data_inicio<=dataStr&&aus.data_fim>=dataStr)||null;}
 
-// ── MATCH DE NOMES (CORRIGIDO) ──────────────────────────────────────
+// ── MATCH DE NOMES ──────────────────────────────────────────────────
 async function cruzar(nomes){
-  const snap=await db.collection('usuarios').where('grupo_id','==',grupoId).get();
-  const users=snap.docs.map(d=>d.data());
+  const snap=await db.collection('usuarios').where('grupo_id','==',grupoId).get();const users=snap.docs.map(d=>d.data());
   const norm=s=>s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9\s]/g,'').trim();
-  const st=new Set(['de','da','do','das','dos','e','a','o','as','os']);
-  const pwSig=s=>norm(s).split(/\s+/).filter(p=>p.length>1&&!st.has(p));
-  
-  function palavrasSimilares(a,b){
-    if(a===b)return true;
-    if(a.length<5||b.length<5)return false;
-    if(Math.abs(a.length-b.length)>1)return false;
-    return lev(a,b)<=1;
-  }
-
-  return nomes.map(nome=>{
-    const nn=norm(nome);
-    const pwNome=pwSig(nome);
-    
-    for(const u of users){
-      const todos=[u.nome_completo,...(u.nomes_conhecidos||[])];
-      if(todos.some(n=>norm(n)===nn)) return {tipo:'exato',nome,usuario:u};
-    }
-    
-    let melhorUser=null,melhorScore=0;
-    for(const u of users){
-      const pwUser=pwSig(u.nome_completo);
-      const palavrasBatem=pwNome.filter(p=>pwUser.some(pu=>palavrasSimilares(p,pu)));
-      const scoreOcr=palavrasBatem.length/Math.max(pwNome.length,1);
-      const scoreUser=palavrasBatem.length/Math.max(pwUser.length,1);
-      const scoreFinal=(scoreOcr*0.5)+(scoreUser*0.5);
-      if(scoreOcr>=0.7&&scoreUser>=0.5&&scoreFinal>melhorScore){melhorScore=scoreFinal;melhorUser=u;}
-    }
-    
-    if(melhorUser&&melhorScore>=0.8) return {tipo:'parcial',nome,usuario:melhorUser,score:melhorScore};
-    if(melhorUser&&melhorScore>=0.5) return {tipo:'baixa_confianca',nome,usuario:melhorUser,score:melhorScore};
-    return {tipo:'nao_encontrado',nome};
+  const st=new Set(['de','da','do','das','dos','e','a','o','as','os']);const pwSig=s=>norm(s).split(/\s+/).filter(p=>p.length>1&&!st.has(p));
+  function ps(a,b){if(a===b)return true;if(a.length<5||b.length<5)return false;if(Math.abs(a.length-b.length)>1)return false;return lev(a,b)<=1;}
+  return nomes.map(nome=>{const nn=norm(nome);const pwNome=pwSig(nome);
+    for(const u of users){if([u.nome_completo,...(u.nomes_conhecidos||[])].some(n=>norm(n)===nn))return{tipo:'exato',nome,usuario:u};}
+    let mu=null,ms=0;for(const u of users){const pwUser=pwSig(u.nome_completo);const pb=pwNome.filter(p=>pwUser.some(pu=>ps(p,pu)));const so=pb.length/Math.max(pwNome.length,1);const su=pb.length/Math.max(pwUser.length,1);const sf=(so*0.5)+(su*0.5);if(so>=0.7&&su>=0.5&&sf>ms){ms=sf;mu=u;}}
+    if(mu&&ms>=0.8)return{tipo:'parcial',nome,usuario:mu,score:ms};
+    if(mu&&ms>=0.5)return{tipo:'baixa_confianca',nome,usuario:mu,score:ms};
+    return{tipo:'nao_encontrado',nome};
   });
 }
-
 function renderMatches(){
-  document.getElementById('rv-matches').innerHTML=matches.length===0
-    ?'<p style="color:var(--light);padding:12px;background:#fff;border-radius:10px;">Nenhum nome identificado.</p>'
-    :matches.map((m,i)=>{
-      if(m.tipo==='exato'){
-        return `<div class="mi ok"><div class="mi-top"><span style="font-size:18px">✅</span><div><div class="mi-nome">${m.nome}</div><div class="mi-sub">→ ${m.usuario.nome_completo} (confirmado)</div></div></div><div class="mi-btns" style="padding-left:0"><button class="btn-desvincular" onclick="desvincularMatch(${i})">⚠️ Não é ${m.usuario.nome_completo.split(' ')[0]}</button></div></div>`;
-      }
-      if(m.tipo==='parcial'){
-        return `<div class="mi av"><div class="mi-top"><span style="font-size:18px">⚠️</span><div><div class="mi-nome">${m.nome}</div><div class="mi-sub">Provável: ${m.usuario.nome_completo} (${Math.round(m.score*100)}%)</div></div></div><div class="mi-btns"><button class="btn-sim" onclick="confirmar(${i},true)">✓ Confirmar</button><button class="btn-nao" onclick="confirmar(${i},false)">✗ Não é</button></div></div>`;
-      }
-      if(m.tipo==='baixa_confianca'){
-        return `<div class="mi no"><div class="mi-top"><span style="font-size:18px">❓</span><div><div class="mi-nome">${m.nome}</div><div class="mi-sub">Baixa confiança: Talvez ${m.usuario.nome_completo}? (${Math.round(m.score*100)}%)</div></div></div><div class="mi-btns"><button class="btn-sim" onclick="confirmar(${i},true)" style="font-size:11px">✓ É ${m.usuario.nome_completo.split(' ')[0]}</button><button class="btn-nao" onclick="confirmar(${i},false)">✗ Não é</button></div></div>`;
-      }
-      return `<div class="mi no"><div class="mi-top"><span style="font-size:18px">❓</span><div><div class="mi-nome">${m.nome}</div><div class="mi-sub">Não encontrado no grupo</div></div></div></div>`;
-    }).join('');
+  document.getElementById('rv-matches').innerHTML=matches.length===0?'<p style="color:var(--light);padding:12px;background:#fff;border-radius:10px;">Nenhum nome.</p>':matches.map((m,i)=>{
+    if(m.tipo==='exato')return`<div class="mi ok"><div class="mi-top"><span>✅</span><div><div class="mi-nome">${m.nome}</div><div class="mi-sub">→ ${m.usuario.nome_completo}</div></div></div><div class="mi-btns" style="padding-left:0"><button class="btn-desvincular" onclick="desvincularMatch(${i})">⚠️ Não é ${m.usuario.nome_completo.split(' ')[0]}</button></div></div>`;
+    if(m.tipo==='parcial')return`<div class="mi av"><div class="mi-top"><span>⚠️</span><div><div class="mi-nome">${m.nome}</div><div class="mi-sub">Provável: ${m.usuario.nome_completo} (${Math.round(m.score*100)}%)</div></div></div><div class="mi-btns"><button class="btn-sim" onclick="confirmar(${i},true)">✓ Confirmar</button><button class="btn-nao" onclick="confirmar(${i},false)">✗ Não é</button></div></div>`;
+    if(m.tipo==='baixa_confianca')return`<div class="mi no"><div class="mi-top"><span>❓</span><div><div class="mi-nome">${m.nome}</div><div class="mi-sub">Talvez ${m.usuario.nome_completo}? (${Math.round(m.score*100)}%)</div></div></div><div class="mi-btns"><button class="btn-sim" onclick="confirmar(${i},true)" style="font-size:11px">✓ É ${m.usuario.nome_completo.split(' ')[0]}</button><button class="btn-nao" onclick="confirmar(${i},false)">✗ Não é</button></div></div>`;
+    return`<div class="mi no"><div class="mi-top"><span>❓</span><div><div class="mi-nome">${m.nome}</div><div class="mi-sub">Não encontrado</div></div></div></div>`;
+  }).join('');
 }
-
-function confirmar(i,sim){
-  if(sim){
-    const m=matches[i];
-    matches[i].tipo='exato';
-    if(m.usuario){db.collection('usuarios').doc(m.usuario.uid).update({nomes_conhecidos:firebase.firestore.FieldValue.arrayUnion(m.nome)});}
-    mostrarToast(`✅ "${m.nome}" confirmado como ${m.usuario.nome_completo}`);
-  }else{
-    matches[i].tipo='nao_encontrado';
-    matches[i].usuario=null;
-    matches[i].sugestao=null;
-  }
-  renderMatches();
-}
-
-function desvincularMatch(i){
-  if(!confirm(`Desvincular "${matches[i].nome}" de ${matches[i].usuario.nome_completo}?\n\nIsso removerá a associação e não notificará a pessoa errada.`))return;
-  const usuario=matches[i].usuario;
-  if(usuario&&usuario.nomes_conhecidos){
-    const novosNomes=usuario.nomes_conhecidos.filter(n=>{
-      const norm=s=>s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9\s]/g,'').trim();
-      return norm(n)!==norm(matches[i].nome);
-    });
-    db.collection('usuarios').doc(usuario.uid).update({nomes_conhecidos:novosNomes});
-  }
-  matches[i].tipo='nao_encontrado';
-  matches[i].usuario=null;
-  matches[i].sugestao=null;
-  renderMatches();
-  mostrarToast(`✅ "${matches[i].nome}" desvinculado!`);
-}
-
+function confirmar(i,sim){if(sim){const m=matches[i];matches[i].tipo='exato';if(m.usuario)db.collection('usuarios').doc(m.usuario.uid).update({nomes_conhecidos:firebase.firestore.FieldValue.arrayUnion(m.nome)});mostrarToast(`✅ Confirmado!`);}else{matches[i].tipo='nao_encontrado';matches[i].usuario=null;}renderMatches();}
+function desvincularMatch(i){if(!confirm(`Desvincular "${matches[i].nome}" de ${matches[i].usuario.nome_completo}?`))return;const u=matches[i].usuario;if(u&&u.nomes_conhecidos){const nn=u.nomes_conhecidos.filter(n=>{const norm=s=>s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9\s]/g,'').trim();return norm(n)!==norm(matches[i].nome);});db.collection('usuarios').doc(u.uid).update({nomes_conhecidos:nn});}matches[i].tipo='nao_encontrado';matches[i].usuario=null;renderMatches();mostrarToast('✅ Desvinculado!');}
 function fecharRv(){document.getElementById('rv-ov').classList.remove('on');ocrDados=null;matches=[];}
-
-async function salvar(){
-  const t=document.getElementById('rv-tit').value.trim();
-  const d=document.getElementById('rv-data').value;
-  if(!t||!d){alert('Preencha título e data.');return;}
-  
-  await db.collection('eventos').add({
-    id_verificacao:ocrDados?.id_ver||null,
-    titulo_evento:t,
-    data_hora:d+':00',
-    local:document.getElementById('rv-loc').value.trim(),
-    lista_convocados:ocrDados?.nomes||[],
-    grupo_id:grupoId,
-    criado_por:eu.uid,
-    criado_em:firebase.firestore.FieldValue.serverTimestamp()
-  });
-  fecharRv();
-  const dtF=new Date(d+':00').toLocaleDateString('pt-BR',{day:'2-digit',month:'short',year:'numeric'});
-  
-  const exatos=matches.filter(m=>m.tipo==='exato');
-  for(const m of exatos){
-    await db.collection('notificacoes').add({uid:m.usuario.uid,tipo:'convocado',nome_convocacao:m.nome,titulo_evento:t,data_hora:d+':00',grupo_id:grupoId,respondido:false,criado_em:firebase.firestore.FieldValue.serverTimestamp()});
-    if(m.usuario.uid===eu.uid)enviarNotificacaoPush('📋 Convocado!',`${t} — ${dtF}`);
-  }
-  
-  const parciais=matches.filter(m=>m.tipo==='parcial'||m.tipo==='baixa_confianca');
-  for(const m of parciais){
-    await db.collection('notificacoes').add({uid:m.usuario.uid,tipo:'confirmar',nome_convocacao:m.nome,titulo_evento:t,data_hora:d+':00',grupo_id:grupoId,respondido:false,criado_em:firebase.firestore.FieldValue.serverTimestamp()});
-  }
-  
-  mostrarToast('✅ Salvo!');
-  carregarEventos();
-  verificarNotificacoesPendentes();
-}
+async function salvar(){const t=document.getElementById('rv-tit').value.trim();const d=document.getElementById('rv-data').value;if(!t||!d){alert('Preencha título e data.');return;}await db.collection('eventos').add({id_verificacao:ocrDados?.id_ver||null,titulo_evento:t,data_hora:d+':00',local:document.getElementById('rv-loc').value.trim(),lista_convocados:ocrDados?.nomes||[],grupo_id:grupoId,criado_por:eu.uid,criado_em:firebase.firestore.FieldValue.serverTimestamp()});fecharRv();const dtF=new Date(d+':00').toLocaleDateString('pt-BR',{day:'2-digit',month:'short',year:'numeric'});const ex=matches.filter(m=>m.tipo==='exato');for(const m of ex){await db.collection('notificacoes').add({uid:m.usuario.uid,tipo:'convocado',nome_convocacao:m.nome,titulo_evento:t,data_hora:d+':00',grupo_id:grupoId,respondido:false,criado_em:firebase.firestore.FieldValue.serverTimestamp()});if(m.usuario.uid===eu.uid)enviarNotificacaoPush('📋 Convocado!',`${t} — ${dtF}`);}const pa=matches.filter(m=>m.tipo==='parcial'||m.tipo==='baixa_confianca');for(const m of pa){await db.collection('notificacoes').add({uid:m.usuario.uid,tipo:'confirmar',nome_convocacao:m.nome,titulo_evento:t,data_hora:d+':00',grupo_id:grupoId,respondido:false,criado_em:firebase.firestore.FieldValue.serverTimestamp()});}mostrarToast('✅ Salvo!');carregarEventos();verificarNotificacoesPendentes();}
 
 // ── DEMAIS FUNÇÕES ──────────────────────────────────────────────────
 function verificarCadastroCompleto(){if(!eu.nome_completo||eu.nome_completo.trim().length<5||!eu.cargo){document.getElementById('cadastro-nome').value=eu.nome_completo||'';document.getElementById('cadastro-cargo').value=eu.cargo||'';document.getElementById('cadastro-email').value=eu.email||'';document.getElementById('completar-cadastro-ov').classList.add('on');return false;}if(eu.nome_completo.trim().split(/\s+/).length<2){document.getElementById('cadastro-erro').textContent='⚠️ Informe nome e sobrenome';document.getElementById('cadastro-erro').style.display='block';document.getElementById('completar-cadastro-ov').classList.add('on');return false;}return true;}
@@ -566,7 +475,6 @@ async function salvarEdicaoNome(){const n=document.getElementById('editar-nome-i
 function abrirPerfil(){abrirEditarNome(eu.uid,eu.nome_completo||'',eu.cargo||'',true);}
 function fecharPerfil(){fecharEditarNome();}
 async function salvarPerfil(){await salvarEdicaoNome();}
-
 async function enviarEmailLembrete(usuario,evento){if(!usuario.email)return false;const dt=new Date(evento.data_hora);try{await emailjs.send(EMAIL_CONFIG.serviceId,EMAIL_CONFIG.templateId,{to_email:usuario.email,nome_usuario:usuario.nome_completo,titulo_evento:evento.titulo_evento||'Evento',data_evento:dt.toLocaleDateString('pt-BR'),hora_evento:dt.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'}),local_evento:evento.local||'A definir'});return true;}catch(e){return false;}}
 async function verificarLembretesAmanha(){if(!grupoId)return;const amanha=new Date();amanha.setDate(amanha.getDate()+1);const amanhaStr=amanha.toISOString().split('T')[0];if(localStorage.getItem(`lembretes_${new Date().toISOString().split('T')[0]}`))return;try{const evs=await db.collection('eventos').where('grupo_id','==',grupoId).get();const evAmanha=evs.docs.map(d=>({id:d.id,...d.data()})).filter(e=>e.data_hora&&e.data_hora.startsWith(amanhaStr));if(!evAmanha.length)return;const us=await db.collection('usuarios').where('grupo_id','==',grupoId).get();const usuarios=us.docs.map(d=>({uid:d.id,...d.data()}));let env=0;for(const ev of evAmanha)for(const n of(ev.lista_convocados||[])){const u=encontrarUsuarioPorNome(usuarios,n);if(u&&u.email&&await enviarEmailLembrete(u,ev))env++;}localStorage.setItem(`lembretes_${new Date().toISOString().split('T')[0]}`,'true');}catch(e){}}
 function encontrarUsuarioPorNome(usuarios,nome){const norm=s=>s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9\s]/g,'').trim();return usuarios.find(u=>(u.nomes_conhecidos||[u.nome_completo]).some(n=>norm(n)===norm(nome)));}
@@ -600,7 +508,7 @@ async function salvarNomesAdmin(){if(!eventoAtualMod)return;await db.collection(
 async function abrirScanner(){if(!grupoId){alert('Entre em um grupo.');return;}document.getElementById('scan-ov').classList.add('on');try{camStream=await navigator.mediaDevices.getUserMedia({video:{facingMode:'environment'}});document.getElementById('video').srcObject=camStream;}catch{alert('Câmera indisponível.');}}
 function fecharScanner(){document.getElementById('scan-ov').classList.remove('on');if(camStream){camStream.getTracks().forEach(t=>t.stop());camStream=null;}}
 function capturar(){const v=document.getElementById('video');const c=document.createElement('canvas');c.width=v.videoWidth;c.height=v.videoHeight;c.getContext('2d').drawImage(v,0,0);c.toBlob(b=>processarFoto(b),'image/jpeg',.9);}
-async function processarFoto(file){if(!file)return;fecharScanner();const oo=document.getElementById('ocr-ov');const ot=document.getElementById('ocr-texto');const os=document.getElementById('ocr-subtexto');const op=document.getElementById('ocr-preenchimento');oo.classList.add('on');op.style.width='10%';ot.textContent='📸 Preparando...';os.textContent='Otimizando imagem';try{const pi=setInterval(()=>{const cw=parseFloat(op.style.width);if(cw<80)op.style.width=(cw+5)+'%';if(cw>30&&cw<50){ot.textContent='🔍 Enviando...';os.textContent='Conectando ao servidor';}if(cw>50&&cw<70){ot.textContent='🤖 Processando...';os.textContent='IA analisando texto';}},800);const b64=await new Promise((res,rej)=>{const img=new Image();const url=URL.createObjectURL(file);img.onload=()=>{const MAX=1600;let w=img.width,h=img.height;if(w>MAX||h>MAX){if(w>h){h=Math.round(h*MAX/w);w=MAX;}else{w=Math.round(w*MAX/h);h=MAX;}}const c=document.createElement('canvas');c.width=w;c.height=h;c.getContext('2d').drawImage(img,0,0,w,h);URL.revokeObjectURL(url);res(c.toDataURL('image/jpeg',0.9).split(',')[1]);};img.onerror=()=>rej(new Error('Erro'));img.src=url;});clearInterval(pi);op.style.width='80%';ot.textContent='🔎 Lendo...';os.textContent='IA analisando';const resp=await fetch('https://api.mistral.ai/v1/chat/completions',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer zQVzmFaX904lqaFwzt40BHXHfGoqSJca'},body:JSON.stringify({model:'pixtral-12b-2409',max_tokens:800,temperature:0.1,messages:[{role:'user',content:[{type:'image_url',image_url:{url:'data:image/jpeg;base64,'+b64}},{type:'text',text:'Analise esta convocação. Retorne APENAS JSON: {"titulo":"TIPO - Tema","data":"YYYY-MM-DD","hora":"HH:MM","local":"local ou null","nomes":["Nome 1","Nome 2"]}. NUNCA junte nomes. Separe por vírgulas, "e", "/".'}]}]})});op.style.width='90%';ot.textContent='✅ Processando...';os.textContent='Organizando dados';const data=await resp.json();const txtRaw=data.choices?.[0]?.message?.content||'';let parsed;try{parsed=JSON.parse(txtRaw.replace(/```json|```/g,'').trim());}catch{const match=txtRaw.match(/\{[\s\S]*\}/);if(match)parsed=JSON.parse(match[0]);else throw new Error('Formato inválido');}if(parsed.nomes&&Array.isArray(parsed.nomes)){parsed.nomes=parsed.nomes.flatMap(nome=>{if(nome.includes(' e ')||nome.includes(' / '))return nome.split(/\s+e\s+|\s+\/\s+/).filter(n=>n.trim().length>2);const ns=nome.split(/(?<=[a-záéíóúãõç])(?=[A-Z])/);if(ns.length>1){const nv=[];let na='';for(let i=0;i<ns.length;i++){na+=ns[i];if(na.trim().split(/\s+/).length>=2&&i<ns.length-1){nv.push(na.trim());na='';}}if(na.trim())nv.push(na.trim());return nv.length>1?nv:[nome];}return[nome];});}op.style.width='100%';ot.textContent='✨ Concluído!';os.textContent='Verifique os dados';ocrDados={titulo:parsed.titulo||null,data_hora:(parsed.data&&parsed.hora)?`${parsed.data}T${parsed.hora}:00`:(parsed.data?`${parsed.data}T00:00:00`:null),local:parsed.local||null,nomes:Array.isArray(parsed.nomes)?parsed.nomes.filter(n=>n&&n.trim().length>2):[],id_ver:null};if(parsed.data&&parsed.hora&&parsed.titulo)ocrDados.id_ver=parsed.data.replace(/-/g,'')+parsed.hora.replace(':','')+parsed.titulo.toUpperCase().replace(/[^A-Z0-9]/g,'').substring(0,10);await new Promise(r=>setTimeout(r,800));}catch(e){oo.classList.remove('on');alert('Erro: '+e.message);return;}oo.classList.remove('on');if(ocrDados.id_ver){const dup=await db.collection('eventos').where('id_verificacao','==',ocrDados.id_ver).where('grupo_id','==',grupoId).get();if(!dup.empty){alert('⚠️ Já cadastrado!');return;}}matches=await cruzar(ocrDados.nomes);document.getElementById('rv-tit').value=ocrDados.titulo||'';document.getElementById('rv-data').value=ocrDados.data_hora?ocrDados.data_hora.substring(0,16):'';document.getElementById('rv-loc').value=ocrDados.local||'';renderMatches();document.getElementById('rv-ov').classList.add('on');}
+async function processarFoto(file){if(!file)return;fecharScanner();const oo=document.getElementById('ocr-ov');const ot=document.getElementById('ocr-texto');const os=document.getElementById('ocr-subtexto');const op=document.getElementById('ocr-preenchimento');oo.classList.add('on');op.style.width='10%';ot.textContent='📸 Preparando...';os.textContent='Otimizando imagem';try{const pi=setInterval(()=>{const cw=parseFloat(op.style.width);if(cw<80)op.style.width=(cw+5)+'%';if(cw>30&&cw<50){ot.textContent='🔍 Enviando...';os.textContent='Conectando ao servidor';}if(cw>50&&cw<70){ot.textContent='🤖 Processando...';os.textContent='IA analisando texto';}},800);const b64=await new Promise((res,rej)=>{const img=new Image();const url=URL.createObjectURL(file);img.onload=()=>{const MAX=1600;let w=img.width,h=img.height;if(w>MAX||h>MAX){if(w>h){h=Math.round(h*MAX/w);w=MAX;}else{w=Math.round(w*MAX/h);h=MAX;}}const c=document.createElement('canvas');c.width=w;c.height=h;c.getContext('2d').drawImage(img,0,0,w,h);URL.revokeObjectURL(url);res(c.toDataURL('image/jpeg',0.9).split(',')[1]);};img.onerror=()=>rej(new Error('Erro'));img.src=url;});clearInterval(pi);op.style.width='80%';ot.textContent='🔎 Lendo...';os.textContent='IA analisando';const resp=await fetch('https://api.mistral.ai/v1/chat/completions',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer zQVzmFaX904lqaFwzt40BHXHfGoqSJca'},body:JSON.stringify({model:'pixtral-12b-2409',max_tokens:800,temperature:0.1,messages:[{role:'user',content:[{type:'image_url',image_url:{url:'data:image/jpeg;base64,'+b64}},{type:'text',text:'Analise esta convocação. Retorne APENAS JSON: {"titulo":"TIPO - Tema","data":"YYYY-MM-DD","hora":"HH:MM","local":"local ou null","nomes":["Nome 1","Nome 2"]}. NUNCA junte nomes.'}]}]})});op.style.width='90%';ot.textContent='✅ Processando...';os.textContent='Organizando dados';const data=await resp.json();const txtRaw=data.choices?.[0]?.message?.content||'';let parsed;try{parsed=JSON.parse(txtRaw.replace(/```json|```/g,'').trim());}catch{const match=txtRaw.match(/\{[\s\S]*\}/);if(match)parsed=JSON.parse(match[0]);else throw new Error('Formato inválido');}if(parsed.nomes&&Array.isArray(parsed.nomes)){parsed.nomes=parsed.nomes.flatMap(nome=>{if(nome.includes(' e ')||nome.includes(' / '))return nome.split(/\s+e\s+|\s+\/\s+/).filter(n=>n.trim().length>2);const ns=nome.split(/(?<=[a-záéíóúãõç])(?=[A-Z])/);if(ns.length>1){const nv=[];let na='';for(let i=0;i<ns.length;i++){na+=ns[i];if(na.trim().split(/\s+/).length>=2&&i<ns.length-1){nv.push(na.trim());na='';}}if(na.trim())nv.push(na.trim());return nv.length>1?nv:[nome];}return[nome];});}op.style.width='100%';ot.textContent='✨ Concluído!';os.textContent='Verifique os dados';ocrDados={titulo:parsed.titulo||null,data_hora:(parsed.data&&parsed.hora)?`${parsed.data}T${parsed.hora}:00`:(parsed.data?`${parsed.data}T00:00:00`:null),local:parsed.local||null,nomes:Array.isArray(parsed.nomes)?parsed.nomes.filter(n=>n&&n.trim().length>2):[],id_ver:null};if(parsed.data&&parsed.hora&&parsed.titulo)ocrDados.id_ver=parsed.data.replace(/-/g,'')+parsed.hora.replace(':','')+parsed.titulo.toUpperCase().replace(/[^A-Z0-9]/g,'').substring(0,10);await new Promise(r=>setTimeout(r,800));}catch(e){oo.classList.remove('on');alert('Erro: '+e.message);return;}oo.classList.remove('on');if(ocrDados.id_ver){const dup=await db.collection('eventos').where('id_verificacao','==',ocrDados.id_ver).where('grupo_id','==',grupoId).get();if(!dup.empty){alert('⚠️ Já cadastrado!');return;}}matches=await cruzar(ocrDados.nomes);document.getElementById('rv-tit').value=ocrDados.titulo||'';document.getElementById('rv-data').value=ocrDados.data_hora?ocrDados.data_hora.substring(0,16):'';document.getElementById('rv-loc').value=ocrDados.local||'';renderMatches();document.getElementById('rv-ov').classList.add('on');}
 
 async function iniciarNotificacoes(){if(!('serviceWorker' in navigator)||!('Notification' in window))return;await navigator.serviceWorker.register('/gestor-convocacoes/sw.js');await Notification.requestPermission();}
 function enviarNotificacaoPush(titulo,corpo,tag){if(Notification.permission==='granted')new Notification(titulo,{body:corpo,tag:tag||'conv'});}
