@@ -102,16 +102,27 @@
     .btn-salvar{flex:1;padding:12px;background:var(--blue);border:none;border-radius:12px;color:#fff;font-size:14px;cursor:pointer;font-family:'Sora',sans-serif;font-weight:600}
     .btn-salvar:disabled{opacity:0.6;cursor:not-allowed}
 
+    /* SCANNER CORRIGIDO */
     #scan-ov{position:fixed;inset:0;background:#000;z-index:300;display:none;flex-direction:column}
     #scan-ov.on{display:flex}
-    .scan-hd{padding:14px 16px;display:flex;align-items:center;gap:10px;background:rgba(0,0,0,.8)}
+    .scan-hd{padding:14px 16px;display:flex;align-items:center;gap:10px;background:rgba(0,0,0,.8);flex-shrink:0}
     .btn-x{background:rgba(255,255,255,.15);border:none;color:#fff;width:34px;height:34px;border-radius:50%;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center}
-    #video{width:100%;height:100%;object-fit:cover}
-    .cam-wrap{flex:1;position:relative;overflow:hidden;max-height:calc(100dvh - 200px)}
-    .cam-box{width:85%;height:75%;border:2px solid rgba(255,255,255,.6);border-radius:12px;position:absolute;inset:0;margin:auto}
-    .btn-cap{width:60px;height:60px;border-radius:50%;background:#fff;border:4px solid rgba(255,255,255,.4);cursor:pointer}
-    .btn-cap svg{width:26px;height:26px;fill:var(--blue)}
-    .btn-gal{background:rgba(255,255,255,.15);border:none;color:#fff;padding:10px 24px;border-radius:12px;font-size:14px;cursor:pointer;width:100%}
+    .scan-hd span{color:#fff;font-family:'Sora',sans-serif;font-size:14px;font-weight:600}
+    #video{width:100%;height:100%;object-fit:cover;display:block}
+    .cam-wrap{flex:1;position:relative;overflow:hidden}
+    .cam-mask{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none}
+    .cam-box{width:85%;height:75%;border:2px solid rgba(255,255,255,.6);border-radius:12px;position:relative}
+    .cam-box::before{content:'';position:absolute;top:-2px;left:-2px;width:20px;height:20px;border:3px solid #fff;border-right:none;border-bottom:none;border-radius:8px 0 0 0}
+    .cam-box::after{content:'';position:absolute;top:-2px;right:-2px;width:20px;height:20px;border:3px solid #fff;border-left:none;border-bottom:none;border-radius:0 8px 0 0}
+    .c-bl{position:absolute;bottom:-2px;left:-2px;width:20px;height:20px;border:3px solid #fff;border-right:none;border-top:none;border-radius:0 0 0 8px}
+    .c-br{position:absolute;bottom:-2px;right:-2px;width:20px;height:20px;border:3px solid #fff;border-left:none;border-top:none;border-radius:0 0 8px 0}
+    .cam-hint{position:absolute;bottom:12px;left:50%;transform:translateX(-50%);color:rgba(255,255,255,.8);font-size:12px;white-space:nowrap}
+    .scan-ctrl{flex-shrink:0;padding:20px 16px 30px;background:rgba(0,0,0,.9);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px}
+    .btn-cap{width:64px;height:64px;border-radius:50%;background:#fff;border:4px solid rgba(255,255,255,.4);cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+    .btn-cap:active{transform:scale(0.95);background:#e2e8f0}
+    .btn-cap svg{width:28px;height:28px;fill:var(--blue)}
+    .btn-gal{background:rgba(255,255,255,.15);border:none;color:#fff;padding:12px 24px;border-radius:12px;font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;width:80%;max-width:280px;flex-shrink:0}
+    .btn-gal:active{background:rgba(255,255,255,.25)}
 
     #ocr-ov{position:fixed;inset:0;background:rgba(0,0,0,.7);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);z-index:500;display:none;flex-direction:column;align-items:center;justify-content:center;gap:20px}
     #ocr-ov.on{display:flex}
@@ -301,7 +312,33 @@
 <div id="completar-cadastro-ov"><div style="background:#fff;border-radius:24px;padding:28px 22px;width:100%;max-width:360px;"><h3 style="font-family:'Sora',sans-serif;font-size:17px;font-weight:700;color:var(--blue);margin-bottom:6px;">👋 Complete seu cadastro</h3><p style="font-size:13px;color:var(--light);margin-bottom:18px;">Precisamos do seu nome completo e cargo.</p><div class="field"><label>Nome completo</label><input type="text" id="cadastro-nome"/></div><div class="field"><label>Cargo</label><input type="text" id="cadastro-cargo"/></div><div class="field"><label>Email</label><input type="email" id="cadastro-email"/></div><p style="font-size:11px;color:var(--red);margin-bottom:12px;display:none;" id="cadastro-erro"></p><button class="btn-salvar" onclick="completarCadastro()" style="width:100%">✓ Salvar</button></div></div>
 <div id="notif-ov"><div class="notif-box"><div class="notif-emoji">🔔</div><div class="notif-titulo" id="notif-titulo"></div><div class="notif-desc" id="notif-desc"></div><div class="notif-evento"><div class="notif-evento-titulo" id="notif-ev-titulo"></div><div class="notif-evento-data" id="notif-ev-data"></div></div><div class="notif-btns"><button class="btn-cancel" onclick="responderNotif(false)">✗ Não sou eu</button><button class="btn-salvar" onclick="responderNotif(true)">✓ Sim, sou eu!</button></div></div></div>
 <div id="admin-ov"><div class="admin-hd"><button class="btn-x" onclick="fecharAdmin()">✕</button><h2>🛡️ Painel Admin</h2></div><div class="admin-body"><div class="sec-titulo">Membros <span id="admin-total"></span></div><div id="admin-membros"></div></div></div>
-<div id="scan-ov"><div class="scan-hd"><button class="btn-x" onclick="fecharScanner()">✕</button><span>Escanear</span></div><div class="cam-wrap"><video id="video" autoplay playsinline muted></video><div class="cam-mask"><div class="cam-box"><div class="cam-hint">Enquadre o documento</div></div></div></div><div class="scan-ctrl"><button class="btn-cap" onclick="capturar()"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3.2"/></svg></button><input type="file" id="file-foto" accept="image/*" style="display:none" onchange="processarFoto(this.files[0])"/><button class="btn-gal" onclick="document.getElementById('file-foto').click()">🖼️ Galeria</button></div></div>
+
+<!-- SCANNER CORRIGIDO -->
+<div id="scan-ov">
+  <div class="scan-hd">
+    <button class="btn-x" onclick="fecharScanner()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:20px;height:20px"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+    </button>
+    <span>Escanear Convocação</span>
+  </div>
+  <div class="cam-wrap">
+    <video id="video" autoplay playsinline muted></video>
+    <div class="cam-mask">
+      <div class="cam-box">
+        <div class="c-bl"></div><div class="c-br"></div>
+        <div class="cam-hint">Enquadre o documento aqui</div>
+      </div>
+    </div>
+  </div>
+  <div class="scan-ctrl">
+    <button class="btn-cap" onclick="capturar()">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3.2"/><path d="M9 2L7.17 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2h-3.17L15 2H9zm3 15c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5z"/></svg>
+    </button>
+    <input type="file" id="file-foto" accept="image/*" style="display:none" onchange="processarFoto(this.files[0])"/>
+    <button class="btn-gal" onclick="document.getElementById('file-foto').click()">🖼️ Escolher da galeria</button>
+  </div>
+</div>
+
 <div id="ocr-ov"><div class="ocr-spinner"></div><div class="ocr-texto" id="ocr-texto">📸 Analisando...</div><div class="ocr-barra"><div class="ocr-preenchimento" id="ocr-preenchimento"></div></div><div class="ocr-subtexto" id="ocr-subtexto"></div><div class="ocr-dica">Não feche o app</div></div>
 <div id="rv-ov"><div class="rv-hd"><button class="btn-x" onclick="fecharRv()">✕</button><h2>Conferir dados</h2></div><div class="rv-body"><div class="rv-lbl">Título</div><div class="rv-val"><input type="text" id="rv-tit"/></div><div class="rv-lbl">Data/hora</div><div class="rv-val"><input type="datetime-local" id="rv-data"/></div><div class="rv-lbl">Local</div><div class="rv-val"><input type="text" id="rv-loc"/></div><div class="rv-lbl">Convocados</div><div id="rv-matches"></div><div class="rv-btns"><button class="btn-cancel" onclick="fecharRv()">Cancelar</button><button class="btn-salvar" onclick="salvar()">✓ Salvar</button></div></div></div>
 
@@ -415,13 +452,11 @@ async function cruzar(nomes){
     const nn=norm(nome);
     const pwNome=pwSig(nome);
     
-    // 1. Busca EXATA
     for(const u of users){
       const todos=[u.nome_completo,...(u.nomes_conhecidos||[])];
       if(todos.some(n=>norm(n)===nn)) return {tipo:'exato',nome,usuario:u};
     }
     
-    // 2. Busca por similaridade (MAIS RIGOROSA)
     let melhorUser=null,melhorScore=0;
     for(const u of users){
       const pwUser=pwSig(u.nome_completo);
@@ -432,12 +467,8 @@ async function cruzar(nomes){
       if(scoreOcr>=0.7&&scoreUser>=0.5&&scoreFinal>melhorScore){melhorScore=scoreFinal;melhorUser=u;}
     }
     
-    // AGORA: sempre marca como 'parcial' (NUNCA confirma automático)
     if(melhorUser&&melhorScore>=0.8) return {tipo:'parcial',nome,usuario:melhorUser,score:melhorScore};
-    
-    // Score baixo: sugestão com alerta
     if(melhorUser&&melhorScore>=0.5) return {tipo:'baixa_confianca',nome,usuario:melhorUser,score:melhorScore};
-    
     return {tipo:'nao_encontrado',nome};
   });
 }
@@ -510,14 +541,12 @@ async function salvar(){
   fecharRv();
   const dtF=new Date(d+':00').toLocaleDateString('pt-BR',{day:'2-digit',month:'short',year:'numeric'});
   
-  // SÓ NOTIFICAR MATCHES EXATOS
   const exatos=matches.filter(m=>m.tipo==='exato');
   for(const m of exatos){
     await db.collection('notificacoes').add({uid:m.usuario.uid,tipo:'convocado',nome_convocacao:m.nome,titulo_evento:t,data_hora:d+':00',grupo_id:grupoId,respondido:false,criado_em:firebase.firestore.FieldValue.serverTimestamp()});
     if(m.usuario.uid===eu.uid)enviarNotificacaoPush('📋 Convocado!',`${t} — ${dtF}`);
   }
   
-  // Para matches parciais, notificar como "confirmar" (NÃO como convocado)
   const parciais=matches.filter(m=>m.tipo==='parcial'||m.tipo==='baixa_confianca');
   for(const m of parciais){
     await db.collection('notificacoes').add({uid:m.usuario.uid,tipo:'confirmar',nome_convocacao:m.nome,titulo_evento:t,data_hora:d+':00',grupo_id:grupoId,respondido:false,criado_em:firebase.firestore.FieldValue.serverTimestamp()});
