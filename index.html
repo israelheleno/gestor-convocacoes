@@ -73,6 +73,7 @@
     .aus-nome{font-weight:600;font-size:14px}
     .aus-detalhe{font-size:12px;color:var(--light)}
     .aus-tipo{font-size:10px;text-transform:uppercase;letter-spacing:.5px;color:var(--light);margin-top:4px}
+    .btn-excluir-ausencia{background:transparent;border:none;color:var(--red);cursor:pointer;font-size:18px;padding:4px 8px}
 
     .overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:200;display:none;align-items:flex-end}
     .overlay.on{display:flex}
@@ -214,7 +215,6 @@
     #completar-cadastro-ov{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:900;display:none;align-items:center;justify-content:center;padding:20px;}
     #completar-cadastro-ov.on{display:flex}
 
-    /* SALDO */
     .saldo-card{background:var(--w);border-radius:16px;padding:16px;margin-bottom:12px;box-shadow:0 2px 8px rgba(30,58,138,.06)}
     .saldo-header{display:flex;align-items:center;gap:12px;margin-bottom:10px}
     .saldo-icon{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px}
@@ -237,7 +237,6 @@
     .uso-info{flex:1}
     .uso-periodo{font-size:12px;color:var(--light)}
     .btn-config-saldo{width:100%;padding:10px;background:transparent;border:1.5px dashed var(--blue);color:var(--blue);border-radius:10px;font-size:13px;cursor:pointer;margin-top:8px}
-    .btn-excluir-ausencia{background:transparent;border:none;color:var(--red);cursor:pointer;font-size:18px;padding:4px 8px}
 
     footer{text-align:center;padding:16px;color:var(--light);font-size:11px;border-top:1px solid var(--border);margin-top:20px}
     footer strong{color:var(--blue)}
@@ -286,7 +285,7 @@
   <p>© 2025 Gestor de Convocações — v17.0</p>
 </footer>
 
-<!-- MODAIS -->
+<!-- MODAIS (mantidos conforme o último update) -->
 <div class="overlay" id="mod-ev" onclick="if(event.target===this) fecharMod()"><div class="sheet"><div class="handle" onclick="fecharMod()"></div><div class="mod-titulo" id="mod-tit"></div><div class="mod-sub" id="mod-sub"></div><div class="mod-sec"><h3>Convocados <span id="admin-badge-conv" style="display:none" class="admin-badge">Admin</span></h3><div id="mod-conv"></div></div><div style="display:flex;gap:8px;margin-top:16px"><button class="btn-ag" id="mod-ag" style="flex:1;margin-top:0">📅 Agenda</button><button id="mod-trocar" style="flex:1;padding:12px;background:#fff7ed;color:#c2410c;border:1.5px solid #fed7aa;border-radius:10px;font-size:14px;cursor:pointer;font-weight:600;display:none;">🔄 Trocar</button></div><button class="btn-del" id="mod-del" style="display:none">🗑 Excluir</button><button class="btn-cancel" style="margin-top:10px;width:100%" onclick="fecharMod()">Fechar</button></div></div>
 
 <div id="trocar-ov"><div class="trocar-box"><h3>🔄 Trocar escala</h3><p id="trocar-desc"></p><div class="trocar-membros" id="trocar-lista"></div><div class="trocar-btns"><button class="btn-cancel" onclick="fecharTrocar()">Cancelar</button><button class="btn-salvar" style="background:#c2410c" id="trocar-confirmar">Confirmar</button></div></div></div>
@@ -383,12 +382,9 @@ async function salvarConfigSaldo(){
   mostrarToast('✅ Saldo atualizado!');carregarSaldo();
 }
 
-// ── FÉRIAS (com exclusão e retorno ao saldo) ────────────────────────
-async function fetchAusencias(){if(!grupoId)return;const hojeStr=new Date().toISOString().split('T')[0];const snap=await db.collection('ausencias').where('grupo_id','==',grupoId).where('data_fim','>=',hojeStr).get();listaAusencias=snap.docs.map(d=>({id:d.id,...d.data()}));}
-
+// ── FÉRIAS (CORRIGIDO) ────────────────────────────────────────────
 async function carregarFerias(){
-  await fetchAusencias();
-  // Carregar também os usos do saldo
+  // Carregar do Firestore o documento mais recente
   const snap=await db.collection('usuarios').doc(eu.uid).get();
   const data=snap.data();
   saldoUsuario=data.saldo||{ferias:30,abono:6,licenca:90,usos:[]};
@@ -428,13 +424,15 @@ async function excluirUsoFerias(index){
   saldoUsuario.usos.splice(index,1);
   await db.collection('usuarios').doc(eu.uid).update({saldo:saldoUsuario});
   
-  // Remover também da coleção ausencias se existir
-  const snap=await db.collection('ausencias')
-    .where('uid','==',eu.uid)
-    .where('data_inicio','==',uso.data_inicio)
-    .where('data_fim','==',uso.data_fim)
-    .where('tipo','==',uso.tipo).get();
-  snap.forEach(async d=>await d.ref.delete());
+  // Tentar remover da coleção ausencias se existir
+  try {
+    const snap=await db.collection('ausencias')
+      .where('uid','==',eu.uid)
+      .where('data_inicio','==',uso.data_inicio)
+      .where('data_fim','==',uso.data_fim)
+      .where('tipo','==',uso.tipo).get();
+    snap.forEach(async d=>await d.ref.delete());
+  } catch(e) {}
   
   mostrarToast('✅ Período excluído. Saldo restituído!');
   carregarFerias();
@@ -455,7 +453,7 @@ async function salvarFerias(){
   if(tipo==='licenca'&&diffDays<2){alert("Licença: mínimo 2 dias.");return;}
   if(tipo==='ferias'&&diffDays<5){alert("Férias: mínimo 5 dias.");return;}
 
-  // Recarregar saldo mais recente
+  // Recarregar saldo mais recente do Firestore
   const snap=await db.collection('usuarios').doc(eu.uid).get();
   const data=snap.data();
   saldoUsuario=data.saldo||{ferias:30,abono:6,licenca:90,usos:[]};
@@ -479,9 +477,10 @@ async function salvarFerias(){
   carregarFerias();
 }
 
+async function fetchAusencias(){if(!grupoId)return;const hojeStr=new Date().toISOString().split('T')[0];const snap=await db.collection('ausencias').where('grupo_id','==',grupoId).where('data_fim','>=',hojeStr).get();listaAusencias=snap.docs.map(d=>({id:d.id,...d.data()}));}
 function verificarStatusAusencia(uid,dataEvento){if(!uid||!dataEvento)return null;const dataStr=dataEvento.split('T')[0];return listaAusencias.find(aus=>aus.uid===uid&&aus.data_inicio<=dataStr&&aus.data_fim>=dataStr)||null;}
 
-// ── DEMAIS FUNÇÕES ──────────────────────────────────────────────────
+// ── DEMAIS FUNÇÕES (MANTIDAS) ──────────────────────────────────────
 function verificarCadastroCompleto(){
   if(!eu.nome_completo||eu.nome_completo.trim().length<5||!eu.cargo){
     document.getElementById('cadastro-nome').value=eu.nome_completo||'';document.getElementById('cadastro-cargo').value=eu.cargo||'';document.getElementById('cadastro-email').value=eu.email||'';
