@@ -327,7 +327,7 @@
   <p>© 2026 Gestor de Convocações — v18.2</p>
 </footer>
 
-<!-- MODAIS -->
+<!-- MODAIS (mantidos) -->
 <div class="overlay" id="mod-ev" onclick="if(event.target===this) fecharMod()"><div class="sheet"><div class="handle" onclick="fecharMod()"></div><input type="text" class="mod-titulo-input" id="mod-tit" placeholder="Título do evento"><input type="text" class="mod-sub-input" id="mod-sub" placeholder="Data e hora"><div class="mod-sec"><h3>Convocados <span id="admin-badge-conv" style="display:none" class="admin-badge">Admin</span></h3><div id="mod-conv"></div></div><div style="display:flex;gap:8px;margin-top:16px"><button class="btn-ag" id="mod-ag" style="flex:1;margin-top:0">📅 Agenda</button><button id="mod-trocar" style="flex:1;padding:12px;background:#fff7ed;color:#c2410c;border:1.5px solid #fed7aa;border-radius:10px;font-size:14px;cursor:pointer;font-weight:600;display:none;">🔄 Trocar</button></div><button class="btn-salvar-edicao-evento" id="mod-salvar-edicao" style="display:none" onclick="salvarEdicaoEvento()">💾 Salvar alterações</button><button class="btn-del" id="mod-del" style="display:none">🗑 Excluir</button><button class="btn-cancel" style="margin-top:10px;width:100%" onclick="fecharMod()">Fechar</button></div></div>
 <div id="trocar-ov"><div class="trocar-box"><h3>🔄 Trocar escala</h3><p id="trocar-desc"></p><div class="trocar-membros" id="trocar-lista"></div><div class="trocar-btns"><button class="btn-cancel" onclick="fecharTrocar()">Cancelar</button><button class="btn-salvar" style="background:#c2410c" id="trocar-confirmar">Confirmar</button></div></div></div>
 
@@ -378,7 +378,6 @@ function mostrarAba(aba,el){
   if(el)el.classList.add('active');
   if(aba==='ferias'){
     carregarFerias();
-    // Garantir que o botão roxo apareça se for admin
     if(eu&&eu.is_admin)document.getElementById('btn-para-outro').style.display='block';
   }
   if(aba==='saldo')carregarSaldo();
@@ -604,43 +603,28 @@ function fecharPerfil(){fecharEditarNome();}
 async function salvarPerfil(){await salvarEdicaoNome();}
 
 // ── ENVIO DE E-MAIL (CORRIGIDO PARA NÃO DUPLICAR) ──────────────────
-async function enviarEmailLembrete(usuario,evento){
-  if(!usuario.email)return false;
-  // Verificar se já foi enviado email para este usuário neste evento
-  const chave=`email_${usuario.uid}_${evento.id||evento.id_verificacao}`;
-  if(localStorage.getItem(chave))return false; // já enviado
-  const dt=new Date(evento.data_hora);
-  try{
-    await emailjs.send(EMAIL_CONFIG.serviceId,EMAIL_CONFIG.templateId,{
-      to_email:usuario.email,
-      nome_usuario:usuario.nome_completo,
-      titulo_evento:evento.titulo_evento||'Evento',
-      data_evento:dt.toLocaleDateString('pt-BR'),
-      hora_evento:dt.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'}),
-      local_evento:evento.local||'A definir'
-    });
-    localStorage.setItem(chave,'1'); // marcar como enviado
-    return true;
-  }catch(e){return false;}
-}
-
 function iniciarVerificacaoLembretes(){
   if(intervaloVerificacaoEmail)clearInterval(intervaloVerificacaoEmail);
-  verificarLembretesAmanha(); // executa imediatamente
-  intervaloVerificacaoEmail=setInterval(verificarLembretesAmanha,60*60*1000); // a cada hora
+  verificarLembretesAmanha();
+  // Verifica a cada 6 horas, mas só envia se for um novo dia
+  intervaloVerificacaoEmail=setInterval(verificarLembretesAmanha,6*60*60*1000);
 }
 
 async function verificarLembretesAmanha(){
   if(!grupoId)return;
-  const amanha=new Date();amanha.setDate(amanha.getDate()+1);
-  const amanhaStr=amanha.toISOString().split('T')[0];
-  const hojeStr=new Date().toISOString().split('T')[0];
-  const chaveDia=`lembretes_enviados_${hojeStr}`;
+  const hoje=new Date();
+  const chaveDia=`lembretes_enviados_${hoje.toISOString().split('T')[0]}`;
   if(localStorage.getItem(chaveDia))return; // já enviou hoje
+
+  const amanha=new Date(hoje);
+  amanha.setDate(amanha.getDate()+1);
+  const amanhaStr=amanha.toISOString().split('T')[0];
+
   try{
     const evs=await db.collection('eventos').where('grupo_id','==',grupoId).get();
     const evAmanha=evs.docs.map(d=>({id:d.id,...d.data()})).filter(e=>e.data_hora&&e.data_hora.startsWith(amanhaStr));
     if(!evAmanha.length)return;
+
     const us=await db.collection('usuarios').where('grupo_id','==',grupoId).get();
     const usuarios=us.docs.map(d=>({uid:d.id,...d.data()}));
     let env=0;
@@ -648,14 +632,27 @@ async function verificarLembretesAmanha(){
       for(const n of(ev.lista_convocados||[])){
         const u=encontrarUsuarioPorNome(usuarios,n);
         if(u&&u.email){
-          const ok=await enviarEmailLembrete(u,ev);
-          if(ok)env++;
+          const chaveEmail=`email_${u.uid}_${ev.id||ev.id_verificacao}`;
+          if(localStorage.getItem(chaveEmail))continue; // já enviado para este usuário/evento
+          try{
+            const dt=new Date(ev.data_hora);
+            await emailjs.send(EMAIL_CONFIG.serviceId,EMAIL_CONFIG.templateId,{
+              to_email:u.email,
+              nome_usuario:u.nome_completo,
+              titulo_evento:ev.titulo_evento||'Evento',
+              data_evento:dt.toLocaleDateString('pt-BR'),
+              hora_evento:dt.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'}),
+              local_evento:ev.local||'A definir'
+            });
+            localStorage.setItem(chaveEmail,'1');
+            env++;
+          }catch(e){console.warn('Falha ao enviar e-mail para',u.email,e);}
         }
       }
     }
     localStorage.setItem(chaveDia,'1');
     if(env>0)console.log(`${env} lembretes enviados`);
-  }catch(e){}
+  }catch(e){console.error('Erro ao verificar lembretes:',e);}
 }
 function encontrarUsuarioPorNome(usuarios,nome){const norm=s=>s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9\s]/g,'').trim();return usuarios.find(u=>(u.nomes_conhecidos||[u.nome_completo]).some(n=>norm(n)===norm(nome)));}
 
