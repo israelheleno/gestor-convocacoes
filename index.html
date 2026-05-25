@@ -257,7 +257,8 @@
     .uso-info{flex:1}
     .uso-periodo{font-size:12px;color:var(--light)}
     .btn-ajustar-saldo{width:100%;padding:10px;background:transparent;border:1.5px solid var(--blue);color:var(--blue);border-radius:10px;font-size:13px;cursor:pointer;margin-top:8px;font-weight:600}
-    
+    .btn-limpar-saldo{width:100%;padding:10px;background:transparent;border:1px solid #fee2e2;color:var(--red);border-radius:10px;font-size:12px;cursor:pointer;margin-top:6px}
+
     .ajuste-bloco{margin-bottom:16px;padding:14px;background:#f8fafc;border-radius:12px;border:1px solid var(--border)}
     .ajuste-bloco h4{font-size:13px;font-weight:700;color:var(--blue);margin-bottom:10px}
     .ajuste-periodo{display:flex;gap:8px;align-items:center;margin-bottom:6px}
@@ -297,7 +298,7 @@
   </div>
   
   <div id="aba-ferias" class="aba-content" style="display:none">
-    <div class="banner-aviso"><span class="banner-icon">👥</span><span><strong>Aviso:</strong> Os períodos de férias, abonos e licenças são compartilhados com todos do grupo para controle de convocações.</span></div>
+    <div class="banner-aviso"><span class="banner-icon">👥</span><span><strong>Aviso:</strong> Os períodos são compartilhados com o grupo.</span></div>
     <div class="card"><div class="card-titulo">📋 Períodos do Grupo</div>
       <button class="btn-meu-periodo" onclick="iniciarAddFerias()">+ Meu Período</button>
       <button class="btn-para-outro" id="btn-para-outro" style="display:none" onclick="abrirSelecaoUsuario()">👤 Adicionar para outro usuário</button>
@@ -315,7 +316,7 @@
 
 <footer>
   <p>Desenvolvido por <strong>Israel Heleno de Castro</strong></p>
-  <p>© 2026 Gestor de Convocações — v18.4</p>
+  <p>© 2026 Gestor de Convocações — v18.5</p>
 </footer>
 
 <!-- MODAIS (mantidos) -->
@@ -387,10 +388,20 @@ async function limparEventosAntigos(){
   try{const snap=await db.collection('eventos').where('grupo_id','==',grupoId).get();const evs=snap.docs.filter(d=>{const e=d.data();return e.data_hora&&new Date(e.data_hora)<seteDiasAtras;});for(const ev of evs)await ev.ref.delete();}catch(e){}
 }
 
+// ── SINCRONIZAR SALDO (remove usos antigos) ─────────────────────────
+async function sincronizarSaldo(){
+  const snap=await db.collection('usuarios').doc(eu.uid).get();
+  const data=snap.data();
+  if(data.saldo&&data.saldo.usos){
+    await db.collection('usuarios').doc(eu.uid).update({'saldo.usos':firebase.firestore.FieldValue.delete()});
+  }
+  carregarSaldo();
+  mostrarToast('✅ Saldo sincronizado!');
+}
+
 // ── SALDO (FONTE ÚNICA: ausencias) ─────────────────────────────────
 async function carregarSaldo(){
   const container=document.getElementById('saldo-container');container.innerHTML='<div class="skel"></div>';
-  // Obter configurações do usuário
   const snap=await db.collection('usuarios').doc(eu.uid).get();const data=snap.data();
   saldoUsuario=data.saldo||{ferias:[],abono:6,licenca:90};
   if(typeof saldoUsuario.ferias==='number')saldoUsuario.ferias=[{periodo:'Total',total:saldoUsuario.ferias}];
@@ -399,7 +410,6 @@ async function carregarSaldo(){
   const totalAbono=saldoUsuario.abono||6;
   const totalLicenca=saldoUsuario.licenca||90;
 
-  // Buscar usos diretamente da coleção ausencias (fonte única)
   const ausenciasSnap=await db.collection('ausencias').where('uid','==',eu.uid).get();
   const usos=ausenciasSnap.docs.map(d=>({id:d.id,...d.data()}));
 
@@ -416,7 +426,8 @@ async function carregarSaldo(){
     <div class="saldo-card"><div class="saldo-header"><div class="saldo-icon ferias">🏖️</div><div class="saldo-info"><div class="saldo-tipo">Férias</div><div class="saldo-dias" style="color:#ec4899">${restanteFerias} / ${totalFerias} dias</div><div class="saldo-sub">${periodosHtml}</div></div></div><div class="saldo-bar"><div class="saldo-bar-fill ferias" style="width:${totalFerias>0?(restanteFerias/totalFerias)*100:0}%"></div></div></div>
     <div class="saldo-card"><div class="saldo-header"><div class="saldo-icon abono">⏱️</div><div class="saldo-info"><div class="saldo-tipo">Abonos</div><div class="saldo-dias" style="color:#06b6d4">${restanteAbono} / ${totalAbono}</div></div></div><div class="saldo-bar"><div class="saldo-bar-fill abono" style="width:${totalAbono>0?(restanteAbono/totalAbono)*100:0}%"></div></div></div>
     <div class="saldo-card"><div class="saldo-header"><div class="saldo-icon licenca">🏆</div><div class="saldo-info"><div class="saldo-tipo">Licença Prêmio</div><div class="saldo-dias" style="color:#f59e0b">${restanteLicenca} / ${totalLicenca} dias</div></div></div><div class="saldo-bar"><div class="saldo-bar-fill licenca" style="width:${totalLicenca>0?(restanteLicenca/totalLicenca)*100:0}%"></div></div></div>
-    <button class="btn-ajustar-saldo" onclick="abrirAjusteSaldo()">⚙️ Ajustar</button></div>
+    <button class="btn-ajustar-saldo" onclick="abrirAjusteSaldo()">⚙️ Ajustar</button>
+    <button class="btn-limpar-saldo" onclick="sincronizarSaldo()">🔄 Sincronizar (corrigir duplicidade)</button></div>
     ${usos.length>0?`<div class="card"><div class="card-titulo">📋 Períodos Registrados</div>${usos.sort((a,b)=>new Date(a.data_inicio)-new Date(b.data_inicio)).map(u=>{let icone=u.tipo==='ferias'?'🏖️':(u.tipo==='licenca'?'🏆':'⏱️');return`<div class="uso-item ${u.tipo}"><div class="uso-dias">${u.dias}d</div><div class="uso-info"><div style="font-weight:600;font-size:13px">${icone} ${u.periodo||u.tipo}</div><div class="uso-periodo">${u.data_inicio?new Date(u.data_inicio+'T12:00:00').toLocaleDateString('pt-BR'):'?'} → ${u.data_fim?new Date(u.data_fim+'T12:00:00').toLocaleDateString('pt-BR'):'?'}</div></div></div>`;}).join('')}</div>`:''}`;
 }
 function abrirAjusteSaldo(){periodosAjuste=JSON.parse(JSON.stringify(saldoUsuario.ferias||[{periodo:'Período atual',total:30}]));document.getElementById('ajuste-abono').value=saldoUsuario.abono||6;document.getElementById('ajuste-licenca').value=saldoUsuario.licenca||90;renderizarPeriodosAjuste();document.getElementById('saldo-ajuste-ov').classList.add('on');}
@@ -472,14 +483,18 @@ function confirmarSelecaoUsuario(){if(!usuarioSelecionadoFerias){mostrarToast('�
 function iniciarAddFerias(){document.getElementById('ferias-consent-desc').textContent='Registrar seu próprio período.';document.getElementById('ferias-consent-ov').classList.add('on');usuarioSelecionadoFerias=null;}
 function iniciarAddFeriasPara(usuario){document.getElementById('ferias-consent-desc').textContent=`Registrar período para: ${usuario.nome_completo}`;document.getElementById('ferias-consent-ov').classList.add('on');usuarioSelecionadoFerias=usuario;}
 
-function atualizarOpcoesPeriodo(){
+async function atualizarOpcoesPeriodo(){
   const tipo=document.getElementById('ferias-tipo').value;
   const selectEl=document.getElementById('ferias-periodo-select');
   const textEl=document.getElementById('ferias-periodo-text');
   if(tipo==='ferias'){
     textEl.style.display='none';selectEl.style.display='block';
     selectEl.innerHTML='';
-    const periodos=saldoUsuario.ferias||[{periodo:'Período atual',total:30}];
+    // Buscar saldo mais recente do Firestore
+    const snap=await db.collection('usuarios').doc(eu.uid).get();
+    const data=snap.data();
+    const saldo=data.saldo||{ferias:[{periodo:'Período atual',total:30}]};
+    const periodos=saldo.ferias||[{periodo:'Período atual',total:30}];
     periodos.forEach(p=>{
       const opt=document.createElement('option');opt.value=p.periodo;opt.textContent=`${p.periodo} (${p.total||30} dias)`;selectEl.appendChild(opt);
     });
@@ -517,7 +532,6 @@ async function salvarFerias(){
   const uidDestino=usuarioSelecionadoFerias?usuarioSelecionadoFerias.uid:eu.uid;
   const nomeDestino=usuarioSelecionadoFerias?usuarioSelecionadoFerias.nome_completo:eu.nome_completo;
 
-  // Verificar saldo ANTES de salvar (consulta ausencias do destinatário)
   const ausenciasSnap=await db.collection('ausencias').where('uid','==',uidDestino).get();
   const usos=ausenciasSnap.docs.map(d=>d.data());
   const userSnap=await db.collection('usuarios').doc(uidDestino).get();
@@ -532,7 +546,6 @@ async function salvarFerias(){
     }
   }
 
-  // Salvar apenas na coleção ausencias (fonte única)
   await db.collection('ausencias').add({uid:uidDestino,nome_completo:nomeDestino,grupo_id:grupoId,tipo,periodo,dias,data_inicio:iniStr,data_fim:fimStr,criado_por:eu.uid,criado_em:firebase.firestore.FieldValue.serverTimestamp()});
   document.getElementById('ferias-form-ov').classList.remove('on');
   usuarioSelecionadoFerias=null;
