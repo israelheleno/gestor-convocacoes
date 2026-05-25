@@ -43,7 +43,6 @@
 
     .btn-meu-periodo{background:var(--blue);color:#fff;border:none;padding:10px 16px;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;font-family:'Sora',sans-serif;width:100%}
     .btn-para-outro{background:var(--purple);color:#fff;border:none;padding:10px 16px;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;font-family:'Sora',sans-serif;width:100%;margin-top:8px}
-    .btn-para-outro:hover{background:#6d28d9}
 
     .card-prox{background:linear-gradient(135deg,var(--blue),#2563eb);border-radius:18px;padding:18px;margin-bottom:16px;color:#fff;position:relative;overflow:hidden}
     .card-prox::after{content:'';position:absolute;right:-15px;top:-15px;width:80px;height:80px;background:rgba(255,255,255,.07);border-radius:50%}
@@ -85,10 +84,8 @@
     .sheet{background:var(--w);border-radius:24px 24px 0 0;width:100%;max-height:90dvh;overflow-y:auto;padding:22px 18px 48px;animation:sup .3s ease}
     @keyframes sup{from{transform:translateY(100%)}to{transform:translateY(0)}}
     .handle{width:38px;height:4px;background:var(--border);border-radius:2px;margin:0 auto 18px}
-    .mod-titulo{font-family:'Sora',sans-serif;font-size:17px;font-weight:700;margin-bottom:6px}
     .mod-titulo-input{font-family:'Sora',sans-serif;font-size:17px;font-weight:700;color:var(--blue);border:none;border-bottom:2px dashed var(--border);background:transparent;width:100%;padding:4px 0;margin-bottom:6px;outline:none}
     .mod-titulo-input:focus{border-bottom-color:var(--blue)}
-    .mod-sub{font-size:13px;color:var(--light);margin-bottom:16px}
     .mod-sub-input{font-size:13px;color:var(--text);border:none;border-bottom:1px dashed var(--border);background:transparent;width:100%;padding:2px 0;margin-bottom:16px;outline:none}
     .mod-sub-input:focus{border-bottom-color:var(--blue)}
     .mod-sec h3{font-size:11px;text-transform:uppercase;letter-spacing:1px;color:var(--light);margin-bottom:8px}
@@ -112,10 +109,9 @@
     .btns-row{display:flex;gap:10px;margin-top:20px}
     .btn-cancel{flex:1;padding:12px;background:transparent;border:1.5px solid var(--border);border-radius:12px;font-size:14px;cursor:pointer;color:var(--text);font-weight:500}
     .btn-salvar{flex:1;padding:12px;background:var(--blue);border:none;border-radius:12px;color:#fff;font-size:14px;cursor:pointer;font-family:'Sora',sans-serif;font-weight:600}
-    .btn-salvar:disabled{opacity:0.6;cursor:not-allowed}
 
     .lista-usuarios{max-height:200px;overflow-y:auto;border:1.5px solid var(--border);border-radius:12px;margin-bottom:14px}
-    .usuario-item{padding:12px 14px;border-bottom:1px solid var(--border);cursor:pointer;display:flex;align-items:center;gap:10px;font-size:14px;transition:background .15s}
+    .usuario-item{padding:12px 14px;border-bottom:1px solid var(--border);cursor:pointer;display:flex;align-items:center;gap:10px;font-size:14px}
     .usuario-item:last-child{border-bottom:none}
     .usuario-item:hover{background:#f8faff}
     .usuario-item.selecionado{background:#eff6ff;font-weight:600;color:var(--blue)}
@@ -139,7 +135,6 @@
     .btn-cap:active{transform:scale(0.95);background:#e2e8f0}
     .btn-cap svg{width:28px;height:28px;fill:var(--blue)}
     .btn-gal{background:rgba(255,255,255,.15);border:none;color:#fff;padding:12px 24px;border-radius:12px;font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;width:auto;min-width:200px;flex-shrink:0;margin:0 auto}
-    .btn-gal:active{background:rgba(255,255,255,.25)}
 
     #ocr-ov{position:fixed;inset:0;background:rgba(0,0,0,.7);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);z-index:500;display:none;flex-direction:column;align-items:center;justify-content:center;gap:20px}
     #ocr-ov.on{display:flex}
@@ -302,12 +297,8 @@
   </div>
   
   <div id="aba-ferias" class="aba-content" style="display:none">
-    <div class="banner-aviso">
-      <span class="banner-icon">👥</span>
-      <span><strong>Aviso:</strong> Os períodos de férias, abonos e licenças são compartilhados com todos do grupo para controle de convocações.</span>
-    </div>
-    <div class="card">
-      <div class="card-titulo">📋 Períodos do Grupo</div>
+    <div class="banner-aviso"><span class="banner-icon">👥</span><span><strong>Aviso:</strong> Os períodos de férias, abonos e licenças são compartilhados com todos do grupo para controle de convocações.</span></div>
+    <div class="card"><div class="card-titulo">📋 Períodos do Grupo</div>
       <button class="btn-meu-periodo" onclick="iniciarAddFerias()">+ Meu Período</button>
       <button class="btn-para-outro" id="btn-para-outro" style="display:none" onclick="abrirSelecaoUsuario()">👤 Adicionar para outro usuário</button>
     </div>
@@ -324,24 +315,25 @@
 
 <footer>
   <p>Desenvolvido por <strong>Israel Heleno de Castro</strong></p>
-  <p>© 2026 Gestor de Convocações — v18.2</p>
+  <p>© 2026 Gestor de Convocações — v18.3</p>
 </footer>
 
-<!-- MODAIS (mantidos) -->
+<!-- MODAIS -->
 <div class="overlay" id="mod-ev" onclick="if(event.target===this) fecharMod()"><div class="sheet"><div class="handle" onclick="fecharMod()"></div><input type="text" class="mod-titulo-input" id="mod-tit" placeholder="Título do evento"><input type="text" class="mod-sub-input" id="mod-sub" placeholder="Data e hora"><div class="mod-sec"><h3>Convocados <span id="admin-badge-conv" style="display:none" class="admin-badge">Admin</span></h3><div id="mod-conv"></div></div><div style="display:flex;gap:8px;margin-top:16px"><button class="btn-ag" id="mod-ag" style="flex:1;margin-top:0">📅 Agenda</button><button id="mod-trocar" style="flex:1;padding:12px;background:#fff7ed;color:#c2410c;border:1.5px solid #fed7aa;border-radius:10px;font-size:14px;cursor:pointer;font-weight:600;display:none;">🔄 Trocar</button></div><button class="btn-salvar-edicao-evento" id="mod-salvar-edicao" style="display:none" onclick="salvarEdicaoEvento()">💾 Salvar alterações</button><button class="btn-del" id="mod-del" style="display:none">🗑 Excluir</button><button class="btn-cancel" style="margin-top:10px;width:100%" onclick="fecharMod()">Fechar</button></div></div>
 <div id="trocar-ov"><div class="trocar-box"><h3>🔄 Trocar escala</h3><p id="trocar-desc"></p><div class="trocar-membros" id="trocar-lista"></div><div class="trocar-btns"><button class="btn-cancel" onclick="fecharTrocar()">Cancelar</button><button class="btn-salvar" style="background:#c2410c" id="trocar-confirmar">Confirmar</button></div></div></div>
 
 <div class="ov-center" id="ferias-consent-ov"><div class="box-center"><h3>Registrar Período</h3><p id="ferias-consent-desc">Registrar férias, licença ou abono.</p><div class="btns-row"><button class="btn-cancel" onclick="document.getElementById('ferias-consent-ov').classList.remove('on')">Cancelar</button><button class="btn-salvar" onclick="abrirFormFerias()">Continuar</button></div></div></div>
-<div class="ov-center" id="ferias-form-ov"><div class="box-center"><h3>📅 Período</h3><p id="ferias-form-para" style="font-size:12px;color:var(--purple);margin-bottom:12px;font-weight:600;display:none"></p><div class="field"><label>Tipo</label><select id="ferias-tipo"><option value="abono">Abono</option><option value="licenca">Licença Prêmio</option><option value="ferias">Férias</option></select></div><div class="field"><label>Período</label><input type="text" id="ferias-periodo" placeholder="Ex: 24/25"/></div><div class="field"><label>Dias</label><input type="number" id="ferias-dias" min="1" max="90" value="1"/></div><div class="field"><label>Início</label><input type="date" id="ferias-ini"/></div><div class="field"><label>Término</label><input type="date" id="ferias-fim"/></div><p style="font-size:11px;color:var(--red);margin-bottom:12px;display:none;" id="ferias-erro"></p><div class="btns-row"><button class="btn-cancel" onclick="document.getElementById('ferias-form-ov').classList.remove('on')">Cancelar</button><button class="btn-salvar" onclick="salvarFerias()">✓ Salvar</button></div></div></div>
+<div class="ov-center" id="ferias-form-ov"><div class="box-center"><h3>📅 Período</h3><p id="ferias-form-para" style="font-size:12px;color:var(--purple);margin-bottom:12px;font-weight:600;display:none"></p>
+    <div class="field"><label>Tipo</label><select id="ferias-tipo" onchange="atualizarOpcoesPeriodo()"><option value="abono">Abono</option><option value="licenca">Licença Prêmio</option><option value="ferias">Férias</option></select></div>
+    <div class="field"><label>Período</label><select id="ferias-periodo-select" style="display:none"></select><input type="text" id="ferias-periodo-text" placeholder="Ex: 24/25"/></div>
+    <div class="field"><label>Dias</label><input type="number" id="ferias-dias" min="1" max="90" value="1" onchange="calcularDataTermino()" oninput="calcularDataTermino()"/></div>
+    <div class="field"><label>Início</label><input type="date" id="ferias-ini" onchange="calcularDataTermino()"/></div>
+    <div class="field"><label>Término (automático)</label><input type="date" id="ferias-fim" readonly style="background:#f8fafc;color:var(--light)"/></div>
+    <p style="font-size:11px;color:var(--red);margin-bottom:12px;display:none;" id="ferias-erro"></p>
+    <div class="btns-row"><button class="btn-cancel" onclick="document.getElementById('ferias-form-ov').classList.remove('on')">Cancelar</button><button class="btn-salvar" onclick="salvarFerias()">✓ Salvar</button></div>
+</div></div>
 
-<div id="selecionar-usuario-ov">
-  <div class="selecionar-box">
-    <h3 style="font-family:'Sora',sans-serif;font-size:17px;font-weight:700;color:var(--purple);margin-bottom:6px;">👤 Selecionar Usuário</h3>
-    <p style="font-size:13px;color:var(--light);margin-bottom:16px;">Escolha para quem adicionar o período.</p>
-    <div class="lista-usuarios" id="lista-usuarios-ferias"></div>
-    <div class="btns-row"><button class="btn-cancel" onclick="fecharSelecaoUsuario()">Cancelar</button><button class="btn-salvar" style="background:var(--purple)" onclick="confirmarSelecaoUsuario()">✓ Selecionar</button></div>
-  </div>
-</div>
+<div id="selecionar-usuario-ov"><div class="selecionar-box"><h3 style="font-family:'Sora',sans-serif;font-size:17px;font-weight:700;color:var(--purple);margin-bottom:6px;">👤 Selecionar Usuário</h3><p style="font-size:13px;color:var(--light);margin-bottom:16px;">Escolha para quem adicionar o período.</p><div class="lista-usuarios" id="lista-usuarios-ferias"></div><div class="btns-row"><button class="btn-cancel" onclick="fecharSelecaoUsuario()">Cancelar</button><button class="btn-salvar" style="background:var(--purple)" onclick="confirmarSelecaoUsuario()">✓ Selecionar</button></div></div></div>
 
 <div id="ms-ov"><div class="ms-box"><h3 id="ms-tit"></h3><p>Você entrará no grupo.</p><div class="ms-btns"><button class="btn-cancel" onclick="document.getElementById('ms-ov').classList.remove('on')">Cancelar</button><button class="btn-salvar" id="ms-ok">Solicitar</button></div></div></div>
 <div id="perfil-ov"><div class="perfil-box"><h3>✏️ Editar perfil</h3><p>Nome completo como nos documentos.</p><div class="perfil-field"><label>Nome</label><input type="text" id="perf-nome"/></div><div class="perfil-field"><label>Cargo</label><input type="text" id="perf-cargo"/></div><div class="perfil-field"><label>Email</label><input type="email" id="perf-email"/></div><div class="perfil-btns"><button class="btn-cancel" onclick="fecharPerfil()">Cancelar</button><button class="btn-salvar" onclick="salvarPerfil()">✓ Salvar</button></div></div></div>
@@ -371,17 +363,7 @@ let toastTimeout,periodosAjuste=[],usuarioSelecionadoFerias=null,usuariosGrupo=[
 
 function mostrarToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');clearTimeout(toastTimeout);toastTimeout=setTimeout(()=>t.classList.remove('show'),2500);}
 function lev(a,b){if(a===b)return 0;const m=a.length,n=b.length;const dp=Array.from({length:m+1},(_,i)=>[i,...Array(n).fill(0)]);for(let j=0;j<=n;j++)dp[0][j]=j;for(let i=1;i<=m;i++)for(let j=1;j<=n;j++)dp[i][j]=a[i-1]===b[j-1]?dp[i-1][j-1]:1+Math.min(dp[i-1][j],dp[i][j-1],dp[i-1][j-1]);return dp[m][n];}
-function mostrarAba(aba,el){
-  document.querySelectorAll('.aba-content').forEach(e=>e.style.display='none');
-  document.getElementById('aba-'+aba).style.display='block';
-  document.querySelectorAll('.nav-tab').forEach(e=>e.classList.remove('active'));
-  if(el)el.classList.add('active');
-  if(aba==='ferias'){
-    carregarFerias();
-    if(eu&&eu.is_admin)document.getElementById('btn-para-outro').style.display='block';
-  }
-  if(aba==='saldo')carregarSaldo();
-}
+function mostrarAba(aba,el){document.querySelectorAll('.aba-content').forEach(e=>e.style.display='none');document.getElementById('aba-'+aba).style.display='block';document.querySelectorAll('.nav-tab').forEach(e=>e.classList.remove('active'));if(el)el.classList.add('active');if(aba==='ferias'){carregarFerias();if(eu&&eu.is_admin)document.getElementById('btn-para-outro').style.display='block';}if(aba==='saldo')carregarSaldo();}
 (function(){emailjs.init(EMAIL_CONFIG.publicKey);})();
 
 let intervaloVerificacaoEmail=null;
@@ -393,10 +375,7 @@ auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL).then(()=>{
     try{const snap=await db.collection('usuarios').doc(user.uid).get();if(!snap.exists||!snap.data().nome_completo){clearTimeout(T);window.location.replace('login.html');return;}
       authOk=true;clearTimeout(T);eu={uid:user.uid,...snap.data()};
       document.getElementById('h-user').textContent=eu.nome_completo+' · '+eu.cargo;
-      if(eu.is_admin){
-        document.getElementById('btn-fab-admin').classList.add('on');
-        document.getElementById('btn-para-outro').style.display='block';
-      }
+      if(eu.is_admin){document.getElementById('btn-fab-admin').classList.add('on');document.getElementById('btn-para-outro').style.display='block';}
       verificarInstalacao();iniciarNotificacoes();carregarGrupos();
       if(eu.grupo_id){grupoId=eu.grupo_id;carregarEventos();verificarAprovacoes();verificarNotificacoesPendentes();iniciarVerificacaoLembretes();}
       else{document.getElementById('lst-ev').innerHTML='<p style="color:var(--light);padding:20px;text-align:center">Entre em um grupo para ver convocações.</p>';document.getElementById('prox').innerHTML='<div class="card-vazio">Entre em um grupo para ver suas convocações.</div>';}
@@ -406,8 +385,7 @@ auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL).then(()=>{
 }).catch(e=>console.error('Persistence:',e));
 
 async function limparEventosAntigos(){
-  if(!grupoId)return;
-  const agora=new Date();const seteDiasAtras=new Date(agora);seteDiasAtras.setDate(seteDiasAtras.getDate()-7);
+  if(!grupoId)return;const agora=new Date();const seteDiasAtras=new Date(agora);seteDiasAtras.setDate(seteDiasAtras.getDate()-7);
   try{const snap=await db.collection('eventos').where('grupo_id','==',grupoId).get();const evs=snap.docs.filter(d=>{const e=d.data();return e.data_hora&&new Date(e.data_hora)<seteDiasAtras;});for(const ev of evs)await ev.ref.delete();}catch(e){}
 }
 
@@ -436,7 +414,7 @@ async function carregarSaldo(){
 }
 function abrirAjusteSaldo(){periodosAjuste=JSON.parse(JSON.stringify(saldoUsuario.ferias||[{periodo:'Período atual',total:30}]));document.getElementById('ajuste-abono').value=saldoUsuario.abono||6;document.getElementById('ajuste-licenca').value=saldoUsuario.licenca||90;renderizarPeriodosAjuste();document.getElementById('saldo-ajuste-ov').classList.add('on');}
 function fecharAjusteSaldo(){document.getElementById('saldo-ajuste-ov').classList.remove('on');}
-function renderizarPeriodosAjuste(){const c=document.getElementById('ajuste-periodos-ferias');c.innerHTML=periodosAjuste.map((p,i)=>`<div class="ajuste-periodo"><input type="text" value="${p.periodo||''}" placeholder="Nome (ex: 24/25)" onchange="periodosAjuste[${i}].periodo=this.value" style="flex:2"><input type="number" value="${p.total||30}" min="0" max="60" placeholder="Dias" onchange="periodosAjuste[${i}].total=parseInt(this.value)||0" style="flex:1"><button class="btn-remover" onclick="removerPeriodoAjuste(${i})">🗑</button></div>`).join('');}
+function renderizarPeriodosAjuste(){const c=document.getElementById('ajuste-periodos-ferias');c.innerHTML=periodosAjuste.map((p,i)=>`<div class="ajuste-periodo"><input type="text" value="${p.periodo||''}" placeholder="Nome" onchange="periodosAjuste[${i}].periodo=this.value" style="flex:2"><input type="number" value="${p.total||30}" min="0" max="60" placeholder="Dias" onchange="periodosAjuste[${i}].total=parseInt(this.value)||0" style="flex:1"><button class="btn-remover" onclick="removerPeriodoAjuste(${i})">🗑</button></div>`).join('');}
 function adicionarPeriodoNoAjuste(){periodosAjuste.push({periodo:'Novo período',total:30});renderizarPeriodosAjuste();}
 function removerPeriodoAjuste(index){if(periodosAjuste.length<=1){mostrarToast('⚠️ Mantenha pelo menos 1 período');return;}periodosAjuste.splice(index,1);renderizarPeriodosAjuste();}
 async function salvarAjusteSaldo(){saldoUsuario.ferias=periodosAjuste;saldoUsuario.abono=parseInt(document.getElementById('ajuste-abono').value)||6;saldoUsuario.licenca=parseInt(document.getElementById('ajuste-licenca').value)||90;await db.collection('usuarios').doc(eu.uid).update({saldo:saldoUsuario});fecharAjusteSaldo();mostrarToast('✅ Saldo atualizado!');carregarSaldo();}
@@ -450,103 +428,99 @@ async function carregarFerias(){
   const snap=await db.collection('ausencias').where('grupo_id','==',grupoId).get();
   const todasAusencias=snap.docs.map(d=>({id:d.id,...d.data()}));
   lst.innerHTML='';
-  if(todasAusencias.length===0){
-    lst.innerHTML='<p style="color:var(--light);padding:20px;text-align:center">Nenhum período registrado no grupo.</p>';
-    return;
-  }
+  if(todasAusencias.length===0){lst.innerHTML='<p style="color:var(--light);padding:20px;text-align:center">Nenhum período registrado no grupo.</p>';return;}
   todasAusencias.sort((a,b)=>new Date(a.data_inicio)-new Date(b.data_inicio));
   todasAusencias.forEach(aus=>{
     let dtIni=new Date(aus.data_inicio+"T12:00:00"),dtFim=new Date(aus.data_fim+"T12:00:00");
     let icone=aus.tipo==='ferias'?'🏖️':(aus.tipo==='licenca'?'🏆':'⏱️');
-    const div=document.createElement('div');
-    div.className=`aus-card tipo-${aus.tipo}`;
-    const nomeUsuario=aus.nome_completo||'Usuário';
-    const podeExcluir=eu.is_admin||eu.uid===aus.uid;
-    div.innerHTML=`
-      <div class="aus-icon">${icone}</div>
-      <div class="aus-info">
-        <div class="aus-nome">${aus.periodo||aus.tipo} - ${aus.dias||'?'} dia(s)</div>
-        <div class="aus-detalhe">${dtIni.toLocaleDateString('pt-BR')} → ${dtFim.toLocaleDateString('pt-BR')}</div>
-        <div class="aus-tipo">${aus.tipo}</div>
-        <div class="aus-usuario">👤 ${nomeUsuario}</div>
-      </div>
-      ${podeExcluir?`<button class="btn-excluir-ausencia" onclick="excluirAusenciaGrupo('${aus.id}')">🗑️</button>`:''}
-    `;
+    const div=document.createElement('div');div.className=`aus-card tipo-${aus.tipo}`;
+    const nomeUsuario=aus.nome_completo||'Usuário';const podeExcluir=eu.is_admin||eu.uid===aus.uid;
+    div.innerHTML=`<div class="aus-icon">${icone}</div><div class="aus-info"><div class="aus-nome">${aus.periodo||aus.tipo} - ${aus.dias||'?'} dia(s)</div><div class="aus-detalhe">${dtIni.toLocaleDateString('pt-BR')} → ${dtFim.toLocaleDateString('pt-BR')}</div><div class="aus-tipo">${aus.tipo}</div><div class="aus-usuario">👤 ${nomeUsuario}</div></div>${podeExcluir?`<button class="btn-excluir-ausencia" onclick="excluirAusenciaGrupo('${aus.id}')">🗑️</button>`:''}`;
     lst.appendChild(div);
   });
 }
 
 async function excluirAusenciaGrupo(id){
-  if(!confirm('Excluir este período?'))return;
-  await db.collection('ausencias').doc(id).delete();
-  mostrarToast('✅ Excluído!');
+  if(!confirm('Excluir este período? O saldo será restituído.'))return;
+  const docRef=db.collection('ausencias').doc(id);
+  const doc=await docRef.get();
+  if(!doc.exists){mostrarToast('Período não encontrado');return;}
+  const aus=doc.data();
+  // Remover do saldo do usuário
+  if(aus.uid){
+    const userSnap=await db.collection('usuarios').doc(aus.uid).get();
+    if(userSnap.exists){
+      const userData=userSnap.data();
+      const userSaldo=userData.saldo||{ferias:[],abono:6,licenca:90,usos:[]};
+      userSaldo.usos=(userSaldo.usos||[]).filter(u=>!(u.data_inicio===aus.data_inicio&&u.data_fim===aus.data_fim&&u.tipo===aus.tipo&&u.dias===aus.dias));
+      await db.collection('usuarios').doc(aus.uid).update({saldo:userSaldo});
+    }
+  }
+  await docRef.delete();
+  mostrarToast('✅ Período excluído e saldo restituído!');
   carregarFerias();
 }
 
 async function abrirSelecaoUsuario(){
   usuarioSelecionadoFerias=null;
-  const lista=document.getElementById('lista-usuarios-ferias');
-  lista.innerHTML='';
+  const lista=document.getElementById('lista-usuarios-ferias');lista.innerHTML='';
   const snap=await db.collection('usuarios').where('grupo_id','==',grupoId).get();
   const usuarios=snap.docs.map(d=>({uid:d.id,...d.data()}));
   usuarios.forEach(u=>{
-    const div=document.createElement('div');
-    div.className='usuario-item';
+    const div=document.createElement('div');div.className='usuario-item';
     div.innerHTML=`<span>👤</span><div><div style="font-weight:500">${u.nome_completo}</div><div style="font-size:12px;color:var(--light)">${u.cargo||''}</div></div>`;
-    div.onclick=()=>{
-      lista.querySelectorAll('.usuario-item').forEach(el=>el.classList.remove('selecionado'));
-      div.classList.add('selecionado');
-      usuarioSelecionadoFerias=u;
-    };
+    div.onclick=()=>{lista.querySelectorAll('.usuario-item').forEach(el=>el.classList.remove('selecionado'));div.classList.add('selecionado');usuarioSelecionadoFerias=u;};
     lista.appendChild(div);
   });
   document.getElementById('selecionar-usuario-ov').classList.add('on');
 }
+function fecharSelecaoUsuario(){document.getElementById('selecionar-usuario-ov').classList.remove('on');usuarioSelecionadoFerias=null;}
+function confirmarSelecaoUsuario(){if(!usuarioSelecionadoFerias){mostrarToast('⚠️ Selecione um usuário');return;}fecharSelecaoUsuario();iniciarAddFeriasPara(usuarioSelecionadoFerias);}
+function iniciarAddFerias(){document.getElementById('ferias-consent-desc').textContent='Registrar seu próprio período.';document.getElementById('ferias-consent-ov').classList.add('on');usuarioSelecionadoFerias=null;}
+function iniciarAddFeriasPara(usuario){document.getElementById('ferias-consent-desc').textContent=`Registrar período para: ${usuario.nome_completo}`;document.getElementById('ferias-consent-ov').classList.add('on');usuarioSelecionadoFerias=usuario;}
 
-function fecharSelecaoUsuario(){
-  document.getElementById('selecionar-usuario-ov').classList.remove('on');
-  usuarioSelecionadoFerias=null;
-}
-
-function confirmarSelecaoUsuario(){
-  if(!usuarioSelecionadoFerias){mostrarToast('⚠️ Selecione um usuário');return;}
-  fecharSelecaoUsuario();
-  iniciarAddFeriasPara(usuarioSelecionadoFerias);
-}
-
-function iniciarAddFerias(){
-  document.getElementById('ferias-consent-desc').textContent='Registrar seu próprio período.';
-  document.getElementById('ferias-consent-ov').classList.add('on');
-  usuarioSelecionadoFerias=null;
-}
-
-function iniciarAddFeriasPara(usuario){
-  document.getElementById('ferias-consent-desc').textContent=`Registrar período para: ${usuario.nome_completo}`;
-  document.getElementById('ferias-consent-ov').classList.add('on');
-  usuarioSelecionadoFerias=usuario;
+function atualizarOpcoesPeriodo(){
+  const tipo=document.getElementById('ferias-tipo').value;
+  const selectEl=document.getElementById('ferias-periodo-select');
+  const textEl=document.getElementById('ferias-periodo-text');
+  if(tipo==='ferias'){
+    textEl.style.display='none';selectEl.style.display='block';
+    selectEl.innerHTML='';
+    const periodos=saldoUsuario.ferias||[{periodo:'Período atual',total:30}];
+    periodos.forEach(p=>{
+      const usado=(saldoUsuario.usos||[]).filter(u=>u.tipo==='ferias'&&u.periodo===p.periodo).reduce((s,u)=>s+(u.dias||0),0);
+      const restante=Math.max(0,(p.total||30)-usado);
+      const opt=document.createElement('option');opt.value=p.periodo;opt.textContent=`${p.periodo} (${restante} dias disponíveis)`;selectEl.appendChild(opt);
+    });
+  } else {
+    selectEl.style.display='none';textEl.style.display='block';
+  }
 }
 
 function abrirFormFerias(){
   document.getElementById('ferias-consent-ov').classList.remove('on');
   document.getElementById('ferias-form-ov').classList.add('on');
-  document.getElementById('ferias-ini').value="";
-  document.getElementById('ferias-fim').value="";
-  document.getElementById('ferias-dias').value="1";
-  document.getElementById('ferias-periodo').value="";
-  document.getElementById('ferias-tipo').value="abono";
-  document.getElementById('ferias-erro').style.display='none';
+  document.getElementById('ferias-ini').value="";document.getElementById('ferias-fim').value="";
+  document.getElementById('ferias-dias').value="1";document.getElementById('ferias-periodo-text').value="";
+  document.getElementById('ferias-tipo').value="abono";document.getElementById('ferias-erro').style.display='none';
+  atualizarOpcoesPeriodo();
   const paraEl=document.getElementById('ferias-form-para');
-  if(usuarioSelecionadoFerias){
-    paraEl.textContent=`👤 Para: ${usuarioSelecionadoFerias.nome_completo}`;
-    paraEl.style.display='block';
-  } else {
-    paraEl.style.display='none';
+  if(usuarioSelecionadoFerias){paraEl.textContent=`👤 Para: ${usuarioSelecionadoFerias.nome_completo}`;paraEl.style.display='block';}else{paraEl.style.display='none';}
+}
+
+function calcularDataTermino(){
+  const iniVal=document.getElementById('ferias-ini').value;
+  const dias=parseInt(document.getElementById('ferias-dias').value)||1;
+  if(iniVal&&dias>0){
+    const dt=new Date(iniVal+"T12:00:00");
+    dt.setDate(dt.getDate()+dias-1);
+    document.getElementById('ferias-fim').value=dt.toISOString().split('T')[0];
   }
 }
 
 async function salvarFerias(){
   const tipo=document.getElementById('ferias-tipo').value;
-  const periodo=document.getElementById('ferias-periodo').value.trim();
+  const periodo=tipo==='ferias'?document.getElementById('ferias-periodo-select').value:document.getElementById('ferias-periodo-text').value.trim();
   const dias=parseInt(document.getElementById('ferias-dias').value)||1;
   const iniStr=document.getElementById('ferias-ini').value;
   const fimStr=document.getElementById('ferias-fim').value;
@@ -554,18 +528,28 @@ async function salvarFerias(){
   if(!periodo){erroEl.textContent='⚠️ Informe o período';erroEl.style.display='block';return;}
   if(!iniStr||!fimStr){erroEl.textContent='⚠️ Preencha as datas';erroEl.style.display='block';return;}
   if(new Date(iniStr+"T12:00:00")>new Date(fimStr+"T12:00:00")){erroEl.textContent='⚠️ Data inválida';erroEl.style.display='block';return;}
+
   const uidDestino=usuarioSelecionadoFerias?usuarioSelecionadoFerias.uid:eu.uid;
   const nomeDestino=usuarioSelecionadoFerias?usuarioSelecionadoFerias.nome_completo:eu.nome_completo;
-  await db.collection('ausencias').add({
-    uid:uidDestino,nome_completo:nomeDestino,grupo_id:grupoId,tipo,periodo,dias,
-    data_inicio:iniStr,data_fim:fimStr,criado_por:eu.uid,criado_em:firebase.firestore.FieldValue.serverTimestamp()
-  });
-  if(uidDestino===eu.uid){
-    const snap=await db.collection('usuarios').doc(eu.uid).get();
-    const data=snap.data();saldoUsuario=data.saldo||{ferias:[],abono:6,licenca:90,usos:[]};
-    saldoUsuario.usos.push({tipo,periodo,dias,data_inicio:iniStr,data_fim:fimStr,adicionado_em:new Date().toISOString()});
-    await db.collection('usuarios').doc(eu.uid).update({saldo:saldoUsuario});
+
+  // Verificar e atualizar saldo do destinatário
+  const userSnap=await db.collection('usuarios').doc(uidDestino).get();
+  if(userSnap.exists){
+    const userData=userSnap.data();
+    const userSaldo=userData.saldo||{ferias:[],abono:6,licenca:90,usos:[]};
+    if(typeof userSaldo.ferias==='number')userSaldo.ferias=[{periodo:'Total',total:userSaldo.ferias,usado:0}];
+    const usos=userSaldo.usos||[];
+    if(tipo==='abono'&&usos.filter(u=>u.tipo==='abono').length>=(userSaldo.abono||6)){erroEl.textContent='⚠️ Abonos esgotados';erroEl.style.display='block';return;}
+    if(tipo==='licenca'){const u=usos.filter(u=>u.tipo==='licenca').reduce((s,u)=>s+(u.dias||0),0);if(u+dias>(userSaldo.licenca||90)){erroEl.textContent='⚠️ Saldo insuficiente';erroEl.style.display='block';return;}}
+    if(tipo==='ferias'){const p=userSaldo.ferias.find(p=>p.periodo===periodo);if(p){const u=usos.filter(u=>u.tipo==='ferias'&&u.periodo===periodo).reduce((s,u)=>s+(u.dias||0),0);if(u+dias>(p.total||30)){erroEl.textContent='⚠️ Saldo insuficiente';erroEl.style.display='block';return;}}}
+    usos.push({tipo,periodo,dias,data_inicio:iniStr,data_fim:fimStr,adicionado_em:new Date().toISOString()});
+    userSaldo.usos=usos;
+    await db.collection('usuarios').doc(uidDestino).update({saldo:userSaldo});
+    // Atualizar saldoUsuario local se for o próprio
+    if(uidDestino===eu.uid)saldoUsuario=userSaldo;
   }
+
+  await db.collection('ausencias').add({uid:uidDestino,nome_completo:nomeDestino,grupo_id:grupoId,tipo,periodo,dias,data_inicio:iniStr,data_fim:fimStr,criado_por:eu.uid,criado_em:firebase.firestore.FieldValue.serverTimestamp()});
   document.getElementById('ferias-form-ov').classList.remove('on');
   usuarioSelecionadoFerias=null;
   mostrarToast("✅ Período registrado!");
@@ -584,13 +568,7 @@ function fecharRv(){document.getElementById('rv-ov').classList.remove('on');ocrD
 async function salvar(){const t=document.getElementById('rv-tit').value.trim();const d=document.getElementById('rv-data').value;if(!t||!d){alert('Preencha título e data.');return;}await db.collection('eventos').add({id_verificacao:ocrDados?.id_ver||null,titulo_evento:t,data_hora:d+':00',local:document.getElementById('rv-loc').value.trim(),lista_convocados:ocrDados?.nomes||[],grupo_id:grupoId,criado_por:eu.uid,criado_em:firebase.firestore.FieldValue.serverTimestamp()});fecharRv();const dtF=new Date(d+':00').toLocaleDateString('pt-BR',{day:'2-digit',month:'short',year:'numeric'});const ex=matches.filter(m=>m.tipo==='exato');for(const m of ex){await db.collection('notificacoes').add({uid:m.usuario.uid,tipo:'convocado',nome_convocacao:m.nome,titulo_evento:t,data_hora:d+':00',grupo_id:grupoId,respondido:false,criado_em:firebase.firestore.FieldValue.serverTimestamp()});if(m.usuario.uid===eu.uid)enviarNotificacaoPush('📋 Convocado!',`${t} — ${dtF}`);}const pa=matches.filter(m=>m.tipo==='parcial'||m.tipo==='baixa_confianca');for(const m of pa){await db.collection('notificacoes').add({uid:m.usuario.uid,tipo:'confirmar',nome_convocacao:m.nome,titulo_evento:t,data_hora:d+':00',grupo_id:grupoId,respondido:false,criado_em:firebase.firestore.FieldValue.serverTimestamp()});}mostrarToast('✅ Salvo!');carregarEventos();verificarNotificacoesPendentes();}
 
 // ── EDIÇÃO DE EVENTO ────────────────────────────────────────────────
-async function salvarEdicaoEvento(){
-  if(!eventoAtualMod||!eu.is_admin)return;
-  const novoTitulo=document.getElementById('mod-tit').value.trim();
-  const novoSub=document.getElementById('mod-sub').value.trim();
-  if(!novoTitulo){mostrarToast('⚠️ Informe o título');return;}
-  try{await db.collection('eventos').doc(eventoAtualMod.id).update({titulo_evento:novoTitulo,local:novoSub});eventoAtualMod.titulo_evento=novoTitulo;mostrarToast('✅ Evento atualizado!');carregarEventos();abrirMod(eventoAtualMod);}catch(e){console.error(e);alert('Erro ao salvar.');}
-}
+async function salvarEdicaoEvento(){if(!eventoAtualMod||!eu.is_admin)return;const novoTitulo=document.getElementById('mod-tit').value.trim();if(!novoTitulo){mostrarToast('⚠️ Informe o título');return;}try{await db.collection('eventos').doc(eventoAtualMod.id).update({titulo_evento:novoTitulo});eventoAtualMod.titulo_evento=novoTitulo;mostrarToast('✅ Evento atualizado!');carregarEventos();abrirMod(eventoAtualMod);}catch(e){console.error(e);alert('Erro ao salvar.');}}
 
 // ── DEMAIS FUNÇÕES ──────────────────────────────────────────────────
 function verificarCadastroCompleto(){if(!eu.nome_completo||eu.nome_completo.trim().length<5||!eu.cargo){document.getElementById('cadastro-nome').value=eu.nome_completo||'';document.getElementById('cadastro-cargo').value=eu.cargo||'';document.getElementById('cadastro-email').value=eu.email||'';document.getElementById('completar-cadastro-ov').classList.add('on');return false;}if(eu.nome_completo.trim().split(/\s+/).length<2){document.getElementById('cadastro-erro').textContent='⚠️ Informe nome e sobrenome';document.getElementById('cadastro-erro').style.display='block';document.getElementById('completar-cadastro-ov').classList.add('on');return false;}return true;}
@@ -602,57 +580,25 @@ function abrirPerfil(){abrirEditarNome(eu.uid,eu.nome_completo||'',eu.cargo||'',
 function fecharPerfil(){fecharEditarNome();}
 async function salvarPerfil(){await salvarEdicaoNome();}
 
-// ── ENVIO DE E-MAIL (CORRIGIDO PARA NÃO DUPLICAR) ──────────────────
-function iniciarVerificacaoLembretes(){
-  if(intervaloVerificacaoEmail)clearInterval(intervaloVerificacaoEmail);
-  verificarLembretesAmanha();
-  // Verifica a cada 6 horas, mas só envia se for um novo dia
-  intervaloVerificacaoEmail=setInterval(verificarLembretesAmanha,6*60*60*1000);
-}
-
+// ── ENVIO DE E-MAIL ─────────────────────────────────────────────────
+function iniciarVerificacaoLembretes(){if(intervaloVerificacaoEmail)clearInterval(intervaloVerificacaoEmail);verificarLembretesAmanha();intervaloVerificacaoEmail=setInterval(verificarLembretesAmanha,6*60*60*1000);}
 async function verificarLembretesAmanha(){
   if(!grupoId)return;
-  const hoje=new Date();
-  const chaveDia=`lembretes_enviados_${hoje.toISOString().split('T')[0]}`;
-  if(localStorage.getItem(chaveDia))return; // já enviou hoje
-
-  const amanha=new Date(hoje);
-  amanha.setDate(amanha.getDate()+1);
-  const amanhaStr=amanha.toISOString().split('T')[0];
-
+  const hoje=new Date();const chaveDia=`lembretes_enviados_${hoje.toISOString().split('T')[0]}`;
+  if(localStorage.getItem(chaveDia))return;
+  const amanha=new Date(hoje);amanha.setDate(amanha.getDate()+1);const amanhaStr=amanha.toISOString().split('T')[0];
   try{
     const evs=await db.collection('eventos').where('grupo_id','==',grupoId).get();
     const evAmanha=evs.docs.map(d=>({id:d.id,...d.data()})).filter(e=>e.data_hora&&e.data_hora.startsWith(amanhaStr));
     if(!evAmanha.length)return;
-
     const us=await db.collection('usuarios').where('grupo_id','==',grupoId).get();
-    const usuarios=us.docs.map(d=>({uid:d.id,...d.data()}));
-    let env=0;
-    for(const ev of evAmanha){
-      for(const n of(ev.lista_convocados||[])){
-        const u=encontrarUsuarioPorNome(usuarios,n);
-        if(u&&u.email){
-          const chaveEmail=`email_${u.uid}_${ev.id||ev.id_verificacao}`;
-          if(localStorage.getItem(chaveEmail))continue; // já enviado para este usuário/evento
-          try{
-            const dt=new Date(ev.data_hora);
-            await emailjs.send(EMAIL_CONFIG.serviceId,EMAIL_CONFIG.templateId,{
-              to_email:u.email,
-              nome_usuario:u.nome_completo,
-              titulo_evento:ev.titulo_evento||'Evento',
-              data_evento:dt.toLocaleDateString('pt-BR'),
-              hora_evento:dt.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'}),
-              local_evento:ev.local||'A definir'
-            });
-            localStorage.setItem(chaveEmail,'1');
-            env++;
-          }catch(e){console.warn('Falha ao enviar e-mail para',u.email,e);}
-        }
-      }
-    }
-    localStorage.setItem(chaveDia,'1');
-    if(env>0)console.log(`${env} lembretes enviados`);
-  }catch(e){console.error('Erro ao verificar lembretes:',e);}
+    const usuarios=us.docs.map(d=>({uid:d.id,...d.data()}));let env=0;
+    for(const ev of evAmanha){for(const n of(ev.lista_convocados||[])){const u=encontrarUsuarioPorNome(usuarios,n);
+      if(u&&u.email){const chaveEmail=`email_${u.uid}_${ev.id||ev.id_verificacao}`;if(localStorage.getItem(chaveEmail))continue;
+        try{const dt=new Date(ev.data_hora);await emailjs.send(EMAIL_CONFIG.serviceId,EMAIL_CONFIG.templateId,{to_email:u.email,nome_usuario:u.nome_completo,titulo_evento:ev.titulo_evento||'Evento',data_evento:dt.toLocaleDateString('pt-BR'),hora_evento:dt.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'}),local_evento:ev.local||'A definir'});localStorage.setItem(chaveEmail,'1');env++;}catch(e){console.warn('Falha e-mail',u.email,e);}
+    }}}
+    localStorage.setItem(chaveDia,'1');if(env>0)console.log(`${env} lembretes`);
+  }catch(e){console.error('Erro verificar lembretes:',e);}
 }
 function encontrarUsuarioPorNome(usuarios,nome){const norm=s=>s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9\s]/g,'').trim();return usuarios.find(u=>(u.nomes_conhecidos||[u.nome_completo]).some(n=>norm(n)===norm(nome)));}
 
@@ -673,7 +619,7 @@ async function recusar(uid){const s=await db.collection('grupos').doc(grupoId).g
 
 async function carregarEventos(){if(!grupoId)return;const snap=await db.collection('eventos').where('grupo_id','==',grupoId).get();const agora=new Date();const evs=snap.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>new Date(a.data_hora)-new Date(b.data_hora));document.getElementById('total').textContent=evs.length+' total';const norm=s=>s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9\s]/g,'').trim();const st=new Set(['de','da','do','das','dos','e','a','o','as','os']);const pw=s=>norm(s).split(/\s+/).filter(p=>p.length>1&&!st.has(p));const euN=[eu.nome_completo,...(eu.nomes_conhecidos||[])];const euPw=pw(eu.nome_completo);function euSou(l){return(l||[]).some(n=>{if(euN.some(en=>norm(en)===norm(n)))return true;const pn=pw(n);const ec=pn.filter(p=>euPw.some(pe=>p===pe||(p.length>=5&&lev(p,pe)<=1)));return ec.length/Math.max(pn.length,1)>=0.55;});}const mp=evs.filter(e=>new Date(e.data_hora)>agora&&euSou(e.lista_convocados));const ms=evs.filter(e=>new Date(e.data_hora)>agora&&(e.substitutos||[]).some(s=>s.uid===eu.uid));const el=document.getElementById('prox');if(!mp.length&&!ms.length){el.innerHTML='<div class="card-vazio">Sem convocações próximas.</div>';}else{el.innerHTML=[...mp.map((ev,i)=>{const dt=new Date(ev.data_hora);const es=JSON.stringify(ev).replace(/'/g,"&#39;");return`<div class="card-prox"><div class="prox-label">${i===0?'SUA PRÓXIMA':'TAMBÉM CONVOCADO'}</div><div class="prox-titulo" onclick='abrirMod(${es})'>${ev.titulo_evento||'Evento'}</div><div class="prox-meta"><span>📅 ${fD(dt)}</span><span>🕐 ${fH(dt)}</span></div><div style="display:flex;gap:8px;"><button class="btn-agenda" style="flex:1" onclick='ics(${es})'>📅 Agendar</button><button class="btn-trocar-prox" style="flex:1" onclick='abrirTrocar(${es})'>🔄 Trocar</button></div></div>`;}),...ms.map(ev=>{const dt=new Date(ev.data_hora);const es=JSON.stringify(ev).replace(/'/g,"&#39;");const sub=ev.substitutos.find(s=>s.uid===eu.uid);return`<div class="card-prox-sub"><div class="sub-badge">🔄 SUBSTITUIÇÃO</div><div class="prox-titulo" onclick='abrirMod(${es})'>${ev.titulo_evento||'Evento'}</div><div style="font-size:12px;opacity:.8;margin-bottom:10px">Substituindo: ${sub.substituindo}</div><div class="prox-meta"><span>📅 ${fD(dt)}</span><span>🕐 ${fH(dt)}</span></div><div style="display:flex;gap:8px;"><button class="btn-agenda" style="flex:1;background:#d97706" onclick='ics(${es})'>📅 Agendar</button><button class="btn-trocar-prox" style="flex:1" onclick='abrirTrocar(${es})'>🔄 Trocar</button></div></div>`;})].join('');}const lst=document.getElementById('lst-ev');if(!evs.length){lst.innerHTML='<p style="color:var(--light);padding:20px;text-align:center">Nenhuma convocação.</p>';return;}lst.innerHTML='';const fut=evs.filter(e=>new Date(e.data_hora)>agora);const pas=evs.filter(e=>new Date(e.data_hora)<=agora).reverse();[...fut,...pas].forEach(ev=>lst.appendChild(criarCard(ev)));}
 function criarCard(ev){const dt=new Date(ev.data_hora);const pa=dt<=new Date();const w=document.createElement('div');w.className='ev-wrap';w.innerHTML=`<div class="ev-bg"><div class="ev-bg-l"><span>👁</span></div>${eu.is_admin?'<div class="ev-bg-r"><span>🗑</span></div>':''}</div><div class="ev-card" style="border-left-color:${pa?'#94a3b8':'var(--blue)'};opacity:${pa?'.7':'1'}"><div class="ev-titulo">${ev.titulo_evento||'Sem título'}${pa?' <span style="font-size:11px;color:#94a3b8">(encerrado)</span>':''}</div><div class="ev-meta"><span>📅 ${fD(dt)}</span><span>🕐 ${fH(dt)}</span></div><div class="ev-conv">${(ev.lista_convocados||[]).length} convocado(s)</div></div>`;const card=w.querySelector('.ev-card');let sx=0,dx=0,mov=false;card.addEventListener('touchstart',e=>{sx=e.touches[0].clientX;mov=false},{passive:true});card.addEventListener('touchmove',e=>{dx=e.touches[0].clientX-sx;mov=true;if(!eu.is_admin&&dx<0)dx=0;if(Math.abs(dx)>8){card.style.transition='none';card.style.transform=`translateX(${Math.max(-100,Math.min(100,dx))}px)`;}},{passive:true});card.addEventListener('touchend',()=>{card.style.transition='transform .2s ease';if(dx<-60&&eu.is_admin){if(confirm('Excluir?'))db.collection('eventos').doc(ev.id).delete().then(()=>carregarEventos());else card.style.transform='translateX(0)';}else if(dx>60){card.style.transform='translateX(0)';abrirMod(ev);}else{card.style.transform='translateX(0)';if(!mov)abrirMod(ev);}dx=0;});card.addEventListener('click',()=>{if(!mov)abrirMod(ev);});return w;}
-function abrirMod(ev){eventoAtualMod=ev;const dt=new Date(ev.data_hora);document.getElementById('mod-tit').value=ev.titulo_evento||'';document.getElementById('mod-sub').value=fD(dt)+' às '+fH(dt)+(ev.local?' · '+ev.local:'');const ti=document.getElementById('mod-tit');const si=document.getElementById('mod-sub');const bs=document.getElementById('mod-salvar-edicao');if(eu.is_admin){ti.readOnly=false;si.readOnly=false;ti.style.borderBottom='2px dashed var(--border)';si.style.borderBottom='1px dashed var(--border)';bs.style.display='block';}else{ti.readOnly=true;si.readOnly=true;ti.style.borderBottom='none';si.style.borderBottom='none';bs.style.display='none';}const ab=document.getElementById('admin-badge-conv');if(eu.is_admin){ab.style.display='inline-block';renderizarNomesAdmin(ev);}else{ab.style.display='none';db.collection('usuarios').where('grupo_id','==',grupoId).get().then(s=>{const us=s.docs.map(d=>d.data());const norm=s=>s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9\s]/g,'').trim();document.getElementById('mod-conv').innerHTML=(ev.lista_convocados||[]).map(n=>{const nn=norm(n);let uid=null;for(const u of us){if([u.nome_completo,...(u.nomes_conhecidos||[])].some(x=>norm(x)===nn)){uid=u.uid;break;}}let av='';if(uid){const ia=verificarStatusAusencia(uid,ev.data_hora);if(ia){let ic=ia.tipo==='ferias'?'🏖️':(ia.tipo==='licenca'?'🏆':'⏱️');av=`<div class="aviso-ferias">${ic} Atenção: Convocado está de ${ia.tipo} neste dia!</div>`;}}return`<div class="conv-linha"><div style="display:flex;align-items:center;gap:10px;width:100%"><div class="conv-icon"><svg viewBox="0 0 24 24"><path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/></svg></div><span class="conv-nome">${n}</span></div>${av}</div>`;}).join('');});}const agr=new Date();const evFut=dt>agr;const euConv=(ev.lista_convocados||[]).some(n=>euSouConvocadoNome(n));const bt=document.getElementById('mod-trocar');if(euConv&&evFut){bt.style.display='block';bt.onclick=()=>abrirTrocar(ev);}else{bt.style.display='none';}document.getElementById('mod-ag').onclick=()=>ics(ev);document.getElementById('mod-del').style.display=eu.is_admin?'block':'none';document.getElementById('mod-del').onclick=()=>{if(!eu.is_admin)return;if(confirm('Excluir?')){db.collection('eventos').doc(ev.id).delete().then(()=>{fecharMod();carregarEventos();mostrarToast('Excluída');});}};document.getElementById('mod-ev').classList.add('on');}
+function abrirMod(ev){eventoAtualMod=ev;const dt=new Date(ev.data_hora);document.getElementById('mod-tit').value=ev.titulo_evento||'';document.getElementById('mod-sub').value=fD(dt)+' às '+fH(dt)+(ev.local?' · '+ev.local:'');const ti=document.getElementById('mod-tit');const si=document.getElementById('mod-sub');const bs=document.getElementById('mod-salvar-edicao');if(eu.is_admin){ti.readOnly=false;si.readOnly=true;ti.style.borderBottom='2px dashed var(--border)';bs.style.display='block';}else{ti.readOnly=true;si.readOnly=true;ti.style.borderBottom='none';bs.style.display='none';}const ab=document.getElementById('admin-badge-conv');if(eu.is_admin){ab.style.display='inline-block';renderizarNomesAdmin(ev);}else{ab.style.display='none';db.collection('usuarios').where('grupo_id','==',grupoId).get().then(s=>{const us=s.docs.map(d=>d.data());const norm=s=>s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9\s]/g,'').trim();document.getElementById('mod-conv').innerHTML=(ev.lista_convocados||[]).map(n=>{const nn=norm(n);let uid=null;for(const u of us){if([u.nome_completo,...(u.nomes_conhecidos||[])].some(x=>norm(x)===nn)){uid=u.uid;break;}}let av='';if(uid){const ia=verificarStatusAusencia(uid,ev.data_hora);if(ia){let ic=ia.tipo==='ferias'?'🏖️':(ia.tipo==='licenca'?'🏆':'⏱️');av=`<div class="aviso-ferias">${ic} Atenção: Convocado está de ${ia.tipo} neste dia!</div>`;}}return`<div class="conv-linha"><div style="display:flex;align-items:center;gap:10px;width:100%"><div class="conv-icon"><svg viewBox="0 0 24 24"><path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/></svg></div><span class="conv-nome">${n}</span></div>${av}</div>`;}).join('');});}const agr=new Date();const evFut=dt>agr;const euConv=(ev.lista_convocados||[]).some(n=>euSouConvocadoNome(n));const bt=document.getElementById('mod-trocar');if(euConv&&evFut){bt.style.display='block';bt.onclick=()=>abrirTrocar(ev);}else{bt.style.display='none';}document.getElementById('mod-ag').onclick=()=>ics(ev);document.getElementById('mod-del').style.display=eu.is_admin?'block':'none';document.getElementById('mod-del').onclick=()=>{if(!eu.is_admin)return;if(confirm('Excluir?')){db.collection('eventos').doc(ev.id).delete().then(()=>{fecharMod();carregarEventos();mostrarToast('Excluída');});}};document.getElementById('mod-ev').classList.add('on');}
 function fecharMod(){document.getElementById('mod-ev').classList.remove('on');eventoAtualMod=null;nomesEditaveis=[];}
 function renderizarNomesAdmin(ev){const c=document.getElementById('mod-conv');nomesEditaveis=[...(ev.lista_convocados||[])];c.innerHTML=nomesEditaveis.map((n,i)=>`<div class="conv-linha" style="flex-direction:column;gap:6px"><div style="display:flex;align-items:center;gap:10px"><div class="conv-icon"><svg viewBox="0 0 24 24"><path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/></svg></div><span class="conv-nome editable" contenteditable="true" onblur="atualizarNomeAdmin(${i},this.textContent)">${n}</span><button class="btn-remover-nome" onclick="removerNomeAdmin(${i})">✕</button></div></div>`).join('')+`<div style="display:flex;gap:8px;margin-top:8px"><input type="text" class="input-novo-nome" id="input-novo-nome" placeholder="Adicionar nome..." style="flex:1"><button class="btn-salvar" onclick="adicionarNomeAdmin()" style="width:auto;padding:10px 16px">+</button></div><button class="btn-salvar-nomes" onclick="salvarNomesAdmin()">💾 Salvar</button>`;}
 function atualizarNomeAdmin(i,n){if(n&&n.trim())nomesEditaveis[i]=n.trim();}
