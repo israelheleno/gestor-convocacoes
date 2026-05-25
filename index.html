@@ -650,7 +650,7 @@ function abrirEditarNome(uid,nomeAtual,cargoAtual,isSelf){membroEditando={uid,is
 function fecharEditarNome(){document.getElementById('editar-nome-ov').classList.remove('on');membroEditando=null;}
 async function salvarEdicaoNome(){const n=document.getElementById('editar-nome-input').value.trim(),c=document.getElementById('editar-cargo-input').value.trim();if(!n||n.length<3||!c){alert('Preencha nome e cargo');return;}await db.collection('usuarios').doc(membroEditando.uid).update({nome_completo:n,cargo:c,nomes_conhecidos:firebase.firestore.FieldValue.arrayUnion(n)});if(membroEditando.uid===eu.uid){eu.nome_completo=n;eu.cargo=c;document.getElementById('h-user').textContent=n+' · '+c;}fecharEditarNome();mostrarToast('✅ Atualizado!');if(grupoId){carregarEventos();if(eu.is_admin)carregarMembrosAdmin();}}
 function ics(ev){const ini=new Date(ev.data_hora);const fim=new Date(ini.getTime()+2*60*60*1000);const f=d=>d.toISOString().replace(/[-:]/g,'').split('.')[0]+'Z';const c=['BEGIN:VCALENDAR','VERSION:2.0','BEGIN:VEVENT','SUMMARY:'+(ev.titulo_evento||'Convocação'),'DTSTART:'+f(ini),'DTEND:'+f(fim),'END:VEVENT','END:VCALENDAR'].join('\r\n');const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([c],{type:'text/calendar'}));a.download='conv.ics';a.click();}
-function fD(d){return d.toLocaleDateString('pt-BR',{day:'2-digit',month:'short'});}
+function fD(d){const dias=['dom','seg','ter','qua','qui','sex','sáb'];return dias[d.getDay()]+', '+d.toLocaleDateString('pt-BR',{day:'2-digit',month:'short'});}
 function fH(d){return d.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});}
 function sair(){auth.signOut().then(()=>window.location.replace('login.html'));}
 </script>
