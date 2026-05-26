@@ -7,6 +7,8 @@
   <meta name="apple-mobile-web-app-capable" content="yes"/>
   <meta name="apple-mobile-web-app-title" content="Convocações"/>
   <meta name="theme-color" content="#1E3A8A"/>
+  <!-- Manifest para ícone no Android -->
+  <link rel="manifest" href="manifest.json" />
   <link href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet"/>
   <style>
     *{box-sizing:border-box;margin:0;padding:0}
@@ -268,6 +270,23 @@
 
     footer{text-align:center;padding:16px;color:var(--light);font-size:11px;border-top:1px solid var(--border);margin-top:20px}
     footer strong{color:var(--blue)}
+
+    /* Modal de instalação */
+    .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:10000;display:none;align-items:center;justify-content:center;padding:20px}
+    .modal-overlay.on{display:flex}
+    .modal-content{background:#fff;border-radius:24px;padding:24px 20px;width:100%;max-width:380px;max-height:85dvh;overflow-y:auto;position:relative;animation:fu .3s ease}
+    .close-modal{position:absolute;top:12px;right:16px;background:none;border:none;font-size:22px;color:var(--light);cursor:pointer}
+    .modal-content h2{font-family:'Sora',sans-serif;font-size:17px;font-weight:700;color:var(--blue);margin-bottom:6px;text-align:center}
+    .os-container{display:flex;gap:12px;justify-content:center;margin-bottom:20px}
+    .os-card{flex:1;background:#f8fafc;border:1.5px solid var(--border);border-radius:14px;padding:18px 10px;text-align:center;cursor:pointer;transition:all .2s}
+    .os-card:hover{background:#eff6ff;border-color:var(--blue)}
+    .os-card .os-icon{font-size:38px;margin-bottom:8px}
+    .os-card .os-title{font-weight:700;font-size:13px;color:var(--text)}
+    .guide-content{display:none}
+    .guide-content.on{display:block}
+    .guide-step{display:flex;align-items:flex-start;gap:12px;margin-bottom:14px;font-size:13px;color:var(--text)}
+    .icon-wrapper{min-width:32px;height:32px;background:#eff6ff;border-radius:8px;display:flex;align-items:center;justify-content:center}
+    .btn-back{display:block;width:100%;padding:10px;margin-top:10px;background:transparent;border:1px solid var(--border);border-radius:10px;font-size:13px;cursor:pointer;color:var(--text);text-align:center}
   </style>
 </head>
 <body>
@@ -323,7 +342,7 @@
 
 <footer>
   <p>Desenvolvido por <strong>Israel Heleno de Castro</strong></p>
-  <p>© 2026 Gestor de Convocações — v19.3</p>
+  <p>© 2026 Gestor de Convocações — v20.0</p>
 </footer>
 
 <!-- MODAIS (mantidos) -->
@@ -345,7 +364,7 @@
 
 <div id="ms-ov"><div class="ms-box"><h3 id="ms-tit"></h3><p>Você entrará no grupo.</p><div class="ms-btns"><button class="btn-cancel" onclick="document.getElementById('ms-ov').classList.remove('on')">Cancelar</button><button class="btn-salvar" id="ms-ok">Solicitar</button></div></div></div>
 <div id="perfil-ov"><div class="perfil-box"><h3>✏️ Editar perfil</h3><p>Nome completo como nos documentos.</p><div class="perfil-field"><label>Nome</label><input type="text" id="perf-nome"/></div><div class="perfil-field"><label>Cargo</label><input type="text" id="perf-cargo"/></div><div class="perfil-field"><label>Email</label><input type="email" id="perf-email"/></div><div class="perfil-btns"><button class="btn-cancel" onclick="fecharPerfil()">Cancelar</button><button class="btn-salvar" onclick="salvarPerfil()">✓ Salvar</button></div></div></div>
-<div id="editar-nome-ov"><div class="editar-nome-box"><h3>✏️ Corrigir Nome</h3><p id="editar-nome-desc"></p><div class="field"><label>Nome</label><input type="text" id="editar-nome-input"/></div><div class="field"><label>Cargo</label><input type="text" id="editar-cargo-input"/></div><div class="btns-row"><button class="btn-cancel" onclick="fecharEditarNome()">Cancelar</button><button class="btn-salvar" onclick="salvarEdicaoNome()">✓ Salvar</button></div></div></div>
+<div id="editar-nome-ov"><div class="editar-nome-box"><h3 id="editar-nome-titulo">✏️ Corrigir Nome</h3><p id="editar-nome-desc"></p><div class="field"><label>Nome</label><input type="text" id="editar-nome-input"/></div><div class="field"><label>Cargo</label><input type="text" id="editar-cargo-input"/></div><div class="btns-row"><button class="btn-cancel" onclick="fecharEditarNome()">Cancelar</button><button class="btn-salvar" onclick="salvarEdicaoNome()">✓ Salvar</button></div></div></div>
 <div id="completar-cadastro-ov"><div style="background:#fff;border-radius:24px;padding:28px 22px;width:100%;max-width:360px;"><h3 style="font-family:'Sora',sans-serif;font-size:17px;font-weight:700;color:var(--blue);margin-bottom:6px;">👋 Complete seu cadastro</h3><p style="font-size:13px;color:var(--light);margin-bottom:18px;">Precisamos do seu nome completo e cargo.</p><div class="field"><label>Nome completo</label><input type="text" id="cadastro-nome"/></div><div class="field"><label>Cargo</label><input type="text" id="cadastro-cargo"/></div><div class="field"><label>Email</label><input type="email" id="cadastro-email"/></div><p style="font-size:11px;color:var(--red);margin-bottom:12px;display:none;" id="cadastro-erro"></p><button class="btn-salvar" onclick="completarCadastro()" style="width:100%">✓ Salvar</button></div></div>
 <div id="notif-ov"><div class="notif-box"><div class="notif-emoji">🔔</div><div class="notif-titulo" id="notif-titulo"></div><div class="notif-desc" id="notif-desc"></div><div class="notif-evento"><div class="notif-evento-titulo" id="notif-ev-titulo"></div><div class="notif-evento-data" id="notif-ev-data"></div></div><div class="notif-btns"><button class="btn-cancel" onclick="responderNotif(false)">✗ Não sou eu</button><button class="btn-salvar" onclick="responderNotif(true)">✓ Sim, sou eu!</button></div></div></div>
 <div id="admin-ov"><div class="admin-hd"><button class="btn-x" onclick="fecharAdmin()">✕</button><h2>🛡️ Painel Admin</h2></div><div class="admin-body"><div class="sec-titulo">Membros <span id="admin-total"></span></div><div id="admin-membros"></div></div></div>
@@ -353,6 +372,57 @@
 <div id="ocr-ov"><div class="ocr-spinner"></div><div class="ocr-texto" id="ocr-texto">📸 Analisando...</div><div class="ocr-barra"><div class="ocr-preenchimento" id="ocr-preenchimento"></div></div><div class="ocr-subtexto" id="ocr-subtexto"></div><div class="ocr-dica">Não feche o app</div></div>
 <div id="rv-ov"><div class="rv-hd"><button class="btn-x" onclick="fecharRv()">✕</button><h2>Conferir dados</h2></div><div class="rv-body"><div class="rv-lbl">Título</div><div class="rv-val"><input type="text" id="rv-tit"/></div><div class="rv-lbl">Data/hora</div><div class="rv-val"><input type="datetime-local" id="rv-data"/></div><div class="rv-lbl">Local</div><div class="rv-val"><input type="text" id="rv-loc"/></div><div class="rv-lbl">Convocados</div><div id="rv-matches"></div><div class="rv-btns"><button class="btn-cancel" onclick="fecharRv()">Cancelar</button><button class="btn-salvar" onclick="salvar()">✓ Salvar</button></div></div></div>
 <div class="ov-center" id="saldo-ajuste-ov"><div class="box-center"><h3>⚙️ Ajustar Saldo</h3><p style="font-size:13px;color:var(--light);margin-bottom:16px">Configure seus saldos e períodos aquisitivos.</p><div class="ajuste-bloco"><h4>🏖️ Períodos Aquisitivos de Férias</h4><div id="ajuste-periodos-ferias"></div><button class="btn-add-ajuste" onclick="adicionarPeriodoNoAjuste()">+ Adicionar período</button></div><div class="ajuste-bloco"><h4>⏱️ Abonos</h4><div class="field" style="margin-bottom:0"><label>Total de abonos disponíveis</label><input type="number" id="ajuste-abono" min="0" max="12" value="6"/></div></div><div class="ajuste-bloco"><h4>🏆 Licença Prêmio</h4><div class="field" style="margin-bottom:0"><label>Total de dias de licença prêmio</label><input type="number" id="ajuste-licenca" min="0" max="180" value="90"/></div></div><div class="btns-row"><button class="btn-cancel" onclick="fecharAjusteSaldo()">Cancelar</button><button class="btn-salvar" onclick="salvarAjusteSaldo()">💾 Salvar</button></div></div></div>
+
+<!-- Modal de instalação (substitui o alert) -->
+<div class="modal-overlay" id="installModal">
+  <div class="modal-content">
+    <span class="close-modal" onclick="closeInstallModal()">✕</span>
+    <h2 style="color: var(--blue); margin-top: 5px; font-size: 18px; text-transform: uppercase;">Instalação do App</h2>
+    <div id="step-os">
+      <p style="font-size: 12px; color: var(--light); margin-bottom: 20px; text-align: center;">Selecione o seu sistema para ver como instalar gratuitamente:</p>
+      <div class="os-container">
+        <div class="os-card" onclick="showGuide('android')">
+          <div class="os-icon">🤖</div>
+          <div class="os-title">ANDROID</div>
+        </div>
+        <div class="os-card" onclick="showGuide('ios')">
+          <div class="os-icon">🍎</div>
+          <div class="os-title">IPHONE</div>
+        </div>
+      </div>
+    </div>
+    <div id="guide-android" class="guide-content">
+      <div class="guide-step">
+        <div class="icon-wrapper">⋮</div>
+        <div>Clique nos <strong>Três Pontos</strong> no canto superior do seu navegador Chrome.</div>
+      </div>
+      <div class="guide-step">
+        <div class="icon-wrapper">➕</div>
+        <div>Selecione a opção <strong>"Adicionar à tela inicial"</strong>.</div>
+      </div>
+      <div class="guide-step">
+        <div class="icon-wrapper">✓</div>
+        <div>Confirme clicando em <strong>Instalar</strong>.</div>
+      </div>
+      <button class="btn-back" onclick="resetInstallModal()">← Voltar</button>
+    </div>
+    <div id="guide-ios" class="guide-content">
+      <div class="guide-step">
+        <div class="icon-wrapper">↗</div>
+        <div>Clique no ícone de <strong>Compartilhar</strong> na barra inferior do Safari.</div>
+      </div>
+      <div class="guide-step">
+        <div class="icon-wrapper">➕</div>
+        <div>Role a lista e clique em <strong>"Adicionar à Tela de Início"</strong>.</div>
+      </div>
+      <div class="guide-step">
+        <div class="icon-wrapper">✓</div>
+        <div>Confirme clicando em <strong>Adicionar</strong> no canto superior direito.</div>
+      </div>
+      <button class="btn-back" onclick="resetInstallModal()">← Voltar</button>
+    </div>
+  </div>
+</div>
 
 <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
@@ -406,13 +476,6 @@ authTimeout = setTimeout(() => {
   mostrarErroTela('Tempo limite excedido. Redirecionando...');
   setTimeout(redirecionarLogin, 2000);
 }, 10000);
-
-setTimeout(() => {
-  if (loadingScreen.style.display !== 'none') {
-    loadingScreen.style.display = 'none';
-    window.location.replace('login.html');
-  }
-}, 15000);
 
 try {
   auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL).then(() => {
@@ -574,7 +637,15 @@ function fecharAjusteSaldo(){document.getElementById('saldo-ajuste-ov').classLis
 function renderizarPeriodosAjuste(){const c=document.getElementById('ajuste-periodos-ferias');c.innerHTML=periodosAjuste.map((p,i)=>`<div class="ajuste-periodo"><input type="text" value="${p.periodo||''}" placeholder="Nome" onchange="periodosAjuste[${i}].periodo=this.value" style="flex:2"><input type="number" value="${p.total||30}" min="0" max="60" placeholder="Dias" onchange="periodosAjuste[${i}].total=parseInt(this.value)||0" style="flex:1"><button class="btn-remover" onclick="removerPeriodoAjuste(${i})">🗑</button></div>`).join('');}
 function adicionarPeriodoNoAjuste(){periodosAjuste.push({periodo:'Novo período',total:30});renderizarPeriodosAjuste();}
 function removerPeriodoAjuste(index){if(periodosAjuste.length<=1){mostrarToast('⚠️ Mantenha pelo menos 1 período');return;}periodosAjuste.splice(index,1);renderizarPeriodosAjuste();}
-async function salvarAjusteSaldo(){saldoUsuario.ferias=periodosAjuste;saldoUsuario.abono=parseInt(document.getElementById('ajuste-abono').value)||6;saldoUsuario.licenca=parseInt(document.getElementById('ajuste-licenca').value)||90;await db.collection('usuarios').doc(eu.uid).update({saldo:{ferias:saldoUsuario.ferias,abono:saldoUsuario.abono,licenca:saldoUsuario.licenca}});fecharAjusteSaldo();mostrarToast('✅ Saldo atualizado!');carregarSaldo();}
+async function salvarAjusteSaldo(){
+  saldoUsuario.ferias=periodosAjuste;
+  saldoUsuario.abono=parseInt(document.getElementById('ajuste-abono').value)||6;
+  saldoUsuario.licenca=parseInt(document.getElementById('ajuste-licenca').value)||90;
+  await db.collection('usuarios').doc(eu.uid).update({saldo:{ferias:saldoUsuario.ferias,abono:saldoUsuario.abono,licenca:saldoUsuario.licenca}});
+  fecharAjusteSaldo();
+  mostrarToast('✅ Saldo atualizado!');
+  await carregarSaldo(); // Agora espera a recarga dos dados
+}
 
 // ── FÉRIAS ──────────────────────────────────────────────────────────
 async function carregarFerias(){
@@ -751,7 +822,11 @@ function capturar(){const v=document.getElementById('video');const c=document.cr
 async function processarFoto(file){if(!file)return;fecharScanner();const oo=document.getElementById('ocr-ov');const ot=document.getElementById('ocr-texto');const os=document.getElementById('ocr-subtexto');const op=document.getElementById('ocr-preenchimento');oo.classList.add('on');op.style.width='10%';ot.textContent='📸 Preparando...';os.textContent='Otimizando imagem';try{const pi=setInterval(()=>{const cw=parseFloat(op.style.width);if(cw<80)op.style.width=(cw+5)+'%';if(cw>30&&cw<50){ot.textContent='🔍 Enviando...';os.textContent='Conectando ao servidor';}if(cw>50&&cw<70){ot.textContent='🤖 Processando...';os.textContent='IA analisando texto';}},800);const b64=await new Promise((res,rej)=>{const img=new Image();const url=URL.createObjectURL(file);img.onload=()=>{const MAX=1600;let w=img.width,h=img.height;if(w>MAX||h>MAX){if(w>h){h=Math.round(h*MAX/w);w=MAX;}else{w=Math.round(w*MAX/h);h=MAX;}}const c=document.createElement('canvas');c.width=w;c.height=h;c.getContext('2d').drawImage(img,0,0,w,h);URL.revokeObjectURL(url);res(c.toDataURL('image/jpeg',0.9).split(',')[1]);};img.onerror=()=>rej(new Error('Erro'));img.src=url;});clearInterval(pi);op.style.width='80%';ot.textContent='🔎 Lendo...';os.textContent='IA analisando';const resp=await fetch('https://api.mistral.ai/v1/chat/completions',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer zQVzmFaX904lqaFwzt40BHXHfGoqSJca'},body:JSON.stringify({model:'pixtral-12b-2409',max_tokens:800,temperature:0.1,messages:[{role:'user',content:[{type:'image_url',image_url:{url:'data:image/jpeg;base64,'+b64}},{type:'text',text:'Analise esta convocação. Retorne APENAS JSON: {"titulo":"TIPO - Tema","data":"YYYY-MM-DD","hora":"HH:MM","local":"local ou null","nomes":["Nome 1","Nome 2"]}. NUNCA junte nomes.'}]}]})});op.style.width='90%';ot.textContent='✅ Processando...';os.textContent='Organizando dados';const data=await resp.json();const txtRaw=data.choices?.[0]?.message?.content||'';let parsed;try{parsed=JSON.parse(txtRaw.replace(/```json|```/g,'').trim());}catch{const match=txtRaw.match(/\{[\s\S]*\}/);if(match)parsed=JSON.parse(match[0]);else throw new Error('Formato inválido');}if(parsed.nomes&&Array.isArray(parsed.nomes)){parsed.nomes=parsed.nomes.flatMap(nome=>{if(nome.includes(' e ')||nome.includes(' / '))return nome.split(/\s+e\s+|\s+\/\s+/).filter(n=>n.trim().length>2);const ns=nome.split(/(?<=[a-záéíóúãõç])(?=[A-Z])/);if(ns.length>1){const nv=[];let na='';for(let i=0;i<ns.length;i++){na+=ns[i];if(na.trim().split(/\s+/).length>=2&&i<ns.length-1){nv.push(na.trim());na='';}}if(na.trim())nv.push(na.trim());return nv.length>1?nv:[nome];}return[nome];});}op.style.width='100%';ot.textContent='✨ Concluído!';os.textContent='Verifique os dados';ocrDados={titulo:parsed.titulo||null,data_hora:(parsed.data&&parsed.hora)?`${parsed.data}T${parsed.hora}:00`:(parsed.data?`${parsed.data}T00:00:00`:null),local:parsed.local||null,nomes:Array.isArray(parsed.nomes)?parsed.nomes.filter(n=>n&&n.trim().length>2):[],id_ver:null};if(parsed.data&&parsed.hora&&parsed.titulo)ocrDados.id_ver=parsed.data.replace(/-/g,'')+parsed.hora.replace(':','')+parsed.titulo.toUpperCase().replace(/[^A-Z0-9]/g,'').substring(0,10);await new Promise(r=>setTimeout(r,800));}catch(e){oo.classList.remove('on');alert('Erro: '+e.message);return;}oo.classList.remove('on');if(ocrDados.id_ver){const dup=await db.collection('eventos').where('id_verificacao','==',ocrDados.id_ver).where('grupo_id','==',grupoId).get();if(!dup.empty){alert('⚠️ Já cadastrado!');return;}}matches=await cruzar(ocrDados.nomes);document.getElementById('rv-tit').value=ocrDados.titulo||'';document.getElementById('rv-data').value=ocrDados.data_hora?ocrDados.data_hora.substring(0,16):'';document.getElementById('rv-loc').value=ocrDados.local||'';renderMatches();document.getElementById('rv-ov').classList.add('on');}
 
 // ── NOTIFICAÇÕES ────────────────────────────────────────────────────
-async function iniciarNotificacoes(){if(!('serviceWorker' in navigator)||!('Notification' in window))return;await navigator.serviceWorker.register('/gestor-convocacoes/sw.js');await Notification.requestPermission();}
+async function iniciarNotificacoes(){
+  // Service worker removido para evitar erro de conexão
+  if (!('Notification' in window)) return;
+  await Notification.requestPermission();
+}
 function enviarNotificacaoPush(titulo,corpo,tag){if(Notification.permission==='granted')new Notification(titulo,{body:corpo,tag:tag||'conv'});}
 function verificarNotificacoesPendentes(){db.collection('notificacoes').where('uid','==',eu.uid).where('respondido','==',false).onSnapshot(snap=>{const docs=snap.docs;if(!docs.length)return;snap.docChanges().forEach(async c=>{if(c.type==='added'){const n=c.doc.data();if(n.tipo==='substituicao'){enviarNotificacaoPush('🔄 Substituição',`Substituindo ${n.substituindo}`);await c.doc.ref.update({respondido:true});carregarEventos();}}});const pen=docs.filter(d=>d.data().tipo==='confirmar'||d.data().tipo==='convocado');if(pen.length>0&&!document.getElementById('notif-ov').classList.contains('on'))mostrarProximaNotif();});}
 async function mostrarProximaNotif(){const snap=await db.collection('notificacoes').where('uid','==',eu.uid).where('respondido','==',false).where('tipo','in',['confirmar','convocado']).get();filaNotifs=snap.docs.map(d=>({id:d.id,...d.data()}));if(!filaNotifs.length){document.getElementById('notif-ov').classList.remove('on');return;}notifAtual=filaNotifs[0];document.getElementById('notif-ov').classList.add('on');document.getElementById('notif-titulo').textContent=notifAtual.tipo==='convocado'?'Convocado!':'Convocado?';document.getElementById('notif-desc').textContent=notifAtual.tipo==='convocado'?'Você está na lista:':`"${notifAtual.nome_convocacao}" é você?`;document.getElementById('notif-ev-titulo').textContent=notifAtual.titulo_evento||'Evento';try{const dt=new Date(notifAtual.data_hora);document.getElementById('notif-ev-data').textContent=fD(dt)+' às '+fH(dt);}catch(e){}}
@@ -762,9 +837,33 @@ async function abrirTrocar(ev){eventoTroca=ev;substitutoSelecionado=null;documen
 function fecharTrocar(){document.getElementById('trocar-ov').classList.remove('on');eventoTroca=null;substitutoSelecionado=null;}
 function euSouConvocadoNome(nome){const norm=s=>s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9\s]/g,'').trim();const euN=[eu.nome_completo,...(eu.nomes_conhecidos||[])];return euN.some(en=>norm(en)===norm(nome));}
 
-// ── PERFIL ──────────────────────────────────────────────────────────
+// ── PERFIL / INSTALAÇÃO ─────────────────────────────────────────────
 function verificarInstalacao(){if(!window.matchMedia('(display-mode: standalone)').matches)document.getElementById('banner-instalar').style.display='block';}
-function abrirModalInstalar(){alert('📱 Android: Chrome → 3 pontinhos → Adicionar à tela inicial\n🍎 iPhone: Safari → Compartilhar → Adicionar à Tela de Início');}
+
+// Modal de instalação
+function abrirModalInstalar(){
+  document.getElementById('installModal').classList.add('on');
+  resetInstallModal();
+}
+function closeInstallModal(){
+  document.getElementById('installModal').classList.remove('on');
+}
+function resetInstallModal(){
+  document.getElementById('step-os').style.display = 'block';
+  document.getElementById('guide-android').classList.remove('on');
+  document.getElementById('guide-ios').classList.remove('on');
+}
+function showGuide(os) {
+  document.getElementById('step-os').style.display = 'none';
+  if (os === 'android') {
+    document.getElementById('guide-android').classList.add('on');
+    document.getElementById('guide-ios').classList.remove('on');
+  } else {
+    document.getElementById('guide-ios').classList.add('on');
+    document.getElementById('guide-android').classList.remove('on');
+  }
+}
+
 function abrirPerfil(){abrirEditarNome(eu.uid,eu.nome_completo||'',eu.cargo||'',true);}
 function fecharPerfil(){fecharEditarNome();}
 async function salvarPerfil(){await salvarEdicaoNome();}
