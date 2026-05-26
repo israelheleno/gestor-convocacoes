@@ -276,6 +276,7 @@
 <div id="loading-screen" style="position:fixed;inset:0;background:var(--bg);z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px">
   <div style="width:48px;height:48px;border:4px solid var(--border);border-top-color:var(--blue);border-radius:50%;animation:spin 0.8s linear infinite"></div>
   <p style="color:var(--light);font-size:14px">Verificando autenticação...</p>
+  <p id="loading-error" style="color:var(--red);font-size:12px;display:none;text-align:center;max-width:250px"></p>
 </div>
 
 <header>
@@ -322,10 +323,10 @@
 
 <footer>
   <p>Desenvolvido por <strong>Israel Heleno de Castro</strong></p>
-  <p>© 2026 Gestor de Convocações — v19.1</p>
+  <p>© 2026 Gestor de Convocações — v19.3</p>
 </footer>
 
-<!-- MODAIS -->
+<!-- MODAIS (mantidos) -->
 <div class="overlay" id="mod-ev" onclick="if(event.target===this) fecharMod()"><div class="sheet"><div class="handle" onclick="fecharMod()"></div><input type="text" class="mod-titulo-input" id="mod-tit" placeholder="Título do evento"><input type="text" class="mod-sub-input" id="mod-sub" placeholder="Data e hora"><div class="mod-sec"><h3>Convocados <span id="admin-badge-conv" style="display:none" class="admin-badge">Admin</span></h3><div id="mod-conv"></div></div><div style="display:flex;gap:8px;margin-top:16px"><button class="btn-ag" id="mod-ag" style="flex:1;margin-top:0">📅 Agenda</button><button id="mod-trocar" style="flex:1;padding:12px;background:#fff7ed;color:#c2410c;border:1.5px solid #fed7aa;border-radius:10px;font-size:14px;cursor:pointer;font-weight:600;display:none;">🔄 Trocar</button></div><button class="btn-salvar-edicao-evento" id="mod-salvar-edicao" style="display:none" onclick="salvarEdicaoEvento()">💾 Salvar alterações</button><button class="btn-del" id="mod-del" style="display:none">🗑 Excluir</button><button class="btn-cancel" style="margin-top:10px;width:100%" onclick="fecharMod()">Fechar</button></div></div>
 <div id="trocar-ov"><div class="trocar-box"><h3>🔄 Trocar escala</h3><p id="trocar-desc"></p><div class="trocar-membros" id="trocar-lista"></div><div class="trocar-btns"><button class="btn-cancel" onclick="fecharTrocar()">Cancelar</button><button class="btn-salvar" style="background:#c2410c" id="trocar-confirmar">Confirmar</button></div></div></div>
 
@@ -361,7 +362,13 @@
 // ═══════════════════════════════════════════════
 // CONFIGURAÇÃO
 // ═══════════════════════════════════════════════
-firebase.initializeApp({apiKey:"AIzaSyAOpV5NFydHWwUwQKg0MANqMHVcXVDDqpQ",authDomain:"gestor-convocacoes-89823.firebaseapp.com",projectId:"gestor-convocacoes-89823",storageBucket:"gestor-convocacoes-89823.firebasestorage.app",messagingSenderId:"212389113483",appId:"1:212389113483:web:eb97eefe621df0cba66e8e"});
+try {
+  firebase.initializeApp({apiKey:"AIzaSyAOpV5NFydHWwUwQKg0MANqMHVcXVDDqpQ",authDomain:"gestor-convocacoes-89823.firebaseapp.com",projectId:"gestor-convocacoes-89823",storageBucket:"gestor-convocacoes-89823.firebasestorage.app",messagingSenderId:"212389113483",appId:"1:212389113483:web:eb97eefe621df0cba66e8e"});
+} catch (e) {
+  document.getElementById('loading-screen').innerHTML = '<p style="color:var(--red);padding:20px;text-align:center">Erro ao inicializar Firebase.</p>';
+  throw e;
+}
+
 const auth=firebase.auth();const db=firebase.firestore();
 const EMAIL_CONFIG={publicKey:'mXZPykI5Nr2COjWr0',serviceId:'service_pam1xgd',templateId:'template_3926tbq'};
 
@@ -372,28 +379,90 @@ let toastTimeout,periodosAjuste=[],usuarioSelecionadoFerias=null,usuariosGrupo=[
 function mostrarToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');clearTimeout(toastTimeout);toastTimeout=setTimeout(()=>t.classList.remove('show'),2500);}
 function lev(a,b){if(a===b)return 0;const m=a.length,n=b.length;const dp=Array.from({length:m+1},(_,i)=>[i,...Array(n).fill(0)]);for(let j=0;j<=n;j++)dp[0][j]=j;for(let i=1;i<=m;i++)for(let j=1;j<=n;j++)dp[i][j]=a[i-1]===b[j-1]?dp[i-1][j-1]:1+Math.min(dp[i-1][j],dp[i][j-1],dp[i-1][j-1]);return dp[m][n];}
 function mostrarAba(aba,el){document.querySelectorAll('.aba-content').forEach(e=>e.style.display='none');document.getElementById('aba-'+aba).style.display='block';document.querySelectorAll('.nav-tab').forEach(e=>e.classList.remove('active'));if(el)el.classList.add('active');if(aba==='ferias'){carregarFerias();if(eu&&eu.is_admin)document.getElementById('btn-para-outro').style.display='block';}if(aba==='saldo')carregarSaldo();}
-(function(){emailjs.init(EMAIL_CONFIG.publicKey);})();
+try {emailjs.init(EMAIL_CONFIG.publicKey);} catch (e) {console.warn('EmailJS init error:',e);}
 
 // ═══════════════════════════════════════════════
-// AUTENTICAÇÃO (CORRIGIDA)
+// AUTENTICAÇÃO (COM TIMEOUT E FALLBACK)
 // ═══════════════════════════════════════════════
-auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL).then(()=>{
-  auth.onAuthStateChanged(async user=>{
-    document.getElementById('loading-screen').style.display='none';
-    if(!user){window.location.replace('login.html');return;}
-    try{
-      const snap=await db.collection('usuarios').doc(user.uid).get();
-      if(!snap.exists){window.location.replace('login.html');return;}
-      eu={uid:user.uid,...snap.data()};
-      document.getElementById('h-user').textContent=eu.nome_completo+' · '+eu.cargo;
-      if(eu.is_admin){document.getElementById('btn-fab-admin').classList.add('on');document.getElementById('btn-para-outro').style.display='block';}
-      verificarInstalacao();iniciarNotificacoes();carregarGrupos();
-      if(eu.grupo_id){grupoId=eu.grupo_id;carregarEventos();verificarAprovacoes();verificarNotificacoesPendentes();iniciarVerificacaoLembretes();}
-      else{document.getElementById('lst-ev').innerHTML='<p style="color:var(--light);padding:20px;text-align:center">Entre em um grupo para ver convocações.</p>';document.getElementById('prox').innerHTML='<div class="card-vazio">Entre em um grupo para ver suas convocações.</div>';}
-      verificarCadastroCompleto();limparEventosAntigos();
-    }catch(err){console.error('Erro ao carregar dados:',err);}
+let authTimeout;
+const loadingScreen=document.getElementById('loading-screen');
+const loadingError=document.getElementById('loading-error');
+
+function mostrarErroTela(msg) {
+  if (loadingError) {
+    loadingError.textContent = msg;
+    loadingError.style.display = 'block';
+  }
+}
+
+function redirecionarLogin() {
+  if (loadingScreen.style.display !== 'none') {
+    loadingScreen.style.display = 'none';
+  }
+  window.location.replace('login.html');
+}
+
+authTimeout = setTimeout(() => {
+  mostrarErroTela('Tempo limite excedido. Redirecionando...');
+  setTimeout(redirecionarLogin, 2000);
+}, 10000);
+
+setTimeout(() => {
+  if (loadingScreen.style.display !== 'none') {
+    loadingScreen.style.display = 'none';
+    window.location.replace('login.html');
+  }
+}, 15000);
+
+try {
+  auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL).then(() => {
+    auth.onAuthStateChanged(async user => {
+      clearTimeout(authTimeout);
+      loadingScreen.style.display = 'none';
+
+      if (!user) {
+        window.location.replace('login.html');
+        return;
+      }
+
+      try {
+        const snap = await db.collection('usuarios').doc(user.uid).get();
+        if (!snap.exists) {
+          window.location.replace('login.html');
+          return;
+        }
+        eu = {uid: user.uid, ...snap.data()};
+        document.getElementById('h-user').textContent = eu.nome_completo + ' · ' + eu.cargo;
+        if (eu.is_admin) {
+          document.getElementById('btn-fab-admin').classList.add('on');
+          document.getElementById('btn-para-outro').style.display = 'block';
+        }
+        verificarInstalacao(); iniciarNotificacoes(); carregarGrupos();
+        if (eu.grupo_id) {
+          grupoId = eu.grupo_id;
+          carregarEventos(); verificarAprovacoes(); verificarNotificacoesPendentes(); iniciarVerificacaoLembretes();
+        } else {
+          document.getElementById('lst-ev').innerHTML = '<p style="color:var(--light);padding:20px;text-align:center">Entre em um grupo para ver convocações.</p>';
+          document.getElementById('prox').innerHTML = '<div class="card-vazio">Entre em um grupo para ver suas convocações.</div>';
+        }
+        verificarCadastroCompleto(); limparEventosAntigos();
+      } catch (err) {
+        console.error('Erro ao carregar dados:', err);
+        mostrarToast('⚠️ Erro de conexão. Tente recarregar.');
+      }
+    });
+  }).catch(e => {
+    console.error('Persistence error:', e);
+    clearTimeout(authTimeout);
+    mostrarErroTela('Erro de configuração. Redirecionando...');
+    setTimeout(redirecionarLogin, 3000);
   });
-}).catch(e=>console.error('Persistence:',e));
+} catch (e) {
+  console.error('Auth setup error:', e);
+  clearTimeout(authTimeout);
+  mostrarErroTela('Erro crítico. Redirecionando...');
+  setTimeout(redirecionarLogin, 3000);
+}
 
 async function limparEventosAntigos(){
   if(!grupoId)return;const agora=new Date();const seteDiasAtras=new Date(agora);seteDiasAtras.setDate(seteDiasAtras.getDate()-7);
@@ -412,6 +481,59 @@ function verificarCadastroCompleto(){
     document.getElementById('completar-cadastro-ov').classList.add('on');return false;
   }
   return true;
+}
+
+async function completarCadastro(){
+  const nome=document.getElementById('cadastro-nome').value.trim();
+  const cargo=document.getElementById('cadastro-cargo').value.trim();
+  const email=document.getElementById('cadastro-email').value.trim();
+  const erroEl=document.getElementById('cadastro-erro');
+  
+  if(!nome||nome.length<3){
+    erroEl.textContent='⚠️ Informe seu nome completo';
+    erroEl.style.display='block';
+    return;
+  }
+  
+  const palavras=nome.split(/\s+/);
+  if(palavras.length<2){
+    erroEl.textContent='⚠️ Por favor, informe nome e sobrenome';
+    erroEl.style.display='block';
+    return;
+  }
+  
+  if(!cargo||cargo.length<2){
+    erroEl.textContent='⚠️ Informe seu cargo';
+    erroEl.style.display='block';
+    return;
+  }
+  
+  try {
+    await db.collection('usuarios').doc(eu.uid).update({
+      nome_completo: nome,
+      cargo: cargo,
+      email: email || null,
+      nomes_conhecidos: firebase.firestore.FieldValue.arrayUnion(nome)
+    });
+    
+    eu.nome_completo = nome;
+    eu.cargo = cargo;
+    eu.email = email;
+    
+    document.getElementById('h-user').textContent = nome + ' · ' + cargo;
+    document.getElementById('completar-cadastro-ov').classList.remove('on');
+    mostrarToast('✅ Cadastro atualizado!');
+    
+    if (grupoId) {
+      carregarEventos();
+    }
+    carregarGrupos();
+    
+  } catch (error) {
+    console.error('Erro ao salvar:', error);
+    erroEl.textContent = 'Erro ao salvar. Tente novamente.';
+    erroEl.style.display = 'block';
+  }
 }
 
 // ── SINCRONIZAR SALDO ──────────────────────────────────────────────
