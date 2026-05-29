@@ -162,6 +162,7 @@
     .btn-sim{flex:1;padding:7px;background:var(--green);color:#fff;border:none;border-radius:8px;font-size:12px;cursor:pointer;font-weight:600}
     .btn-nao{flex:1;padding:7px;background:#fee2e2;color:var(--red);border:none;border-radius:8px;font-size:12px;cursor:pointer}
     .btn-desvincular{padding:5px 10px;background:#fff;border:1px solid #fee2e2;color:var(--red);border-radius:6px;font-size:10px;cursor:pointer;font-weight:600;white-space:nowrap}
+    .btn-editar-nome{padding:2px 6px;background:transparent;border:1px solid #d1d5db;border-radius:6px;font-size:12px;cursor:pointer;color:var(--text)}
     .rv-btns{display:flex;gap:10px;margin:16px}
 
     #fab{position:fixed;bottom:22px;right:18px;width:58px;height:58px;background:var(--blue);border:none;border-radius:50%;box-shadow:0 4px 18px rgba(30,58,138,.4);cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:50}
@@ -341,7 +342,7 @@
 
 <footer>
   <p>Desenvolvido por <strong>Israel Heleno de Castro</strong></p>
-  <p>© 2026 Gestor de Convocações — v20.4</p>
+  <p>© 2026 Gestor de Convocações — v20.5</p>
 </footer>
 
 <!-- MODAIS (mantidos) -->
@@ -767,7 +768,36 @@ function verificarStatusAusencia(uid,dataEvento){if(!uid||!dataEvento)return nul
 
 // ── MATCH DE NOMES ──────────────────────────────────────────────────
 async function cruzar(nomes){const snap=await db.collection('usuarios').where('grupo_id','==',grupoId).get();const users=snap.docs.map(d=>d.data());const norm=s=>s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9\s]/g,'').trim();const st=new Set(['de','da','do','das','dos','e','a','o','as','os']);const pwSig=s=>norm(s).split(/\s+/).filter(p=>p.length>1&&!st.has(p));function ps(a,b){if(a===b)return true;if(a.length<5||b.length<5)return false;if(Math.abs(a.length-b.length)>1)return false;return lev(a,b)<=1;}return nomes.map(nome=>{const nn=norm(nome);const pwNome=pwSig(nome);for(const u of users){if([u.nome_completo,...(u.nomes_conhecidos||[])].some(n=>norm(n)===nn))return{tipo:'exato',nome,usuario:u};}let mu=null,ms=0;for(const u of users){const pwUser=pwSig(u.nome_completo);const pb=pwNome.filter(p=>pwUser.some(pu=>ps(p,pu)));const so=pb.length/Math.max(pwNome.length,1);const su=pb.length/Math.max(pwUser.length,1);const sf=(so*0.5)+(su*0.5);if(so>=0.7&&su>=0.5&&sf>ms){ms=sf;mu=u;}}if(mu&&ms>=0.8)return{tipo:'parcial',nome,usuario:mu,score:ms};if(mu&&ms>=0.5)return{tipo:'baixa_confianca',nome,usuario:mu,score:ms};return{tipo:'nao_encontrado',nome};});}
-function renderMatches(){document.getElementById('rv-matches').innerHTML=matches.length===0?'<p style="color:var(--light);padding:12px;background:#fff;border-radius:10px;">Nenhum nome.</p>':matches.map((m,i)=>{if(m.tipo==='exato')return`<div class="mi ok"><div class="mi-top"><span>✅</span><div><div class="mi-nome">${m.nome}</div><div class="mi-sub">→ ${m.usuario.nome_completo}</div></div></div><div class="mi-btns" style="padding-left:0"><button class="btn-desvincular" onclick="desvincularMatch(${i})">⚠️ Não é ${m.usuario.nome_completo.split(' ')[0]}</button></div></div>`;if(m.tipo==='parcial')return`<div class="mi av"><div class="mi-top"><span>⚠️</span><div><div class="mi-nome">${m.nome}</div><div class="mi-sub">Provável: ${m.usuario.nome_completo} (${Math.round(m.score*100)}%)</div></div></div><div class="mi-btns"><button class="btn-sim" onclick="confirmar(${i},true)">✓ Confirmar</button><button class="btn-nao" onclick="confirmar(${i},false)">✗ Não é</button></div></div>`;if(m.tipo==='baixa_confianca')return`<div class="mi no"><div class="mi-top"><span>❓</span><div><div class="mi-nome">${m.nome}</div><div class="mi-sub">Talvez ${m.usuario.nome_completo}? (${Math.round(m.score*100)}%)</div></div></div><div class="mi-btns"><button class="btn-sim" onclick="confirmar(${i},true)" style="font-size:11px">✓ É ${m.usuario.nome_completo.split(' ')[0]}</button><button class="btn-nao" onclick="confirmar(${i},false)">✗ Não é</button></div></div>`;return`<div class="mi no"><div class="mi-top"><span>❓</span><div><div class="mi-nome">${m.nome}</div><div class="mi-sub">Não encontrado</div></div></div></div>`;}).join('');}
+function editarNomeMatch(index) {
+  const match = matches[index];
+  const novoNome = prompt('Corrigir nome:', match.nome);
+  if (novoNome && novoNome.trim()) {
+    match.nome = novoNome.trim();
+    // Atualiza a lista original do OCR
+    if (ocrDados && ocrDados.nomes && index < ocrDados.nomes.length) {
+      ocrDados.nomes[index] = match.nome;
+    }
+    renderMatches();
+    mostrarToast('✅ Nome corrigido!');
+  }
+}
+function renderMatches(){
+  document.getElementById('rv-matches').innerHTML = matches.length === 0
+    ? '<p style="color:var(--light);padding:12px;background:#fff;border-radius:10px;">Nenhum nome.</p>'
+    : matches.map((m, i) => {
+        const editBtn = `<button class="btn-editar-nome" onclick="editarNomeMatch(${i})" title="Editar nome">✏️</button>`;
+        if (m.tipo === 'exato') {
+          return `<div class="mi ok"><div class="mi-top"><span>✅</span><div style="flex:1"><div class="mi-nome">${m.nome} ${editBtn}</div><div class="mi-sub">→ ${m.usuario.nome_completo}</div></div></div><div class="mi-btns" style="padding-left:0"><button class="btn-desvincular" onclick="desvincularMatch(${i})">⚠️ Não é ${m.usuario.nome_completo.split(' ')[0]}</button></div></div>`;
+        }
+        if (m.tipo === 'parcial') {
+          return `<div class="mi av"><div class="mi-top"><span>⚠️</span><div style="flex:1"><div class="mi-nome">${m.nome} ${editBtn}</div><div class="mi-sub">Provável: ${m.usuario.nome_completo} (${Math.round(m.score*100)}%)</div></div></div><div class="mi-btns"><button class="btn-sim" onclick="confirmar(${i},true)">✓ Confirmar</button><button class="btn-nao" onclick="confirmar(${i},false)">✗ Não é</button></div></div>`;
+        }
+        if (m.tipo === 'baixa_confianca') {
+          return `<div class="mi no"><div class="mi-top"><span>❓</span><div style="flex:1"><div class="mi-nome">${m.nome} ${editBtn}</div><div class="mi-sub">Talvez ${m.usuario.nome_completo}? (${Math.round(m.score*100)}%)</div></div></div><div class="mi-btns"><button class="btn-sim" onclick="confirmar(${i},true)" style="font-size:11px">✓ É ${m.usuario.nome_completo.split(' ')[0]}</button><button class="btn-nao" onclick="confirmar(${i},false)">✗ Não é</button></div></div>`;
+        }
+        return `<div class="mi no"><div class="mi-top"><span>❓</span><div style="flex:1"><div class="mi-nome">${m.nome} ${editBtn}</div><div class="mi-sub">Não encontrado</div></div></div></div>`;
+      }).join('');
+}
 function confirmar(i,sim){if(sim){const m=matches[i];matches[i].tipo='exato';if(m.usuario)db.collection('usuarios').doc(m.usuario.uid).update({nomes_conhecidos:firebase.firestore.FieldValue.arrayUnion(m.nome)});mostrarToast('✅ Confirmado!');}else{matches[i].tipo='nao_encontrado';matches[i].usuario=null;}renderMatches();}
 function desvincularMatch(i){if(!confirm(`Desvincular "${matches[i].nome}" de ${matches[i].usuario.nome_completo}?`))return;const u=matches[i].usuario;if(u&&u.nomes_conhecidos){const nn=u.nomes_conhecidos.filter(n=>{const norm=s=>s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9\s]/g,'').trim();return norm(n)!==norm(matches[i].nome);});db.collection('usuarios').doc(u.uid).update({nomes_conhecidos:nn});}matches[i].tipo='nao_encontrado';matches[i].usuario=null;renderMatches();mostrarToast('✅ Desvinculado!');}
 function fecharRv(){document.getElementById('rv-ov').classList.remove('on');ocrDados=null;matches=[];}
