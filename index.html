@@ -342,7 +342,7 @@
 
 <footer>
   <p>Desenvolvido por <strong>Israel Heleno de Castro</strong></p>
-  <p>© 2026 Gestor de Convocações — v20.5</p>
+  <p>© 2026 Gestor de Convocações — v20.6</p>
 </footer>
 
 <!-- MODAIS (mantidos) -->
@@ -773,7 +773,6 @@ function editarNomeMatch(index) {
   const novoNome = prompt('Corrigir nome:', match.nome);
   if (novoNome && novoNome.trim()) {
     match.nome = novoNome.trim();
-    // Atualiza a lista original do OCR
     if (ocrDados && ocrDados.nomes && index < ocrDados.nomes.length) {
       ocrDados.nomes[index] = match.nome;
     }
@@ -856,7 +855,49 @@ function renderizarNomesAdmin(ev){const c=document.getElementById('mod-conv');no
 function atualizarNomeAdmin(i,n){if(n&&n.trim())nomesEditaveis[i]=n.trim();}
 function removerNomeAdmin(i){if(confirm('Remover?')){nomesEditaveis.splice(i,1);renderizarNomesAdmin(eventoAtualMod);}}
 function adicionarNomeAdmin(){const n=document.getElementById('input-novo-nome').value.trim();if(!n)return;nomesEditaveis.push(n);renderizarNomesAdmin(eventoAtualMod);mostrarToast('Adicionado');}
-async function salvarNomesAdmin(){if(!eventoAtualMod)return;await db.collection('eventos').doc(eventoAtualMod.id).update({lista_convocados:nomesEditaveis});eventoAtualMod.lista_convocados=[...nomesEditaveis];mostrarToast('Salvo!');carregarEventos();}
+async function salvarNomesAdmin(){
+  if(!eventoAtualMod)return;
+  const listaAntiga = eventoAtualMod.lista_convocados || [];
+  await db.collection('eventos').doc(eventoAtualMod.id).update({lista_convocados:nomesEditaveis});
+  eventoAtualMod.lista_convocados = [...nomesEditaveis];
+  // Identifica novos nomes adicionados
+  const novos = nomesEditaveis.filter(n => !listaAntiga.includes(n));
+  if (novos.length > 0) {
+    // Faz o matching dos novos nomes
+    const novosMatches = await cruzar(novos);
+    const dtEvento = eventoAtualMod.data_hora;
+    const titulo = eventoAtualMod.titulo_evento || 'Evento';
+    // Notifica exatos e parciais
+    for (const m of novosMatches) {
+      if (m.tipo === 'exato') {
+        await db.collection('notificacoes').add({
+          uid: m.usuario.uid,
+          tipo: 'convocado',
+          nome_convocacao: m.nome,
+          titulo_evento: titulo,
+          data_hora: dtEvento,
+          grupo_id: grupoId,
+          respondido: false,
+          criado_em: firebase.firestore.FieldValue.serverTimestamp()
+        });
+      } else if (m.tipo === 'parcial' || m.tipo === 'baixa_confianca') {
+        await db.collection('notificacoes').add({
+          uid: m.usuario.uid,
+          tipo: 'confirmar',
+          nome_convocacao: m.nome,
+          titulo_evento: titulo,
+          data_hora: dtEvento,
+          grupo_id: grupoId,
+          respondido: false,
+          criado_em: firebase.firestore.FieldValue.serverTimestamp()
+        });
+      }
+    }
+  }
+  mostrarToast('✅ Salvo e notificações enviadas!');
+  carregarEventos();
+  abrirMod(eventoAtualMod); // Reabre o modal para refletir as mudanças
+}
 
 // ── SCANNER ─────────────────────────────────────────────────────────
 async function abrirScanner(){if(!grupoId){alert('Entre em um grupo.');return;}document.getElementById('scan-ov').classList.add('on');try{camStream=await navigator.mediaDevices.getUserMedia({video:{facingMode:'environment'}});document.getElementById('video').srcObject=camStream;}catch{alert('Câmera indisponível.');}}
