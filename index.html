@@ -342,7 +342,7 @@
 
 <footer>
   <p>Desenvolvido por <strong>Israel Heleno de Castro</strong></p>
-  <p>© 2026 Gestor de Convocações — v20.6</p>
+  <p>© 2026 Gestor de Convocações — v20.7</p>
 </footer>
 
 <!-- MODAIS (mantidos) -->
@@ -851,10 +851,51 @@ async function carregarEventos(){if(!grupoId)return;const snap=await db.collecti
 function criarCard(ev){const dt=new Date(ev.data_hora);const pa=dt<=new Date();const w=document.createElement('div');w.className='ev-wrap';w.innerHTML=`<div class="ev-bg"><div class="ev-bg-l"><span>👁</span></div>${eu.is_admin?'<div class="ev-bg-r"><span>🗑</span></div>':''}</div><div class="ev-card" style="border-left-color:${pa?'#94a3b8':'var(--blue)'};opacity:${pa?'.7':'1'}"><div class="ev-titulo">${ev.titulo_evento||'Sem título'}${pa?' <span style="font-size:11px;color:#94a3b8">(encerrado)</span>':''}</div><div class="ev-meta"><span>📅 ${fD(dt)}</span><span>🕐 ${fH(dt)}</span></div><div class="ev-conv">${(ev.lista_convocados||[]).length} convocado(s)</div></div>`;const card=w.querySelector('.ev-card');let sx=0,dx=0,mov=false;card.addEventListener('touchstart',e=>{sx=e.touches[0].clientX;mov=false},{passive:true});card.addEventListener('touchmove',e=>{dx=e.touches[0].clientX-sx;mov=true;if(!eu.is_admin&&dx<0)dx=0;if(Math.abs(dx)>8){card.style.transition='none';card.style.transform=`translateX(${Math.max(-100,Math.min(100,dx))}px)`;}},{passive:true});card.addEventListener('touchend',()=>{card.style.transition='transform .2s ease';if(dx<-60&&eu.is_admin){if(confirm('Excluir?'))db.collection('eventos').doc(ev.id).delete().then(()=>carregarEventos());else card.style.transform='translateX(0)';}else if(dx>60){card.style.transform='translateX(0)';abrirMod(ev);}else{card.style.transform='translateX(0)';if(!mov)abrirMod(ev);}dx=0;});card.addEventListener('click',()=>{if(!mov)abrirMod(ev);});return w;}
 function abrirMod(ev){eventoAtualMod=ev;const dt=new Date(ev.data_hora);document.getElementById('mod-tit').value=ev.titulo_evento||'';document.getElementById('mod-sub').value=fD(dt)+' às '+fH(dt)+(ev.local?' · '+ev.local:'');const ti=document.getElementById('mod-tit');const si=document.getElementById('mod-sub');const bs=document.getElementById('mod-salvar-edicao');if(eu.is_admin){ti.readOnly=false;si.readOnly=true;ti.style.borderBottom='2px dashed var(--border)';bs.style.display='block';}else{ti.readOnly=true;si.readOnly=true;ti.style.borderBottom='none';bs.style.display='none';}const ab=document.getElementById('admin-badge-conv');if(eu.is_admin){ab.style.display='inline-block';renderizarNomesAdmin(ev);}else{ab.style.display='none';db.collection('usuarios').where('grupo_id','==',grupoId).get().then(s=>{const us=s.docs.map(d=>d.data());const norm=s=>s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9\s]/g,'').trim();document.getElementById('mod-conv').innerHTML=(ev.lista_convocados||[]).map(n=>{const nn=norm(n);let uid=null;for(const u of us){if([u.nome_completo,...(u.nomes_conhecidos||[])].some(x=>norm(x)===nn)){uid=u.uid;break;}}let av='';if(uid){const ia=verificarStatusAusencia(uid,ev.data_hora);if(ia){let ic=ia.tipo==='ferias'?'🏖️':(ia.tipo==='licenca'?'🏆':'⏱️');av=`<div class="aviso-ferias">${ic} Atenção: Convocado está de ${ia.tipo} neste dia!</div>`;}}return`<div class="conv-linha"><div style="display:flex;align-items:center;gap:10px;width:100%"><div class="conv-icon"><svg viewBox="0 0 24 24"><path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/></svg></div><span class="conv-nome">${n}</span></div>${av}</div>`;}).join('');});}const agr=new Date();const evFut=dt>agr;const euConv=(ev.lista_convocados||[]).some(n=>euSouConvocadoNome(n));const bt=document.getElementById('mod-trocar');if(euConv&&evFut){bt.style.display='block';bt.onclick=()=>abrirTrocar(ev);}else{bt.style.display='none';}document.getElementById('mod-ag').onclick=()=>ics(ev);document.getElementById('mod-del').style.display=eu.is_admin?'block':'none';document.getElementById('mod-del').onclick=()=>{if(!eu.is_admin)return;if(confirm('Excluir?')){db.collection('eventos').doc(ev.id).delete().then(()=>{fecharMod();carregarEventos();mostrarToast('Excluída');});}};document.getElementById('mod-ev').classList.add('on');}
 function fecharMod(){document.getElementById('mod-ev').classList.remove('on');eventoAtualMod=null;nomesEditaveis=[];}
-function renderizarNomesAdmin(ev){const c=document.getElementById('mod-conv');nomesEditaveis=[...(ev.lista_convocados||[])];c.innerHTML=nomesEditaveis.map((n,i)=>`<div class="conv-linha" style="flex-direction:column;gap:6px"><div style="display:flex;align-items:center;gap:10px"><div class="conv-icon"><svg viewBox="0 0 24 24"><path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/></svg></div><span class="conv-nome editable" contenteditable="true" onblur="atualizarNomeAdmin(${i},this.textContent)">${n}</span><button class="btn-remover-nome" onclick="removerNomeAdmin(${i})">✕</button></div></div>`).join('')+`<div style="display:flex;gap:8px;margin-top:8px"><input type="text" class="input-novo-nome" id="input-novo-nome" placeholder="Adicionar nome..." style="flex:1"><button class="btn-salvar" onclick="adicionarNomeAdmin()" style="width:auto;padding:10px 16px">+</button></div><button class="btn-salvar-nomes" onclick="salvarNomesAdmin()">💾 Salvar</button>`;}
-function atualizarNomeAdmin(i,n){if(n&&n.trim())nomesEditaveis[i]=n.trim();}
-function removerNomeAdmin(i){if(confirm('Remover?')){nomesEditaveis.splice(i,1);renderizarNomesAdmin(eventoAtualMod);}}
-function adicionarNomeAdmin(){const n=document.getElementById('input-novo-nome').value.trim();if(!n)return;nomesEditaveis.push(n);renderizarNomesAdmin(eventoAtualMod);mostrarToast('Adicionado');}
+
+// Função auxiliar para renderizar apenas a UI da lista de nomes, sem redefinir o array
+function renderizarNomesAdminUI() {
+  const c = document.getElementById('mod-conv');
+  c.innerHTML = nomesEditaveis.map((n, i) =>
+    `<div class="conv-linha" style="flex-direction:column;gap:6px">
+      <div style="display:flex;align-items:center;gap:10px">
+        <div class="conv-icon">
+          <svg viewBox="0 0 24 24"><path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/></svg>
+        </div>
+        <span class="conv-nome editable" contenteditable="true" onblur="atualizarNomeAdmin(${i}, this.textContent)">${n}</span>
+        <button class="btn-remover-nome" onclick="removerNomeAdmin(${i})">✕</button>
+      </div>
+    </div>`
+  ).join('') +
+  `<div style="display:flex;gap:8px;margin-top:8px">
+    <input type="text" class="input-novo-nome" id="input-novo-nome" placeholder="Adicionar nome..." style="flex:1">
+    <button class="btn-salvar" onclick="adicionarNomeAdmin()" style="width:auto;padding:10px 16px">+</button>
+  </div>
+  <button class="btn-salvar-nomes" onclick="salvarNomesAdmin()">💾 Salvar</button>`;
+}
+
+function renderizarNomesAdmin(ev){
+  nomesEditaveis = [...(ev.lista_convocados||[])];
+  renderizarNomesAdminUI();
+}
+
+function atualizarNomeAdmin(i, n) {
+  if (n && n.trim()) nomesEditaveis[i] = n.trim();
+}
+function removerNomeAdmin(i) {
+  if (confirm('Remover?')) {
+    nomesEditaveis.splice(i, 1);
+    renderizarNomesAdminUI();
+  }
+}
+function adicionarNomeAdmin() {
+  const input = document.getElementById('input-novo-nome');
+  const n = input.value.trim();
+  if (!n) return;
+  nomesEditaveis.push(n);
+  renderizarNomesAdminUI();
+  mostrarToast('Adicionado');
+}
+
 async function salvarNomesAdmin(){
   if(!eventoAtualMod)return;
   const listaAntiga = eventoAtualMod.lista_convocados || [];
@@ -863,11 +904,9 @@ async function salvarNomesAdmin(){
   // Identifica novos nomes adicionados
   const novos = nomesEditaveis.filter(n => !listaAntiga.includes(n));
   if (novos.length > 0) {
-    // Faz o matching dos novos nomes
     const novosMatches = await cruzar(novos);
     const dtEvento = eventoAtualMod.data_hora;
     const titulo = eventoAtualMod.titulo_evento || 'Evento';
-    // Notifica exatos e parciais
     for (const m of novosMatches) {
       if (m.tipo === 'exato') {
         await db.collection('notificacoes').add({
