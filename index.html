@@ -362,7 +362,7 @@
 
 <footer>
   <p>Desenvolvido por <strong>IHC Solutions</strong></p>
-  <p>© 2026 Gestor de Convocações — v21.0</p>
+  <p>© 2026 Gestor de Convocações — v21.1</p>
 </footer>
 
 <!-- MODAIS -->
@@ -432,26 +432,63 @@ function lev(a,b){if(a===b)return 0;const m=a.length,n=b.length;const dp=Array.f
 function mostrarAba(aba,el){document.querySelectorAll('.aba-content').forEach(e=>e.style.display='none');document.getElementById('aba-'+aba).style.display='block';document.querySelectorAll('.nav-tab').forEach(e=>e.classList.remove('active'));if(el)el.classList.add('active');if(aba==='ferias'){carregarFerias();if(eu&&eu.is_admin)document.getElementById('btn-para-outro').style.display='block';}if(aba==='saldo')carregarSaldo();}
 try {emailjs.init(EMAIL_CONFIG.publicKey);} catch (e) {console.warn('EmailJS init error:',e);}
 
-// ══ MIGRAÇÃO DE grupo_id PARA grupos ══
+// ══ MIGRAÇÃO ROBUSTA DE grupo_id PARA grupos ══
 async function migrarGruposSeNecessario(){
   if(!eu)return;
-  const snap=await db.collection('usuarios').doc(eu.uid).get();
-  const data=snap.data();
+  const userRef = db.collection('usuarios').doc(eu.uid);
+  const snap = await userRef.get();
+  const data = snap.data();
   if(!data)return;
-  if(data.grupo_id && !data.grupos){
-    const gSnap=await db.collection('grupos').doc(data.grupo_id).get();
-    if(gSnap.exists){
-      const gData=gSnap.data();
-      const admins=gData.admins||[gData.criado_por];
-      const isAdmin=admins.includes(eu.uid)||gData.criado_por===eu.uid;
-      const novosGrupos=[{id:data.grupo_id, nome:gData.nome||'Meu Grupo', is_admin:isAdmin}];
-      await db.collection('usuarios').doc(eu.uid).update({grupos:novosGrupos, grupo_id:firebase.firestore.FieldValue.delete()});
-      eu.grupos=novosGrupos;
-      eu.grupo_id=null;
-      console.log('✅ Migração concluída: grupo_id → grupos');
+  
+  let precisaMigrar = false;
+  let grupoIdAntigo = data.grupo_id;
+  
+  // Se ainda tem grupo_id (campo antigo), precisa migrar
+  if(grupoIdAntigo){
+    // Se grupos não existe ou está vazio, migrar
+    if(!data.grupos || !Array.isArray(data.grupos) || data.grupos.length === 0){
+      precisaMigrar = true;
+    } else {
+      // Se grupos já existe e tem itens, mas grupo_id ainda existe, apenas remove grupo_id
+      await userRef.update({ grupo_id: firebase.firestore.FieldValue.delete() });
+      eu.grupos = data.grupos;
+      eu.grupo_id = null;
+      console.log('✅ grupo_id removido (grupos já existia)');
+      return;
     }
-  }else if(data.grupos){
-    eu.grupos=data.grupos;
+  }
+  
+  if(precisaMigrar && grupoIdAntigo){
+    try {
+      const gSnap = await db.collection('grupos').doc(grupoIdAntigo).get();
+      if(gSnap.exists){
+        const gData = gSnap.data();
+        const admins = gData.admins || [gData.criado_por];
+        const isAdmin = admins.includes(eu.uid) || gData.criado_por === eu.uid;
+        const novoGrupo = {
+          id: grupoIdAntigo,
+          nome: gData.nome || 'Meu Grupo',
+          is_admin: isAdmin
+        };
+        await userRef.update({
+          grupos: firebase.firestore.FieldValue.arrayUnion(novoGrupo),
+          grupo_id: firebase.firestore.FieldValue.delete()
+        });
+        eu.grupos = [novoGrupo];
+        eu.grupo_id = null;
+        console.log('✅ Migração concluída: grupo_id → grupos', novoGrupo);
+      } else {
+        // Grupo não existe mais, apenas remove grupo_id
+        await userRef.update({ grupo_id: firebase.firestore.FieldValue.delete() });
+        eu.grupos = [];
+        eu.grupo_id = null;
+        console.warn('⚠️ Grupo antigo não encontrado, removendo referência.');
+      }
+    } catch(e){
+      console.error('Erro na migração:', e);
+    }
+  } else if(data.grupos){
+    eu.grupos = data.grupos;
   }
 }
 
@@ -657,7 +694,7 @@ try {
         if(!snap.exists){window.location.replace('login.html');return;}
         eu={uid:user.uid,...snap.data()};
         document.getElementById('h-user').textContent=eu.nome_completo+' · '+eu.cargo;
-        // Migração
+        // Migração (agora robusta)
         await migrarGruposSeNecessario();
         const snap2=await db.collection('usuarios').doc(user.uid).get();
         eu={uid:user.uid,...snap2.data()};
