@@ -362,7 +362,7 @@
 
 <footer>
   <p>Desenvolvido por <strong>IHC Solutions</strong></p>
-  <p>© 2026 Gestor de Convocações — v21.1</p>
+  <p>© 2026 Gestor de Convocações — v21.2.1</p>
 </footer>
 
 <!-- MODAIS -->
@@ -443,13 +443,10 @@ async function migrarGruposSeNecessario(){
   let precisaMigrar = false;
   let grupoIdAntigo = data.grupo_id;
   
-  // Se ainda tem grupo_id (campo antigo), precisa migrar
   if(grupoIdAntigo){
-    // Se grupos não existe ou está vazio, migrar
     if(!data.grupos || !Array.isArray(data.grupos) || data.grupos.length === 0){
       precisaMigrar = true;
     } else {
-      // Se grupos já existe e tem itens, mas grupo_id ainda existe, apenas remove grupo_id
       await userRef.update({ grupo_id: firebase.firestore.FieldValue.delete() });
       eu.grupos = data.grupos;
       eu.grupo_id = null;
@@ -478,7 +475,6 @@ async function migrarGruposSeNecessario(){
         eu.grupo_id = null;
         console.log('✅ Migração concluída: grupo_id → grupos', novoGrupo);
       } else {
-        // Grupo não existe mais, apenas remove grupo_id
         await userRef.update({ grupo_id: firebase.firestore.FieldValue.delete() });
         eu.grupos = [];
         eu.grupo_id = null;
@@ -694,7 +690,6 @@ try {
         if(!snap.exists){window.location.replace('login.html');return;}
         eu={uid:user.uid,...snap.data()};
         document.getElementById('h-user').textContent=eu.nome_completo+' · '+eu.cargo;
-        // Migração (agora robusta)
         await migrarGruposSeNecessario();
         const snap2=await db.collection('usuarios').doc(user.uid).get();
         eu={uid:user.uid,...snap2.data()};
@@ -716,7 +711,7 @@ try {
   }).catch(e=>{console.error('Persistence error:',e);clearTimeout(authTimeout);mostrarErroTela('Erro de configuração. Redirecionando...');setTimeout(redirecionarLogin,3000);});
 }catch(e){console.error('Auth setup error:',e);clearTimeout(authTimeout);mostrarErroTela('Erro crítico. Redirecionando...');setTimeout(redirecionarLogin,3000);}
 
-// ══ DEMAIS FUNÇÕES (v20.7 MANTIDAS INTEGRALMENTE) ══
+// ══ DEMAIS FUNÇÕES ══
 async function limparEventosAntigos(){
   if(!grupoId)return;const agora=new Date();const seteDiasAtras=new Date(agora);seteDiasAtras.setDate(seteDiasAtras.getDate()-7);
   try{const snap=await db.collection('eventos').where('grupo_id','==',grupoId).get();const evs=snap.docs.filter(d=>{const e=d.data();return e.data_hora&&new Date(e.data_hora)<seteDiasAtras;});for(const ev of evs)await ev.ref.delete();}catch(e){}
@@ -956,8 +951,72 @@ async function salvarFerias(){
 async function fetchAusencias(){if(!grupoId)return;const hojeStr=new Date().toISOString().split('T')[0];const snap=await db.collection('ausencias').where('grupo_id','==',grupoId).where('data_fim','>=',hojeStr).get();listaAusencias=snap.docs.map(d=>({id:d.id,...d.data()}));}
 function verificarStatusAusencia(uid,dataEvento){if(!uid||!dataEvento)return null;const dataStr=dataEvento.split('T')[0];return listaAusencias.find(aus=>aus.uid===uid&&aus.data_inicio<=dataStr&&aus.data_fim>=dataStr)||null;}
 
-// ── MATCH DE NOMES ──────────────────────────────────────────────────
-async function cruzar(nomes){const snap=await db.collection('usuarios').where('grupo_id','==',grupoId).get();const users=snap.docs.map(d=>d.data());const norm=s=>s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9\s]/g,'').trim();const st=new Set(['de','da','do','das','dos','e','a','o','as','os']);const pwSig=s=>norm(s).split(/\s+/).filter(p=>p.length>1&&!st.has(p));function ps(a,b){if(a===b)return true;if(a.length<5||b.length<5)return false;if(Math.abs(a.length-b.length)>1)return false;return lev(a,b)<=1;}return nomes.map(nome=>{const nn=norm(nome);const pwNome=pwSig(nome);for(const u of users){if([u.nome_completo,...(u.nomes_conhecidos||[])].some(n=>norm(n)===nn))return{tipo:'exato',nome,usuario:u};}let mu=null,ms=0;for(const u of users){const pwUser=pwSig(u.nome_completo);const pb=pwNome.filter(p=>pwUser.some(pu=>ps(p,pu)));const so=pb.length/Math.max(pwNome.length,1);const su=pb.length/Math.max(pwUser.length,1);const sf=(so*0.5)+(su*0.5);if(so>=0.7&&su>=0.5&&sf>ms){ms=sf;mu=u;}}if(mu&&ms>=0.8)return{tipo:'parcial',nome,usuario:mu,score:ms};if(mu&&ms>=0.5)return{tipo:'baixa_confianca',nome,usuario:mu,score:ms};return{tipo:'nao_encontrado',nome};});}
+// ══ MATCH DE NOMES (CORRIGIDO v21.2.1) ═══════════════════════════════════
+async function cruzar(nomes) {
+  // Busca usuários do grupo ativo de duas formas:
+  // 1. Pelo array 'grupos' (novo modelo)
+  // 2. Pelo campo 'grupo_id' (compatibilidade com usuários não migrados)
+  const snap1 = await db.collection('usuarios')
+    .where('grupos', 'array-contains', { id: grupoId, is_admin: true }).get();
+  const snap2 = await db.collection('usuarios')
+    .where('grupos', 'array-contains', { id: grupoId, is_admin: false }).get();
+  const snap3 = await db.collection('usuarios').where('grupo_id', '==', grupoId).get();
+  
+  // Junta todos os resultados, removendo duplicatas por UID
+  const usersMap = new Map();
+  [...snap1.docs, ...snap2.docs, ...snap3.docs].forEach(doc => {
+    if (!usersMap.has(doc.id)) {
+      usersMap.set(doc.id, { uid: doc.id, ...doc.data() });
+    }
+  });
+  const users = Array.from(usersMap.values());
+  
+  const norm = s => s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9\s]/g, '').trim();
+  const st = new Set(['de', 'da', 'do', 'das', 'dos', 'e', 'a', 'o', 'as', 'os']);
+  const pwSig = s => norm(s).split(/\s+/).filter(p => p.length > 1 && !st.has(p));
+  
+  function ps(a, b) {
+    if (a === b) return true;
+    if (a.length < 5 || b.length < 5) return false;
+    if (Math.abs(a.length - b.length) > 1) return false;
+    return lev(a, b) <= 1;
+  }
+  
+  return nomes.map(nome => {
+    const nn = norm(nome);
+    const pwNome = pwSig(nome);
+    
+    // Busca exata
+    for (const u of users) {
+      const todosNomes = [u.nome_completo, ...(u.nomes_conhecidos || [])];
+      if (todosNomes.some(n => norm(n) === nn)) {
+        return { tipo: 'exato', nome, usuario: u };
+      }
+    }
+    
+    // Busca por correspondência parcial
+    let mu = null, ms = 0;
+    for (const u of users) {
+      const todosNomes = [u.nome_completo, ...(u.nomes_conhecidos || [])];
+      for (const nomeConhecido of todosNomes) {
+        const pwUser = pwSig(nomeConhecido);
+        const pb = pwNome.filter(p => pwUser.some(pu => ps(p, pu)));
+        const so = pb.length / Math.max(pwNome.length, 1);
+        const su = pb.length / Math.max(pwUser.length, 1);
+        const sf = (so * 0.5) + (su * 0.5);
+        if (so >= 0.7 && su >= 0.5 && sf > ms) {
+          ms = sf;
+          mu = u;
+        }
+      }
+    }
+    
+    if (mu && ms >= 0.8) return { tipo: 'parcial', nome, usuario: mu, score: ms };
+    if (mu && ms >= 0.5) return { tipo: 'baixa_confianca', nome, usuario: mu, score: ms };
+    return { tipo: 'nao_encontrado', nome };
+  });
+}
+
 function editarNomeMatch(index) {
   const match = matches[index];
   const novoNome = prompt('Corrigir nome:', match.nome);
