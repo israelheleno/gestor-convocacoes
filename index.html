@@ -35,7 +35,6 @@
     .banner-aviso{background:#fff7ed;border:1px solid #fed7aa;border-radius:12px;padding:12px 14px;margin-bottom:16px;display:flex;align-items:center;gap:10px;font-size:12px;color:#c2410c}
     .banner-aviso .banner-icon{font-size:20px;flex-shrink:0}
 
-    /* Grupos */
     .grupo-header{display:flex;align-items:center;justify-content:space-between;cursor:pointer;padding:4px 0}
     .grupo-header .grupo-nome{font-size:14px;font-weight:600;color:var(--blue);display:flex;align-items:center;gap:6px}
     .grupo-header .seta{font-size:12px;transition:transform .2s}
@@ -156,7 +155,6 @@
     .btn-cap:active{transform:scale(0.95);background:#e2e8f0}
     .btn-cap svg{width:28px;height:28px;fill:var(--blue)}
     .btn-gal{background:rgba(255,255,255,.15);border:none;color:#fff;padding:12px 24px;border-radius:12px;font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;width:auto;min-width:200px;flex-shrink:0;margin:0 auto}
-    /* Indicador de carregamento sobreposto à câmera */
     .scan-loading-overlay{position:absolute;inset:0;background:rgba(0,0,0,0.8);z-index:10;display:none;flex-direction:column;align-items:center;justify-content:center;gap:16px}
     .scan-loading-overlay.show{display:flex}
     .scan-loading-spinner{width:48px;height:48px;border:4px solid rgba(255,255,255,.2);border-top:4px solid #fff;border-radius:50%;animation:spin 1s linear infinite}
@@ -296,7 +294,6 @@
     footer{text-align:center;padding:16px;color:var(--light);font-size:11px;border-top:1px solid var(--border);margin-top:20px}
     footer strong{color:var(--blue)}
 
-    /* Modal de instalação */
     .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:10000;display:none;align-items:center;justify-content:center;padding:20px}
     .modal-overlay.on{display:flex}
     .modal-content{background:#fff;border-radius:24px;padding:24px 20px;width:100%;max-width:380px;max-height:85dvh;overflow-y:auto;position:relative;animation:fu .3s ease}
@@ -316,7 +313,6 @@
 </head>
 <body>
 
-<!-- TELA DE CARREGAMENTO INICIAL -->
 <div id="loading-screen" style="position:fixed;inset:0;background:var(--bg);z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px">
   <div style="width:48px;height:48px;border:4px solid var(--border);border-top-color:var(--blue);border-radius:50%;animation:spin 0.8s linear infinite"></div>
   <p style="color:var(--light);font-size:14px">Verificando autenticação...</p>
@@ -367,10 +363,9 @@
 
 <footer>
   <p>Desenvolvido por <strong>IHC Solutions</strong></p>
-  <p>© 2026 Gestor de Convocações — v21.3</p>
+  <p>© 2026 Gestor de Convocações — v21.5</p>
 </footer>
 
-<!-- MODAIS -->
 <div class="overlay" id="mod-ev" onclick="if(event.target===this) fecharMod()"><div class="sheet"><div class="handle" onclick="fecharMod()"></div><input type="text" class="mod-titulo-input" id="mod-tit" placeholder="Título do evento"><input type="text" class="mod-sub-input" id="mod-sub" placeholder="Data e hora"><div class="mod-sec"><h3>Convocados <span id="admin-badge-conv" style="display:none" class="admin-badge">Admin</span></h3><div id="mod-conv"></div></div><div style="display:flex;gap:8px;margin-top:16px"><button class="btn-ag" id="mod-ag" style="flex:1;margin-top:0">📅 Agenda</button><button id="mod-trocar" style="flex:1;padding:12px;background:#fff7ed;color:#c2410c;border:1.5px solid #fed7aa;border-radius:10px;font-size:14px;cursor:pointer;font-weight:600;display:none;">🔄 Trocar</button></div><button class="btn-salvar-edicao-evento" id="mod-salvar-edicao" style="display:none" onclick="salvarEdicaoEvento()">💾 Salvar alterações</button><button class="btn-del" id="mod-del" style="display:none">🗑 Excluir</button><button class="btn-cancel" style="margin-top:10px;width:100%" onclick="fecharMod()">Fechar</button></div></div>
 <div id="trocar-ov"><div class="trocar-box"><h3>🔄 Trocar escala</h3><p id="trocar-desc"></p><div class="trocar-membros" id="trocar-lista"></div><div class="trocar-btns"><button class="btn-cancel" onclick="fecharTrocar()">Cancelar</button><button class="btn-salvar" style="background:#c2410c" id="trocar-confirmar">Confirmar</button></div></div></div>
 
@@ -393,12 +388,11 @@
 <div id="completar-cadastro-ov"><div style="background:#fff;border-radius:24px;padding:28px 22px;width:100%;max-width:360px;"><h3 style="font-family:'Sora',sans-serif;font-size:17px;font-weight:700;color:var(--blue);margin-bottom:6px;">👋 Complete seu cadastro</h3><p style="font-size:13px;color:var(--light);margin-bottom:18px;">Precisamos do seu nome completo e cargo.</p><div class="field"><label>Nome completo</label><input type="text" id="cadastro-nome"/></div><div class="field"><label>Cargo</label><input type="text" id="cadastro-cargo"/></div><div class="field"><label>Email</label><input type="email" id="cadastro-email"/></div><p style="font-size:11px;color:var(--red);margin-bottom:12px;display:none;" id="cadastro-erro"></p><button class="btn-salvar" onclick="completarCadastro()" style="width:100%">✓ Salvar</button></div></div>
 <div id="notif-ov"><div class="notif-box"><div class="notif-emoji">🔔</div><div class="notif-titulo" id="notif-titulo"></div><div class="notif-desc" id="notif-desc"></div><div class="notif-evento"><div class="notif-evento-titulo" id="notif-ev-titulo"></div><div class="notif-evento-data" id="notif-ev-data"></div></div><div class="notif-btns"><button class="btn-cancel" onclick="responderNotif(false)">✗ Não sou eu</button><button class="btn-salvar" onclick="responderNotif(true)">✓ Sim, sou eu!</button></div></div></div>
 <div id="admin-ov"><div class="admin-hd"><button class="btn-x" onclick="fecharAdmin()">✕</button><h2>🛡️ Painel Admin</h2></div><div class="admin-body"><div class="sec-titulo">Membros <span id="admin-total"></span></div><div id="admin-membros"></div></div></div>
-<div id="scan-ov"><div class="scan-hd"><button class="btn-x" onclick="fecharScanner()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:20px;height:20px"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button><span>Escanear Convocação</span></div><div class="cam-wrap"><video id="video" autoplay playsinline muted></video><div class="cam-mask"><div class="cam-box"><div class="c-bl"></div><div class="c-br"></div><div class="cam-hint">Enquadre o documento aqui</div></div></div><div id="scan-loading" class="scan-loading-overlay"><div class="scan-loading-spinner"></div><div class="scan-loading-text">Processando arquivo...</div></div></div><div class="scan-ctrl"><button class="btn-cap" onclick="capturar()"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3.2"/><path d="M9 2L7.17 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2h-3.17L15 2H9zm3 15c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5z"/></svg></button><input type="file" id="file-foto" accept="image/*" style="display:none" onchange="processarFoto(this.files[0])"/><button class="btn-gal" onclick="document.getElementById('file-foto').click()">🖼️ Escolher da galeria</button></div></div>
+<div id="scan-ov"><div class="scan-hd"><button class="btn-x" onclick="fecharScanner()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:20px;height:20px"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button><span>Escanear Convocação</span></div><div class="cam-wrap"><video id="video" autoplay playsinline muted></video><div class="cam-mask"><div class="cam-box"><div class="c-bl"></div><div class="c-br"></div><div class="cam-hint">Enquadre o documento aqui</div></div></div><div id="scan-loading" class="scan-loading-overlay"><div class="scan-loading-spinner"></div><div class="scan-loading-text">Processando arquivo...</div></div></div><div class="scan-ctrl"><button class="btn-cap" onclick="capturar()"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3.2"/><path d="M9 2L7.17 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2h-3.17L15 2H9zm3 15c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5z"/></svg></button><input type="file" id="file-foto" accept="image/*" style="display:none" onchange="processarFoto(this.files[0], true)"/><button class="btn-gal" onclick="document.getElementById('file-foto').click()">🖼️ Escolher da galeria</button></div></div>
 <div id="ocr-ov"><div class="ocr-spinner"></div><div class="ocr-texto" id="ocr-texto">📸 Analisando...</div><div class="ocr-barra"><div class="ocr-preenchimento" id="ocr-preenchimento"></div></div><div class="ocr-subtexto" id="ocr-subtexto"></div><div class="ocr-dica">Não feche o app</div></div>
 <div id="rv-ov"><div class="rv-hd"><button class="btn-x" onclick="fecharRv()">✕</button><h2>Conferir dados</h2></div><div class="rv-body"><div class="rv-lbl">Título</div><div class="rv-val"><input type="text" id="rv-tit"/></div><div class="rv-lbl">Data/hora</div><div class="rv-val"><input type="datetime-local" id="rv-data"/></div><div class="rv-lbl">Local</div><div class="rv-val"><input type="text" id="rv-loc"/></div><div class="rv-lbl">Convocados</div><div id="rv-matches"></div><div class="rv-btns"><button class="btn-cancel" onclick="fecharRv()">Cancelar</button><button class="btn-salvar" onclick="salvar()">✓ Salvar</button></div></div></div>
 <div class="ov-center" id="saldo-ajuste-ov"><div class="box-center"><h3>⚙️ Ajustar Saldo</h3><p style="font-size:13px;color:var(--light);margin-bottom:16px">Configure seus saldos e períodos aquisitivos.</p><div class="ajuste-bloco"><h4>🏖️ Períodos Aquisitivos de Férias</h4><div id="ajuste-periodos-ferias"></div><button class="btn-add-ajuste" onclick="adicionarPeriodoNoAjuste()">+ Adicionar período</button></div><div class="ajuste-bloco"><h4>⏱️ Abonos</h4><div class="field" style="margin-bottom:0"><label>Total de abonos disponíveis</label><input type="number" id="ajuste-abono" min="0" max="6" value="6"/></div></div><div class="ajuste-bloco"><h4>🏆 Licença Prêmio</h4><div class="field" style="margin-bottom:0"><label>Total de dias de licença prêmio</label><input type="number" id="ajuste-licenca" min="0" max="180" value="90"/></div></div><div class="btns-row"><button class="btn-cancel" onclick="fecharAjusteSaldo()">Cancelar</button><button class="btn-salvar" onclick="salvarAjusteSaldo()">💾 Salvar</button></div></div></div>
 
-<!-- Modal de instalação -->
 <div class="modal-overlay" id="installModal">
   <div class="modal-content">
     <span class="close-modal" onclick="closeInstallModal()">✕</span>
@@ -414,9 +408,6 @@
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 <script>
-// ═══════════════════════════════════════════════
-// CONFIGURAÇÃO
-// ═══════════════════════════════════════════════
 try {
   firebase.initializeApp({apiKey:"AIzaSyAOpV5NFydHWwUwQKg0MANqMHVcXVDDqpQ",authDomain:"gestor-convocacoes-89823.firebaseapp.com",projectId:"gestor-convocacoes-89823",storageBucket:"gestor-convocacoes-89823.firebasestorage.app",messagingSenderId:"212389113483",appId:"1:212389113483:web:eb97eefe621df0cba66e8e"});
 } catch (e) {
@@ -431,23 +422,19 @@ let eu=null,grupoId=null,gruposUsuario=[],grupoAtivo=null,ocrDados=null,matches=
 let notifAtual=null,filaNotifs=[],listaAusencias=[],membroEditando=null,saldoUsuario={ferias:[],abono:6,licenca:90};
 let toastTimeout,periodosAjuste=[],usuarioSelecionadoFerias=null,usuariosGrupo=[];
 
-// ══ FUNÇÕES UTILITÁRIAS ══
 function mostrarToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');clearTimeout(toastTimeout);toastTimeout=setTimeout(()=>t.classList.remove('show'),2500);}
 function lev(a,b){if(a===b)return 0;const m=a.length,n=b.length;const dp=Array.from({length:m+1},(_,i)=>[i,...Array(n).fill(0)]);for(let j=0;j<=n;j++)dp[0][j]=j;for(let i=1;i<=m;i++)for(let j=1;j<=n;j++)dp[i][j]=a[i-1]===b[j-1]?dp[i-1][j-1]:1+Math.min(dp[i-1][j],dp[i][j-1],dp[i-1][j-1]);return dp[m][n];}
 function mostrarAba(aba,el){document.querySelectorAll('.aba-content').forEach(e=>e.style.display='none');document.getElementById('aba-'+aba).style.display='block';document.querySelectorAll('.nav-tab').forEach(e=>e.classList.remove('active'));if(el)el.classList.add('active');if(aba==='ferias'){carregarFerias();if(eu&&eu.is_admin)document.getElementById('btn-para-outro').style.display='block';}if(aba==='saldo')carregarSaldo();}
 try {emailjs.init(EMAIL_CONFIG.publicKey);} catch (e) {console.warn('EmailJS init error:',e);}
 
-// ══ MIGRAÇÃO ROBUSTA DE grupo_id PARA grupos ══
 async function migrarGruposSeNecessario(){
   if(!eu)return;
   const userRef = db.collection('usuarios').doc(eu.uid);
   const snap = await userRef.get();
   const data = snap.data();
   if(!data)return;
-  
   let precisaMigrar = false;
   let grupoIdAntigo = data.grupo_id;
-  
   if(grupoIdAntigo){
     if(!data.grupos || !Array.isArray(data.grupos) || data.grupos.length === 0){
       precisaMigrar = true;
@@ -455,11 +442,9 @@ async function migrarGruposSeNecessario(){
       await userRef.update({ grupo_id: firebase.firestore.FieldValue.delete() });
       eu.grupos = data.grupos;
       eu.grupo_id = null;
-      console.log('✅ grupo_id removido (grupos já existia)');
       return;
     }
   }
-  
   if(precisaMigrar && grupoIdAntigo){
     try {
       const gSnap = await db.collection('grupos').doc(grupoIdAntigo).get();
@@ -467,33 +452,24 @@ async function migrarGruposSeNecessario(){
         const gData = gSnap.data();
         const admins = gData.admins || [gData.criado_por];
         const isAdmin = admins.includes(eu.uid) || gData.criado_por === eu.uid;
-        const novoGrupo = {
-          id: grupoIdAntigo,
-          nome: gData.nome || 'Meu Grupo',
-          is_admin: isAdmin
-        };
+        const novoGrupo = { id: grupoIdAntigo, nome: gData.nome || 'Meu Grupo', is_admin: isAdmin };
         await userRef.update({
           grupos: firebase.firestore.FieldValue.arrayUnion(novoGrupo),
           grupo_id: firebase.firestore.FieldValue.delete()
         });
         eu.grupos = [novoGrupo];
         eu.grupo_id = null;
-        console.log('✅ Migração concluída: grupo_id → grupos', novoGrupo);
       } else {
         await userRef.update({ grupo_id: firebase.firestore.FieldValue.delete() });
         eu.grupos = [];
         eu.grupo_id = null;
-        console.warn('⚠️ Grupo antigo não encontrado, removendo referência.');
       }
-    } catch(e){
-      console.error('Erro na migração:', e);
-    }
+    } catch(e){ console.error('Erro na migração:', e); }
   } else if(data.grupos){
     eu.grupos = data.grupos;
   }
 }
 
-// ══ GRUPOS: RENDERIZAÇÃO E GERENCIAMENTO ══
 function renderizarCardGrupos(){
   const container=document.getElementById('grp-content');
   const badge=document.getElementById('grp-badge');
@@ -565,10 +541,7 @@ async function selecionarGrupoAtivo(gId){
 async function buscarGrupos(){
   const termo=document.getElementById('busca-grupo-input').value.trim().toLowerCase();
   const container=document.getElementById('resultados-busca');
-  if(!termo||termo.length<2){
-    container.classList.remove('show');
-    return;
-  }
+  if(!termo||termo.length<2){ container.classList.remove('show'); return; }
   const snap=await db.collection('grupos').get();
   const resultados=[];
   snap.forEach(doc=>{
@@ -674,7 +647,6 @@ function removerGrupoLocal(gId){
   }
 }
 
-// ══ AUTENTICAÇÃO ══
 let authTimeout;
 const loadingScreen=document.getElementById('loading-screen');
 const loadingError=document.getElementById('loading-error');
@@ -716,7 +688,6 @@ try {
   }).catch(e=>{console.error('Persistence error:',e);clearTimeout(authTimeout);mostrarErroTela('Erro de configuração. Redirecionando...');setTimeout(redirecionarLogin,3000);});
 }catch(e){console.error('Auth setup error:',e);clearTimeout(authTimeout);mostrarErroTela('Erro crítico. Redirecionando...');setTimeout(redirecionarLogin,3000);}
 
-// ══ DEMAIS FUNÇÕES ══
 async function limparEventosAntigos(){
   if(!grupoId)return;const agora=new Date();const seteDiasAtras=new Date(agora);seteDiasAtras.setDate(seteDiasAtras.getDate()-7);
   try{const snap=await db.collection('eventos').where('grupo_id','==',grupoId).get();const evs=snap.docs.filter(d=>{const e=d.data();return e.data_hora&&new Date(e.data_hora)<seteDiasAtras;});for(const ev of evs)await ev.ref.delete();}catch(e){}
@@ -741,62 +712,27 @@ async function completarCadastro(){
   const cargo=document.getElementById('cadastro-cargo').value.trim();
   const email=document.getElementById('cadastro-email').value.trim();
   const erroEl=document.getElementById('cadastro-erro');
-  
-  if(!nome||nome.length<3){
-    erroEl.textContent='⚠️ Informe seu nome completo';
-    erroEl.style.display='block';
-    return;
-  }
-  
+  if(!nome||nome.length<3){erroEl.textContent='⚠️ Informe seu nome completo';erroEl.style.display='block';return;}
   const palavras=nome.split(/\s+/);
-  if(palavras.length<2){
-    erroEl.textContent='⚠️ Por favor, informe nome e sobrenome';
-    erroEl.style.display='block';
-    return;
-  }
-  
-  if(!cargo||cargo.length<2){
-    erroEl.textContent='⚠️ Informe seu cargo';
-    erroEl.style.display='block';
-    return;
-  }
-  
+  if(palavras.length<2){erroEl.textContent='⚠️ Por favor, informe nome e sobrenome';erroEl.style.display='block';return;}
+  if(!cargo||cargo.length<2){erroEl.textContent='⚠️ Informe seu cargo';erroEl.style.display='block';return;}
   try {
-    await db.collection('usuarios').doc(eu.uid).update({
-      nome_completo: nome,
-      cargo: cargo,
-      email: email || null,
-      nomes_conhecidos: firebase.firestore.FieldValue.arrayUnion(nome)
-    });
-    
-    eu.nome_completo = nome;
-    eu.cargo = cargo;
-    eu.email = email;
-    
-    document.getElementById('h-user').textContent = nome + ' · ' + cargo;
+    await db.collection('usuarios').doc(eu.uid).update({nome_completo:nome,cargo:cargo,email:email||null,nomes_conhecidos:firebase.firestore.FieldValue.arrayUnion(nome)});
+    eu.nome_completo=nome;eu.cargo=cargo;eu.email=email;
+    document.getElementById('h-user').textContent=nome+' · '+cargo;
     document.getElementById('completar-cadastro-ov').classList.remove('on');
     mostrarToast('✅ Cadastro atualizado!');
-    
-    if (grupoId) {
-      carregarEventos();
-    }
+    if(grupoId)carregarEventos();
     renderizarCardGrupos();
-    
-  } catch (error) {
-    console.error('Erro ao salvar:', error);
-    erroEl.textContent = 'Erro ao salvar. Tente novamente.';
-    erroEl.style.display = 'block';
-  }
+  } catch(error){console.error('Erro ao salvar:',error);erroEl.textContent='Erro ao salvar. Tente novamente.';erroEl.style.display='block';}
 }
 
-// ── SINCRONIZAR SALDO ──────────────────────────────────────────────
 async function sincronizarSaldo(){
   const snap=await db.collection('usuarios').doc(eu.uid).get();const data=snap.data();
   if(data.saldo&&data.saldo.usos){await db.collection('usuarios').doc(eu.uid).update({'saldo.usos':firebase.firestore.FieldValue.delete()});}
   carregarSaldo();mostrarToast('✅ Saldo sincronizado!');
 }
 
-// ── SALDO ───────────────────────────────────────────────────────────
 async function carregarSaldo(){
   const container=document.getElementById('saldo-container');container.innerHTML='<div class="skel"></div>';
   const snap=await db.collection('usuarios').doc(eu.uid).get();const data=snap.data();
@@ -830,17 +766,16 @@ function adicionarPeriodoNoAjuste(){periodosAjuste.push({periodo:'Novo período'
 function removerPeriodoAjuste(index){if(periodosAjuste.length<=1){mostrarToast('⚠️ Mantenha pelo menos 1 período');return;}periodosAjuste.splice(index,1);renderizarPeriodosAjuste();}
 async function salvarAjusteSaldo(){
   saldoUsuario.ferias=periodosAjuste;
-  const abonoVal = parseInt(document.getElementById('ajuste-abono').value);
-  saldoUsuario.abono = isNaN(abonoVal) ? 6 : Math.max(0, Math.min(6, abonoVal));
-  const licencaVal = parseInt(document.getElementById('ajuste-licenca').value);
-  saldoUsuario.licenca = isNaN(licencaVal) ? 90 : Math.max(0, Math.min(180, licencaVal));
+  const abonoVal=parseInt(document.getElementById('ajuste-abono').value);
+  saldoUsuario.abono=isNaN(abonoVal)?6:Math.max(0,Math.min(6,abonoVal));
+  const licencaVal=parseInt(document.getElementById('ajuste-licenca').value);
+  saldoUsuario.licenca=isNaN(licencaVal)?90:Math.max(0,Math.min(180,licencaVal));
   await db.collection('usuarios').doc(eu.uid).update({saldo:{ferias:saldoUsuario.ferias,abono:saldoUsuario.abono,licenca:saldoUsuario.licenca}});
   fecharAjusteSaldo();
   mostrarToast('✅ Saldo atualizado!');
   await carregarSaldo();
 }
 
-// ── FÉRIAS ──────────────────────────────────────────────────────────
 async function carregarFerias(){
   if(!grupoId)return;
   const lst=document.getElementById('lst-ausencias');lst.innerHTML='<div class="skel"></div>';
@@ -861,11 +796,7 @@ async function carregarFerias(){
   });
 }
 
-async function excluirAusenciaGrupo(id){
-  if(!confirm('Excluir este período?'))return;
-  await db.collection('ausencias').doc(id).delete();
-  mostrarToast('✅ Excluído!');carregarFerias();
-}
+async function excluirAusenciaGrupo(id){if(!confirm('Excluir este período?'))return;await db.collection('ausencias').doc(id).delete();mostrarToast('✅ Excluído!');carregarFerias();}
 
 async function abrirSelecaoUsuario(){
   usuarioSelecionadoFerias=null;
@@ -883,9 +814,9 @@ async function abrirSelecaoUsuario(){
 function fecharSelecaoUsuario(){document.getElementById('selecionar-usuario-ov').classList.remove('on');usuarioSelecionadoFerias=null;}
 function confirmarSelecaoUsuario(){
   if(!usuarioSelecionadoFerias){mostrarToast('⚠️ Selecione um usuário');return;}
-  const usuario = usuarioSelecionadoFerias;
+  const usuario=usuarioSelecionadoFerias;
   fecharSelecaoUsuario();
-  usuarioSelecionadoFerias = usuario;
+  usuarioSelecionadoFerias=usuario;
   abrirFormFerias();
 }
 function iniciarAddFerias(){document.getElementById('ferias-consent-desc').textContent='Registrar seu próprio período.';document.getElementById('ferias-consent-ov').classList.add('on');usuarioSelecionadoFerias=null;}
@@ -938,12 +869,12 @@ async function salvarFerias(){
   const userSnap=await db.collection('usuarios').doc(uidDestino).get();
   if(userSnap.exists){
     const userData=userSnap.data();const userSaldo=userData.saldo||{ferias:[],abono:6,licenca:90};
-    const limiteAbono = (userSaldo.abono != null && !isNaN(userSaldo.abono)) ? userSaldo.abono : 6;
-    if(tipo==='abono' && usos.filter(u=>u.tipo==='abono').length >= limiteAbono){erroEl.textContent='⚠️ Abonos esgotados';erroEl.style.display='block';return;}
+    const limiteAbono=(userSaldo.abono!=null&&!isNaN(userSaldo.abono))?userSaldo.abono:6;
+    if(tipo==='abono'&&usos.filter(u=>u.tipo==='abono').length>=limiteAbono){erroEl.textContent='⚠️ Abonos esgotados';erroEl.style.display='block';return;}
     if(tipo==='licenca'){
-      const limiteLicenca = (userSaldo.licenca != null && !isNaN(userSaldo.licenca)) ? userSaldo.licenca : 90;
+      const limiteLicenca=(userSaldo.licenca!=null&&!isNaN(userSaldo.licenca))?userSaldo.licenca:90;
       const u=usos.filter(u=>u.tipo==='licenca').reduce((s,u)=>s+(u.dias||0),0);
-      if(u+dias > limiteLicenca){erroEl.textContent='⚠️ Saldo insuficiente';erroEl.style.display='block';return;}
+      if(u+dias>limiteLicenca){erroEl.textContent='⚠️ Saldo insuficiente';erroEl.style.display='block';return;}
     }
     if(tipo==='ferias'){if(typeof userSaldo.ferias==='number')userSaldo.ferias=[{periodo:'Total',total:userSaldo.ferias}];const p=userSaldo.ferias.find(p=>p.periodo===periodo);if(p){const u=usos.filter(u=>u.tipo==='ferias'&&u.periodo===periodo).reduce((s,u)=>s+(u.dias||0),0);if(u+dias>(p.total||30)){erroEl.textContent='⚠️ Saldo insuficiente';erroEl.style.display='block';return;}}}
   }
@@ -956,44 +887,63 @@ async function salvarFerias(){
 async function fetchAusencias(){if(!grupoId)return;const hojeStr=new Date().toISOString().split('T')[0];const snap=await db.collection('ausencias').where('grupo_id','==',grupoId).where('data_fim','>=',hojeStr).get();listaAusencias=snap.docs.map(d=>({id:d.id,...d.data()}));}
 function verificarStatusAusencia(uid,dataEvento){if(!uid||!dataEvento)return null;const dataStr=dataEvento.split('T')[0];return listaAusencias.find(aus=>aus.uid===uid&&aus.data_inicio<=dataStr&&aus.data_fim>=dataStr)||null;}
 
-// ══ MATCH DE NOMES (CORRIGIDO v21.2.1) ═══════════════════════════════════
+// ══ MATCH DE NOMES (CORRIGIDO v21.5) ═══════════════════════════════════
 async function cruzar(nomes) {
-  const snap1 = await db.collection('usuarios')
-    .where('grupos', 'array-contains', { id: grupoId, is_admin: true }).get();
-  const snap2 = await db.collection('usuarios')
-    .where('grupos', 'array-contains', { id: grupoId, is_admin: false }).get();
-  const snap3 = await db.collection('usuarios').where('grupo_id', '==', grupoId).get();
-  
+  // Busca TODOS os usuários que têm o campo 'grupos' (modelo novo)
+  const snapGrupos = await db.collection('usuarios')
+    .where('grupos', '!=', null).get();
+  // Busca usuários antigos (campo grupo_id)
+  const snapLegado = await db.collection('usuarios')
+    .where('grupo_id', '==', grupoId).get();
+
+  // Junta todos os resultados, removendo duplicatas por UID
   const usersMap = new Map();
-  [...snap1.docs, ...snap2.docs, ...snap3.docs].forEach(doc => {
+  
+  // Processa usuários do modelo novo (array grupos)
+  snapGrupos.forEach(doc => {
+    const data = doc.data();
+    const grupos = data.grupos || [];
+    // Verifica se o usuário pertence ao grupo ativo
+    const pertence = grupos.some(g => g.id === grupoId);
+    if (pertence && !usersMap.has(doc.id)) {
+      usersMap.set(doc.id, { uid: doc.id, ...data });
+    }
+  });
+  
+  // Processa usuários antigos (grupo_id)
+  snapLegado.forEach(doc => {
     if (!usersMap.has(doc.id)) {
       usersMap.set(doc.id, { uid: doc.id, ...doc.data() });
     }
   });
+
   const users = Array.from(usersMap.values());
-  
+  console.log('👥 Membros encontrados:', users.length, users.map(u => u.nome_completo));
+
   const norm = s => s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9\s]/g, '').trim();
   const st = new Set(['de', 'da', 'do', 'das', 'dos', 'e', 'a', 'o', 'as', 'os']);
   const pwSig = s => norm(s).split(/\s+/).filter(p => p.length > 1 && !st.has(p));
-  
+
   function ps(a, b) {
     if (a === b) return true;
     if (a.length < 5 || b.length < 5) return false;
     if (Math.abs(a.length - b.length) > 1) return false;
     return lev(a, b) <= 1;
   }
-  
+
   return nomes.map(nome => {
     const nn = norm(nome);
     const pwNome = pwSig(nome);
-    
+
+    // Busca exata
     for (const u of users) {
       const todosNomes = [u.nome_completo, ...(u.nomes_conhecidos || [])];
       if (todosNomes.some(n => norm(n) === nn)) {
         return { tipo: 'exato', nome, usuario: u };
       }
     }
-    
+
+    // Busca por correspondência parcial
     let mu = null, ms = 0;
     for (const u of users) {
       const todosNomes = [u.nome_completo, ...(u.nomes_conhecidos || [])];
@@ -1009,7 +959,7 @@ async function cruzar(nomes) {
         }
       }
     }
-    
+
     if (mu && ms >= 0.8) return { tipo: 'parcial', nome, usuario: mu, score: ms };
     if (mu && ms >= 0.5) return { tipo: 'baixa_confianca', nome, usuario: mu, score: ms };
     return { tipo: 'nao_encontrado', nome };
@@ -1050,10 +1000,8 @@ function desvincularMatch(i){if(!confirm(`Desvincular "${matches[i].nome}" de ${
 function fecharRv(){document.getElementById('rv-ov').classList.remove('on');ocrDados=null;matches=[];}
 async function salvar(){const t=document.getElementById('rv-tit').value.trim();const d=document.getElementById('rv-data').value;if(!t||!d){alert('Preencha título e data.');return;}await db.collection('eventos').add({id_verificacao:ocrDados?.id_ver||null,titulo_evento:t,data_hora:d+':00',local:document.getElementById('rv-loc').value.trim(),lista_convocados:ocrDados?.nomes||[],grupo_id:grupoId,criado_por:eu.uid,criado_em:firebase.firestore.FieldValue.serverTimestamp()});fecharRv();const dtF=new Date(d+':00').toLocaleDateString('pt-BR',{day:'2-digit',month:'short',year:'numeric'});const ex=matches.filter(m=>m.tipo==='exato');for(const m of ex){await db.collection('notificacoes').add({uid:m.usuario.uid,tipo:'convocado',nome_convocacao:m.nome,titulo_evento:t,data_hora:d+':00',grupo_id:grupoId,respondido:false,criado_em:firebase.firestore.FieldValue.serverTimestamp()});if(m.usuario.uid===eu.uid)enviarNotificacaoPush('📋 Convocado!',`${t} — ${dtF}`);}const pa=matches.filter(m=>m.tipo==='parcial'||m.tipo==='baixa_confianca');for(const m of pa){await db.collection('notificacoes').add({uid:m.usuario.uid,tipo:'confirmar',nome_convocacao:m.nome,titulo_evento:t,data_hora:d+':00',grupo_id:grupoId,respondido:false,criado_em:firebase.firestore.FieldValue.serverTimestamp()});}mostrarToast('✅ Salvo!');carregarEventos();verificarNotificacoesPendentes();}
 
-// ── EDIÇÃO DE EVENTO ────────────────────────────────────────────────
 async function salvarEdicaoEvento(){if(!eventoAtualMod||!eu.is_admin)return;const novoTitulo=document.getElementById('mod-tit').value.trim();if(!novoTitulo){mostrarToast('⚠️ Informe o título');return;}try{await db.collection('eventos').doc(eventoAtualMod.id).update({titulo_evento:novoTitulo});eventoAtualMod.titulo_evento=novoTitulo;mostrarToast('✅ Evento atualizado!');carregarEventos();abrirMod(eventoAtualMod);}catch(e){console.error(e);alert('Erro ao salvar.');}}
 
-// ── ENVIO DE E-MAIL ─────────────────────────────────────────────────
 let intervaloVerificacaoEmail=null;
 function iniciarVerificacaoLembretes(){if(intervaloVerificacaoEmail)clearInterval(intervaloVerificacaoEmail);verificarLembretesAmanha();intervaloVerificacaoEmail=setInterval(verificarLembretesAmanha,6*60*60*1000);}
 async function verificarLembretesAmanha(){
@@ -1076,12 +1024,10 @@ async function verificarLembretesAmanha(){
 }
 function encontrarUsuarioPorNome(usuarios,nome){const norm=s=>s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9\s]/g,'').trim();return usuarios.find(u=>(u.nomes_conhecidos||[u.nome_completo]).some(n=>norm(n)===norm(nome)));}
 
-// ── APROVAÇÕES ─────────────────────────────────────────────────────
 async function verificarAprovacoes(){if(!grupoId)return;const s=await db.collection('grupos').doc(grupoId).get();const sol=s.data().solicitacoes||{};const ent=Object.entries(sol);if(!ent.length)return;document.getElementById('sec-apv').style.display='block';const lst=document.getElementById('lst-apv');lst.innerHTML='';ent.forEach(([uid,d])=>{const el=document.createElement('div');el.className='apv';el.innerHTML=`<div class="apv-nome">${d.nome}</div><div class="apv-btns"><button class="btn-apr" onclick="aprovar('${uid}','${d.nome}')">✓</button><button class="btn-rec" onclick="recusar('${uid}')">✗</button></div>`;lst.appendChild(el);});}
 async function aprovar(uid,nome){await db.collection('usuarios').doc(uid).update({grupo_id:grupoId,solicitacoes:[]});const s=await db.collection('grupos').doc(grupoId).get();const sol=s.data().solicitacoes||{};delete sol[uid];await db.collection('grupos').doc(grupoId).update({solicitacoes:sol,membros:(s.data().membros||1)+1});verificarAprovacoes();mostrarToast(nome+' aprovado!');}
 async function recusar(uid){const s=await db.collection('grupos').doc(grupoId).get();const sol=s.data().solicitacoes||{};delete sol[uid];await db.collection('grupos').doc(grupoId).update({solicitacoes:sol});await db.collection('usuarios').doc(uid).update({solicitacoes:[]});verificarAprovacoes();}
 
-// ── EVENTOS ─────────────────────────────────────────────────────────
 async function carregarEventos(){if(!grupoId)return;const snap=await db.collection('eventos').where('grupo_id','==',grupoId).get();const agora=new Date();const evs=snap.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>new Date(a.data_hora)-new Date(b.data_hora));document.getElementById('total').textContent=evs.length+' total';const norm=s=>s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9\s]/g,'').trim();const st=new Set(['de','da','do','das','dos','e','a','o','as','os']);const pw=s=>norm(s).split(/\s+/).filter(p=>p.length>1&&!st.has(p));const euN=[eu.nome_completo,...(eu.nomes_conhecidos||[])];const euPw=pw(eu.nome_completo);function euSou(l){return(l||[]).some(n=>{if(euN.some(en=>norm(en)===norm(n)))return true;const pn=pw(n);const ec=pn.filter(p=>euPw.some(pe=>p===pe||(p.length>=5&&lev(p,pe)<=1)));return ec.length/Math.max(pn.length,1)>=0.55;});}const mp=evs.filter(e=>new Date(e.data_hora)>agora&&euSou(e.lista_convocados));const ms=evs.filter(e=>new Date(e.data_hora)>agora&&(e.substitutos||[]).some(s=>s.uid===eu.uid));const el=document.getElementById('prox');if(!mp.length&&!ms.length){el.innerHTML='<div class="card-vazio">Sem convocações próximas.</div>';}else{el.innerHTML=[...mp.map((ev,i)=>{const dt=new Date(ev.data_hora);const es=JSON.stringify(ev).replace(/'/g,"&#39;");return`<div class="card-prox"><div class="prox-label">${i===0?'SUA PRÓXIMA':'TAMBÉM CONVOCADO'}</div><div class="prox-titulo" onclick='abrirMod(${es})'>${ev.titulo_evento||'Evento'}</div><div class="prox-meta"><span>📅 ${fD(dt)}</span><span>🕐 ${fH(dt)}</span></div><div style="display:flex;gap:8px;"><button class="btn-agenda" style="flex:1" onclick='ics(${es})'>📅 Agendar</button><button class="btn-trocar-prox" style="flex:1" onclick='abrirTrocar(${es})'>🔄 Trocar</button></div></div>`;}),...ms.map(ev=>{const dt=new Date(ev.data_hora);const es=JSON.stringify(ev).replace(/'/g,"&#39;");const sub=ev.substitutos.find(s=>s.uid===eu.uid);return`<div class="card-prox-sub"><div class="sub-badge">🔄 SUBSTITUIÇÃO</div><div class="prox-titulo" onclick='abrirMod(${es})'>${ev.titulo_evento||'Evento'}</div><div style="font-size:12px;opacity:.8;margin-bottom:10px">Substituindo: ${sub.substituindo}</div><div class="prox-meta"><span>📅 ${fD(dt)}</span><span>🕐 ${fH(dt)}</span></div><div style="display:flex;gap:8px;"><button class="btn-agenda" style="flex:1;background:#d97706" onclick='ics(${es})'>📅 Agendar</button><button class="btn-trocar-prox" style="flex:1" onclick='abrirTrocar(${es})'>🔄 Trocar</button></div></div>`;})].join('');}const lst=document.getElementById('lst-ev');if(!evs.length){lst.innerHTML='<p style="color:var(--light);padding:20px;text-align:center">Nenhuma convocação.</p>';return;}lst.innerHTML='';const fut=evs.filter(e=>new Date(e.data_hora)>agora);const pas=evs.filter(e=>new Date(e.data_hora)<=agora).reverse();[...fut,...pas].forEach(ev=>lst.appendChild(criarCard(ev)));}
 function criarCard(ev){const dt=new Date(ev.data_hora);const pa=dt<=new Date();const w=document.createElement('div');w.className='ev-wrap';w.innerHTML=`<div class="ev-bg"><div class="ev-bg-l"><span>👁</span></div>${eu.is_admin?'<div class="ev-bg-r"><span>🗑</span></div>':''}</div><div class="ev-card" style="border-left-color:${pa?'#94a3b8':'var(--blue)'};opacity:${pa?'.7':'1'}"><div class="ev-titulo">${ev.titulo_evento||'Sem título'}${pa?' <span style="font-size:11px;color:#94a3b8">(encerrado)</span>':''}</div><div class="ev-meta"><span>📅 ${fD(dt)}</span><span>🕐 ${fH(dt)}</span></div><div class="ev-conv">${(ev.lista_convocados||[]).length} convocado(s)</div></div>`;const card=w.querySelector('.ev-card');let sx=0,dx=0,mov=false;card.addEventListener('touchstart',e=>{sx=e.touches[0].clientX;mov=false},{passive:true});card.addEventListener('touchmove',e=>{dx=e.touches[0].clientX-sx;mov=true;if(!eu.is_admin&&dx<0)dx=0;if(Math.abs(dx)>8){card.style.transition='none';card.style.transform=`translateX(${Math.max(-100,Math.min(100,dx))}px)`;}},{passive:true});card.addEventListener('touchend',()=>{card.style.transition='transform .2s ease';if(dx<-60&&eu.is_admin){if(confirm('Excluir?'))db.collection('eventos').doc(ev.id).delete().then(()=>carregarEventos());else card.style.transform='translateX(0)';}else if(dx>60){card.style.transform='translateX(0)';abrirMod(ev);}else{card.style.transform='translateX(0)';if(!mov)abrirMod(ev);}dx=0;});card.addEventListener('click',()=>{if(!mov)abrirMod(ev);});return w;}
 function abrirMod(ev){eventoAtualMod=ev;const dt=new Date(ev.data_hora);document.getElementById('mod-tit').value=ev.titulo_evento||'';document.getElementById('mod-sub').value=fD(dt)+' às '+fH(dt)+(ev.local?' · '+ev.local:'');const ti=document.getElementById('mod-tit');const si=document.getElementById('mod-sub');const bs=document.getElementById('mod-salvar-edicao');if(eu.is_admin){ti.readOnly=false;si.readOnly=true;ti.style.borderBottom='2px dashed var(--border)';bs.style.display='block';}else{ti.readOnly=true;si.readOnly=true;ti.style.borderBottom='none';bs.style.display='none';}const ab=document.getElementById('admin-badge-conv');if(eu.is_admin){ab.style.display='inline-block';renderizarNomesAdmin(ev);}else{ab.style.display='none';db.collection('usuarios').where('grupo_id','==',grupoId).get().then(s=>{const us=s.docs.map(d=>d.data());const norm=s=>s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9\s]/g,'').trim();document.getElementById('mod-conv').innerHTML=(ev.lista_convocados||[]).map(n=>{const nn=norm(n);let uid=null;for(const u of us){if([u.nome_completo,...(u.nomes_conhecidos||[])].some(x=>norm(x)===nn)){uid=u.uid;break;}}let av='';if(uid){const ia=verificarStatusAusencia(uid,ev.data_hora);if(ia){let ic=ia.tipo==='ferias'?'🏖️':(ia.tipo==='licenca'?'🏆':'⏱️');av=`<div class="aviso-ferias">${ic} Atenção: Convocado está de ${ia.tipo} neste dia!</div>`;}}return`<div class="conv-linha"><div style="display:flex;align-items:center;gap:10px;width:100%"><div class="conv-icon"><svg viewBox="0 0 24 24"><path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/></svg></div><span class="conv-nome">${n}</span></div>${av}</div>`;}).join('');});}const agr=new Date();const evFut=dt>agr;const euConv=(ev.lista_convocados||[]).some(n=>euSouConvocadoNome(n));const bt=document.getElementById('mod-trocar');if(euConv&&evFut){bt.style.display='block';bt.onclick=()=>abrirTrocar(ev);}else{bt.style.display='none';}document.getElementById('mod-ag').onclick=()=>ics(ev);document.getElementById('mod-del').style.display=eu.is_admin?'block':'none';document.getElementById('mod-del').onclick=()=>{if(!eu.is_admin)return;if(confirm('Excluir?')){db.collection('eventos').doc(ev.id).delete().then(()=>{fecharMod();carregarEventos();mostrarToast('Excluída');});}};document.getElementById('mod-ev').classList.add('on');}
@@ -1091,9 +1037,7 @@ function renderizarNomesAdminUI() {
   c.innerHTML = nomesEditaveis.map((n, i) =>
     `<div class="conv-linha" style="flex-direction:column;gap:6px">
       <div style="display:flex;align-items:center;gap:10px">
-        <div class="conv-icon">
-          <svg viewBox="0 0 24 24"><path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/></svg>
-        </div>
+        <div class="conv-icon"><svg viewBox="0 0 24 24"><path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/></svg></div>
         <span class="conv-nome editable" contenteditable="true" onblur="atualizarNomeAdmin(${i}, this.textContent)">${n}</span>
         <button class="btn-remover-nome" onclick="removerNomeAdmin(${i})">✕</button>
       </div>
@@ -1105,60 +1049,25 @@ function renderizarNomesAdminUI() {
   </div>
   <button class="btn-salvar-nomes" onclick="salvarNomesAdmin()">💾 Salvar</button>`;
 }
-function renderizarNomesAdmin(ev){
-  nomesEditaveis = [...(ev.lista_convocados||[])];
-  renderizarNomesAdminUI();
-}
-function atualizarNomeAdmin(i, n) {
-  if (n && n.trim()) nomesEditaveis[i] = n.trim();
-}
-function removerNomeAdmin(i) {
-  if (confirm('Remover?')) {
-    nomesEditaveis.splice(i, 1);
-    renderizarNomesAdminUI();
-  }
-}
-function adicionarNomeAdmin() {
-  const input = document.getElementById('input-novo-nome');
-  const n = input.value.trim();
-  if (!n) return;
-  nomesEditaveis.push(n);
-  renderizarNomesAdminUI();
-  mostrarToast('Adicionado');
-}
+function renderizarNomesAdmin(ev){nomesEditaveis=[...(ev.lista_convocados||[])];renderizarNomesAdminUI();}
+function atualizarNomeAdmin(i,n){if(n&&n.trim())nomesEditaveis[i]=n.trim();}
+function removerNomeAdmin(i){if(confirm('Remover?')){nomesEditaveis.splice(i,1);renderizarNomesAdminUI();}}
+function adicionarNomeAdmin(){const n=document.getElementById('input-novo-nome').value.trim();if(!n)return;nomesEditaveis.push(n);renderizarNomesAdminUI();mostrarToast('Adicionado');}
 async function salvarNomesAdmin(){
   if(!eventoAtualMod)return;
-  const listaAntiga = eventoAtualMod.lista_convocados || [];
+  const listaAntiga=eventoAtualMod.lista_convocados||[];
   await db.collection('eventos').doc(eventoAtualMod.id).update({lista_convocados:nomesEditaveis});
-  eventoAtualMod.lista_convocados = [...nomesEditaveis];
-  const novos = nomesEditaveis.filter(n => !listaAntiga.includes(n));
-  if (novos.length > 0) {
-    const novosMatches = await cruzar(novos);
-    const dtEvento = eventoAtualMod.data_hora;
-    const titulo = eventoAtualMod.titulo_evento || 'Evento';
-    for (const m of novosMatches) {
-      if (m.tipo === 'exato') {
-        await db.collection('notificacoes').add({
-          uid: m.usuario.uid,
-          tipo: 'convocado',
-          nome_convocacao: m.nome,
-          titulo_evento: titulo,
-          data_hora: dtEvento,
-          grupo_id: grupoId,
-          respondido: false,
-          criado_em: firebase.firestore.FieldValue.serverTimestamp()
-        });
-      } else if (m.tipo === 'parcial' || m.tipo === 'baixa_confianca') {
-        await db.collection('notificacoes').add({
-          uid: m.usuario.uid,
-          tipo: 'confirmar',
-          nome_convocacao: m.nome,
-          titulo_evento: titulo,
-          data_hora: dtEvento,
-          grupo_id: grupoId,
-          respondido: false,
-          criado_em: firebase.firestore.FieldValue.serverTimestamp()
-        });
+  eventoAtualMod.lista_convocados=[...nomesEditaveis];
+  const novos=nomesEditaveis.filter(n=>!listaAntiga.includes(n));
+  if(novos.length>0){
+    const novosMatches=await cruzar(novos);
+    const dtEvento=eventoAtualMod.data_hora;
+    const titulo=eventoAtualMod.titulo_evento||'Evento';
+    for(const m of novosMatches){
+      if(m.tipo==='exato'){
+        await db.collection('notificacoes').add({uid:m.usuario.uid,tipo:'convocado',nome_convocacao:m.nome,titulo_evento:titulo,data_hora:dtEvento,grupo_id:grupoId,respondido:false,criado_em:firebase.firestore.FieldValue.serverTimestamp()});
+      }else if(m.tipo==='parcial'||m.tipo==='baixa_confianca'){
+        await db.collection('notificacoes').add({uid:m.usuario.uid,tipo:'confirmar',nome_convocacao:m.nome,titulo_evento:titulo,data_hora:dtEvento,grupo_id:grupoId,respondido:false,criado_em:firebase.firestore.FieldValue.serverTimestamp()});
       }
     }
   }
@@ -1167,174 +1076,54 @@ async function salvarNomesAdmin(){
   abrirMod(eventoAtualMod);
 }
 
-// ── SCANNER (MELHORADO v21.3) ─────────────────────────────────────
 async function abrirScanner(){if(!grupoId){alert('Entre em um grupo.');return;}document.getElementById('scan-ov').classList.add('on');try{camStream=await navigator.mediaDevices.getUserMedia({video:{facingMode:'environment'}});document.getElementById('video').srcObject=camStream;}catch{alert('Câmera indisponível.');}}
 function fecharScanner(){document.getElementById('scan-ov').classList.remove('on');if(camStream){camStream.getTracks().forEach(t=>t.stop());camStream=null;}}
 function capturar(){const v=document.getElementById('video');const c=document.createElement('canvas');c.width=v.videoWidth;c.height=v.videoHeight;c.getContext('2d').drawImage(v,0,0);c.toBlob(b=>processarFoto(b),'image/jpeg',.9);}
 
-// Função auxiliar para processar foto (recebe o arquivo e uma flag indicando se veio da galeria)
-async function processarFoto(file, fromGallery = false) {
+async function processarFoto(file,fromGallery=false){
   if(!file)return;
-  
-  // Se veio da galeria, mostra indicador de carregamento sobreposto à câmera
-  if(fromGallery) {
-    const loadingOverlay = document.getElementById('scan-loading');
+  if(fromGallery){
+    const loadingOverlay=document.getElementById('scan-loading');
     loadingOverlay.classList.add('show');
     mostrarToast('📤 Processando arquivo...');
-    // Pequeno delay para garantir que o toast apareça antes do processamento pesado
-    await new Promise(r => setTimeout(r, 300));
+    await new Promise(r=>setTimeout(r,300));
   }
-  
-  // Se não veio da galeria (foto tirada), fecha o scanner como antes
-  if(!fromGallery) {
-    fecharScanner();
-  } else {
-    // Para arquivo da galeria, esperamos o OCR iniciar para fechar a câmera
-    // Ocultamos o indicador de carregamento e fechamos o scanner quando o OCR abrir
-    const loadingOverlay = document.getElementById('scan-loading');
-    if(loadingOverlay) loadingOverlay.classList.remove('show');
-    fecharScanner();
-  }
-
-  const oo=document.getElementById('ocr-ov');
-  const ot=document.getElementById('ocr-texto');
-  const os=document.getElementById('ocr-subtexto');
-  const op=document.getElementById('ocr-preenchimento');
-  
-  oo.classList.add('on');
-  op.style.width='10%';
-  ot.textContent='📸 Preparando...';
-  os.textContent='Otimizando imagem';
-  
+  if(!fromGallery){fecharScanner();}else{const loadingOverlay=document.getElementById('scan-loading');if(loadingOverlay)loadingOverlay.classList.remove('show');fecharScanner();}
+  const oo=document.getElementById('ocr-ov');const ot=document.getElementById('ocr-texto');const os=document.getElementById('ocr-subtexto');const op=document.getElementById('ocr-preenchimento');
+  oo.classList.add('on');op.style.width='10%';ot.textContent='📸 Preparando...';os.textContent='Otimizando imagem';
   try{
-    const pi=setInterval(()=>{
-      const cw=parseFloat(op.style.width);
-      if(cw<80)op.style.width=(cw+5)+'%';
-      if(cw>30&&cw<50){ot.textContent='🔍 Enviando...';os.textContent='Conectando ao servidor';}
-      if(cw>50&&cw<70){ot.textContent='🤖 Processando...';os.textContent='IA analisando texto';}
-    },800);
-    
-    const b64=await new Promise((res,rej)=>{
-      const img=new Image();
-      const url=URL.createObjectURL(file);
-      img.onload=()=>{
-        const MAX=1600;
-        let w=img.width,h=img.height;
-        if(w>MAX||h>MAX){
-          if(w>h){h=Math.round(h*MAX/w);w=MAX;}
-          else{w=Math.round(w*MAX/h);h=MAX;}
-        }
-        const c=document.createElement('canvas');
-        c.width=w;c.height=h;
-        c.getContext('2d').drawImage(img,0,0,w,h);
-        URL.revokeObjectURL(url);
-        res(c.toDataURL('image/jpeg',0.9).split(',')[1]);
-      };
-      img.onerror=()=>rej(new Error('Erro ao carregar imagem'));
-      img.src=url;
-    });
-    
-    clearInterval(pi);
-    op.style.width='80%';
-    ot.textContent='🔎 Lendo...';
-    os.textContent='IA analisando';
-    
-    const resp=await fetch('https://api.mistral.ai/v1/chat/completions',{
-      method:'POST',
-      headers:{'Content-Type':'application/json','Authorization':'Bearer zQVzmFaX904lqaFwzt40BHXHfGoqSJca'},
-      body:JSON.stringify({
-        model:'pixtral-12b-2409',
-        max_tokens:800,
-        temperature:0.1,
-        messages:[{
-          role:'user',
-          content:[
-            {type:'image_url',image_url:{url:'data:image/jpeg;base64,'+b64}},
-            {type:'text',text:'Analise esta convocação. Retorne APENAS JSON: {"titulo":"TIPO - Tema","data":"YYYY-MM-DD","hora":"HH:MM","local":"local ou null","nomes":["Nome 1","Nome 2"]}. NUNCA junte nomes.'}
-          ]
-        }]
-      })
-    });
-    
-    op.style.width='90%';
-    ot.textContent='✅ Processando...';
-    os.textContent='Organizando dados';
-    
-    const data=await resp.json();
-    const txtRaw=data.choices?.[0]?.message?.content||'';
-    let parsed;
-    try{parsed=JSON.parse(txtRaw.replace(/```json|```/g,'').trim());}
-    catch{const match=txtRaw.match(/\{[\s\S]*\}/);if(match)parsed=JSON.parse(match[0]);else throw new Error('Formato inválido');}
-    
-    if(parsed.nomes&&Array.isArray(parsed.nomes)){
-      parsed.nomes=parsed.nomes.flatMap(nome=>{
-        if(nome.includes(' e ')||nome.includes(' / '))return nome.split(/\s+e\s+|\s+\/\s+/).filter(n=>n.trim().length>2);
-        const ns=nome.split(/(?<=[a-záéíóúãõç])(?=[A-Z])/);
-        if(ns.length>1){
-          const nv=[];let na='';
-          for(let i=0;i<ns.length;i++){
-            na+=ns[i];
-            if(na.trim().split(/\s+/).length>=2&&i<ns.length-1){nv.push(na.trim());na='';}
-          }
-          if(na.trim())nv.push(na.trim());
-          return nv.length>1?nv:[nome];
-        }
-        return[nome];
-      });
-    }
-    
-    op.style.width='100%';
-    ot.textContent='✨ Concluído!';
-    os.textContent='Verifique os dados';
-    
-    ocrDados={
-      titulo:parsed.titulo||null,
-      data_hora:(parsed.data&&parsed.hora)?`${parsed.data}T${parsed.hora}:00`:(parsed.data?`${parsed.data}T00:00:00`:null),
-      local:parsed.local||null,
-      nomes:Array.isArray(parsed.nomes)?parsed.nomes.filter(n=>n&&n.trim().length>2):[],
-      id_ver:null
-    };
-    
+    const pi=setInterval(()=>{const cw=parseFloat(op.style.width);if(cw<80)op.style.width=(cw+5)+'%';if(cw>30&&cw<50){ot.textContent='🔍 Enviando...';os.textContent='Conectando ao servidor';}if(cw>50&&cw<70){ot.textContent='🤖 Processando...';os.textContent='IA analisando texto';}},800);
+    const b64=await new Promise((res,rej)=>{const img=new Image();const url=URL.createObjectURL(file);img.onload=()=>{const MAX=1600;let w=img.width,h=img.height;if(w>MAX||h>MAX){if(w>h){h=Math.round(h*MAX/w);w=MAX;}else{w=Math.round(w*MAX/h);h=MAX;}}const c=document.createElement('canvas');c.width=w;c.height=h;c.getContext('2d').drawImage(img,0,0,w,h);URL.revokeObjectURL(url);res(c.toDataURL('image/jpeg',0.9).split(',')[1]);};img.onerror=()=>rej(new Error('Erro ao carregar imagem'));img.src=url;});
+    clearInterval(pi);op.style.width='80%';ot.textContent='🔎 Lendo...';os.textContent='IA analisando';
+    const resp=await fetch('https://api.mistral.ai/v1/chat/completions',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer zQVzmFaX904lqaFwzt40BHXHfGoqSJca'},body:JSON.stringify({model:'pixtral-12b-2409',max_tokens:800,temperature:0.1,messages:[{role:'user',content:[{type:'image_url',image_url:{url:'data:image/jpeg;base64,'+b64}},{type:'text',text:'Analise esta convocação. Retorne APENAS JSON: {"titulo":"TIPO - Tema","data":"YYYY-MM-DD","hora":"HH:MM","local":"local ou null","nomes":["Nome 1","Nome 2"]}. NUNCA junte nomes.'}]}]})});
+    op.style.width='90%';ot.textContent='✅ Processando...';os.textContent='Organizando dados';
+    const data=await resp.json();const txtRaw=data.choices?.[0]?.message?.content||'';let parsed;
+    try{parsed=JSON.parse(txtRaw.replace(/```json|```/g,'').trim());}catch{const match=txtRaw.match(/\{[\s\S]*\}/);if(match)parsed=JSON.parse(match[0]);else throw new Error('Formato inválido');}
+    if(parsed.nomes&&Array.isArray(parsed.nomes)){parsed.nomes=parsed.nomes.flatMap(nome=>{if(nome.includes(' e ')||nome.includes(' / '))return nome.split(/\s+e\s+|\s+\/\s+/).filter(n=>n.trim().length>2);const ns=nome.split(/(?<=[a-záéíóúãõç])(?=[A-Z])/);if(ns.length>1){const nv=[];let na='';for(let i=0;i<ns.length;i++){na+=ns[i];if(na.trim().split(/\s+/).length>=2&&i<ns.length-1){nv.push(na.trim());na='';}}if(na.trim())nv.push(na.trim());return nv.length>1?nv:[nome];}return[nome];});}
+    op.style.width='100%';ot.textContent='✨ Concluído!';os.textContent='Verifique os dados';
+    ocrDados={titulo:parsed.titulo||null,data_hora:(parsed.data&&parsed.hora)?`${parsed.data}T${parsed.hora}:00`:(parsed.data?`${parsed.data}T00:00:00`:null),local:parsed.local||null,nomes:Array.isArray(parsed.nomes)?parsed.nomes.filter(n=>n&&n.trim().length>2):[],id_ver:null};
     if(parsed.data&&parsed.hora&&parsed.titulo)ocrDados.id_ver=parsed.data.replace(/-/g,'')+parsed.hora.replace(':','')+parsed.titulo.toUpperCase().replace(/[^A-Z0-9]/g,'').substring(0,10);
-    
     await new Promise(r=>setTimeout(r,800));
-  }catch(e){
-    oo.classList.remove('on');
-    alert('Erro: '+e.message);
-    return;
-  }
-  
+  }catch(e){oo.classList.remove('on');alert('Erro: '+e.message);return;}
   oo.classList.remove('on');
-  
-  if(ocrDados.id_ver){
-    const dup=await db.collection('eventos').where('id_verificacao','==',ocrDados.id_ver).where('grupo_id','==',grupoId).get();
-    if(!dup.empty){alert('⚠️ Já cadastrado!');return;}
-  }
-  
+  if(ocrDados.id_ver){const dup=await db.collection('eventos').where('id_verificacao','==',ocrDados.id_ver).where('grupo_id','==',grupoId).get();if(!dup.empty){alert('⚠️ Já cadastrado!');return;}}
   matches=await cruzar(ocrDados.nomes);
   document.getElementById('rv-tit').value=ocrDados.titulo||'';
   document.getElementById('rv-data').value=ocrDados.data_hora?ocrDados.data_hora.substring(0,16):'';
   document.getElementById('rv-loc').value=ocrDados.local||'';
-  renderMatches();
-  document.getElementById('rv-ov').classList.add('on');
+  renderMatches();document.getElementById('rv-ov').classList.add('on');
 }
 
-// ── NOTIFICAÇÕES ────────────────────────────────────────────────────
-async function iniciarNotificacoes(){
-  if (!('Notification' in window)) return;
-  await Notification.requestPermission();
-}
+async function iniciarNotificacoes(){if(!('Notification' in window))return;await Notification.requestPermission();}
 function enviarNotificacaoPush(titulo,corpo,tag){if(Notification.permission==='granted')new Notification(titulo,{body:corpo,tag:tag||'conv'});}
 function verificarNotificacoesPendentes(){db.collection('notificacoes').where('uid','==',eu.uid).where('respondido','==',false).onSnapshot(snap=>{const docs=snap.docs;if(!docs.length)return;snap.docChanges().forEach(async c=>{if(c.type==='added'){const n=c.doc.data();if(n.tipo==='substituicao'){enviarNotificacaoPush('🔄 Substituição',`Substituindo ${n.substituindo}`);await c.doc.ref.update({respondido:true});carregarEventos();}}});const pen=docs.filter(d=>d.data().tipo==='confirmar'||d.data().tipo==='convocado');if(pen.length>0&&!document.getElementById('notif-ov').classList.contains('on'))mostrarProximaNotif();});}
 async function mostrarProximaNotif(){const snap=await db.collection('notificacoes').where('uid','==',eu.uid).where('respondido','==',false).where('tipo','in',['confirmar','convocado']).get();filaNotifs=snap.docs.map(d=>({id:d.id,...d.data()}));if(!filaNotifs.length){document.getElementById('notif-ov').classList.remove('on');return;}notifAtual=filaNotifs[0];document.getElementById('notif-ov').classList.add('on');document.getElementById('notif-titulo').textContent=notifAtual.tipo==='convocado'?'Convocado!':'Convocado?';document.getElementById('notif-desc').textContent=notifAtual.tipo==='convocado'?'Você está na lista:':`"${notifAtual.nome_convocacao}" é você?`;document.getElementById('notif-ev-titulo').textContent=notifAtual.titulo_evento||'Evento';try{const dt=new Date(notifAtual.data_hora);document.getElementById('notif-ev-data').textContent=fD(dt)+' às '+fH(dt);}catch(e){}}
 async function responderNotif(sim){if(!notifAtual)return;document.getElementById('notif-ov').classList.remove('on');await db.collection('notificacoes').doc(notifAtual.id).update({respondido:true});if(sim&&notifAtual.tipo==='confirmar'){await db.collection('usuarios').doc(eu.uid).update({nomes_conhecidos:firebase.firestore.FieldValue.arrayUnion(notifAtual.nome_convocacao)});eu.nomes_conhecidos=[...(eu.nomes_conhecidos||[]),notifAtual.nome_convocacao];mostrarToast('✅ Anotado!');carregarEventos();}notifAtual=null;setTimeout(mostrarProximaNotif,500);}
 
-// ── TROCAR ──────────────────────────────────────────────────────────
 async function abrirTrocar(ev){eventoTroca=ev;substitutoSelecionado=null;document.getElementById('mod-ev').classList.remove('on');document.getElementById('trocar-desc').textContent=`Trocar em "${ev.titulo_evento}"`;const snap=await db.collection('usuarios').where('grupo_id','==',grupoId).get();const lst=document.getElementById('trocar-lista');lst.innerHTML='';snap.forEach(d=>{const m=d.data();if(m.uid===eu.uid)return;const div=document.createElement('div');div.className='trocar-membro';div.innerHTML=`<span>👤</span><div><div>${m.nome_completo}</div><div style="font-size:12px;color:var(--light)">${m.cargo||''}</div></div>`;div.onclick=()=>{lst.querySelectorAll('.trocar-membro').forEach(el=>el.classList.remove('selecionado'));div.classList.add('selecionado');substitutoSelecionado=m;};lst.appendChild(div);});document.getElementById('trocar-confirmar').onclick=async()=>{if(!substitutoSelecionado){alert('Selecione.');return;}if(!confirm(`Confirmar: ${eu.nome_completo} → ${substitutoSelecionado.nome_completo}?`))return;const subs=[...(eventoTroca.substitutos||[]),{uid:substitutoSelecionado.uid,nome:substitutoSelecionado.nome_completo,substituindo:eu.nome_completo,em:new Date().toISOString()}];await db.collection('eventos').doc(eventoTroca.id).update({substitutos:subs,lista_convocados:(eventoTroca.lista_convocados||[]).filter(n=>!euSouConvocadoNome(n))});await db.collection('notificacoes').add({uid:substitutoSelecionado.uid,tipo:'substituicao',nome_convocacao:substitutoSelecionado.nome_completo,titulo_evento:eventoTroca.titulo_evento,data_hora:eventoTroca.data_hora,substituindo:eu.nome_completo,respondido:false,criado_em:firebase.firestore.FieldValue.serverTimestamp()});fecharTrocar();mostrarToast('✅ Troca confirmada!');carregarEventos();};document.getElementById('trocar-ov').classList.add('on');}
 function fecharTrocar(){document.getElementById('trocar-ov').classList.remove('on');eventoTroca=null;substitutoSelecionado=null;}
 function euSouConvocadoNome(nome){const norm=s=>s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9\s]/g,'').trim();const euN=[eu.nome_completo,...(eu.nomes_conhecidos||[])];return euN.some(en=>norm(en)===norm(nome));}
 
-// ── ADMIN ───────────────────────────────────────────────────────────
 function abrirAdmin(){document.getElementById('admin-ov').classList.add('on');carregarMembrosAdmin();}
 function fecharAdmin(){document.getElementById('admin-ov').classList.remove('on');}
 async function carregarMembrosAdmin(){const lst=document.getElementById('admin-membros');lst.innerHTML='<div class="skel"></div>';const gs=await db.collection('grupos').doc(grupoId).get();const adm=gs.data().admins||[gs.data().criado_por];const s=await db.collection('usuarios').where('grupo_id','==',grupoId).get();const mb=s.docs.map(d=>({id:d.id,...d.data()}));document.getElementById('admin-total').textContent=mb.length+' membro(s)';lst.innerHTML='';mb.forEach(m=>{const isA=adm.includes(m.uid),isS=m.uid===eu.uid;const c=document.createElement('div');c.className='membro-card';c.innerHTML=`<div class="membro-avatar">${isA?'🛡️':'👤'}</div><div class="membro-info"><div class="membro-nome">${m.nome_completo}</div><div class="membro-cargo">${m.cargo||'Sem cargo'}</div><span class="membro-badge ${isA?'badge-admin':'badge-membro'}">${isA?'Admin':'Membro'}</span></div>${!isS?`<div class="membro-acoes"><button class="btn-admin-sm btn-editar-membro" onclick="abrirEditarNome('${m.uid}','${m.nome_completo.replace(/'/g,"\\'")}','${(m.cargo||'').replace(/'/g,"\\'")}',false)">✏️</button>${!isA?`<button class="btn-admin-sm btn-promover" onclick="promoverAdmin('${m.uid}')">⬆</button>`:''}${isA?`<button class="btn-admin-sm btn-rebaixar" onclick="rebaixarAdmin('${m.uid}')">⬇</button>`:''}<button class="btn-admin-sm btn-expulsar" onclick="expulsarMembro('${m.uid}')">✕</button></div>`:`<div style="display:flex;flex-direction:column;gap:6px"><button class="btn-admin-sm btn-editar-membro" onclick="abrirEditarNome('${m.uid}','${m.nome_completo.replace(/'/g,"\\'")}','${(m.cargo||'').replace(/'/g,"\\'")}',true)">✏️</button><div style="font-size:11px;color:var(--light)">Você</div></div>`}`;lst.appendChild(c);});}
@@ -1342,31 +1131,11 @@ async function promoverAdmin(uid){const s=await db.collection('grupos').doc(grup
 async function rebaixarAdmin(uid){const s=await db.collection('grupos').doc(grupoId).get();const d=s.data();if(uid===d.criado_por){alert("Criador não pode ser rebaixado.");return;}const admins=(d.admins||[d.criado_por]).filter(a=>a!==uid);await db.collection('grupos').doc(grupoId).update({admins});await db.collection('usuarios').doc(uid).update({is_admin:false});if(uid===eu.uid){eu.is_admin=false;document.getElementById('btn-fab-admin').classList.remove('on');document.getElementById('btn-para-outro').style.display='none';fecharAdmin();}carregarMembrosAdmin();}
 async function expulsarMembro(uid){if(!confirm('Expulsar?'))return;await db.collection('usuarios').doc(uid).update({grupo_id:null,is_admin:false});const s=await db.collection('grupos').doc(grupoId).get();await db.collection('grupos').doc(grupoId).update({membros:Math.max(0,(s.data().membros||1)-1)});carregarMembrosAdmin();renderizarCardGrupos();}
 
-// ── PERFIL / INSTALAÇÃO ─────────────────────────────────────────────
 function verificarInstalacao(){if(!window.matchMedia('(display-mode: standalone)').matches)document.getElementById('banner-instalar').style.display='block';}
-
-function abrirModalInstalar(){
-  document.getElementById('installModal').classList.add('on');
-  resetInstallModal();
-}
-function closeInstallModal(){
-  document.getElementById('installModal').classList.remove('on');
-}
-function resetInstallModal(){
-  document.getElementById('step-os').style.display = 'block';
-  document.getElementById('guide-android').classList.remove('on');
-  document.getElementById('guide-ios').classList.remove('on');
-}
-function showGuide(os) {
-  document.getElementById('step-os').style.display = 'none';
-  if (os === 'android') {
-    document.getElementById('guide-android').classList.add('on');
-    document.getElementById('guide-ios').classList.remove('on');
-  } else {
-    document.getElementById('guide-ios').classList.add('on');
-    document.getElementById('guide-android').classList.remove('on');
-  }
-}
+function abrirModalInstalar(){document.getElementById('installModal').classList.add('on');resetInstallModal();}
+function closeInstallModal(){document.getElementById('installModal').classList.remove('on');}
+function resetInstallModal(){document.getElementById('step-os').style.display='block';document.getElementById('guide-android').classList.remove('on');document.getElementById('guide-ios').classList.remove('on');}
+function showGuide(os){document.getElementById('step-os').style.display='none';if(os==='android'){document.getElementById('guide-android').classList.add('on');document.getElementById('guide-ios').classList.remove('on');}else{document.getElementById('guide-ios').classList.add('on');document.getElementById('guide-android').classList.remove('on');}}
 
 function abrirPerfil(){abrirEditarNome(eu.uid,eu.nome_completo||'',eu.cargo||'',true);}
 function fecharPerfil(){fecharEditarNome();}
