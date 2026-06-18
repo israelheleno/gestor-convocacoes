@@ -363,7 +363,7 @@
 
 <footer>
   <p>Desenvolvido por <strong>IHC Solutions</strong></p>
-  <p>© 2026 Gestor de Convocações — v21.5</p>
+  <p>© 2026 Gestor de Convocações — v21.6</p>
 </footer>
 
 <div class="overlay" id="mod-ev" onclick="if(event.target===this) fecharMod()"><div class="sheet"><div class="handle" onclick="fecharMod()"></div><input type="text" class="mod-titulo-input" id="mod-tit" placeholder="Título do evento"><input type="text" class="mod-sub-input" id="mod-sub" placeholder="Data e hora"><div class="mod-sec"><h3>Convocados <span id="admin-badge-conv" style="display:none" class="admin-badge">Admin</span></h3><div id="mod-conv"></div></div><div style="display:flex;gap:8px;margin-top:16px"><button class="btn-ag" id="mod-ag" style="flex:1;margin-top:0">📅 Agenda</button><button id="mod-trocar" style="flex:1;padding:12px;background:#fff7ed;color:#c2410c;border:1.5px solid #fed7aa;border-radius:10px;font-size:14px;cursor:pointer;font-weight:600;display:none;">🔄 Trocar</button></div><button class="btn-salvar-edicao-evento" id="mod-salvar-edicao" style="display:none" onclick="salvarEdicaoEvento()">💾 Salvar alterações</button><button class="btn-del" id="mod-del" style="display:none">🗑 Excluir</button><button class="btn-cancel" style="margin-top:10px;width:100%" onclick="fecharMod()">Fechar</button></div></div>
@@ -388,7 +388,7 @@
 <div id="completar-cadastro-ov"><div style="background:#fff;border-radius:24px;padding:28px 22px;width:100%;max-width:360px;"><h3 style="font-family:'Sora',sans-serif;font-size:17px;font-weight:700;color:var(--blue);margin-bottom:6px;">👋 Complete seu cadastro</h3><p style="font-size:13px;color:var(--light);margin-bottom:18px;">Precisamos do seu nome completo e cargo.</p><div class="field"><label>Nome completo</label><input type="text" id="cadastro-nome"/></div><div class="field"><label>Cargo</label><input type="text" id="cadastro-cargo"/></div><div class="field"><label>Email</label><input type="email" id="cadastro-email"/></div><p style="font-size:11px;color:var(--red);margin-bottom:12px;display:none;" id="cadastro-erro"></p><button class="btn-salvar" onclick="completarCadastro()" style="width:100%">✓ Salvar</button></div></div>
 <div id="notif-ov"><div class="notif-box"><div class="notif-emoji">🔔</div><div class="notif-titulo" id="notif-titulo"></div><div class="notif-desc" id="notif-desc"></div><div class="notif-evento"><div class="notif-evento-titulo" id="notif-ev-titulo"></div><div class="notif-evento-data" id="notif-ev-data"></div></div><div class="notif-btns"><button class="btn-cancel" onclick="responderNotif(false)">✗ Não sou eu</button><button class="btn-salvar" onclick="responderNotif(true)">✓ Sim, sou eu!</button></div></div></div>
 <div id="admin-ov"><div class="admin-hd"><button class="btn-x" onclick="fecharAdmin()">✕</button><h2>🛡️ Painel Admin</h2></div><div class="admin-body"><div class="sec-titulo">Membros <span id="admin-total"></span></div><div id="admin-membros"></div></div></div>
-<div id="scan-ov"><div class="scan-hd"><button class="btn-x" onclick="fecharScanner()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:20px;height:20px"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button><span>Escanear Convocação</span></div><div class="cam-wrap"><video id="video" autoplay playsinline muted></video><div class="cam-mask"><div class="cam-box"><div class="c-bl"></div><div class="c-br"></div><div class="cam-hint">Enquadre o documento aqui</div></div></div><div id="scan-loading" class="scan-loading-overlay"><div class="scan-loading-spinner"></div><div class="scan-loading-text">Processando arquivo...</div></div></div><div class="scan-ctrl"><button class="btn-cap" onclick="capturar()"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3.2"/><path d="M9 2L7.17 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2h-3.17L15 2H9zm3 15c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5z"/></svg></button><input type="file" id="file-foto" accept="image/*" style="display:none" onchange="processarFoto(this.files[0], true)"/><button class="btn-gal" onclick="document.getElementById('file-foto').click()">🖼️ Escolher da galeria</button></div></div>
+<div id="scan-ov"><div class="scan-hd"><button class="btn-x" onclick="fecharScanner()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:20px;height:20px"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button><span>Escanear Convocação</span></div><div class="cam-wrap"><video id="video" autoplay playsinline muted></video><div class="cam-mask"><div class="cam-box"><div class="c-bl"></div><div class="c-br"></div><div class="cam-hint">Enquadre o documento aqui</div></div></div><div id="scan-loading" class="scan-loading-overlay"><div class="scan-loading-spinner"></div><div class="scan-loading-text">Processando arquivo...</div></div></div><div class="scan-ctrl"><button class="btn-cap" onclick="capturar()"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3.2"/><path d="M9 2L7.17 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2h-3.17L15 2H9zm3 15c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5z"/></svg></button><input type="file" id="file-foto" accept="image/*" style="display:none" onchange="processarArquivoGaleria(this)"/><button class="btn-gal" onclick="document.getElementById('file-foto').click()">🖼️ Escolher da galeria</button></div></div>
 <div id="ocr-ov"><div class="ocr-spinner"></div><div class="ocr-texto" id="ocr-texto">📸 Analisando...</div><div class="ocr-barra"><div class="ocr-preenchimento" id="ocr-preenchimento"></div></div><div class="ocr-subtexto" id="ocr-subtexto"></div><div class="ocr-dica">Não feche o app</div></div>
 <div id="rv-ov"><div class="rv-hd"><button class="btn-x" onclick="fecharRv()">✕</button><h2>Conferir dados</h2></div><div class="rv-body"><div class="rv-lbl">Título</div><div class="rv-val"><input type="text" id="rv-tit"/></div><div class="rv-lbl">Data/hora</div><div class="rv-val"><input type="datetime-local" id="rv-data"/></div><div class="rv-lbl">Local</div><div class="rv-val"><input type="text" id="rv-loc"/></div><div class="rv-lbl">Convocados</div><div id="rv-matches"></div><div class="rv-btns"><button class="btn-cancel" onclick="fecharRv()">Cancelar</button><button class="btn-salvar" onclick="salvar()">✓ Salvar</button></div></div></div>
 <div class="ov-center" id="saldo-ajuste-ov"><div class="box-center"><h3>⚙️ Ajustar Saldo</h3><p style="font-size:13px;color:var(--light);margin-bottom:16px">Configure seus saldos e períodos aquisitivos.</p><div class="ajuste-bloco"><h4>🏖️ Períodos Aquisitivos de Férias</h4><div id="ajuste-periodos-ferias"></div><button class="btn-add-ajuste" onclick="adicionarPeriodoNoAjuste()">+ Adicionar período</button></div><div class="ajuste-bloco"><h4>⏱️ Abonos</h4><div class="field" style="margin-bottom:0"><label>Total de abonos disponíveis</label><input type="number" id="ajuste-abono" min="0" max="6" value="6"/></div></div><div class="ajuste-bloco"><h4>🏆 Licença Prêmio</h4><div class="field" style="margin-bottom:0"><label>Total de dias de licença prêmio</label><input type="number" id="ajuste-licenca" min="0" max="180" value="90"/></div></div><div class="btns-row"><button class="btn-cancel" onclick="fecharAjusteSaldo()">Cancelar</button><button class="btn-salvar" onclick="salvarAjusteSaldo()">💾 Salvar</button></div></div></div>
@@ -429,44 +429,44 @@ try {emailjs.init(EMAIL_CONFIG.publicKey);} catch (e) {console.warn('EmailJS ini
 
 async function migrarGruposSeNecessario(){
   if(!eu)return;
-  const userRef = db.collection('usuarios').doc(eu.uid);
-  const snap = await userRef.get();
-  const data = snap.data();
+  const userRef=db.collection('usuarios').doc(eu.uid);
+  const snap=await userRef.get();
+  const data=snap.data();
   if(!data)return;
-  let precisaMigrar = false;
-  let grupoIdAntigo = data.grupo_id;
+  let precisaMigrar=false;
+  let grupoIdAntigo=data.grupo_id;
   if(grupoIdAntigo){
-    if(!data.grupos || !Array.isArray(data.grupos) || data.grupos.length === 0){
-      precisaMigrar = true;
-    } else {
-      await userRef.update({ grupo_id: firebase.firestore.FieldValue.delete() });
-      eu.grupos = data.grupos;
-      eu.grupo_id = null;
+    if(!data.grupos||!Array.isArray(data.grupos)||data.grupos.length===0){
+      precisaMigrar=true;
+    }else{
+      await userRef.update({grupo_id:firebase.firestore.FieldValue.delete()});
+      eu.grupos=data.grupos;
+      eu.grupo_id=null;
       return;
     }
   }
-  if(precisaMigrar && grupoIdAntigo){
-    try {
-      const gSnap = await db.collection('grupos').doc(grupoIdAntigo).get();
+  if(precisaMigrar&&grupoIdAntigo){
+    try{
+      const gSnap=await db.collection('grupos').doc(grupoIdAntigo).get();
       if(gSnap.exists){
-        const gData = gSnap.data();
-        const admins = gData.admins || [gData.criado_por];
-        const isAdmin = admins.includes(eu.uid) || gData.criado_por === eu.uid;
-        const novoGrupo = { id: grupoIdAntigo, nome: gData.nome || 'Meu Grupo', is_admin: isAdmin };
+        const gData=gSnap.data();
+        const admins=gData.admins||[gData.criado_por];
+        const isAdmin=admins.includes(eu.uid)||gData.criado_por===eu.uid;
+        const novoGrupo={id:grupoIdAntigo,nome:gData.nome||'Meu Grupo',is_admin:isAdmin};
         await userRef.update({
-          grupos: firebase.firestore.FieldValue.arrayUnion(novoGrupo),
-          grupo_id: firebase.firestore.FieldValue.delete()
+          grupos:firebase.firestore.FieldValue.arrayUnion(novoGrupo),
+          grupo_id:firebase.firestore.FieldValue.delete()
         });
-        eu.grupos = [novoGrupo];
-        eu.grupo_id = null;
-      } else {
-        await userRef.update({ grupo_id: firebase.firestore.FieldValue.delete() });
-        eu.grupos = [];
-        eu.grupo_id = null;
+        eu.grupos=[novoGrupo];
+        eu.grupo_id=null;
+      }else{
+        await userRef.update({grupo_id:firebase.firestore.FieldValue.delete()});
+        eu.grupos=[];
+        eu.grupo_id=null;
       }
-    } catch(e){ console.error('Erro na migração:', e); }
-  } else if(data.grupos){
-    eu.grupos = data.grupos;
+    }catch(e){console.error('Erro na migração:',e);}
+  }else if(data.grupos){
+    eu.grupos=data.grupos;
   }
 }
 
@@ -484,7 +484,7 @@ function renderizarCardGrupos(){
       <div class="resultados-busca" id="resultados-busca"></div>
       <button class="btn-criar" onclick="criarGrupo()">+ Criar novo grupo</button>`;
   }else{
-    if(!grupoAtivo) grupoAtivo=eu.grupos[0];
+    if(!grupoAtivo)grupoAtivo=eu.grupos[0];
     const totalMembros=grupoAtivo.totalMembros||'?';
     badge.textContent=totalMembros;
     const isAdmin=grupoAtivo.is_admin;
@@ -541,7 +541,7 @@ async function selecionarGrupoAtivo(gId){
 async function buscarGrupos(){
   const termo=document.getElementById('busca-grupo-input').value.trim().toLowerCase();
   const container=document.getElementById('resultados-busca');
-  if(!termo||termo.length<2){ container.classList.remove('show'); return; }
+  if(!termo||termo.length<2){container.classList.remove('show');return;}
   const snap=await db.collection('grupos').get();
   const resultados=[];
   snap.forEach(doc=>{
@@ -656,7 +656,7 @@ function redirecionarLogin(){if(loadingScreen.style.display!=='none')loadingScre
 
 authTimeout=setTimeout(()=>{mostrarErroTela('Tempo limite excedido. Redirecionando...');setTimeout(redirecionarLogin,2000);},10000);
 
-try {
+try{
   auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL).then(()=>{
     auth.onAuthStateChanged(async user=>{
       clearTimeout(authTimeout);
@@ -716,7 +716,7 @@ async function completarCadastro(){
   const palavras=nome.split(/\s+/);
   if(palavras.length<2){erroEl.textContent='⚠️ Por favor, informe nome e sobrenome';erroEl.style.display='block';return;}
   if(!cargo||cargo.length<2){erroEl.textContent='⚠️ Informe seu cargo';erroEl.style.display='block';return;}
-  try {
+  try{
     await db.collection('usuarios').doc(eu.uid).update({nome_completo:nome,cargo:cargo,email:email||null,nomes_conhecidos:firebase.firestore.FieldValue.arrayUnion(nome)});
     eu.nome_completo=nome;eu.cargo=cargo;eu.email=email;
     document.getElementById('h-user').textContent=nome+' · '+cargo;
@@ -724,7 +724,7 @@ async function completarCadastro(){
     mostrarToast('✅ Cadastro atualizado!');
     if(grupoId)carregarEventos();
     renderizarCardGrupos();
-  } catch(error){console.error('Erro ao salvar:',error);erroEl.textContent='Erro ao salvar. Tente novamente.';erroEl.style.display='block';}
+  }catch(error){console.error('Erro ao salvar:',error);erroEl.textContent='Erro ao salvar. Tente novamente.';erroEl.style.display='block';}
 }
 
 async function sincronizarSaldo(){
@@ -832,7 +832,7 @@ async function atualizarOpcoesPeriodo(){
     const saldo=data.saldo||{ferias:[{periodo:'Período atual',total:30}]};
     const periodos=saldo.ferias||[{periodo:'Período atual',total:30}];
     periodos.forEach(p=>{const opt=document.createElement('option');opt.value=p.periodo;opt.textContent=`${p.periodo} (${p.total||30} dias)`;selectEl.appendChild(opt);});
-  } else {selectEl.style.display='none';textEl.style.display='block';}
+  }else{selectEl.style.display='none';textEl.style.display='block';}
 }
 
 function abrirFormFerias(){
@@ -887,113 +887,52 @@ async function salvarFerias(){
 async function fetchAusencias(){if(!grupoId)return;const hojeStr=new Date().toISOString().split('T')[0];const snap=await db.collection('ausencias').where('grupo_id','==',grupoId).where('data_fim','>=',hojeStr).get();listaAusencias=snap.docs.map(d=>({id:d.id,...d.data()}));}
 function verificarStatusAusencia(uid,dataEvento){if(!uid||!dataEvento)return null;const dataStr=dataEvento.split('T')[0];return listaAusencias.find(aus=>aus.uid===uid&&aus.data_inicio<=dataStr&&aus.data_fim>=dataStr)||null;}
 
-// ══ MATCH DE NOMES (CORRIGIDO v21.5) ═══════════════════════════════════
-async function cruzar(nomes) {
-  // Busca TODOS os usuários que têm o campo 'grupos' (modelo novo)
-  const snapGrupos = await db.collection('usuarios')
-    .where('grupos', '!=', null).get();
-  // Busca usuários antigos (campo grupo_id)
-  const snapLegado = await db.collection('usuarios')
-    .where('grupo_id', '==', grupoId).get();
-
-  // Junta todos os resultados, removendo duplicatas por UID
-  const usersMap = new Map();
-  
-  // Processa usuários do modelo novo (array grupos)
-  snapGrupos.forEach(doc => {
-    const data = doc.data();
-    const grupos = data.grupos || [];
-    // Verifica se o usuário pertence ao grupo ativo
-    const pertence = grupos.some(g => g.id === grupoId);
-    if (pertence && !usersMap.has(doc.id)) {
-      usersMap.set(doc.id, { uid: doc.id, ...data });
-    }
+async function cruzar(nomes){
+  const snapGrupos=await db.collection('usuarios').where('grupos','!=',null).get();
+  const snapLegado=await db.collection('usuarios').where('grupo_id','==',grupoId).get();
+  const usersMap=new Map();
+  snapGrupos.forEach(doc=>{
+    const data=doc.data();
+    const grupos=data.grupos||[];
+    const pertence=grupos.some(g=>g.id===grupoId);
+    if(pertence&&!usersMap.has(doc.id)){usersMap.set(doc.id,{uid:doc.id,...data});}
   });
-  
-  // Processa usuários antigos (grupo_id)
-  snapLegado.forEach(doc => {
-    if (!usersMap.has(doc.id)) {
-      usersMap.set(doc.id, { uid: doc.id, ...doc.data() });
-    }
-  });
-
-  const users = Array.from(usersMap.values());
-  console.log('👥 Membros encontrados:', users.length, users.map(u => u.nome_completo));
-
-  const norm = s => s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9\s]/g, '').trim();
-  const st = new Set(['de', 'da', 'do', 'das', 'dos', 'e', 'a', 'o', 'as', 'os']);
-  const pwSig = s => norm(s).split(/\s+/).filter(p => p.length > 1 && !st.has(p));
-
-  function ps(a, b) {
-    if (a === b) return true;
-    if (a.length < 5 || b.length < 5) return false;
-    if (Math.abs(a.length - b.length) > 1) return false;
-    return lev(a, b) <= 1;
-  }
-
-  return nomes.map(nome => {
-    const nn = norm(nome);
-    const pwNome = pwSig(nome);
-
-    // Busca exata
-    for (const u of users) {
-      const todosNomes = [u.nome_completo, ...(u.nomes_conhecidos || [])];
-      if (todosNomes.some(n => norm(n) === nn)) {
-        return { tipo: 'exato', nome, usuario: u };
+  snapLegado.forEach(doc=>{if(!usersMap.has(doc.id)){usersMap.set(doc.id,{uid:doc.id,...doc.data()});}});
+  const users=Array.from(usersMap.values());
+  const norm=s=>s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9\s]/g,'').trim();
+  const st=new Set(['de','da','do','das','dos','e','a','o','as','os']);
+  const pwSig=s=>norm(s).split(/\s+/).filter(p=>p.length>1&&!st.has(p));
+  function ps(a,b){if(a===b)return true;if(a.length<5||b.length<5)return false;if(Math.abs(a.length-b.length)>1)return false;return lev(a,b)<=1;}
+  return nomes.map(nome=>{
+    const nn=norm(nome);const pwNome=pwSig(nome);
+    for(const u of users){const todosNomes=[u.nome_completo,...(u.nomes_conhecidos||[])];if(todosNomes.some(n=>norm(n)===nn))return{tipo:'exato',nome,usuario:u};}
+    let mu=null,ms=0;
+    for(const u of users){
+      const todosNomes=[u.nome_completo,...(u.nomes_conhecidos||[])];
+      for(const nomeConhecido of todosNomes){
+        const pwUser=pwSig(nomeConhecido);
+        const pb=pwNome.filter(p=>pwUser.some(pu=>ps(p,pu)));
+        const so=pb.length/Math.max(pwNome.length,1);
+        const su=pb.length/Math.max(pwUser.length,1);
+        const sf=(so*0.5)+(su*0.5);
+        if(so>=0.7&&su>=0.5&&sf>ms){ms=sf;mu=u;}
       }
     }
-
-    // Busca por correspondência parcial
-    let mu = null, ms = 0;
-    for (const u of users) {
-      const todosNomes = [u.nome_completo, ...(u.nomes_conhecidos || [])];
-      for (const nomeConhecido of todosNomes) {
-        const pwUser = pwSig(nomeConhecido);
-        const pb = pwNome.filter(p => pwUser.some(pu => ps(p, pu)));
-        const so = pb.length / Math.max(pwNome.length, 1);
-        const su = pb.length / Math.max(pwUser.length, 1);
-        const sf = (so * 0.5) + (su * 0.5);
-        if (so >= 0.7 && su >= 0.5 && sf > ms) {
-          ms = sf;
-          mu = u;
-        }
-      }
-    }
-
-    if (mu && ms >= 0.8) return { tipo: 'parcial', nome, usuario: mu, score: ms };
-    if (mu && ms >= 0.5) return { tipo: 'baixa_confianca', nome, usuario: mu, score: ms };
-    return { tipo: 'nao_encontrado', nome };
+    if(mu&&ms>=0.8)return{tipo:'parcial',nome,usuario:mu,score:ms};
+    if(mu&&ms>=0.5)return{tipo:'baixa_confianca',nome,usuario:mu,score:ms};
+    return{tipo:'nao_encontrado',nome};
   });
 }
 
-function editarNomeMatch(index) {
-  const match = matches[index];
-  const novoNome = prompt('Corrigir nome:', match.nome);
-  if (novoNome && novoNome.trim()) {
-    match.nome = novoNome.trim();
-    if (ocrDados && ocrDados.nomes && index < ocrDados.nomes.length) {
-      ocrDados.nomes[index] = match.nome;
-    }
-    renderMatches();
-    mostrarToast('✅ Nome corrigido!');
-  }
-}
+function editarNomeMatch(index){const match=matches[index];const novoNome=prompt('Corrigir nome:',match.nome);if(novoNome&&novoNome.trim()){match.nome=novoNome.trim();if(ocrDados&&ocrDados.nomes&&index<ocrDados.nomes.length){ocrDados.nomes[index]=match.nome;}renderMatches();mostrarToast('✅ Nome corrigido!');}}
 function renderMatches(){
-  document.getElementById('rv-matches').innerHTML = matches.length === 0
-    ? '<p style="color:var(--light);padding:12px;background:#fff;border-radius:10px;">Nenhum nome.</p>'
-    : matches.map((m, i) => {
-        const editBtn = `<button class="btn-editar-nome" onclick="editarNomeMatch(${i})" title="Editar nome">✏️</button>`;
-        if (m.tipo === 'exato') {
-          return `<div class="mi ok"><div class="mi-top"><span>✅</span><div style="flex:1"><div class="mi-nome">${m.nome} ${editBtn}</div><div class="mi-sub">→ ${m.usuario.nome_completo}</div></div></div><div class="mi-btns" style="padding-left:0"><button class="btn-desvincular" onclick="desvincularMatch(${i})">⚠️ Não é ${m.usuario.nome_completo.split(' ')[0]}</button></div></div>`;
-        }
-        if (m.tipo === 'parcial') {
-          return `<div class="mi av"><div class="mi-top"><span>⚠️</span><div style="flex:1"><div class="mi-nome">${m.nome} ${editBtn}</div><div class="mi-sub">Provável: ${m.usuario.nome_completo} (${Math.round(m.score*100)}%)</div></div></div><div class="mi-btns"><button class="btn-sim" onclick="confirmar(${i},true)">✓ Confirmar</button><button class="btn-nao" onclick="confirmar(${i},false)">✗ Não é</button></div></div>`;
-        }
-        if (m.tipo === 'baixa_confianca') {
-          return `<div class="mi no"><div class="mi-top"><span>❓</span><div style="flex:1"><div class="mi-nome">${m.nome} ${editBtn}</div><div class="mi-sub">Talvez ${m.usuario.nome_completo}? (${Math.round(m.score*100)}%)</div></div></div><div class="mi-btns"><button class="btn-sim" onclick="confirmar(${i},true)" style="font-size:11px">✓ É ${m.usuario.nome_completo.split(' ')[0]}</button><button class="btn-nao" onclick="confirmar(${i},false)">✗ Não é</button></div></div>`;
-        }
-        return `<div class="mi no"><div class="mi-top"><span>❓</span><div style="flex:1"><div class="mi-nome">${m.nome} ${editBtn}</div><div class="mi-sub">Não encontrado</div></div></div></div>`;
-      }).join('');
+  document.getElementById('rv-matches').innerHTML=matches.length===0?'<p style="color:var(--light);padding:12px;background:#fff;border-radius:10px;">Nenhum nome.</p>':matches.map((m,i)=>{
+    const editBtn=`<button class="btn-editar-nome" onclick="editarNomeMatch(${i})" title="Editar nome">✏️</button>`;
+    if(m.tipo==='exato')return`<div class="mi ok"><div class="mi-top"><span>✅</span><div style="flex:1"><div class="mi-nome">${m.nome} ${editBtn}</div><div class="mi-sub">→ ${m.usuario.nome_completo}</div></div></div><div class="mi-btns" style="padding-left:0"><button class="btn-desvincular" onclick="desvincularMatch(${i})">⚠️ Não é ${m.usuario.nome_completo.split(' ')[0]}</button></div></div>`;
+    if(m.tipo==='parcial')return`<div class="mi av"><div class="mi-top"><span>⚠️</span><div style="flex:1"><div class="mi-nome">${m.nome} ${editBtn}</div><div class="mi-sub">Provável: ${m.usuario.nome_completo} (${Math.round(m.score*100)}%)</div></div></div><div class="mi-btns"><button class="btn-sim" onclick="confirmar(${i},true)">✓ Confirmar</button><button class="btn-nao" onclick="confirmar(${i},false)">✗ Não é</button></div></div>`;
+    if(m.tipo==='baixa_confianca')return`<div class="mi no"><div class="mi-top"><span>❓</span><div style="flex:1"><div class="mi-nome">${m.nome} ${editBtn}</div><div class="mi-sub">Talvez ${m.usuario.nome_completo}? (${Math.round(m.score*100)}%)</div></div></div><div class="mi-btns"><button class="btn-sim" onclick="confirmar(${i},true)" style="font-size:11px">✓ É ${m.usuario.nome_completo.split(' ')[0]}</button><button class="btn-nao" onclick="confirmar(${i},false)">✗ Não é</button></div></div>`;
+    return`<div class="mi no"><div class="mi-top"><span>❓</span><div style="flex:1"><div class="mi-nome">${m.nome} ${editBtn}</div><div class="mi-sub">Não encontrado</div></div></div></div>`;
+  }).join('');
 }
 function confirmar(i,sim){if(sim){const m=matches[i];matches[i].tipo='exato';if(m.usuario)db.collection('usuarios').doc(m.usuario.uid).update({nomes_conhecidos:firebase.firestore.FieldValue.arrayUnion(m.nome)});mostrarToast('✅ Confirmado!');}else{matches[i].tipo='nao_encontrado';matches[i].usuario=null;}renderMatches();}
 function desvincularMatch(i){if(!confirm(`Desvincular "${matches[i].nome}" de ${matches[i].usuario.nome_completo}?`))return;const u=matches[i].usuario;if(u&&u.nomes_conhecidos){const nn=u.nomes_conhecidos.filter(n=>{const norm=s=>s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9\s]/g,'').trim();return norm(n)!==norm(matches[i].nome);});db.collection('usuarios').doc(u.uid).update({nomes_conhecidos:nn});}matches[i].tipo='nao_encontrado';matches[i].usuario=null;renderMatches();mostrarToast('✅ Desvinculado!');}
@@ -1032,23 +971,7 @@ async function carregarEventos(){if(!grupoId)return;const snap=await db.collecti
 function criarCard(ev){const dt=new Date(ev.data_hora);const pa=dt<=new Date();const w=document.createElement('div');w.className='ev-wrap';w.innerHTML=`<div class="ev-bg"><div class="ev-bg-l"><span>👁</span></div>${eu.is_admin?'<div class="ev-bg-r"><span>🗑</span></div>':''}</div><div class="ev-card" style="border-left-color:${pa?'#94a3b8':'var(--blue)'};opacity:${pa?'.7':'1'}"><div class="ev-titulo">${ev.titulo_evento||'Sem título'}${pa?' <span style="font-size:11px;color:#94a3b8">(encerrado)</span>':''}</div><div class="ev-meta"><span>📅 ${fD(dt)}</span><span>🕐 ${fH(dt)}</span></div><div class="ev-conv">${(ev.lista_convocados||[]).length} convocado(s)</div></div>`;const card=w.querySelector('.ev-card');let sx=0,dx=0,mov=false;card.addEventListener('touchstart',e=>{sx=e.touches[0].clientX;mov=false},{passive:true});card.addEventListener('touchmove',e=>{dx=e.touches[0].clientX-sx;mov=true;if(!eu.is_admin&&dx<0)dx=0;if(Math.abs(dx)>8){card.style.transition='none';card.style.transform=`translateX(${Math.max(-100,Math.min(100,dx))}px)`;}},{passive:true});card.addEventListener('touchend',()=>{card.style.transition='transform .2s ease';if(dx<-60&&eu.is_admin){if(confirm('Excluir?'))db.collection('eventos').doc(ev.id).delete().then(()=>carregarEventos());else card.style.transform='translateX(0)';}else if(dx>60){card.style.transform='translateX(0)';abrirMod(ev);}else{card.style.transform='translateX(0)';if(!mov)abrirMod(ev);}dx=0;});card.addEventListener('click',()=>{if(!mov)abrirMod(ev);});return w;}
 function abrirMod(ev){eventoAtualMod=ev;const dt=new Date(ev.data_hora);document.getElementById('mod-tit').value=ev.titulo_evento||'';document.getElementById('mod-sub').value=fD(dt)+' às '+fH(dt)+(ev.local?' · '+ev.local:'');const ti=document.getElementById('mod-tit');const si=document.getElementById('mod-sub');const bs=document.getElementById('mod-salvar-edicao');if(eu.is_admin){ti.readOnly=false;si.readOnly=true;ti.style.borderBottom='2px dashed var(--border)';bs.style.display='block';}else{ti.readOnly=true;si.readOnly=true;ti.style.borderBottom='none';bs.style.display='none';}const ab=document.getElementById('admin-badge-conv');if(eu.is_admin){ab.style.display='inline-block';renderizarNomesAdmin(ev);}else{ab.style.display='none';db.collection('usuarios').where('grupo_id','==',grupoId).get().then(s=>{const us=s.docs.map(d=>d.data());const norm=s=>s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9\s]/g,'').trim();document.getElementById('mod-conv').innerHTML=(ev.lista_convocados||[]).map(n=>{const nn=norm(n);let uid=null;for(const u of us){if([u.nome_completo,...(u.nomes_conhecidos||[])].some(x=>norm(x)===nn)){uid=u.uid;break;}}let av='';if(uid){const ia=verificarStatusAusencia(uid,ev.data_hora);if(ia){let ic=ia.tipo==='ferias'?'🏖️':(ia.tipo==='licenca'?'🏆':'⏱️');av=`<div class="aviso-ferias">${ic} Atenção: Convocado está de ${ia.tipo} neste dia!</div>`;}}return`<div class="conv-linha"><div style="display:flex;align-items:center;gap:10px;width:100%"><div class="conv-icon"><svg viewBox="0 0 24 24"><path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/></svg></div><span class="conv-nome">${n}</span></div>${av}</div>`;}).join('');});}const agr=new Date();const evFut=dt>agr;const euConv=(ev.lista_convocados||[]).some(n=>euSouConvocadoNome(n));const bt=document.getElementById('mod-trocar');if(euConv&&evFut){bt.style.display='block';bt.onclick=()=>abrirTrocar(ev);}else{bt.style.display='none';}document.getElementById('mod-ag').onclick=()=>ics(ev);document.getElementById('mod-del').style.display=eu.is_admin?'block':'none';document.getElementById('mod-del').onclick=()=>{if(!eu.is_admin)return;if(confirm('Excluir?')){db.collection('eventos').doc(ev.id).delete().then(()=>{fecharMod();carregarEventos();mostrarToast('Excluída');});}};document.getElementById('mod-ev').classList.add('on');}
 function fecharMod(){document.getElementById('mod-ev').classList.remove('on');eventoAtualMod=null;nomesEditaveis=[];}
-function renderizarNomesAdminUI() {
-  const c = document.getElementById('mod-conv');
-  c.innerHTML = nomesEditaveis.map((n, i) =>
-    `<div class="conv-linha" style="flex-direction:column;gap:6px">
-      <div style="display:flex;align-items:center;gap:10px">
-        <div class="conv-icon"><svg viewBox="0 0 24 24"><path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/></svg></div>
-        <span class="conv-nome editable" contenteditable="true" onblur="atualizarNomeAdmin(${i}, this.textContent)">${n}</span>
-        <button class="btn-remover-nome" onclick="removerNomeAdmin(${i})">✕</button>
-      </div>
-    </div>`
-  ).join('') +
-  `<div style="display:flex;gap:8px;margin-top:8px">
-    <input type="text" class="input-novo-nome" id="input-novo-nome" placeholder="Adicionar nome..." style="flex:1">
-    <button class="btn-salvar" onclick="adicionarNomeAdmin()" style="width:auto;padding:10px 16px">+</button>
-  </div>
-  <button class="btn-salvar-nomes" onclick="salvarNomesAdmin()">💾 Salvar</button>`;
-}
+function renderizarNomesAdminUI(){const c=document.getElementById('mod-conv');c.innerHTML=nomesEditaveis.map((n,i)=>`<div class="conv-linha" style="flex-direction:column;gap:6px"><div style="display:flex;align-items:center;gap:10px"><div class="conv-icon"><svg viewBox="0 0 24 24"><path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/></svg></div><span class="conv-nome editable" contenteditable="true" onblur="atualizarNomeAdmin(${i},this.textContent)">${n}</span><button class="btn-remover-nome" onclick="removerNomeAdmin(${i})">✕</button></div></div>`).join('')+`<div style="display:flex;gap:8px;margin-top:8px"><input type="text" class="input-novo-nome" id="input-novo-nome" placeholder="Adicionar nome..." style="flex:1"><button class="btn-salvar" onclick="adicionarNomeAdmin()" style="width:auto;padding:10px 16px">+</button></div><button class="btn-salvar-nomes" onclick="salvarNomesAdmin()">💾 Salvar</button>`;}
 function renderizarNomesAdmin(ev){nomesEditaveis=[...(ev.lista_convocados||[])];renderizarNomesAdminUI();}
 function atualizarNomeAdmin(i,n){if(n&&n.trim())nomesEditaveis[i]=n.trim();}
 function removerNomeAdmin(i){if(confirm('Remover?')){nomesEditaveis.splice(i,1);renderizarNomesAdminUI();}}
@@ -1064,11 +987,8 @@ async function salvarNomesAdmin(){
     const dtEvento=eventoAtualMod.data_hora;
     const titulo=eventoAtualMod.titulo_evento||'Evento';
     for(const m of novosMatches){
-      if(m.tipo==='exato'){
-        await db.collection('notificacoes').add({uid:m.usuario.uid,tipo:'convocado',nome_convocacao:m.nome,titulo_evento:titulo,data_hora:dtEvento,grupo_id:grupoId,respondido:false,criado_em:firebase.firestore.FieldValue.serverTimestamp()});
-      }else if(m.tipo==='parcial'||m.tipo==='baixa_confianca'){
-        await db.collection('notificacoes').add({uid:m.usuario.uid,tipo:'confirmar',nome_convocacao:m.nome,titulo_evento:titulo,data_hora:dtEvento,grupo_id:grupoId,respondido:false,criado_em:firebase.firestore.FieldValue.serverTimestamp()});
-      }
+      if(m.tipo==='exato'){await db.collection('notificacoes').add({uid:m.usuario.uid,tipo:'convocado',nome_convocacao:m.nome,titulo_evento:titulo,data_hora:dtEvento,grupo_id:grupoId,respondido:false,criado_em:firebase.firestore.FieldValue.serverTimestamp()});}
+      else if(m.tipo==='parcial'||m.tipo==='baixa_confianca'){await db.collection('notificacoes').add({uid:m.usuario.uid,tipo:'confirmar',nome_convocacao:m.nome,titulo_evento:titulo,data_hora:dtEvento,grupo_id:grupoId,respondido:false,criado_em:firebase.firestore.FieldValue.serverTimestamp()});}
     }
   }
   mostrarToast('✅ Salvo e notificações enviadas!');
@@ -1080,15 +1000,21 @@ async function abrirScanner(){if(!grupoId){alert('Entre em um grupo.');return;}d
 function fecharScanner(){document.getElementById('scan-ov').classList.remove('on');if(camStream){camStream.getTracks().forEach(t=>t.stop());camStream=null;}}
 function capturar(){const v=document.getElementById('video');const c=document.createElement('canvas');c.width=v.videoWidth;c.height=v.videoHeight;c.getContext('2d').drawImage(v,0,0);c.toBlob(b=>processarFoto(b),'image/jpeg',.9);}
 
+function processarArquivoGaleria(input){
+  if(!input.files||!input.files[0]){console.warn('⚠️ Nenhum arquivo selecionado');return;}
+  const file=input.files[0];
+  if(file.size===0){mostrarToast('⚠️ Arquivo vazio. Tente novamente.');return;}
+  const loadingOverlay=document.getElementById('scan-loading');
+  if(loadingOverlay){loadingOverlay.classList.add('show');}
+  mostrarToast('📤 Processando arquivo...');
+  setTimeout(()=>{processarFoto(file,true);},500);
+  input.value='';
+}
+
 async function processarFoto(file,fromGallery=false){
-  if(!file)return;
-  if(fromGallery){
-    const loadingOverlay=document.getElementById('scan-loading');
-    loadingOverlay.classList.add('show');
-    mostrarToast('📤 Processando arquivo...');
-    await new Promise(r=>setTimeout(r,300));
-  }
-  if(!fromGallery){fecharScanner();}else{const loadingOverlay=document.getElementById('scan-loading');if(loadingOverlay)loadingOverlay.classList.remove('show');fecharScanner();}
+  if(!file||!file.size){console.error('❌ Arquivo inválido:',file);const loadingOverlay=document.getElementById('scan-loading');if(loadingOverlay)loadingOverlay.classList.remove('show');mostrarToast('⚠️ Erro ao processar arquivo. Tente novamente.');return;}
+  if(fromGallery){const loadingOverlay=document.getElementById('scan-loading');if(loadingOverlay)loadingOverlay.classList.remove('show');}
+  fecharScanner();
   const oo=document.getElementById('ocr-ov');const ot=document.getElementById('ocr-texto');const os=document.getElementById('ocr-subtexto');const op=document.getElementById('ocr-preenchimento');
   oo.classList.add('on');op.style.width='10%';ot.textContent='📸 Preparando...';os.textContent='Otimizando imagem';
   try{
