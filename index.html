@@ -156,6 +156,11 @@
     .btn-cap:active{transform:scale(0.95);background:#e2e8f0}
     .btn-cap svg{width:28px;height:28px;fill:var(--blue)}
     .btn-gal{background:rgba(255,255,255,.15);border:none;color:#fff;padding:12px 24px;border-radius:12px;font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;width:auto;min-width:200px;flex-shrink:0;margin:0 auto}
+    /* Indicador de carregamento sobreposto à câmera */
+    .scan-loading-overlay{position:absolute;inset:0;background:rgba(0,0,0,0.8);z-index:10;display:none;flex-direction:column;align-items:center;justify-content:center;gap:16px}
+    .scan-loading-overlay.show{display:flex}
+    .scan-loading-spinner{width:48px;height:48px;border:4px solid rgba(255,255,255,.2);border-top:4px solid #fff;border-radius:50%;animation:spin 1s linear infinite}
+    .scan-loading-text{color:#fff;font-size:15px;font-weight:600;text-align:center}
 
     #ocr-ov{position:fixed;inset:0;background:rgba(0,0,0,.7);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);z-index:500;display:none;flex-direction:column;align-items:center;justify-content:center;gap:20px}
     #ocr-ov.on{display:flex}
@@ -362,7 +367,7 @@
 
 <footer>
   <p>Desenvolvido por <strong>IHC Solutions</strong></p>
-  <p>© 2026 Gestor de Convocações — v21.2.1</p>
+  <p>© 2026 Gestor de Convocações — v21.3</p>
 </footer>
 
 <!-- MODAIS -->
@@ -388,7 +393,7 @@
 <div id="completar-cadastro-ov"><div style="background:#fff;border-radius:24px;padding:28px 22px;width:100%;max-width:360px;"><h3 style="font-family:'Sora',sans-serif;font-size:17px;font-weight:700;color:var(--blue);margin-bottom:6px;">👋 Complete seu cadastro</h3><p style="font-size:13px;color:var(--light);margin-bottom:18px;">Precisamos do seu nome completo e cargo.</p><div class="field"><label>Nome completo</label><input type="text" id="cadastro-nome"/></div><div class="field"><label>Cargo</label><input type="text" id="cadastro-cargo"/></div><div class="field"><label>Email</label><input type="email" id="cadastro-email"/></div><p style="font-size:11px;color:var(--red);margin-bottom:12px;display:none;" id="cadastro-erro"></p><button class="btn-salvar" onclick="completarCadastro()" style="width:100%">✓ Salvar</button></div></div>
 <div id="notif-ov"><div class="notif-box"><div class="notif-emoji">🔔</div><div class="notif-titulo" id="notif-titulo"></div><div class="notif-desc" id="notif-desc"></div><div class="notif-evento"><div class="notif-evento-titulo" id="notif-ev-titulo"></div><div class="notif-evento-data" id="notif-ev-data"></div></div><div class="notif-btns"><button class="btn-cancel" onclick="responderNotif(false)">✗ Não sou eu</button><button class="btn-salvar" onclick="responderNotif(true)">✓ Sim, sou eu!</button></div></div></div>
 <div id="admin-ov"><div class="admin-hd"><button class="btn-x" onclick="fecharAdmin()">✕</button><h2>🛡️ Painel Admin</h2></div><div class="admin-body"><div class="sec-titulo">Membros <span id="admin-total"></span></div><div id="admin-membros"></div></div></div>
-<div id="scan-ov"><div class="scan-hd"><button class="btn-x" onclick="fecharScanner()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:20px;height:20px"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button><span>Escanear Convocação</span></div><div class="cam-wrap"><video id="video" autoplay playsinline muted></video><div class="cam-mask"><div class="cam-box"><div class="c-bl"></div><div class="c-br"></div><div class="cam-hint">Enquadre o documento aqui</div></div></div></div><div class="scan-ctrl"><button class="btn-cap" onclick="capturar()"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3.2"/><path d="M9 2L7.17 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2h-3.17L15 2H9zm3 15c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5z"/></svg></button><input type="file" id="file-foto" accept="image/*" style="display:none" onchange="processarFoto(this.files[0])"/><button class="btn-gal" onclick="document.getElementById('file-foto').click()">🖼️ Escolher da galeria</button></div></div>
+<div id="scan-ov"><div class="scan-hd"><button class="btn-x" onclick="fecharScanner()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:20px;height:20px"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button><span>Escanear Convocação</span></div><div class="cam-wrap"><video id="video" autoplay playsinline muted></video><div class="cam-mask"><div class="cam-box"><div class="c-bl"></div><div class="c-br"></div><div class="cam-hint">Enquadre o documento aqui</div></div></div><div id="scan-loading" class="scan-loading-overlay"><div class="scan-loading-spinner"></div><div class="scan-loading-text">Processando arquivo...</div></div></div><div class="scan-ctrl"><button class="btn-cap" onclick="capturar()"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3.2"/><path d="M9 2L7.17 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2h-3.17L15 2H9zm3 15c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5z"/></svg></button><input type="file" id="file-foto" accept="image/*" style="display:none" onchange="processarFoto(this.files[0])"/><button class="btn-gal" onclick="document.getElementById('file-foto').click()">🖼️ Escolher da galeria</button></div></div>
 <div id="ocr-ov"><div class="ocr-spinner"></div><div class="ocr-texto" id="ocr-texto">📸 Analisando...</div><div class="ocr-barra"><div class="ocr-preenchimento" id="ocr-preenchimento"></div></div><div class="ocr-subtexto" id="ocr-subtexto"></div><div class="ocr-dica">Não feche o app</div></div>
 <div id="rv-ov"><div class="rv-hd"><button class="btn-x" onclick="fecharRv()">✕</button><h2>Conferir dados</h2></div><div class="rv-body"><div class="rv-lbl">Título</div><div class="rv-val"><input type="text" id="rv-tit"/></div><div class="rv-lbl">Data/hora</div><div class="rv-val"><input type="datetime-local" id="rv-data"/></div><div class="rv-lbl">Local</div><div class="rv-val"><input type="text" id="rv-loc"/></div><div class="rv-lbl">Convocados</div><div id="rv-matches"></div><div class="rv-btns"><button class="btn-cancel" onclick="fecharRv()">Cancelar</button><button class="btn-salvar" onclick="salvar()">✓ Salvar</button></div></div></div>
 <div class="ov-center" id="saldo-ajuste-ov"><div class="box-center"><h3>⚙️ Ajustar Saldo</h3><p style="font-size:13px;color:var(--light);margin-bottom:16px">Configure seus saldos e períodos aquisitivos.</p><div class="ajuste-bloco"><h4>🏖️ Períodos Aquisitivos de Férias</h4><div id="ajuste-periodos-ferias"></div><button class="btn-add-ajuste" onclick="adicionarPeriodoNoAjuste()">+ Adicionar período</button></div><div class="ajuste-bloco"><h4>⏱️ Abonos</h4><div class="field" style="margin-bottom:0"><label>Total de abonos disponíveis</label><input type="number" id="ajuste-abono" min="0" max="6" value="6"/></div></div><div class="ajuste-bloco"><h4>🏆 Licença Prêmio</h4><div class="field" style="margin-bottom:0"><label>Total de dias de licença prêmio</label><input type="number" id="ajuste-licenca" min="0" max="180" value="90"/></div></div><div class="btns-row"><button class="btn-cancel" onclick="fecharAjusteSaldo()">Cancelar</button><button class="btn-salvar" onclick="salvarAjusteSaldo()">💾 Salvar</button></div></div></div>
@@ -953,16 +958,12 @@ function verificarStatusAusencia(uid,dataEvento){if(!uid||!dataEvento)return nul
 
 // ══ MATCH DE NOMES (CORRIGIDO v21.2.1) ═══════════════════════════════════
 async function cruzar(nomes) {
-  // Busca usuários do grupo ativo de duas formas:
-  // 1. Pelo array 'grupos' (novo modelo)
-  // 2. Pelo campo 'grupo_id' (compatibilidade com usuários não migrados)
   const snap1 = await db.collection('usuarios')
     .where('grupos', 'array-contains', { id: grupoId, is_admin: true }).get();
   const snap2 = await db.collection('usuarios')
     .where('grupos', 'array-contains', { id: grupoId, is_admin: false }).get();
   const snap3 = await db.collection('usuarios').where('grupo_id', '==', grupoId).get();
   
-  // Junta todos os resultados, removendo duplicatas por UID
   const usersMap = new Map();
   [...snap1.docs, ...snap2.docs, ...snap3.docs].forEach(doc => {
     if (!usersMap.has(doc.id)) {
@@ -986,7 +987,6 @@ async function cruzar(nomes) {
     const nn = norm(nome);
     const pwNome = pwSig(nome);
     
-    // Busca exata
     for (const u of users) {
       const todosNomes = [u.nome_completo, ...(u.nomes_conhecidos || [])];
       if (todosNomes.some(n => norm(n) === nn)) {
@@ -994,7 +994,6 @@ async function cruzar(nomes) {
       }
     }
     
-    // Busca por correspondência parcial
     let mu = null, ms = 0;
     for (const u of users) {
       const todosNomes = [u.nome_completo, ...(u.nomes_conhecidos || [])];
@@ -1168,11 +1167,157 @@ async function salvarNomesAdmin(){
   abrirMod(eventoAtualMod);
 }
 
-// ── SCANNER ─────────────────────────────────────────────────────────
+// ── SCANNER (MELHORADO v21.3) ─────────────────────────────────────
 async function abrirScanner(){if(!grupoId){alert('Entre em um grupo.');return;}document.getElementById('scan-ov').classList.add('on');try{camStream=await navigator.mediaDevices.getUserMedia({video:{facingMode:'environment'}});document.getElementById('video').srcObject=camStream;}catch{alert('Câmera indisponível.');}}
 function fecharScanner(){document.getElementById('scan-ov').classList.remove('on');if(camStream){camStream.getTracks().forEach(t=>t.stop());camStream=null;}}
 function capturar(){const v=document.getElementById('video');const c=document.createElement('canvas');c.width=v.videoWidth;c.height=v.videoHeight;c.getContext('2d').drawImage(v,0,0);c.toBlob(b=>processarFoto(b),'image/jpeg',.9);}
-async function processarFoto(file){if(!file)return;fecharScanner();const oo=document.getElementById('ocr-ov');const ot=document.getElementById('ocr-texto');const os=document.getElementById('ocr-subtexto');const op=document.getElementById('ocr-preenchimento');oo.classList.add('on');op.style.width='10%';ot.textContent='📸 Preparando...';os.textContent='Otimizando imagem';try{const pi=setInterval(()=>{const cw=parseFloat(op.style.width);if(cw<80)op.style.width=(cw+5)+'%';if(cw>30&&cw<50){ot.textContent='🔍 Enviando...';os.textContent='Conectando ao servidor';}if(cw>50&&cw<70){ot.textContent='🤖 Processando...';os.textContent='IA analisando texto';}},800);const b64=await new Promise((res,rej)=>{const img=new Image();const url=URL.createObjectURL(file);img.onload=()=>{const MAX=1600;let w=img.width,h=img.height;if(w>MAX||h>MAX){if(w>h){h=Math.round(h*MAX/w);w=MAX;}else{w=Math.round(w*MAX/h);h=MAX;}}const c=document.createElement('canvas');c.width=w;c.height=h;c.getContext('2d').drawImage(img,0,0,w,h);URL.revokeObjectURL(url);res(c.toDataURL('image/jpeg',0.9).split(',')[1]);};img.onerror=()=>rej(new Error('Erro'));img.src=url;});clearInterval(pi);op.style.width='80%';ot.textContent='🔎 Lendo...';os.textContent='IA analisando';const resp=await fetch('https://api.mistral.ai/v1/chat/completions',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer zQVzmFaX904lqaFwzt40BHXHfGoqSJca'},body:JSON.stringify({model:'pixtral-12b-2409',max_tokens:800,temperature:0.1,messages:[{role:'user',content:[{type:'image_url',image_url:{url:'data:image/jpeg;base64,'+b64}},{type:'text',text:'Analise esta convocação. Retorne APENAS JSON: {"titulo":"TIPO - Tema","data":"YYYY-MM-DD","hora":"HH:MM","local":"local ou null","nomes":["Nome 1","Nome 2"]}. NUNCA junte nomes.'}]}]})});op.style.width='90%';ot.textContent='✅ Processando...';os.textContent='Organizando dados';const data=await resp.json();const txtRaw=data.choices?.[0]?.message?.content||'';let parsed;try{parsed=JSON.parse(txtRaw.replace(/```json|```/g,'').trim());}catch{const match=txtRaw.match(/\{[\s\S]*\}/);if(match)parsed=JSON.parse(match[0]);else throw new Error('Formato inválido');}if(parsed.nomes&&Array.isArray(parsed.nomes)){parsed.nomes=parsed.nomes.flatMap(nome=>{if(nome.includes(' e ')||nome.includes(' / '))return nome.split(/\s+e\s+|\s+\/\s+/).filter(n=>n.trim().length>2);const ns=nome.split(/(?<=[a-záéíóúãõç])(?=[A-Z])/);if(ns.length>1){const nv=[];let na='';for(let i=0;i<ns.length;i++){na+=ns[i];if(na.trim().split(/\s+/).length>=2&&i<ns.length-1){nv.push(na.trim());na='';}}if(na.trim())nv.push(na.trim());return nv.length>1?nv:[nome];}return[nome];});}op.style.width='100%';ot.textContent='✨ Concluído!';os.textContent='Verifique os dados';ocrDados={titulo:parsed.titulo||null,data_hora:(parsed.data&&parsed.hora)?`${parsed.data}T${parsed.hora}:00`:(parsed.data?`${parsed.data}T00:00:00`:null),local:parsed.local||null,nomes:Array.isArray(parsed.nomes)?parsed.nomes.filter(n=>n&&n.trim().length>2):[],id_ver:null};if(parsed.data&&parsed.hora&&parsed.titulo)ocrDados.id_ver=parsed.data.replace(/-/g,'')+parsed.hora.replace(':','')+parsed.titulo.toUpperCase().replace(/[^A-Z0-9]/g,'').substring(0,10);await new Promise(r=>setTimeout(r,800));}catch(e){oo.classList.remove('on');alert('Erro: '+e.message);return;}oo.classList.remove('on');if(ocrDados.id_ver){const dup=await db.collection('eventos').where('id_verificacao','==',ocrDados.id_ver).where('grupo_id','==',grupoId).get();if(!dup.empty){alert('⚠️ Já cadastrado!');return;}}matches=await cruzar(ocrDados.nomes);document.getElementById('rv-tit').value=ocrDados.titulo||'';document.getElementById('rv-data').value=ocrDados.data_hora?ocrDados.data_hora.substring(0,16):'';document.getElementById('rv-loc').value=ocrDados.local||'';renderMatches();document.getElementById('rv-ov').classList.add('on');}
+
+// Função auxiliar para processar foto (recebe o arquivo e uma flag indicando se veio da galeria)
+async function processarFoto(file, fromGallery = false) {
+  if(!file)return;
+  
+  // Se veio da galeria, mostra indicador de carregamento sobreposto à câmera
+  if(fromGallery) {
+    const loadingOverlay = document.getElementById('scan-loading');
+    loadingOverlay.classList.add('show');
+    mostrarToast('📤 Processando arquivo...');
+    // Pequeno delay para garantir que o toast apareça antes do processamento pesado
+    await new Promise(r => setTimeout(r, 300));
+  }
+  
+  // Se não veio da galeria (foto tirada), fecha o scanner como antes
+  if(!fromGallery) {
+    fecharScanner();
+  } else {
+    // Para arquivo da galeria, esperamos o OCR iniciar para fechar a câmera
+    // Ocultamos o indicador de carregamento e fechamos o scanner quando o OCR abrir
+    const loadingOverlay = document.getElementById('scan-loading');
+    if(loadingOverlay) loadingOverlay.classList.remove('show');
+    fecharScanner();
+  }
+
+  const oo=document.getElementById('ocr-ov');
+  const ot=document.getElementById('ocr-texto');
+  const os=document.getElementById('ocr-subtexto');
+  const op=document.getElementById('ocr-preenchimento');
+  
+  oo.classList.add('on');
+  op.style.width='10%';
+  ot.textContent='📸 Preparando...';
+  os.textContent='Otimizando imagem';
+  
+  try{
+    const pi=setInterval(()=>{
+      const cw=parseFloat(op.style.width);
+      if(cw<80)op.style.width=(cw+5)+'%';
+      if(cw>30&&cw<50){ot.textContent='🔍 Enviando...';os.textContent='Conectando ao servidor';}
+      if(cw>50&&cw<70){ot.textContent='🤖 Processando...';os.textContent='IA analisando texto';}
+    },800);
+    
+    const b64=await new Promise((res,rej)=>{
+      const img=new Image();
+      const url=URL.createObjectURL(file);
+      img.onload=()=>{
+        const MAX=1600;
+        let w=img.width,h=img.height;
+        if(w>MAX||h>MAX){
+          if(w>h){h=Math.round(h*MAX/w);w=MAX;}
+          else{w=Math.round(w*MAX/h);h=MAX;}
+        }
+        const c=document.createElement('canvas');
+        c.width=w;c.height=h;
+        c.getContext('2d').drawImage(img,0,0,w,h);
+        URL.revokeObjectURL(url);
+        res(c.toDataURL('image/jpeg',0.9).split(',')[1]);
+      };
+      img.onerror=()=>rej(new Error('Erro ao carregar imagem'));
+      img.src=url;
+    });
+    
+    clearInterval(pi);
+    op.style.width='80%';
+    ot.textContent='🔎 Lendo...';
+    os.textContent='IA analisando';
+    
+    const resp=await fetch('https://api.mistral.ai/v1/chat/completions',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','Authorization':'Bearer zQVzmFaX904lqaFwzt40BHXHfGoqSJca'},
+      body:JSON.stringify({
+        model:'pixtral-12b-2409',
+        max_tokens:800,
+        temperature:0.1,
+        messages:[{
+          role:'user',
+          content:[
+            {type:'image_url',image_url:{url:'data:image/jpeg;base64,'+b64}},
+            {type:'text',text:'Analise esta convocação. Retorne APENAS JSON: {"titulo":"TIPO - Tema","data":"YYYY-MM-DD","hora":"HH:MM","local":"local ou null","nomes":["Nome 1","Nome 2"]}. NUNCA junte nomes.'}
+          ]
+        }]
+      })
+    });
+    
+    op.style.width='90%';
+    ot.textContent='✅ Processando...';
+    os.textContent='Organizando dados';
+    
+    const data=await resp.json();
+    const txtRaw=data.choices?.[0]?.message?.content||'';
+    let parsed;
+    try{parsed=JSON.parse(txtRaw.replace(/```json|```/g,'').trim());}
+    catch{const match=txtRaw.match(/\{[\s\S]*\}/);if(match)parsed=JSON.parse(match[0]);else throw new Error('Formato inválido');}
+    
+    if(parsed.nomes&&Array.isArray(parsed.nomes)){
+      parsed.nomes=parsed.nomes.flatMap(nome=>{
+        if(nome.includes(' e ')||nome.includes(' / '))return nome.split(/\s+e\s+|\s+\/\s+/).filter(n=>n.trim().length>2);
+        const ns=nome.split(/(?<=[a-záéíóúãõç])(?=[A-Z])/);
+        if(ns.length>1){
+          const nv=[];let na='';
+          for(let i=0;i<ns.length;i++){
+            na+=ns[i];
+            if(na.trim().split(/\s+/).length>=2&&i<ns.length-1){nv.push(na.trim());na='';}
+          }
+          if(na.trim())nv.push(na.trim());
+          return nv.length>1?nv:[nome];
+        }
+        return[nome];
+      });
+    }
+    
+    op.style.width='100%';
+    ot.textContent='✨ Concluído!';
+    os.textContent='Verifique os dados';
+    
+    ocrDados={
+      titulo:parsed.titulo||null,
+      data_hora:(parsed.data&&parsed.hora)?`${parsed.data}T${parsed.hora}:00`:(parsed.data?`${parsed.data}T00:00:00`:null),
+      local:parsed.local||null,
+      nomes:Array.isArray(parsed.nomes)?parsed.nomes.filter(n=>n&&n.trim().length>2):[],
+      id_ver:null
+    };
+    
+    if(parsed.data&&parsed.hora&&parsed.titulo)ocrDados.id_ver=parsed.data.replace(/-/g,'')+parsed.hora.replace(':','')+parsed.titulo.toUpperCase().replace(/[^A-Z0-9]/g,'').substring(0,10);
+    
+    await new Promise(r=>setTimeout(r,800));
+  }catch(e){
+    oo.classList.remove('on');
+    alert('Erro: '+e.message);
+    return;
+  }
+  
+  oo.classList.remove('on');
+  
+  if(ocrDados.id_ver){
+    const dup=await db.collection('eventos').where('id_verificacao','==',ocrDados.id_ver).where('grupo_id','==',grupoId).get();
+    if(!dup.empty){alert('⚠️ Já cadastrado!');return;}
+  }
+  
+  matches=await cruzar(ocrDados.nomes);
+  document.getElementById('rv-tit').value=ocrDados.titulo||'';
+  document.getElementById('rv-data').value=ocrDados.data_hora?ocrDados.data_hora.substring(0,16):'';
+  document.getElementById('rv-loc').value=ocrDados.local||'';
+  renderMatches();
+  document.getElementById('rv-ov').classList.add('on');
+}
 
 // ── NOTIFICAÇÕES ────────────────────────────────────────────────────
 async function iniciarNotificacoes(){
