@@ -27,7 +27,7 @@
     .nav-tab.active{color:var(--blue);border-bottom-color:var(--blue)}
 
     main{padding:16px;max-width:480px;margin:0 auto}
-    #aba-painel{max-width:100%;padding:0;margin:0;height:100vh;background:#1a1a2e}
+    #aba-painel{max-width:100vw;padding:0;margin:0;height:100vh;overflow:hidden;background:#0f172a;display:flex;flex-direction:column;position:relative}
 
     .card{background:var(--w);border-radius:16px;padding:18px;margin-bottom:16px;box-shadow:0 2px 10px rgba(30,58,138,.06)}
     .card-titulo{font-family:'Sora',sans-serif;font-size:14px;font-weight:700;color:var(--blue);margin-bottom:12px;display:flex;align-items:center;justify-content:space-between}
@@ -295,25 +295,58 @@
     footer{text-align:center;padding:16px;color:var(--light);font-size:11px;border-top:1px solid var(--border);margin-top:20px}
     footer strong{color:var(--blue)}
 
-    /* PAINEL (TV) */
-    #aba-painel{background:#0f172a;color:#fff;font-family:'DM Sans',sans-serif;overflow:hidden;position:relative;display:flex;flex-direction:column;height:100vh}
-    .painel-grid{display:grid;grid-template-columns:repeat(4,1fr);grid-template-rows:repeat(2,1fr);gap:20px;padding:20px;flex:1;overflow:hidden}
-    .painel-card{background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-left:4px solid var(--blue);border-radius:12px;padding:18px;display:flex;flex-direction:column;justify-content:space-between;backdrop-filter:blur(10px);transition:all .5s ease;position:relative}
+    /* ═══════════════ PAINEL TV (v22.1) ═══════════════ */
+    #aba-painel{
+      background:#0f172a;color:#fff;font-family:'DM Sans',sans-serif;
+      overflow:hidden;position:relative;display:flex;flex-direction:column;
+      height:100vh;width:100vw;max-width:100vw;margin:0;padding:0;
+    }
+    .painel-wrapper{
+      width:100%;max-width:177.78vh; /* 16:9 ratio */ 
+      margin:0 auto;flex:1;display:flex;flex-direction:column;overflow:hidden;
+    }
+    .painel-header{
+      background:rgba(0,0,0,.3);padding:16px 24px;display:flex;align-items:center;
+      justify-content:space-between;border-bottom:1px solid rgba(255,255,255,0.05);flex-shrink:0;
+    }
+    .painel-header h2{font-family:'Sora',sans-serif;font-size:24px;font-weight:700;color:#e2e8f0}
+    .painel-header .grupo-badge{background:var(--blue);color:#fff;font-size:14px;padding:6px 16px;border-radius:20px;font-weight:600}
+    .painel-status{display:flex;align-items:center;gap:8px;font-size:14px;color:#94a3b8}
+    .painel-status .dot{width:10px;height:10px;background:var(--green);border-radius:50%;animation:pulse 2s infinite}
+    @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+    
+    .painel-grid{
+      display:grid;grid-template-columns:repeat(3,1fr);grid-template-rows:repeat(2,1fr);
+      gap:24px;padding:24px;flex:1;overflow:hidden;align-content:center;
+    }
+    .painel-card{
+      background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);
+      border-left:4px solid var(--blue);border-radius:14px;padding:20px;
+      display:flex;flex-direction:column;justify-content:flex-start;
+      backdrop-filter:blur(10px);transition:all .5s ease;position:relative;
+    }
     .painel-card.expirado{opacity:.25;border-left-color:var(--light)}
     .painel-card.removendo{opacity:0;transform:scale(.95);pointer-events:none}
-    .painel-card-titulo{font-family:'Sora',sans-serif;font-size:15px;font-weight:700;color:#e2e8f0;margin-bottom:8px;line-height:1.3;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
-    .painel-card-data{font-size:13px;color:#94a3b8;margin-bottom:6px}
-    .painel-card-convocados{font-size:12px;color:#cbd5e1;line-height:1.6;overflow-y:auto;max-height:90px}
-    .painel-card-convocados span{display:inline-block;background:rgba(255,255,255,0.08);padding:2px 8px;border-radius:4px;margin:2px 4px 2px 0;font-size:11px}
-    .painel-footer{background:rgba(0,0,0,.5);padding:12px 20px;text-align:center;font-size:11px;color:#94a3b8;border-top:1px solid rgba(255,255,255,0.05);flex-shrink:0}
+    .painel-card-titulo{
+      font-family:'Sora',sans-serif;font-size:18px;font-weight:700;color:#e2e8f0;
+      margin-bottom:10px;line-height:1.3;display:-webkit-box;-webkit-line-clamp:2;
+      -webkit-box-orient:vertical;overflow:hidden;
+    }
+    .painel-card-data{font-size:14px;color:#94a3b8;margin-bottom:12px}
+    .painel-card-convocados{display:flex;flex-wrap:wrap;gap:6px;font-size:13px;color:#cbd5e1;line-height:1.5}
+    .painel-card-convocados span{
+      display:inline-block;background:rgba(255,255,255,0.08);padding:4px 10px;
+      border-radius:6px;font-size:13px;white-space:nowrap;
+    }
+    .painel-footer{
+      background:rgba(0,0,0,.5);padding:14px 24px;text-align:center;font-size:13px;
+      color:#94a3b8;border-top:1px solid rgba(255,255,255,0.05);flex-shrink:0;
+    }
     .painel-footer strong{color:var(--blue)}
-    .painel-vazio{display:flex;align-items:center;justify-content:center;height:100%;color:#64748b;font-size:18px;text-align:center}
-    .painel-header{background:rgba(0,0,0,.3);padding:12px 20px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(255,255,255,0.05);flex-shrink:0}
-    .painel-header h2{font-family:'Sora',sans-serif;font-size:18px;font-weight:700;color:#e2e8f0}
-    .painel-header .grupo-badge{background:var(--blue);color:#fff;font-size:12px;padding:4px 12px;border-radius:20px;font-weight:600}
-    .painel-status{display:flex;align-items:center;gap:8px;font-size:12px;color:#94a3b8}
-    .painel-status .dot{width:8px;height:8px;background:var(--green);border-radius:50%;animation:pulse 2s infinite}
-    @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+    .painel-vazio{
+      display:flex;align-items:center;justify-content:center;height:100%;
+      color:#64748b;font-size:22px;text-align:center;grid-column:1/-1;grid-row:1/-1;
+    }
 
     .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:10000;display:none;align-items:center;justify-content:center;padding:20px}
     .modal-overlay.on{display:flex}
@@ -380,16 +413,18 @@
   </div>
   
   <div id="aba-painel" class="aba-content" style="display:none">
-    <div class="painel-header">
-      <h2>📋 Painel de Convocações</h2>
-      <div class="painel-status"><span class="dot"></span> Atualizando em tempo real</div>
-      <div class="grupo-badge" id="painel-grupo-nome">—</div>
-    </div>
-    <div class="painel-grid" id="painel-grid">
-      <div class="painel-vazio" style="grid-column:1/-1;grid-row:1/-1">Nenhuma convocação disponível no momento.</div>
-    </div>
-    <div class="painel-footer">
-      Desenvolvido por <strong>IHC Solutions</strong> — © 2026 Gestor de Convocações — v22.0
+    <div class="painel-wrapper">
+      <div class="painel-header">
+        <h2>📋 Painel de Convocações</h2>
+        <div class="painel-status"><span class="dot"></span> Atualizando em tempo real</div>
+        <div class="grupo-badge" id="painel-grupo-nome">—</div>
+      </div>
+      <div class="painel-grid" id="painel-grid">
+        <div class="painel-vazio">Nenhuma convocação disponível no momento.</div>
+      </div>
+      <div class="painel-footer">
+        Desenvolvido por <strong>IHC Solutions</strong> — © 2026 Gestor de Convocações — v22.1
+      </div>
     </div>
   </div>
 </main>
@@ -399,9 +434,10 @@
 
 <footer>
   <p>Desenvolvido por <strong>IHC Solutions</strong></p>
-  <p>© 2026 Gestor de Convocações — v22.0</p>
+  <p>© 2026 Gestor de Convocações — v22.1</p>
 </footer>
 
+<!-- MODAIS (mantidos) -->
 <div class="overlay" id="mod-ev" onclick="if(event.target===this) fecharMod()"><div class="sheet"><div class="handle" onclick="fecharMod()"></div><input type="text" class="mod-titulo-input" id="mod-tit" placeholder="Título do evento"><input type="text" class="mod-sub-input" id="mod-sub" placeholder="Data e hora"><div class="mod-sec"><h3>Convocados <span id="admin-badge-conv" style="display:none" class="admin-badge">Admin</span></h3><div id="mod-conv"></div></div><div style="display:flex;gap:8px;margin-top:16px"><button class="btn-ag" id="mod-ag" style="flex:1;margin-top:0">📅 Agenda</button><button id="mod-trocar" style="flex:1;padding:12px;background:#fff7ed;color:#c2410c;border:1.5px solid #fed7aa;border-radius:10px;font-size:14px;cursor:pointer;font-weight:600;display:none;">🔄 Trocar</button></div><button class="btn-salvar-edicao-evento" id="mod-salvar-edicao" style="display:none" onclick="salvarEdicaoEvento()">💾 Salvar alterações</button><button class="btn-del" id="mod-del" style="display:none">🗑 Excluir</button><button class="btn-cancel" style="margin-top:10px;width:100%" onclick="fecharMod()">Fechar</button></div></div>
 <div id="trocar-ov"><div class="trocar-box"><h3>🔄 Trocar escala</h3><p id="trocar-desc"></p><div class="trocar-membros" id="trocar-lista"></div><div class="trocar-btns"><button class="btn-cancel" onclick="fecharTrocar()">Cancelar</button><button class="btn-salvar" style="background:#c2410c" id="trocar-confirmar">Confirmar</button></div></div></div>
 
@@ -456,101 +492,43 @@ let painelListener=null,painelCache=[],painelTimer=null;
 
 function mostrarToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');clearTimeout(toastTimeout);toastTimeout=setTimeout(()=>t.classList.remove('show'),2500);}
 function lev(a,b){if(a===b)return 0;const m=a.length,n=b.length;const dp=Array.from({length:m+1},(_,i)=>[i,...Array(n).fill(0)]);for(let j=0;j<=n;j++)dp[0][j]=j;for(let i=1;i<=m;i++)for(let j=1;j<=n;j++)dp[i][j]=a[i-1]===b[j-1]?dp[i-1][j-1]:1+Math.min(dp[i-1][j],dp[i][j-1],dp[i-1][j-1]);return dp[m][n];}
-function mostrarAba(aba,el){
-  document.querySelectorAll('.aba-content').forEach(e=>e.style.display='none');
-  document.getElementById('aba-'+aba).style.display='block';
-  document.querySelectorAll('.nav-tab').forEach(e=>e.classList.remove('active'));
-  if(el)el.classList.add('active');
-  if(aba==='ferias'){carregarFerias();if(eu&&eu.is_admin)document.getElementById('btn-para-outro').style.display='block';}
-  if(aba==='saldo')carregarSaldo();
-  if(aba==='painel')iniciarPainel();
-}
+function mostrarAba(aba,el){document.querySelectorAll('.aba-content').forEach(e=>e.style.display='none');document.getElementById('aba-'+aba).style.display='block';document.querySelectorAll('.nav-tab').forEach(e=>e.classList.remove('active'));if(el)el.classList.add('active');if(aba==='ferias'){carregarFerias();if(eu&&eu.is_admin)document.getElementById('btn-para-outro').style.display='block';}if(aba==='saldo')carregarSaldo();if(aba==='painel')iniciarPainel();}
 try{emailjs.init(EMAIL_CONFIG.publicKey);}catch(e){console.warn('EmailJS init error:',e);}
 
-// ══ PAINEL (TV) ══
 function iniciarPainel(){
-  if(!grupoId){document.getElementById('painel-grid').innerHTML='<div class="painel-vazio" style="grid-column:1/-1;grid-row:1/-1">Selecione um grupo para visualizar o painel.</div>';return;}
+  if(!grupoId){document.getElementById('painel-grid').innerHTML='<div class="painel-vazio">Selecione um grupo para visualizar o painel.</div>';return;}
   document.getElementById('painel-grupo-nome').textContent=grupoAtivo?grupoAtivo.nome:'—';
   if(painelListener)painelListener();
   painelListener=db.collection('eventos').where('grupo_id','==',grupoId).onSnapshot(snap=>{
     const eventos=snap.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>new Date(a.data_hora)-new Date(b.data_hora));
-    painelCache=eventos;
-    localStorage.setItem('painelCache_'+grupoId,JSON.stringify(eventos));
-    renderizarPainel(eventos);
-  },err=>{
-    console.warn('Offline — usando cache local');
-    const cached=localStorage.getItem('painelCache_'+grupoId);
-    if(cached)renderizarPainel(JSON.parse(cached));
-  });
+    painelCache=eventos;localStorage.setItem('painelCache_'+grupoId,JSON.stringify(eventos));renderizarPainel(eventos);
+  },err=>{console.warn('Offline — usando cache local');const cached=localStorage.getItem('painelCache_'+grupoId);if(cached)renderizarPainel(JSON.parse(cached));});
   if(painelTimer)clearInterval(painelTimer);
   painelTimer=setInterval(()=>{if(painelCache.length)renderizarPainel(painelCache);},60000);
 }
-
 function renderizarPainel(eventos){
-  const agora=new Date();
-  const grid=document.getElementById('painel-grid');
-  // Filtra eventos que já passaram há mais de 30 minutos
-  const validos=eventos.filter(ev=>{
-    const dt=new Date(ev.data_hora);
-    const diff=(agora-dt)/60000;
-    return diff<30;
-  });
-  if(!validos.length){grid.innerHTML='<div class="painel-vazio" style="grid-column:1/-1;grid-row:1/-1">Nenhuma convocação disponível no momento.</div>';return;}
-  const visiveis=validos.slice(0,8);
+  const agora=new Date();const grid=document.getElementById('painel-grid');
+  const validos=eventos.filter(ev=>{const dt=new Date(ev.data_hora);return(agora-dt)/60000<30;});
+  if(!validos.length){grid.innerHTML='<div class="painel-vazio">Nenhuma convocação disponível no momento.</div>';return;}
+  const visiveis=validos.slice(0,6);
   grid.innerHTML=visiveis.map(ev=>{
-    const dt=new Date(ev.data_hora);
-    const passou=dt<=agora;
+    const dt=new Date(ev.data_hora);const passou=dt<=agora;
     const cls=passou?'painel-card expirado':'painel-card';
     const nomes=(ev.lista_convocados||[]).map(n=>`<span>${n}</span>`).join('');
-    return `<div class="${cls}">
-      <div class="painel-card-titulo">${ev.titulo_evento||'Sem título'}</div>
-      <div class="painel-card-data">📅 ${fD(dt)} · 🕐 ${fH(dt)}${ev.local?' · 📍 '+ev.local:''}</div>
-      <div class="painel-card-convocados">${nomes||'Nenhum convocado'}</div>
-    </div>`;
+    return `<div class="${cls}"><div class="painel-card-titulo">${ev.titulo_evento||'Sem título'}</div><div class="painel-card-data">📅 ${fD(dt)} · 🕐 ${fH(dt)}${ev.local?' · 📍 '+ev.local:''}</div><div class="painel-card-convocados">${nomes||'Nenhum convocado'}</div></div>`;
   }).join('');
 }
 
-// ══ MIGRAÇÃO ══
 async function migrarGruposSeNecessario(){
-  if(!eu)return;
-  const userRef=db.collection('usuarios').doc(eu.uid);
-  const snap=await userRef.get();
-  const data=snap.data();
-  if(!data)return;
+  if(!eu)return;const userRef=db.collection('usuarios').doc(eu.uid);const snap=await userRef.get();const data=snap.data();if(!data)return;
   let precisaMigrar=false,grupoIdAntigo=data.grupo_id;
-  if(grupoIdAntigo){
-    if(!data.grupos||!Array.isArray(data.grupos)||data.grupos.length===0){precisaMigrar=true;}
-    else{await userRef.update({grupo_id:firebase.firestore.FieldValue.delete()});eu.grupos=data.grupos;eu.grupo_id=null;return;}
-  }
-  if(precisaMigrar&&grupoIdAntigo){
-    try{
-      const gSnap=await db.collection('grupos').doc(grupoIdAntigo).get();
-      if(gSnap.exists){
-        const gData=gSnap.data();
-        const admins=gData.admins||[gData.criado_por];
-        const isAdmin=admins.includes(eu.uid)||gData.criado_por===eu.uid;
-        const novoGrupo={id:grupoIdAntigo,nome:gData.nome||'Meu Grupo',is_admin:isAdmin};
-        await userRef.update({grupos:firebase.firestore.FieldValue.arrayUnion(novoGrupo),grupo_id:firebase.firestore.FieldValue.delete()});
-        eu.grupos=[novoGrupo];eu.grupo_id=null;
-      }else{await userRef.update({grupo_id:firebase.firestore.FieldValue.delete()});eu.grupos=[];eu.grupo_id=null;}
-    }catch(e){console.error('Erro na migração:',e);}
-  }else if(data.grupos){eu.grupos=data.grupos;}
+  if(grupoIdAntigo){if(!data.grupos||!Array.isArray(data.grupos)||data.grupos.length===0)precisaMigrar=true;else{await userRef.update({grupo_id:firebase.firestore.FieldValue.delete()});eu.grupos=data.grupos;eu.grupo_id=null;return;}}
+  if(precisaMigrar&&grupoIdAntigo){try{const gSnap=await db.collection('grupos').doc(grupoIdAntigo).get();if(gSnap.exists){const gData=gSnap.data();const admins=gData.admins||[gData.criado_por];const isAdmin=admins.includes(eu.uid)||gData.criado_por===eu.uid;const novoGrupo={id:grupoIdAntigo,nome:gData.nome||'Meu Grupo',is_admin:isAdmin};await userRef.update({grupos:firebase.firestore.FieldValue.arrayUnion(novoGrupo),grupo_id:firebase.firestore.FieldValue.delete()});eu.grupos=[novoGrupo];eu.grupo_id=null;}else{await userRef.update({grupo_id:firebase.firestore.FieldValue.delete()});eu.grupos=[];eu.grupo_id=null;}}catch(e){console.error('Erro na migração:',e);}}else if(data.grupos){eu.grupos=data.grupos;}
 }
-
-// ══ GRUPOS ══
 function renderizarCardGrupos(){
-  const container=document.getElementById('grp-content');
-  const badge=document.getElementById('grp-badge');
-  if(!eu.grupos||eu.grupos.length===0){
-    badge.textContent='0';
-    container.innerHTML=`<p style="color:var(--light);text-align:center;margin-bottom:12px">Você ainda não está em nenhum grupo.</p><div class="busca-grupo"><input type="text" id="busca-grupo-input" placeholder="Buscar grupo existente..."><button onclick="buscarGrupos()">🔍 Buscar</button></div><div class="resultados-busca" id="resultados-busca"></div><button class="btn-criar" onclick="criarGrupo()">+ Criar novo grupo</button>`;
-  }else{
-    if(!grupoAtivo)grupoAtivo=eu.grupos[0];
-    const totalMembros=grupoAtivo.totalMembros||'?';
-    badge.textContent=totalMembros;
-    const isAdmin=grupoAtivo.is_admin;
-    container.innerHTML=`<div class="grupo-header" onclick="toggleListaGrupos()"><div class="grupo-nome">📁 ${grupoAtivo.nome}${isAdmin?'<span class="admin-badge" style="margin-left:6px">Admin</span>':''}</div><span class="seta" id="seta-grupos">▼</span></div><div class="grupo-info">${totalMembros} membro(s)</div><div class="grupo-lista-expandida" id="lista-grupos-expandida">${eu.grupos.map(g=>`<div class="grupo-item-exp ${g.id===grupoAtivo.id?'ativo':''}" onclick="selecionarGrupoAtivo('${g.id}')"><span>📁 ${g.nome} ${g.is_admin?'🛡️':''}</span><button class="btn-sair-grupo" onclick="event.stopPropagation();sairDoGrupo('${g.id}','${g.nome}')">🚪 Sair</button></div>`).join('')}</div><div class="grupo-acoes"><button class="btn-criar" style="margin-top:0;flex:1" onclick="criarGrupo()">+ Criar novo grupo</button></div><div class="busca-grupo"><input type="text" id="busca-grupo-input" placeholder="Buscar grupo existente..."><button onclick="buscarGrupos()">🔍 Buscar</button></div><div class="resultados-busca" id="resultados-busca"></div>`;
-  }
+  const container=document.getElementById('grp-content');const badge=document.getElementById('grp-badge');
+  if(!eu.grupos||eu.grupos.length===0){badge.textContent='0';container.innerHTML=`<p style="color:var(--light);text-align:center;margin-bottom:12px">Você ainda não está em nenhum grupo.</p><div class="busca-grupo"><input type="text" id="busca-grupo-input" placeholder="Buscar grupo existente..."><button onclick="buscarGrupos()">🔍 Buscar</button></div><div class="resultados-busca" id="resultados-busca"></div><button class="btn-criar" onclick="criarGrupo()">+ Criar novo grupo</button>`;}
+  else{if(!grupoAtivo)grupoAtivo=eu.grupos[0];const totalMembros=grupoAtivo.totalMembros||'?';badge.textContent=totalMembros;const isAdmin=grupoAtivo.is_admin;container.innerHTML=`<div class="grupo-header" onclick="toggleListaGrupos()"><div class="grupo-nome">📁 ${grupoAtivo.nome}${isAdmin?'<span class="admin-badge" style="margin-left:6px">Admin</span>':''}</div><span class="seta" id="seta-grupos">▼</span></div><div class="grupo-info">${totalMembros} membro(s)</div><div class="grupo-lista-expandida" id="lista-grupos-expandida">${eu.grupos.map(g=>`<div class="grupo-item-exp ${g.id===grupoAtivo.id?'ativo':''}" onclick="selecionarGrupoAtivo('${g.id}')"><span>📁 ${g.nome} ${g.is_admin?'🛡️':''}</span><button class="btn-sair-grupo" onclick="event.stopPropagation();sairDoGrupo('${g.id}','${g.nome}')">🚪 Sair</button></div>`).join('')}</div><div class="grupo-acoes"><button class="btn-criar" style="margin-top:0;flex:1" onclick="criarGrupo()">+ Criar novo grupo</button></div><div class="busca-grupo"><input type="text" id="busca-grupo-input" placeholder="Buscar grupo existente..."><button onclick="buscarGrupos()">🔍 Buscar</button></div><div class="resultados-busca" id="resultados-busca"></div>`;}
 }
 function toggleListaGrupos(){const lista=document.getElementById('lista-grupos-expandida');const seta=document.getElementById('seta-grupos');if(!lista||!seta)return;lista.classList.toggle('show');seta.classList.toggle('open');}
 async function selecionarGrupoAtivo(gId){const grupo=eu.grupos.find(g=>g.id===gId);if(!grupo)return;grupoAtivo=grupo;grupoId=gId;eu.is_admin=grupo.is_admin;document.getElementById('btn-fab-admin').classList.toggle('on',eu.is_admin);document.getElementById('btn-para-outro').style.display=eu.is_admin?'block':'none';renderizarCardGrupos();carregarEventos();carregarFerias();verificarAprovacoes();iniciarPainel();mostrarToast(`✅ Grupo ativo: ${grupo.nome}`);}
@@ -558,18 +536,14 @@ async function buscarGrupos(){const termo=document.getElementById('busca-grupo-i
 function solicitarEntradaGrupo(gId,gNome){document.getElementById('ms-tit').textContent='Entrar em '+gNome;document.getElementById('ms-desc').textContent='Você solicitará entrada neste grupo.';document.getElementById('ms-ov').classList.add('on');document.getElementById('ms-ok').onclick=async()=>{await db.collection('usuarios').doc(eu.uid).update({grupos:firebase.firestore.FieldValue.arrayUnion({id:gId,nome:gNome,is_admin:false})});const s=await db.collection('grupos').doc(gId).get();await db.collection('grupos').doc(gId).update({membros:(s.data().membros||0)+1});if(!eu.grupos)eu.grupos=[];eu.grupos.push({id:gId,nome:gNome,is_admin:false});if(!grupoAtivo){grupoAtivo=eu.grupos[0];grupoId=gId;}document.getElementById('ms-ov').classList.remove('on');document.getElementById('resultados-busca').classList.remove('show');renderizarCardGrupos();carregarEventos();mostrarToast('✅ Entrada solicitada!');};}
 async function criarGrupo(){const n=prompt('Nome do grupo:');if(!n||!n.trim())return;const nome=n.trim();const ref=await db.collection('grupos').add({nome,criado_por:eu.uid,criado_em:firebase.firestore.FieldValue.serverTimestamp(),membros:1,admins:[eu.uid]});const novoGrupo={id:ref.id,nome,is_admin:true};if(!eu.grupos)eu.grupos=[];eu.grupos.push(novoGrupo);await db.collection('usuarios').doc(eu.uid).update({grupos:eu.grupos,is_admin:true});grupoAtivo=novoGrupo;grupoId=ref.id;eu.is_admin=true;document.getElementById('btn-fab-admin').classList.add('on');document.getElementById('btn-para-outro').style.display='block';renderizarCardGrupos();carregarEventos();iniciarPainel();mostrarToast('✅ Grupo criado!');}
 async function sairDoGrupo(gId,gNome){if(!confirm(`Sair do grupo "${gNome}"?`))return;const grupo=eu.grupos.find(g=>g.id===gId);if(!grupo)return;const gSnap=await db.collection('grupos').doc(gId).get();if(!gSnap.exists){removerGrupoLocal(gId);return;}const gData=gSnap.data();const admins=gData.admins||[gData.criado_por];const membrosAtuais=gData.membros||1;if(membrosAtuais<=1){await db.collection('grupos').doc(gId).delete();removerGrupoLocal(gId);mostrarToast('✅ Grupo excluído (era o único membro).');return;}if(grupo.is_admin&&admins.filter(a=>eu.grupos.some(g=>g.id===a||a===eu.uid)).length<=1){mostrarToast('⚠️ Promova outro administrador antes de sair.');return;}await db.collection('usuarios').doc(eu.uid).update({grupos:eu.grupos.filter(g=>g.id!==gId)});await db.collection('grupos').doc(gId).update({membros:Math.max(0,membrosAtuais-1)});if(grupo.is_admin){const novosAdmins=admins.filter(a=>a!==eu.uid);await db.collection('grupos').doc(gId).update({admins:novosAdmins});}removerGrupoLocal(gId);mostrarToast('✅ Você saiu do grupo.');}
-function removerGrupoLocal(gId){eu.grupos=eu.grupos.filter(g=>g.id!==gId);if(grupoAtivo&&grupoAtivo.id===gId){grupoAtivo=eu.grupos.length>0?eu.grupos[0]:null;grupoId=grupoAtivo?grupoAtivo.id:null;eu.is_admin=grupoAtivo?grupoAtivo.is_admin:false;document.getElementById('btn-fab-admin').classList.toggle('on',eu.is_admin);}renderizarCardGrupos();if(grupoId){carregarEventos();iniciarPainel();}else{document.getElementById('lst-ev').innerHTML='<p style="color:var(--light);padding:20px;text-align:center">Entre em um grupo para ver convocações.</p>';document.getElementById('prox').innerHTML='<div class="card-vazio">Entre em um grupo para ver suas convocações.</div>';if(painelListener)painelListener();painelListener=null;document.getElementById('painel-grid').innerHTML='<div class="painel-vazio" style="grid-column:1/-1;grid-row:1/-1">Selecione um grupo para visualizar o painel.</div>';}}
+function removerGrupoLocal(gId){eu.grupos=eu.grupos.filter(g=>g.id!==gId);if(grupoAtivo&&grupoAtivo.id===gId){grupoAtivo=eu.grupos.length>0?eu.grupos[0]:null;grupoId=grupoAtivo?grupoAtivo.id:null;eu.is_admin=grupoAtivo?grupoAtivo.is_admin:false;document.getElementById('btn-fab-admin').classList.toggle('on',eu.is_admin);}renderizarCardGrupos();if(grupoId){carregarEventos();iniciarPainel();}else{document.getElementById('lst-ev').innerHTML='<p style="color:var(--light);padding:20px;text-align:center">Entre em um grupo para ver convocações.</p>';document.getElementById('prox').innerHTML='<div class="card-vazio">Entre em um grupo para ver suas convocações.</div>';if(painelListener)painelListener();painelListener=null;document.getElementById('painel-grid').innerHTML='<div class="painel-vazio">Selecione um grupo para visualizar o painel.</div>';}}
 
-// ══ AUTENTICAÇÃO ══
-let authTimeout;
-const loadingScreen=document.getElementById('loading-screen');
-const loadingError=document.getElementById('loading-error');
+let authTimeout;const loadingScreen=document.getElementById('loading-screen');const loadingError=document.getElementById('loading-error');
 function mostrarErroTela(msg){if(loadingError){loadingError.textContent=msg;loadingError.style.display='block';}}
 function redirecionarLogin(){if(loadingScreen.style.display!=='none')loadingScreen.style.display='none';window.location.replace('login.html');}
 authTimeout=setTimeout(()=>{mostrarErroTela('Tempo limite excedido. Redirecionando...');setTimeout(redirecionarLogin,2000);},10000);
 try{auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL).then(()=>{auth.onAuthStateChanged(async user=>{clearTimeout(authTimeout);loadingScreen.style.display='none';if(!user){window.location.replace('login.html');return;}try{const snap=await db.collection('usuarios').doc(user.uid).get();if(!snap.exists){window.location.replace('login.html');return;}eu={uid:user.uid,...snap.data()};document.getElementById('h-user').textContent=eu.nome_completo+' · '+eu.cargo;await migrarGruposSeNecessario();const snap2=await db.collection('usuarios').doc(user.uid).get();eu={uid:user.uid,...snap2.data()};gruposUsuario=eu.grupos||[];if(gruposUsuario.length>0){grupoAtivo=gruposUsuario[0];grupoId=grupoAtivo.id;eu.is_admin=grupoAtivo.is_admin;}document.getElementById('btn-fab-admin').classList.toggle('on',eu.is_admin);document.getElementById('btn-para-outro').style.display=eu.is_admin?'block':'none';verificarInstalacao();iniciarNotificacoes();renderizarCardGrupos();if(grupoId){carregarEventos();verificarAprovacoes();verificarNotificacoesPendentes();iniciarVerificacaoLembretes();iniciarPainel();}else{document.getElementById('lst-ev').innerHTML='<p style="color:var(--light);padding:20px;text-align:center">Entre em um grupo para ver convocações.</p>';document.getElementById('prox').innerHTML='<div class="card-vazio">Entre em um grupo para ver suas convocações.</div>';}verificarCadastroCompleto();limparEventosAntigos();}catch(err){console.error('Erro ao carregar dados:',err);mostrarToast('⚠️ Erro de conexão. Tente recarregar.');}});}).catch(e=>{console.error('Persistence error:',e);clearTimeout(authTimeout);mostrarErroTela('Erro de configuração. Redirecionando...');setTimeout(redirecionarLogin,3000);});}catch(e){console.error('Auth setup error:',e);clearTimeout(authTimeout);mostrarErroTela('Erro crítico. Redirecionando...');setTimeout(redirecionarLogin,3000);}
 
-// ══ DEMAIS FUNÇÕES (mantidas da v21.7) ══
 async function limparEventosAntigos(){if(!grupoId)return;const agora=new Date();const seteDiasAtras=new Date(agora);seteDiasAtras.setDate(seteDiasAtras.getDate()-7);try{const snap=await db.collection('eventos').where('grupo_id','==',grupoId).get();const evs=snap.docs.filter(d=>{const e=d.data();return e.data_hora&&new Date(e.data_hora)<seteDiasAtras;});for(const ev of evs)await ev.ref.delete();}catch(e){}}
 function verificarCadastroCompleto(){if(!eu)return false;if(!eu.nome_completo||eu.nome_completo.trim().length<5||!eu.cargo){document.getElementById('cadastro-nome').value=eu.nome_completo||'';document.getElementById('cadastro-cargo').value=eu.cargo||'';document.getElementById('cadastro-email').value=eu.email||'';document.getElementById('completar-cadastro-ov').classList.add('on');return false;}if(eu.nome_completo.trim().split(/\s+/).length<2){document.getElementById('cadastro-nome').value=eu.nome_completo||'';document.getElementById('cadastro-cargo').value=eu.cargo||'';document.getElementById('cadastro-email').value=eu.email||'';document.getElementById('cadastro-erro').textContent='⚠️ Informe nome e sobrenome';document.getElementById('cadastro-erro').style.display='block';document.getElementById('completar-cadastro-ov').classList.add('on');return false;}return true;}
 async function completarCadastro(){const nome=document.getElementById('cadastro-nome').value.trim();const cargo=document.getElementById('cadastro-cargo').value.trim();const email=document.getElementById('cadastro-email').value.trim();const erroEl=document.getElementById('cadastro-erro');if(!nome||nome.length<3){erroEl.textContent='⚠️ Informe seu nome completo';erroEl.style.display='block';return;}const palavras=nome.split(/\s+/);if(palavras.length<2){erroEl.textContent='⚠️ Por favor, informe nome e sobrenome';erroEl.style.display='block';return;}if(!cargo||cargo.length<2){erroEl.textContent='⚠️ Informe seu cargo';erroEl.style.display='block';return;}try{await db.collection('usuarios').doc(eu.uid).update({nome_completo:nome,cargo:cargo,email:email||null,nomes_conhecidos:firebase.firestore.FieldValue.arrayUnion(nome)});eu.nome_completo=nome;eu.cargo=cargo;eu.email=email;document.getElementById('h-user').textContent=nome+' · '+cargo;document.getElementById('completar-cadastro-ov').classList.remove('on');mostrarToast('✅ Cadastro atualizado!');if(grupoId)carregarEventos();renderizarCardGrupos();}catch(error){console.error('Erro ao salvar:',error);erroEl.textContent='Erro ao salvar. Tente novamente.';erroEl.style.display='block';}}
