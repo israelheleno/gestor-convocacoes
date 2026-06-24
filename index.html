@@ -27,15 +27,75 @@
     .nav-tab.active{color:var(--blue);border-bottom-color:var(--blue)}
 
     main{padding:16px;max-width:480px;margin:0 auto}
-    #aba-painel{max-width:100vw;padding:0;margin:0;height:100vh;overflow:hidden;background:#0f172a;display:flex;flex-direction:column;position:relative}
+    
+    /* ═══════════════ PAINEL TV (v22.2) ═══════════════ */
+    #aba-painel{
+      background:#0f172a;color:#fff;font-family:'DM Sans',sans-serif;
+      overflow:hidden;position:fixed;inset:0;z-index:200;
+      display:flex;flex-direction:column;margin:0;padding:0;max-width:100vw;
+    }
+    #aba-painel .painel-wrapper{
+      width:100%;height:100%;display:flex;flex-direction:column;overflow:hidden;
+    }
+    .painel-header{
+      background:rgba(0,0,0,.4);padding:16px 40px;display:flex;align-items:center;
+      justify-content:space-between;border-bottom:1px solid rgba(255,255,255,0.08);flex-shrink:0;min-height:60px;
+    }
+    .painel-header h2{font-family:'Sora',sans-serif;font-size:24px;font-weight:700;color:#e2e8f0}
+    .painel-header .grupo-badge{background:var(--blue);color:#fff;font-size:14px;padding:6px 16px;border-radius:20px;font-weight:600}
+    .painel-status{display:flex;align-items:center;gap:8px;font-size:14px;color:#94a3b8}
+    .painel-status .dot{width:10px;height:10px;background:var(--green);border-radius:50%;animation:pulse 2s infinite}
+    @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+    
+    .painel-grid{
+      display:grid;grid-template-columns:repeat(3,1fr);grid-template-rows:repeat(2,1fr);
+      gap:30px;padding:40px;flex:1;overflow:hidden;align-content:stretch;
+    }
+    .painel-card{
+      background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);
+      border-left:5px solid var(--blue);border-radius:16px;padding:28px 24px;
+      display:flex;flex-direction:column;justify-content:flex-start;
+      backdrop-filter:blur(10px);transition:all .5s ease;position:relative;
+      overflow:hidden;
+    }
+    .painel-card.expirado{opacity:.2;border-left-color:var(--light)}
+    .painel-card.removendo{opacity:0;transform:scale(.95);pointer-events:none}
+    .painel-card-titulo{
+      font-family:'Sora',sans-serif;font-size:20px;font-weight:700;color:#f1f5f9;
+      margin-bottom:14px;line-height:1.3;overflow:hidden;text-overflow:ellipsis;
+      display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;
+    }
+    .painel-card-data{font-size:15px;color:#94a3b8;margin-bottom:16px;line-height:1.4}
+    .painel-card-convocados{display:flex;flex-wrap:wrap;gap:8px;font-size:14px;color:#cbd5e1;line-height:1.5;overflow-y:auto;flex:1}
+    .painel-card-convocados span{
+      display:inline-block;background:rgba(255,255,255,0.1);padding:5px 12px;
+      border-radius:8px;font-size:14px;white-space:nowrap;
+    }
+    .painel-footer{
+      background:rgba(0,0,0,.5);padding:14px 40px;text-align:center;font-size:13px;
+      color:#94a3b8;border-top:1px solid rgba(255,255,255,0.08);flex-shrink:0;min-height:50px;
+      display:flex;align-items:center;justify-content:center;
+    }
+    .painel-footer strong{color:var(--blue);margin:0 4px}
+    .painel-vazio{
+      display:flex;align-items:center;justify-content:center;height:100%;
+      color:#64748b;font-size:24px;text-align:center;grid-column:1/-1;grid-row:1/-1;
+    }
+    /* Esconde header, nav e footer normais quando no painel */
+    body.painel-ativo > header,
+    body.painel-ativo > .nav-tabs,
+    body.painel-ativo > footer,
+    body.painel-ativo > #fab,
+    body.painel-ativo > #btn-fab-admin,
+    body.painel-ativo > main > .aba-content:not(#aba-painel){display:none!important}
+    body.painel-ativo{padding-bottom:0}
+    body.painel-ativo main{padding:0;max-width:100vw}
 
     .card{background:var(--w);border-radius:16px;padding:18px;margin-bottom:16px;box-shadow:0 2px 10px rgba(30,58,138,.06)}
     .card-titulo{font-family:'Sora',sans-serif;font-size:14px;font-weight:700;color:var(--blue);margin-bottom:12px;display:flex;align-items:center;justify-content:space-between}
     .badge{background:var(--blue);color:#fff;font-size:11px;padding:3px 9px;border-radius:20px;font-weight:600}
-
     .banner-aviso{background:#fff7ed;border:1px solid #fed7aa;border-radius:12px;padding:12px 14px;margin-bottom:16px;display:flex;align-items:center;gap:10px;font-size:12px;color:#c2410c}
     .banner-aviso .banner-icon{font-size:20px;flex-shrink:0}
-
     .grupo-header{display:flex;align-items:center;justify-content:space-between;cursor:pointer;padding:4px 0}
     .grupo-header .grupo-nome{font-size:14px;font-weight:600;color:var(--blue);display:flex;align-items:center;gap:6px}
     .grupo-header .seta{font-size:12px;transition:transform .2s}
@@ -48,7 +108,6 @@
     .grupo-item-exp .btn-sair-grupo{background:transparent;border:1px solid #fee2e2;color:var(--red);padding:3px 8px;border-radius:6px;font-size:11px;cursor:pointer}
     .grupo-acoes{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
     .grupo-info{font-size:12px;color:var(--light);margin-top:4px}
-
     .busca-grupo{display:flex;gap:8px;margin-top:10px}
     .busca-grupo input{flex:1;padding:10px 12px;border:1.5px solid var(--border);border-radius:10px;font-size:13px;outline:none;font-family:'DM Sans',sans-serif}
     .busca-grupo input:focus{border-color:var(--blue)}
@@ -59,12 +118,9 @@
     .resultado-item:last-child{border-bottom:none}
     .resultado-item .btn-solicitar{padding:4px 10px;background:var(--green);color:#fff;border:none;border-radius:6px;font-size:12px;cursor:pointer;font-weight:600}
     .resultado-item .ja-membro{font-size:11px;color:var(--green);font-weight:600}
-
     .btn-criar{width:100%;padding:11px;margin-top:12px;background:transparent;border:1.5px dashed var(--blue);color:var(--blue);border-radius:12px;font-size:14px;cursor:pointer}
-
     .btn-meu-periodo{background:var(--blue);color:#fff;border:none;padding:10px 16px;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;font-family:'Sora',sans-serif;width:100%}
     .btn-para-outro{background:var(--purple);color:#fff;border:none;padding:10px 16px;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;font-family:'Sora',sans-serif;width:100%;margin-top:8px}
-
     .card-prox{background:linear-gradient(135deg,var(--blue),#2563eb);border-radius:18px;padding:18px;margin-bottom:16px;color:#fff;position:relative;overflow:hidden}
     .card-prox::after{content:'';position:absolute;right:-15px;top:-15px;width:80px;height:80px;background:rgba(255,255,255,.07);border-radius:50%}
     .card-prox-sub{background:linear-gradient(135deg,#92400e,#b45309);border-radius:18px;padding:18px;margin-bottom:10px;color:#fff;position:relative;overflow:hidden}
@@ -76,7 +132,6 @@
     .btn-agenda{background:var(--green);color:#fff;border:none;padding:10px;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;width:100%;font-family:'Sora',sans-serif}
     .btn-trocar-prox{background:#fff7ed;color:#c2410c;border:1.5px solid #fed7aa;padding:10px;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;width:100%;font-family:'Sora',sans-serif}
     .card-vazio{background:var(--w);border-radius:18px;padding:28px 16px;text-align:center;margin-bottom:16px;box-shadow:0 2px 10px rgba(30,58,138,.06);color:var(--light);font-size:14px}
-
     .sec-titulo{font-family:'Sora',sans-serif;font-size:13px;font-weight:700;color:var(--blue);margin-bottom:10px;display:flex;align-items:center;justify-content:space-between}
     .ev-wrap{position:relative;margin-bottom:10px;border-radius:14px;overflow:hidden}
     .ev-bg{position:absolute;inset:0;display:flex;border-radius:14px}
@@ -87,7 +142,6 @@
     .ev-meta{font-size:12px;color:var(--light);display:flex;gap:10px}
     .ev-conv{margin-top:6px;font-size:12px;color:var(--blue);font-weight:500}
     .aviso-ferias{background:#fee2e2;color:#991b1b;font-size:11px;padding:6px 10px;border-radius:6px;margin-top:8px;font-weight:600;display:flex;align-items:center;gap:6px}
-
     .aus-card{background:var(--w);border-radius:12px;padding:13px 15px;margin-bottom:10px;display:flex;align-items:center;gap:12px;border-left:3px solid var(--blue);box-shadow:0 2px 8px rgba(30,58,138,.06)}
     .aus-card.tipo-ferias{border-left-color:#ec4899}
     .aus-card.tipo-licenca{border-left-color:#f59e0b}
@@ -99,7 +153,6 @@
     .aus-tipo{font-size:10px;text-transform:uppercase;letter-spacing:.5px;color:var(--light);margin-top:4px}
     .aus-usuario{font-size:11px;color:var(--blue);font-weight:600;margin-top:2px}
     .btn-excluir-ausencia{background:transparent;border:none;color:var(--red);cursor:pointer;font-size:18px;padding:4px 8px}
-
     .overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:200;display:none;align-items:flex-end}
     .overlay.on{display:flex}
     .sheet{background:var(--w);border-radius:24px 24px 0 0;width:100%;max-height:90dvh;overflow-y:auto;padding:22px 18px 48px;animation:sup .3s ease}
@@ -118,7 +171,6 @@
     .btn-ag{width:100%;padding:12px;background:var(--green);color:#fff;border:none;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;margin-top:16px;font-family:'Sora',sans-serif}
     .btn-del{width:100%;padding:11px;background:#fee2e2;color:var(--red);border:none;border-radius:10px;font-size:14px;cursor:pointer;margin-top:8px}
     .btn-salvar-edicao-evento{width:100%;padding:10px;background:var(--blue);color:#fff;border:none;border-radius:10px;font-size:13px;cursor:pointer;margin-top:8px;font-family:'Sora',sans-serif;font-weight:600}
-
     .ov-center{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:750;display:none;align-items:center;justify-content:center;padding:20px}
     .ov-center.on{display:flex}
     .box-center{background:#fff;border-radius:24px;padding:28px 22px;width:100%;max-width:380px;max-height:85dvh;overflow-y:auto;animation:fu .3s ease}
@@ -130,13 +182,11 @@
     .btns-row{display:flex;gap:10px;margin-top:20px}
     .btn-cancel{flex:1;padding:12px;background:transparent;border:1.5px solid var(--border);border-radius:12px;font-size:14px;cursor:pointer;color:var(--text);font-weight:500}
     .btn-salvar{flex:1;padding:12px;background:var(--blue);border:none;border-radius:12px;color:#fff;font-size:14px;cursor:pointer;font-family:'Sora',sans-serif;font-weight:600}
-
     .lista-usuarios{max-height:200px;overflow-y:auto;border:1.5px solid var(--border);border-radius:12px;margin-bottom:14px}
     .usuario-item{padding:12px 14px;border-bottom:1px solid var(--border);cursor:pointer;display:flex;align-items:center;gap:10px;font-size:14px}
     .usuario-item:last-child{border-bottom:none}
     .usuario-item:hover{background:#f8faff}
     .usuario-item.selecionado{background:#eff6ff;font-weight:600;color:var(--blue)}
-
     #scan-ov{position:fixed;inset:0;background:#000;z-index:300;display:none;flex-direction:column}
     #scan-ov.on{display:flex}
     .scan-hd{padding:14px 16px;display:flex;align-items:center;gap:10px;background:rgba(0,0,0,.8);flex-shrink:0}
@@ -160,7 +210,6 @@
     .scan-loading-overlay.show{display:flex}
     .scan-loading-spinner{width:48px;height:48px;border:4px solid rgba(255,255,255,.2);border-top:4px solid #fff;border-radius:50%;animation:spin 1s linear infinite}
     .scan-loading-text{color:#fff;font-size:15px;font-weight:600;text-align:center}
-
     #ocr-ov{position:fixed;inset:0;background:rgba(0,0,0,.7);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);z-index:500;display:none;flex-direction:column;align-items:center;justify-content:center;gap:20px}
     #ocr-ov.on{display:flex}
     .ocr-spinner{width:60px;height:60px;border:4px solid rgba(255,255,255,.2);border-top:4px solid #fff;border-radius:50%;animation:spin 1s linear infinite}
@@ -168,7 +217,6 @@
     .ocr-texto{color:#fff;font-family:'Sora',sans-serif;font-size:16px;font-weight:700}
     .ocr-barra{width:200px;height:4px;background:rgba(255,255,255,.2);border-radius:2px;overflow:hidden}
     .ocr-preenchimento{height:100%;background:#fff;border-radius:2px;transition:width .5s ease;width:0%}
-
     #rv-ov{position:fixed;inset:0;background:var(--bg);z-index:400;display:none;flex-direction:column;overflow-y:auto}
     #rv-ov.on{display:flex}
     .rv-hd{background:var(--blue);color:#fff;padding:18px 16px;display:flex;align-items:center;gap:10px}
@@ -188,25 +236,20 @@
     .btn-desvincular{padding:5px 10px;background:#fff;border:1px solid #fee2e2;color:var(--red);border-radius:6px;font-size:10px;cursor:pointer;font-weight:600;white-space:nowrap}
     .btn-editar-nome{padding:2px 6px;background:transparent;border:1px solid #d1d5db;border-radius:6px;font-size:12px;cursor:pointer;color:var(--text)}
     .rv-btns{display:flex;gap:10px;margin:16px}
-
     #fab{position:fixed;bottom:22px;right:18px;width:58px;height:58px;background:var(--blue);border:none;border-radius:50%;box-shadow:0 4px 18px rgba(30,58,138,.4);cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:50}
     #fab svg{width:24px;height:24px;fill:#fff}
-
     .apv{background:var(--w);border-radius:12px;padding:13px 15px;margin-bottom:8px;border-left:3px solid var(--yellow)}
     .apv-nome{font-weight:600;font-size:14px}
     .apv-btns{display:flex;gap:8px}
     .btn-apr{flex:1;padding:8px;background:var(--green);color:#fff;border:none;border-radius:8px;cursor:pointer;font-weight:600}
     .btn-rec{flex:1;padding:8px;background:#fee2e2;color:var(--red);border:none;border-radius:8px;cursor:pointer}
-
     #ms-ov{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:600;display:none;align-items:center;justify-content:center;padding:16px}
     #ms-ov.on{display:flex}
     .ms-box{background:var(--w);border-radius:20px;padding:26px 22px;width:100%;max-width:340px}
     .ms-btns{display:flex;gap:10px}
-
     .skel{background:linear-gradient(90deg,#e2e8f0 25%,#f1f5f9 50%,#e2e8f0 75%);background-size:200% 100%;animation:sh 1.5s infinite;border-radius:10px;height:76px;margin-bottom:10px}
     @keyframes sh{0%{background-position:200% 0}100%{background-position:-200% 0}}
     @keyframes fu{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
-
     #admin-ov{position:fixed;inset:0;background:var(--bg);z-index:400;display:none;flex-direction:column;overflow-y:auto}
     #admin-ov.on{display:flex}
     .admin-hd{background:var(--blue);color:#fff;padding:18px 16px;display:flex;align-items:center;gap:10px}
@@ -227,7 +270,6 @@
     .btn-editar-membro{background:#e0e7ff;color:#3730a3}
     .btn-fab-admin{position:fixed;bottom:92px;right:18px;width:44px;height:44px;background:#fff;border:2px solid var(--blue);border-radius:50%;box-shadow:0 2px 10px rgba(30,58,138,.2);cursor:pointer;display:none;align-items:center;justify-content:center;z-index:50;font-size:20px}
     .btn-fab-admin.on{display:flex}
-
     #perfil-ov,#editar-nome-ov,#selecionar-usuario-ov{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:700;display:none;align-items:center;justify-content:center;padding:20px}
     #perfil-ov.on,#editar-nome-ov.on,#selecionar-usuario-ov.on{display:flex}
     .perfil-box,.editar-nome-box,.selecionar-box{background:#fff;border-radius:24px;padding:28px 22px;width:100%;max-width:360px}
@@ -235,7 +277,6 @@
     .perfil-field label{display:block;font-size:12px;font-weight:600;color:var(--text);margin-bottom:5px;text-transform:uppercase;letter-spacing:.5px}
     .perfil-field input{width:100%;padding:11px 13px;border:1.5px solid var(--border);border-radius:12px;font-family:'DM Sans',sans-serif;font-size:15px;outline:none}
     .perfil-btns{display:flex;gap:10px;margin-top:6px}
-
     #notif-ov{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:800;display:none;align-items:center;justify-content:center;padding:20px}
     #notif-ov.on{display:flex}
     .notif-box{background:#fff;border-radius:24px;padding:28px 22px;width:100%;max-width:360px}
@@ -244,7 +285,6 @@
     .notif-desc{font-size:14px;color:var(--light);text-align:center;margin-bottom:20px}
     .notif-evento{background:#eff6ff;border-radius:12px;padding:12px;margin-bottom:20px;text-align:center}
     .notif-btns{display:flex;gap:10px}
-
     #trocar-ov{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:750;display:none;align-items:center;justify-content:center;padding:20px}
     #trocar-ov.on{display:flex}
     .trocar-box{background:#fff;border-radius:24px;padding:28px 22px;width:100%;max-width:360px}
@@ -252,14 +292,11 @@
     .trocar-membro{padding:12px 14px;border-bottom:1px solid var(--border);cursor:pointer;display:flex;align-items:center;gap:10px}
     .trocar-membro.selecionado{background:#fff7ed;font-weight:600;color:#c2410c}
     .trocar-btns{display:flex;gap:10px}
-
     .toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:#1e293b;color:#fff;padding:12px 24px;border-radius:12px;font-size:14px;z-index:999;opacity:0;transition:opacity .3s;pointer-events:none;white-space:nowrap}
     .toast.show{opacity:1}
-
     #banner-instalar{display:none;background:#EFF6FF;border-bottom:1px solid #BFDBFE;padding:10px 16px;}
     #completar-cadastro-ov{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:900;display:none;align-items:center;justify-content:center;padding:20px;}
     #completar-cadastro-ov.on{display:flex}
-
     .saldo-card{background:var(--w);border-radius:16px;padding:16px;margin-bottom:12px;box-shadow:0 2px 8px rgba(30,58,138,.06)}
     .saldo-header{display:flex;align-items:center;gap:12px;margin-bottom:10px}
     .saldo-icon{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px}
@@ -284,70 +321,14 @@
     .uso-periodo{font-size:12px;color:var(--light)}
     .btn-ajustar-saldo{width:100%;padding:10px;background:transparent;border:1.5px solid var(--blue);color:var(--blue);border-radius:10px;font-size:13px;cursor:pointer;margin-top:8px;font-weight:600}
     .btn-limpar-saldo{width:100%;padding:10px;background:transparent;border:1px solid #fee2e2;color:var(--red);border-radius:10px;font-size:12px;cursor:pointer;margin-top:6px}
-
     .ajuste-bloco{margin-bottom:16px;padding:14px;background:#f8fafc;border-radius:12px;border:1px solid var(--border)}
     .ajuste-bloco h4{font-size:13px;font-weight:700;color:var(--blue);margin-bottom:10px}
     .ajuste-periodo{display:flex;gap:8px;align-items:center;margin-bottom:6px}
     .ajuste-periodo input{flex:1;padding:8px 10px;border:1.5px solid var(--border);border-radius:8px;font-size:13px}
     .ajuste-periodo .btn-remover{background:transparent;border:none;color:var(--red);cursor:pointer;font-size:16px}
     .btn-add-ajuste{padding:8px 14px;background:transparent;border:1.5px dashed var(--blue);color:var(--blue);border-radius:8px;font-size:12px;cursor:pointer;width:100%}
-
     footer{text-align:center;padding:16px;color:var(--light);font-size:11px;border-top:1px solid var(--border);margin-top:20px}
     footer strong{color:var(--blue)}
-
-    /* ═══════════════ PAINEL TV (v22.1) ═══════════════ */
-    #aba-painel{
-      background:#0f172a;color:#fff;font-family:'DM Sans',sans-serif;
-      overflow:hidden;position:relative;display:flex;flex-direction:column;
-      height:100vh;width:100vw;max-width:100vw;margin:0;padding:0;
-    }
-    .painel-wrapper{
-      width:100%;max-width:177.78vh; /* 16:9 ratio */ 
-      margin:0 auto;flex:1;display:flex;flex-direction:column;overflow:hidden;
-    }
-    .painel-header{
-      background:rgba(0,0,0,.3);padding:16px 24px;display:flex;align-items:center;
-      justify-content:space-between;border-bottom:1px solid rgba(255,255,255,0.05);flex-shrink:0;
-    }
-    .painel-header h2{font-family:'Sora',sans-serif;font-size:24px;font-weight:700;color:#e2e8f0}
-    .painel-header .grupo-badge{background:var(--blue);color:#fff;font-size:14px;padding:6px 16px;border-radius:20px;font-weight:600}
-    .painel-status{display:flex;align-items:center;gap:8px;font-size:14px;color:#94a3b8}
-    .painel-status .dot{width:10px;height:10px;background:var(--green);border-radius:50%;animation:pulse 2s infinite}
-    @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
-    
-    .painel-grid{
-      display:grid;grid-template-columns:repeat(3,1fr);grid-template-rows:repeat(2,1fr);
-      gap:24px;padding:24px;flex:1;overflow:hidden;align-content:center;
-    }
-    .painel-card{
-      background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);
-      border-left:4px solid var(--blue);border-radius:14px;padding:20px;
-      display:flex;flex-direction:column;justify-content:flex-start;
-      backdrop-filter:blur(10px);transition:all .5s ease;position:relative;
-    }
-    .painel-card.expirado{opacity:.25;border-left-color:var(--light)}
-    .painel-card.removendo{opacity:0;transform:scale(.95);pointer-events:none}
-    .painel-card-titulo{
-      font-family:'Sora',sans-serif;font-size:18px;font-weight:700;color:#e2e8f0;
-      margin-bottom:10px;line-height:1.3;display:-webkit-box;-webkit-line-clamp:2;
-      -webkit-box-orient:vertical;overflow:hidden;
-    }
-    .painel-card-data{font-size:14px;color:#94a3b8;margin-bottom:12px}
-    .painel-card-convocados{display:flex;flex-wrap:wrap;gap:6px;font-size:13px;color:#cbd5e1;line-height:1.5}
-    .painel-card-convocados span{
-      display:inline-block;background:rgba(255,255,255,0.08);padding:4px 10px;
-      border-radius:6px;font-size:13px;white-space:nowrap;
-    }
-    .painel-footer{
-      background:rgba(0,0,0,.5);padding:14px 24px;text-align:center;font-size:13px;
-      color:#94a3b8;border-top:1px solid rgba(255,255,255,0.05);flex-shrink:0;
-    }
-    .painel-footer strong{color:var(--blue)}
-    .painel-vazio{
-      display:flex;align-items:center;justify-content:center;height:100%;
-      color:#64748b;font-size:22px;text-align:center;grid-column:1/-1;grid-row:1/-1;
-    }
-
     .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:10000;display:none;align-items:center;justify-content:center;padding:20px}
     .modal-overlay.on{display:flex}
     .modal-content{background:#fff;border-radius:24px;padding:24px 20px;width:100%;max-width:380px;max-height:85dvh;overflow-y:auto;position:relative;animation:fu .3s ease}
@@ -398,20 +379,12 @@
     <div class="sec-titulo" style="margin-bottom:10px">Próxima convocação</div><div id="prox"></div>
     <div class="sec-titulo" style="margin-top:20px">Todas <span style="font-size:12px;color:var(--light)" id="total"></span></div><div id="lst-ev"><div class="skel"></div></div>
   </div>
-  
   <div id="aba-ferias" class="aba-content" style="display:none">
     <div class="banner-aviso"><span class="banner-icon">👥</span><span><strong>Aviso:</strong> Os períodos são compartilhados com o grupo.</span></div>
-    <div class="card"><div class="card-titulo">📋 Períodos do Grupo</div>
-      <button class="btn-meu-periodo" onclick="iniciarAddFerias()">+ Meu Período</button>
-      <button class="btn-para-outro" id="btn-para-outro" style="display:none" onclick="abrirSelecaoUsuario()">👤 Adicionar para outro usuário</button>
-    </div>
+    <div class="card"><div class="card-titulo">📋 Períodos do Grupo</div><button class="btn-meu-periodo" onclick="iniciarAddFerias()">+ Meu Período</button><button class="btn-para-outro" id="btn-para-outro" style="display:none" onclick="abrirSelecaoUsuario()">👤 Adicionar para outro usuário</button></div>
     <div id="lst-ausencias"></div>
   </div>
-  
-  <div id="aba-saldo" class="aba-content" style="display:none">
-    <div id="saldo-container"><div class="skel"></div></div>
-  </div>
-  
+  <div id="aba-saldo" class="aba-content" style="display:none"><div id="saldo-container"><div class="skel"></div></div></div>
   <div id="aba-painel" class="aba-content" style="display:none">
     <div class="painel-wrapper">
       <div class="painel-header">
@@ -419,12 +392,8 @@
         <div class="painel-status"><span class="dot"></span> Atualizando em tempo real</div>
         <div class="grupo-badge" id="painel-grupo-nome">—</div>
       </div>
-      <div class="painel-grid" id="painel-grid">
-        <div class="painel-vazio">Nenhuma convocação disponível no momento.</div>
-      </div>
-      <div class="painel-footer">
-        Desenvolvido por <strong>IHC Solutions</strong> — © 2026 Gestor de Convocações — v22.1
-      </div>
+      <div class="painel-grid" id="painel-grid"><div class="painel-vazio">Nenhuma convocação disponível no momento.</div></div>
+      <div class="painel-footer">Desenvolvido por <strong>IHC Solutions</strong> — © 2026 Gestor de Convocações — v22.2</div>
     </div>
   </div>
 </main>
@@ -432,28 +401,14 @@
 <button id="fab" onclick="abrirScanner()"><svg viewBox="0 0 24 24"><path d="M9 3H5a2 2 0 00-2 2v4m6-6h10a2 2 0 012 2v4M9 3v18m0 0h10a2 2 0 002-2V9M9 21H5a2 2 0 01-2-2V9m0 0h18"/></svg></button>
 <button class="btn-fab-admin" id="btn-fab-admin" onclick="abrirAdmin()">🛡️</button>
 
-<footer>
-  <p>Desenvolvido por <strong>IHC Solutions</strong></p>
-  <p>© 2026 Gestor de Convocações — v22.1</p>
-</footer>
+<footer><p>Desenvolvido por <strong>IHC Solutions</strong></p><p>© 2026 Gestor de Convocações — v22.2</p></footer>
 
-<!-- MODAIS (mantidos) -->
+<!-- MODAIS (mantidos integralmente da v22.1) -->
 <div class="overlay" id="mod-ev" onclick="if(event.target===this) fecharMod()"><div class="sheet"><div class="handle" onclick="fecharMod()"></div><input type="text" class="mod-titulo-input" id="mod-tit" placeholder="Título do evento"><input type="text" class="mod-sub-input" id="mod-sub" placeholder="Data e hora"><div class="mod-sec"><h3>Convocados <span id="admin-badge-conv" style="display:none" class="admin-badge">Admin</span></h3><div id="mod-conv"></div></div><div style="display:flex;gap:8px;margin-top:16px"><button class="btn-ag" id="mod-ag" style="flex:1;margin-top:0">📅 Agenda</button><button id="mod-trocar" style="flex:1;padding:12px;background:#fff7ed;color:#c2410c;border:1.5px solid #fed7aa;border-radius:10px;font-size:14px;cursor:pointer;font-weight:600;display:none;">🔄 Trocar</button></div><button class="btn-salvar-edicao-evento" id="mod-salvar-edicao" style="display:none" onclick="salvarEdicaoEvento()">💾 Salvar alterações</button><button class="btn-del" id="mod-del" style="display:none">🗑 Excluir</button><button class="btn-cancel" style="margin-top:10px;width:100%" onclick="fecharMod()">Fechar</button></div></div>
 <div id="trocar-ov"><div class="trocar-box"><h3>🔄 Trocar escala</h3><p id="trocar-desc"></p><div class="trocar-membros" id="trocar-lista"></div><div class="trocar-btns"><button class="btn-cancel" onclick="fecharTrocar()">Cancelar</button><button class="btn-salvar" style="background:#c2410c" id="trocar-confirmar">Confirmar</button></div></div></div>
-
 <div class="ov-center" id="ferias-consent-ov"><div class="box-center"><h3>Registrar Período</h3><p id="ferias-consent-desc">Registrar férias, licença ou abono.</p><div class="btns-row"><button class="btn-cancel" onclick="document.getElementById('ferias-consent-ov').classList.remove('on')">Cancelar</button><button class="btn-salvar" onclick="abrirFormFerias()">Continuar</button></div></div></div>
-<div class="ov-center" id="ferias-form-ov"><div class="box-center"><h3>📅 Período</h3><p id="ferias-form-para" style="font-size:12px;color:var(--purple);margin-bottom:12px;font-weight:600;display:none"></p>
-    <div class="field"><label>Tipo</label><select id="ferias-tipo" onchange="atualizarOpcoesPeriodo()"><option value="abono">Abono</option><option value="licenca">Licença Prêmio</option><option value="ferias">Férias</option></select></div>
-    <div class="field"><label>Período</label><select id="ferias-periodo-select" style="display:none"></select><input type="text" id="ferias-periodo-text" placeholder="Ex: 24/25"/></div>
-    <div class="field"><label>Dias</label><input type="number" id="ferias-dias" min="1" max="90" value="1" onchange="calcularDataTermino()" oninput="calcularDataTermino()"/></div>
-    <div class="field"><label>Início</label><input type="date" id="ferias-ini" onchange="calcularDataTermino()"/></div>
-    <div class="field"><label>Término (automático)</label><input type="date" id="ferias-fim" readonly style="background:#f8fafc;color:var(--light)"/></div>
-    <p style="font-size:11px;color:var(--red);margin-bottom:12px;display:none;" id="ferias-erro"></p>
-    <div class="btns-row"><button class="btn-cancel" onclick="document.getElementById('ferias-form-ov').classList.remove('on')">Cancelar</button><button class="btn-salvar" onclick="salvarFerias()">✓ Salvar</button></div>
-</div></div>
-
+<div class="ov-center" id="ferias-form-ov"><div class="box-center"><h3>📅 Período</h3><p id="ferias-form-para" style="font-size:12px;color:var(--purple);margin-bottom:12px;font-weight:600;display:none"></p><div class="field"><label>Tipo</label><select id="ferias-tipo" onchange="atualizarOpcoesPeriodo()"><option value="abono">Abono</option><option value="licenca">Licença Prêmio</option><option value="ferias">Férias</option></select></div><div class="field"><label>Período</label><select id="ferias-periodo-select" style="display:none"></select><input type="text" id="ferias-periodo-text" placeholder="Ex: 24/25"/></div><div class="field"><label>Dias</label><input type="number" id="ferias-dias" min="1" max="90" value="1" onchange="calcularDataTermino()" oninput="calcularDataTermino()"/></div><div class="field"><label>Início</label><input type="date" id="ferias-ini" onchange="calcularDataTermino()"/></div><div class="field"><label>Término (automático)</label><input type="date" id="ferias-fim" readonly style="background:#f8fafc;color:var(--light)"/></div><p style="font-size:11px;color:var(--red);margin-bottom:12px;display:none;" id="ferias-erro"></p><div class="btns-row"><button class="btn-cancel" onclick="document.getElementById('ferias-form-ov').classList.remove('on')">Cancelar</button><button class="btn-salvar" onclick="salvarFerias()">✓ Salvar</button></div></div></div>
 <div id="selecionar-usuario-ov"><div class="selecionar-box"><h3 style="font-family:'Sora',sans-serif;font-size:17px;font-weight:700;color:var(--purple);margin-bottom:6px;">👤 Selecionar Usuário</h3><p style="font-size:13px;color:var(--light);margin-bottom:16px;">Escolha para quem adicionar o período.</p><div class="lista-usuarios" id="lista-usuarios-ferias"></div><div class="btns-row"><button class="btn-cancel" onclick="fecharSelecaoUsuario()">Cancelar</button><button class="btn-salvar" style="background:var(--purple)" onclick="confirmarSelecaoUsuario()">✓ Selecionar</button></div></div></div>
-
 <div id="ms-ov"><div class="ms-box"><h3 id="ms-tit"></h3><p id="ms-desc"></p><div class="ms-btns"><button class="btn-cancel" onclick="document.getElementById('ms-ov').classList.remove('on')">Cancelar</button><button class="btn-salvar" id="ms-ok">Confirmar</button></div></div></div>
 <div id="perfil-ov"><div class="perfil-box"><h3>✏️ Editar perfil</h3><p>Nome completo como nos documentos.</p><div class="perfil-field"><label>Nome</label><input type="text" id="perf-nome"/></div><div class="perfil-field"><label>Cargo</label><input type="text" id="perf-cargo"/></div><div class="perfil-field"><label>Email</label><input type="email" id="perf-email"/></div><div class="perfil-btns"><button class="btn-cancel" onclick="fecharPerfil()">Cancelar</button><button class="btn-salvar" onclick="salvarPerfil()">✓ Salvar</button></div></div></div>
 <div id="editar-nome-ov"><div class="editar-nome-box"><h3 id="editar-nome-titulo">✏️ Corrigir Nome</h3><p id="editar-nome-desc"></p><div class="field"><label>Nome</label><input type="text" id="editar-nome-input"/></div><div class="field"><label>Cargo</label><input type="text" id="editar-cargo-input"/></div><div class="btns-row"><button class="btn-cancel" onclick="fecharEditarNome()">Cancelar</button><button class="btn-salvar" onclick="salvarEdicaoNome()">✓ Salvar</button></div></div></div>
@@ -464,15 +419,8 @@
 <div id="ocr-ov"><div class="ocr-spinner"></div><div class="ocr-texto" id="ocr-texto">📸 Analisando...</div><div class="ocr-barra"><div class="ocr-preenchimento" id="ocr-preenchimento"></div></div><div class="ocr-subtexto" id="ocr-subtexto"></div><div class="ocr-dica">Não feche o app</div></div>
 <div id="rv-ov"><div class="rv-hd"><button class="btn-x" onclick="fecharRv()">✕</button><h2>Conferir dados</h2></div><div class="rv-body"><div class="rv-lbl">Título</div><div class="rv-val"><input type="text" id="rv-tit"/></div><div class="rv-lbl">Data/hora</div><div class="rv-val"><input type="datetime-local" id="rv-data"/></div><div class="rv-lbl">Local</div><div class="rv-val"><input type="text" id="rv-loc"/></div><div class="rv-lbl">Convocados</div><div id="rv-matches"></div><div class="rv-btns"><button class="btn-cancel" onclick="fecharRv()">Cancelar</button><button class="btn-salvar" onclick="salvar()">✓ Salvar</button></div></div></div>
 <div class="ov-center" id="saldo-ajuste-ov"><div class="box-center"><h3>⚙️ Ajustar Saldo</h3><p style="font-size:13px;color:var(--light);margin-bottom:16px">Configure seus saldos e períodos aquisitivos.</p><div class="ajuste-bloco"><h4>🏖️ Períodos Aquisitivos de Férias</h4><div id="ajuste-periodos-ferias"></div><button class="btn-add-ajuste" onclick="adicionarPeriodoNoAjuste()">+ Adicionar período</button></div><div class="ajuste-bloco"><h4>⏱️ Abonos</h4><div class="field" style="margin-bottom:0"><label>Total de abonos disponíveis</label><input type="number" id="ajuste-abono" min="0" max="6" value="6"/></div></div><div class="ajuste-bloco"><h4>🏆 Licença Prêmio</h4><div class="field" style="margin-bottom:0"><label>Total de dias de licença prêmio</label><input type="number" id="ajuste-licenca" min="0" max="180" value="90"/></div></div><div class="btns-row"><button class="btn-cancel" onclick="fecharAjusteSaldo()">Cancelar</button><button class="btn-salvar" onclick="salvarAjusteSaldo()">💾 Salvar</button></div></div></div>
-
 <div class="modal-overlay" id="installModal">
-  <div class="modal-content">
-    <span class="close-modal" onclick="closeInstallModal()">✕</span>
-    <h2 style="color: var(--blue); margin-top: 5px; font-size: 18px; text-transform: uppercase;">Instalação do App</h2>
-    <div id="step-os"><p style="font-size:12px;color:var(--light);margin-bottom:20px;text-align:center">Selecione o seu sistema para ver como instalar gratuitamente:</p><div class="os-container"><div class="os-card" onclick="showGuide('android')"><div class="os-icon">🤖</div><div class="os-title">ANDROID</div></div><div class="os-card" onclick="showGuide('ios')"><div class="os-icon">🍎</div><div class="os-title">IPHONE</div></div></div></div>
-    <div id="guide-android" class="guide-content"><div class="guide-step"><div class="icon-wrapper">⋮</div><div>Clique nos <strong>Três Pontos</strong> no canto superior do seu navegador Chrome.</div></div><div class="guide-step"><div class="icon-wrapper">➕</div><div>Selecione a opção <strong>"Adicionar à tela inicial"</strong>.</div></div><div class="guide-step"><div class="icon-wrapper">✓</div><div>Confirme clicando em <strong>Instalar</strong>.</div></div><button class="btn-back" onclick="resetInstallModal()">← Voltar</button></div>
-    <div id="guide-ios" class="guide-content"><div class="guide-step"><div class="icon-wrapper">↗</div><div>Clique no ícone de <strong>Compartilhar</strong> na barra inferior do Safari.</div></div><div class="guide-step"><div class="icon-wrapper">➕</div><div>Role a lista e clique em <strong>"Adicionar à Tela de Início"</strong>.</div></div><div class="guide-step"><div class="icon-wrapper">✓</div><div>Confirme clicando em <strong>Adicionar</strong> no canto superior direito.</div></div><button class="btn-back" onclick="resetInstallModal()">← Voltar</button></div>
-  </div>
+  <div class="modal-content"><span class="close-modal" onclick="closeInstallModal()">✕</span><h2 style="color: var(--blue); margin-top: 5px; font-size: 18px; text-transform: uppercase;">Instalação do App</h2><div id="step-os"><p style="font-size:12px;color:var(--light);margin-bottom:20px;text-align:center">Selecione o seu sistema para ver como instalar gratuitamente:</p><div class="os-container"><div class="os-card" onclick="showGuide('android')"><div class="os-icon">🤖</div><div class="os-title">ANDROID</div></div><div class="os-card" onclick="showGuide('ios')"><div class="os-icon">🍎</div><div class="os-title">IPHONE</div></div></div></div><div id="guide-android" class="guide-content"><div class="guide-step"><div class="icon-wrapper">⋮</div><div>Clique nos <strong>Três Pontos</strong> no canto superior do seu navegador Chrome.</div></div><div class="guide-step"><div class="icon-wrapper">➕</div><div>Selecione a opção <strong>"Adicionar à tela inicial"</strong>.</div></div><div class="guide-step"><div class="icon-wrapper">✓</div><div>Confirme clicando em <strong>Instalar</strong>.</div></div><button class="btn-back" onclick="resetInstallModal()">← Voltar</button></div><div id="guide-ios" class="guide-content"><div class="guide-step"><div class="icon-wrapper">↗</div><div>Clique no ícone de <strong>Compartilhar</strong> na barra inferior do Safari.</div></div><div class="guide-step"><div class="icon-wrapper">➕</div><div>Role a lista e clique em <strong>"Adicionar à Tela de Início"</strong>.</div></div><div class="guide-step"><div class="icon-wrapper">✓</div><div>Confirme clicando em <strong>Adicionar</strong> no canto superior direito.</div></div><button class="btn-back" onclick="resetInstallModal()">← Voltar</button></div></div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
@@ -481,69 +429,50 @@
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 <script>
 try{firebase.initializeApp({apiKey:"AIzaSyAOpV5NFydHWwUwQKg0MANqMHVcXVDDqpQ",authDomain:"gestor-convocacoes-89823.firebaseapp.com",projectId:"gestor-convocacoes-89823",storageBucket:"gestor-convocacoes-89823.firebasestorage.app",messagingSenderId:"212389113483",appId:"1:212389113483:web:eb97eefe621df0cba66e8e"});}catch(e){document.getElementById('loading-screen').innerHTML='<p style="color:var(--red);padding:20px;text-align:center">Erro ao inicializar Firebase.</p>';throw e;}
-
 const auth=firebase.auth();const db=firebase.firestore();
 const EMAIL_CONFIG={publicKey:'mXZPykI5Nr2COjWr0',serviceId:'service_pam1xgd',templateId:'template_3926tbq'};
-
 let eu=null,grupoId=null,gruposUsuario=[],grupoAtivo=null,ocrDados=null,matches=[],camStream=null,eventoTroca=null,substitutoSelecionado=null,eventoAtualMod=null,nomesEditaveis=[];
 let notifAtual=null,filaNotifs=[],listaAusencias=[],membroEditando=null,saldoUsuario={ferias:[],abono:6,licenca:90};
 let toastTimeout,periodosAjuste=[],usuarioSelecionadoFerias=null,usuariosGrupo=[];
 let painelListener=null,painelCache=[],painelTimer=null;
-
 function mostrarToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');clearTimeout(toastTimeout);toastTimeout=setTimeout(()=>t.classList.remove('show'),2500);}
 function lev(a,b){if(a===b)return 0;const m=a.length,n=b.length;const dp=Array.from({length:m+1},(_,i)=>[i,...Array(n).fill(0)]);for(let j=0;j<=n;j++)dp[0][j]=j;for(let i=1;i<=m;i++)for(let j=1;j<=n;j++)dp[i][j]=a[i-1]===b[j-1]?dp[i-1][j-1]:1+Math.min(dp[i-1][j],dp[i][j-1],dp[i-1][j-1]);return dp[m][n];}
-function mostrarAba(aba,el){document.querySelectorAll('.aba-content').forEach(e=>e.style.display='none');document.getElementById('aba-'+aba).style.display='block';document.querySelectorAll('.nav-tab').forEach(e=>e.classList.remove('active'));if(el)el.classList.add('active');if(aba==='ferias'){carregarFerias();if(eu&&eu.is_admin)document.getElementById('btn-para-outro').style.display='block';}if(aba==='saldo')carregarSaldo();if(aba==='painel')iniciarPainel();}
+function mostrarAba(aba,el){
+  document.querySelectorAll('.aba-content').forEach(e=>e.style.display='none');
+  document.getElementById('aba-'+aba).style.display='block';
+  document.querySelectorAll('.nav-tab').forEach(e=>e.classList.remove('active'));
+  if(el)el.classList.add('active');
+  // Ativa/desativa modo tela cheia para o painel
+  if(aba==='painel'){document.body.classList.add('painel-ativo');iniciarPainel();}
+  else{document.body.classList.remove('painel-ativo');if(painelListener)painelListener();painelListener=null;if(painelTimer)clearInterval(painelTimer);}
+  if(aba==='ferias'){carregarFerias();if(eu&&eu.is_admin)document.getElementById('btn-para-outro').style.display='block';}
+  if(aba==='saldo')carregarSaldo();
+}
 try{emailjs.init(EMAIL_CONFIG.publicKey);}catch(e){console.warn('EmailJS init error:',e);}
-
 function iniciarPainel(){
   if(!grupoId){document.getElementById('painel-grid').innerHTML='<div class="painel-vazio">Selecione um grupo para visualizar o painel.</div>';return;}
   document.getElementById('painel-grupo-nome').textContent=grupoAtivo?grupoAtivo.nome:'—';
   if(painelListener)painelListener();
-  painelListener=db.collection('eventos').where('grupo_id','==',grupoId).onSnapshot(snap=>{
-    const eventos=snap.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>new Date(a.data_hora)-new Date(b.data_hora));
-    painelCache=eventos;localStorage.setItem('painelCache_'+grupoId,JSON.stringify(eventos));renderizarPainel(eventos);
-  },err=>{console.warn('Offline — usando cache local');const cached=localStorage.getItem('painelCache_'+grupoId);if(cached)renderizarPainel(JSON.parse(cached));});
-  if(painelTimer)clearInterval(painelTimer);
-  painelTimer=setInterval(()=>{if(painelCache.length)renderizarPainel(painelCache);},60000);
+  painelListener=db.collection('eventos').where('grupo_id','==',grupoId).onSnapshot(snap=>{const eventos=snap.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>new Date(a.data_hora)-new Date(b.data_hora));painelCache=eventos;localStorage.setItem('painelCache_'+grupoId,JSON.stringify(eventos));renderizarPainel(eventos);},err=>{console.warn('Offline — usando cache local');const cached=localStorage.getItem('painelCache_'+grupoId);if(cached)renderizarPainel(JSON.parse(cached));});
+  if(painelTimer)clearInterval(painelTimer);painelTimer=setInterval(()=>{if(painelCache.length)renderizarPainel(painelCache);},60000);
 }
-function renderizarPainel(eventos){
-  const agora=new Date();const grid=document.getElementById('painel-grid');
-  const validos=eventos.filter(ev=>{const dt=new Date(ev.data_hora);return(agora-dt)/60000<30;});
-  if(!validos.length){grid.innerHTML='<div class="painel-vazio">Nenhuma convocação disponível no momento.</div>';return;}
-  const visiveis=validos.slice(0,6);
-  grid.innerHTML=visiveis.map(ev=>{
-    const dt=new Date(ev.data_hora);const passou=dt<=agora;
-    const cls=passou?'painel-card expirado':'painel-card';
-    const nomes=(ev.lista_convocados||[]).map(n=>`<span>${n}</span>`).join('');
-    return `<div class="${cls}"><div class="painel-card-titulo">${ev.titulo_evento||'Sem título'}</div><div class="painel-card-data">📅 ${fD(dt)} · 🕐 ${fH(dt)}${ev.local?' · 📍 '+ev.local:''}</div><div class="painel-card-convocados">${nomes||'Nenhum convocado'}</div></div>`;
-  }).join('');
-}
-
-async function migrarGruposSeNecessario(){
-  if(!eu)return;const userRef=db.collection('usuarios').doc(eu.uid);const snap=await userRef.get();const data=snap.data();if(!data)return;
-  let precisaMigrar=false,grupoIdAntigo=data.grupo_id;
-  if(grupoIdAntigo){if(!data.grupos||!Array.isArray(data.grupos)||data.grupos.length===0)precisaMigrar=true;else{await userRef.update({grupo_id:firebase.firestore.FieldValue.delete()});eu.grupos=data.grupos;eu.grupo_id=null;return;}}
-  if(precisaMigrar&&grupoIdAntigo){try{const gSnap=await db.collection('grupos').doc(grupoIdAntigo).get();if(gSnap.exists){const gData=gSnap.data();const admins=gData.admins||[gData.criado_por];const isAdmin=admins.includes(eu.uid)||gData.criado_por===eu.uid;const novoGrupo={id:grupoIdAntigo,nome:gData.nome||'Meu Grupo',is_admin:isAdmin};await userRef.update({grupos:firebase.firestore.FieldValue.arrayUnion(novoGrupo),grupo_id:firebase.firestore.FieldValue.delete()});eu.grupos=[novoGrupo];eu.grupo_id=null;}else{await userRef.update({grupo_id:firebase.firestore.FieldValue.delete()});eu.grupos=[];eu.grupo_id=null;}}catch(e){console.error('Erro na migração:',e);}}else if(data.grupos){eu.grupos=data.grupos;}
-}
-function renderizarCardGrupos(){
-  const container=document.getElementById('grp-content');const badge=document.getElementById('grp-badge');
-  if(!eu.grupos||eu.grupos.length===0){badge.textContent='0';container.innerHTML=`<p style="color:var(--light);text-align:center;margin-bottom:12px">Você ainda não está em nenhum grupo.</p><div class="busca-grupo"><input type="text" id="busca-grupo-input" placeholder="Buscar grupo existente..."><button onclick="buscarGrupos()">🔍 Buscar</button></div><div class="resultados-busca" id="resultados-busca"></div><button class="btn-criar" onclick="criarGrupo()">+ Criar novo grupo</button>`;}
-  else{if(!grupoAtivo)grupoAtivo=eu.grupos[0];const totalMembros=grupoAtivo.totalMembros||'?';badge.textContent=totalMembros;const isAdmin=grupoAtivo.is_admin;container.innerHTML=`<div class="grupo-header" onclick="toggleListaGrupos()"><div class="grupo-nome">📁 ${grupoAtivo.nome}${isAdmin?'<span class="admin-badge" style="margin-left:6px">Admin</span>':''}</div><span class="seta" id="seta-grupos">▼</span></div><div class="grupo-info">${totalMembros} membro(s)</div><div class="grupo-lista-expandida" id="lista-grupos-expandida">${eu.grupos.map(g=>`<div class="grupo-item-exp ${g.id===grupoAtivo.id?'ativo':''}" onclick="selecionarGrupoAtivo('${g.id}')"><span>📁 ${g.nome} ${g.is_admin?'🛡️':''}</span><button class="btn-sair-grupo" onclick="event.stopPropagation();sairDoGrupo('${g.id}','${g.nome}')">🚪 Sair</button></div>`).join('')}</div><div class="grupo-acoes"><button class="btn-criar" style="margin-top:0;flex:1" onclick="criarGrupo()">+ Criar novo grupo</button></div><div class="busca-grupo"><input type="text" id="busca-grupo-input" placeholder="Buscar grupo existente..."><button onclick="buscarGrupos()">🔍 Buscar</button></div><div class="resultados-busca" id="resultados-busca"></div>`;}
-}
+function renderizarPainel(eventos){const agora=new Date();const grid=document.getElementById('painel-grid');const validos=eventos.filter(ev=>{const dt=new Date(ev.data_hora);return(agora-dt)/60000<30;});if(!validos.length){grid.innerHTML='<div class="painel-vazio">Nenhuma convocação disponível no momento.</div>';return;}const visiveis=validos.slice(0,6);grid.innerHTML=visiveis.map(ev=>{const dt=new Date(ev.data_hora);const passou=dt<=agora;const cls=passou?'painel-card expirado':'painel-card';const nomes=(ev.lista_convocados||[]).map(n=>`<span>${n}</span>`).join('');return `<div class="${cls}"><div class="painel-card-titulo">${ev.titulo_evento||'Sem título'}</div><div class="painel-card-data">📅 ${fD(dt)} · 🕐 ${fH(dt)}${ev.local?' · 📍 '+ev.local:''}</div><div class="painel-card-convocados">${nomes||'Nenhum convocado'}</div></div>`;}).join('');}
+// ══ DEMAIS FUNÇÕES (mantidas integralmente da v22.1) ══
+async function migrarGruposSeNecessario(){if(!eu)return;const userRef=db.collection('usuarios').doc(eu.uid);const snap=await userRef.get();const data=snap.data();if(!data)return;let precisaMigrar=false,grupoIdAntigo=data.grupo_id;if(grupoIdAntigo){if(!data.grupos||!Array.isArray(data.grupos)||data.grupos.length===0)precisaMigrar=true;else{await userRef.update({grupo_id:firebase.firestore.FieldValue.delete()});eu.grupos=data.grupos;eu.grupo_id=null;return;}}if(precisaMigrar&&grupoIdAntigo){try{const gSnap=await db.collection('grupos').doc(grupoIdAntigo).get();if(gSnap.exists){const gData=gSnap.data();const admins=gData.admins||[gData.criado_por];const isAdmin=admins.includes(eu.uid)||gData.criado_por===eu.uid;const novoGrupo={id:grupoIdAntigo,nome:gData.nome||'Meu Grupo',is_admin:isAdmin};await userRef.update({grupos:firebase.firestore.FieldValue.arrayUnion(novoGrupo),grupo_id:firebase.firestore.FieldValue.delete()});eu.grupos=[novoGrupo];eu.grupo_id=null;}else{await userRef.update({grupo_id:firebase.firestore.FieldValue.delete()});eu.grupos=[];eu.grupo_id=null;}}catch(e){console.error('Erro na migração:',e);}}else if(data.grupos){eu.grupos=data.grupos;}}
+function renderizarCardGrupos(){const container=document.getElementById('grp-content');const badge=document.getElementById('grp-badge');if(!eu.grupos||eu.grupos.length===0){badge.textContent='0';container.innerHTML=`<p style="color:var(--light);text-align:center;margin-bottom:12px">Você ainda não está em nenhum grupo.</p><div class="busca-grupo"><input type="text" id="busca-grupo-input" placeholder="Buscar grupo existente..."><button onclick="buscarGrupos()">🔍 Buscar</button></div><div class="resultados-busca" id="resultados-busca"></div><button class="btn-criar" onclick="criarGrupo()">+ Criar novo grupo</button>`;}else{if(!grupoAtivo)grupoAtivo=eu.grupos[0];const totalMembros=grupoAtivo.totalMembros||'?';badge.textContent=totalMembros;const isAdmin=grupoAtivo.is_admin;container.innerHTML=`<div class="grupo-header" onclick="toggleListaGrupos()"><div class="grupo-nome">📁 ${grupoAtivo.nome}${isAdmin?'<span class="admin-badge" style="margin-left:6px">Admin</span>':''}</div><span class="seta" id="seta-grupos">▼</span></div><div class="grupo-info">${totalMembros} membro(s)</div><div class="grupo-lista-expandida" id="lista-grupos-expandida">${eu.grupos.map(g=>`<div class="grupo-item-exp ${g.id===grupoAtivo.id?'ativo':''}" onclick="selecionarGrupoAtivo('${g.id}')"><span>📁 ${g.nome} ${g.is_admin?'🛡️':''}</span><button class="btn-sair-grupo" onclick="event.stopPropagation();sairDoGrupo('${g.id}','${g.nome}')">🚪 Sair</button></div>`).join('')}</div><div class="grupo-acoes"><button class="btn-criar" style="margin-top:0;flex:1" onclick="criarGrupo()">+ Criar novo grupo</button></div><div class="busca-grupo"><input type="text" id="busca-grupo-input" placeholder="Buscar grupo existente..."><button onclick="buscarGrupos()">🔍 Buscar</button></div><div class="resultados-busca" id="resultados-busca"></div>`;}}
 function toggleListaGrupos(){const lista=document.getElementById('lista-grupos-expandida');const seta=document.getElementById('seta-grupos');if(!lista||!seta)return;lista.classList.toggle('show');seta.classList.toggle('open');}
-async function selecionarGrupoAtivo(gId){const grupo=eu.grupos.find(g=>g.id===gId);if(!grupo)return;grupoAtivo=grupo;grupoId=gId;eu.is_admin=grupo.is_admin;document.getElementById('btn-fab-admin').classList.toggle('on',eu.is_admin);document.getElementById('btn-para-outro').style.display=eu.is_admin?'block':'none';renderizarCardGrupos();carregarEventos();carregarFerias();verificarAprovacoes();iniciarPainel();mostrarToast(`✅ Grupo ativo: ${grupo.nome}`);}
+async function selecionarGrupoAtivo(gId){const grupo=eu.grupos.find(g=>g.id===gId);if(!grupo)return;grupoAtivo=grupo;grupoId=gId;eu.is_admin=grupo.is_admin;document.getElementById('btn-fab-admin').classList.toggle('on',eu.is_admin);document.getElementById('btn-para-outro').style.display=eu.is_admin?'block':'none';renderizarCardGrupos();carregarEventos();carregarFerias();verificarAprovacoes();if(document.body.classList.contains('painel-ativo'))iniciarPainel();mostrarToast(`✅ Grupo ativo: ${grupo.nome}`);}
 async function buscarGrupos(){const termo=document.getElementById('busca-grupo-input').value.trim().toLowerCase();const container=document.getElementById('resultados-busca');if(!termo||termo.length<2){container.classList.remove('show');return;}const snap=await db.collection('grupos').get();const resultados=[];snap.forEach(doc=>{const g=doc.data();if(g.nome&&g.nome.toLowerCase().includes(termo)){const jaMembro=eu.grupos&&eu.grupos.some(x=>x.id===doc.id);resultados.push({id:doc.id,nome:g.nome,membros:g.membros||0,jaMembro});}});container.innerHTML=resultados.length===0?'<p style="padding:12px;color:var(--light);text-align:center">Nenhum grupo encontrado.</p>':resultados.map(r=>`<div class="resultado-item"><div><strong>${r.nome}</strong><br><small>${r.membros} membro(s)</small></div>${r.jaMembro?'<span class="ja-membro">✅ Já é membro</span>':`<button class="btn-solicitar" onclick="solicitarEntradaGrupo('${r.id}','${r.nome}')">Solicitar entrada</button>`}</div>`).join('');container.classList.add('show');}
 function solicitarEntradaGrupo(gId,gNome){document.getElementById('ms-tit').textContent='Entrar em '+gNome;document.getElementById('ms-desc').textContent='Você solicitará entrada neste grupo.';document.getElementById('ms-ov').classList.add('on');document.getElementById('ms-ok').onclick=async()=>{await db.collection('usuarios').doc(eu.uid).update({grupos:firebase.firestore.FieldValue.arrayUnion({id:gId,nome:gNome,is_admin:false})});const s=await db.collection('grupos').doc(gId).get();await db.collection('grupos').doc(gId).update({membros:(s.data().membros||0)+1});if(!eu.grupos)eu.grupos=[];eu.grupos.push({id:gId,nome:gNome,is_admin:false});if(!grupoAtivo){grupoAtivo=eu.grupos[0];grupoId=gId;}document.getElementById('ms-ov').classList.remove('on');document.getElementById('resultados-busca').classList.remove('show');renderizarCardGrupos();carregarEventos();mostrarToast('✅ Entrada solicitada!');};}
-async function criarGrupo(){const n=prompt('Nome do grupo:');if(!n||!n.trim())return;const nome=n.trim();const ref=await db.collection('grupos').add({nome,criado_por:eu.uid,criado_em:firebase.firestore.FieldValue.serverTimestamp(),membros:1,admins:[eu.uid]});const novoGrupo={id:ref.id,nome,is_admin:true};if(!eu.grupos)eu.grupos=[];eu.grupos.push(novoGrupo);await db.collection('usuarios').doc(eu.uid).update({grupos:eu.grupos,is_admin:true});grupoAtivo=novoGrupo;grupoId=ref.id;eu.is_admin=true;document.getElementById('btn-fab-admin').classList.add('on');document.getElementById('btn-para-outro').style.display='block';renderizarCardGrupos();carregarEventos();iniciarPainel();mostrarToast('✅ Grupo criado!');}
+async function criarGrupo(){const n=prompt('Nome do grupo:');if(!n||!n.trim())return;const nome=n.trim();const ref=await db.collection('grupos').add({nome,criado_por:eu.uid,criado_em:firebase.firestore.FieldValue.serverTimestamp(),membros:1,admins:[eu.uid]});const novoGrupo={id:ref.id,nome,is_admin:true};if(!eu.grupos)eu.grupos=[];eu.grupos.push(novoGrupo);await db.collection('usuarios').doc(eu.uid).update({grupos:eu.grupos,is_admin:true});grupoAtivo=novoGrupo;grupoId=ref.id;eu.is_admin=true;document.getElementById('btn-fab-admin').classList.add('on');document.getElementById('btn-para-outro').style.display='block';renderizarCardGrupos();carregarEventos();if(document.body.classList.contains('painel-ativo'))iniciarPainel();mostrarToast('✅ Grupo criado!');}
 async function sairDoGrupo(gId,gNome){if(!confirm(`Sair do grupo "${gNome}"?`))return;const grupo=eu.grupos.find(g=>g.id===gId);if(!grupo)return;const gSnap=await db.collection('grupos').doc(gId).get();if(!gSnap.exists){removerGrupoLocal(gId);return;}const gData=gSnap.data();const admins=gData.admins||[gData.criado_por];const membrosAtuais=gData.membros||1;if(membrosAtuais<=1){await db.collection('grupos').doc(gId).delete();removerGrupoLocal(gId);mostrarToast('✅ Grupo excluído (era o único membro).');return;}if(grupo.is_admin&&admins.filter(a=>eu.grupos.some(g=>g.id===a||a===eu.uid)).length<=1){mostrarToast('⚠️ Promova outro administrador antes de sair.');return;}await db.collection('usuarios').doc(eu.uid).update({grupos:eu.grupos.filter(g=>g.id!==gId)});await db.collection('grupos').doc(gId).update({membros:Math.max(0,membrosAtuais-1)});if(grupo.is_admin){const novosAdmins=admins.filter(a=>a!==eu.uid);await db.collection('grupos').doc(gId).update({admins:novosAdmins});}removerGrupoLocal(gId);mostrarToast('✅ Você saiu do grupo.');}
-function removerGrupoLocal(gId){eu.grupos=eu.grupos.filter(g=>g.id!==gId);if(grupoAtivo&&grupoAtivo.id===gId){grupoAtivo=eu.grupos.length>0?eu.grupos[0]:null;grupoId=grupoAtivo?grupoAtivo.id:null;eu.is_admin=grupoAtivo?grupoAtivo.is_admin:false;document.getElementById('btn-fab-admin').classList.toggle('on',eu.is_admin);}renderizarCardGrupos();if(grupoId){carregarEventos();iniciarPainel();}else{document.getElementById('lst-ev').innerHTML='<p style="color:var(--light);padding:20px;text-align:center">Entre em um grupo para ver convocações.</p>';document.getElementById('prox').innerHTML='<div class="card-vazio">Entre em um grupo para ver suas convocações.</div>';if(painelListener)painelListener();painelListener=null;document.getElementById('painel-grid').innerHTML='<div class="painel-vazio">Selecione um grupo para visualizar o painel.</div>';}}
-
+function removerGrupoLocal(gId){eu.grupos=eu.grupos.filter(g=>g.id!==gId);if(grupoAtivo&&grupoAtivo.id===gId){grupoAtivo=eu.grupos.length>0?eu.grupos[0]:null;grupoId=grupoAtivo?grupoAtivo.id:null;eu.is_admin=grupoAtivo?grupoAtivo.is_admin:false;document.getElementById('btn-fab-admin').classList.toggle('on',eu.is_admin);}renderizarCardGrupos();if(grupoId){carregarEventos();if(document.body.classList.contains('painel-ativo'))iniciarPainel();}else{document.getElementById('lst-ev').innerHTML='<p style="color:var(--light);padding:20px;text-align:center">Entre em um grupo para ver convocações.</p>';document.getElementById('prox').innerHTML='<div class="card-vazio">Entre em um grupo para ver suas convocações.</div>';if(painelListener)painelListener();painelListener=null;document.getElementById('painel-grid').innerHTML='<div class="painel-vazio">Selecione um grupo para visualizar o painel.</div>';}}
 let authTimeout;const loadingScreen=document.getElementById('loading-screen');const loadingError=document.getElementById('loading-error');
 function mostrarErroTela(msg){if(loadingError){loadingError.textContent=msg;loadingError.style.display='block';}}
 function redirecionarLogin(){if(loadingScreen.style.display!=='none')loadingScreen.style.display='none';window.location.replace('login.html');}
 authTimeout=setTimeout(()=>{mostrarErroTela('Tempo limite excedido. Redirecionando...');setTimeout(redirecionarLogin,2000);},10000);
-try{auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL).then(()=>{auth.onAuthStateChanged(async user=>{clearTimeout(authTimeout);loadingScreen.style.display='none';if(!user){window.location.replace('login.html');return;}try{const snap=await db.collection('usuarios').doc(user.uid).get();if(!snap.exists){window.location.replace('login.html');return;}eu={uid:user.uid,...snap.data()};document.getElementById('h-user').textContent=eu.nome_completo+' · '+eu.cargo;await migrarGruposSeNecessario();const snap2=await db.collection('usuarios').doc(user.uid).get();eu={uid:user.uid,...snap2.data()};gruposUsuario=eu.grupos||[];if(gruposUsuario.length>0){grupoAtivo=gruposUsuario[0];grupoId=grupoAtivo.id;eu.is_admin=grupoAtivo.is_admin;}document.getElementById('btn-fab-admin').classList.toggle('on',eu.is_admin);document.getElementById('btn-para-outro').style.display=eu.is_admin?'block':'none';verificarInstalacao();iniciarNotificacoes();renderizarCardGrupos();if(grupoId){carregarEventos();verificarAprovacoes();verificarNotificacoesPendentes();iniciarVerificacaoLembretes();iniciarPainel();}else{document.getElementById('lst-ev').innerHTML='<p style="color:var(--light);padding:20px;text-align:center">Entre em um grupo para ver convocações.</p>';document.getElementById('prox').innerHTML='<div class="card-vazio">Entre em um grupo para ver suas convocações.</div>';}verificarCadastroCompleto();limparEventosAntigos();}catch(err){console.error('Erro ao carregar dados:',err);mostrarToast('⚠️ Erro de conexão. Tente recarregar.');}});}).catch(e=>{console.error('Persistence error:',e);clearTimeout(authTimeout);mostrarErroTela('Erro de configuração. Redirecionando...');setTimeout(redirecionarLogin,3000);});}catch(e){console.error('Auth setup error:',e);clearTimeout(authTimeout);mostrarErroTela('Erro crítico. Redirecionando...');setTimeout(redirecionarLogin,3000);}
-
+try{auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL).then(()=>{auth.onAuthStateChanged(async user=>{clearTimeout(authTimeout);loadingScreen.style.display='none';if(!user){window.location.replace('login.html');return;}try{const snap=await db.collection('usuarios').doc(user.uid).get();if(!snap.exists){window.location.replace('login.html');return;}eu={uid:user.uid,...snap.data()};document.getElementById('h-user').textContent=eu.nome_completo+' · '+eu.cargo;await migrarGruposSeNecessario();const snap2=await db.collection('usuarios').doc(user.uid).get();eu={uid:user.uid,...snap2.data()};gruposUsuario=eu.grupos||[];if(gruposUsuario.length>0){grupoAtivo=gruposUsuario[0];grupoId=grupoAtivo.id;eu.is_admin=grupoAtivo.is_admin;}document.getElementById('btn-fab-admin').classList.toggle('on',eu.is_admin);document.getElementById('btn-para-outro').style.display=eu.is_admin?'block':'none';verificarInstalacao();iniciarNotificacoes();renderizarCardGrupos();if(grupoId){carregarEventos();verificarAprovacoes();verificarNotificacoesPendentes();iniciarVerificacaoLembretes();}else{document.getElementById('lst-ev').innerHTML='<p style="color:var(--light);padding:20px;text-align:center">Entre em um grupo para ver convocações.</p>';document.getElementById('prox').innerHTML='<div class="card-vazio">Entre em um grupo para ver suas convocações.</div>';}verificarCadastroCompleto();limparEventosAntigos();}catch(err){console.error('Erro ao carregar dados:',err);mostrarToast('⚠️ Erro de conexão. Tente recarregar.');}});}).catch(e=>{console.error('Persistence error:',e);clearTimeout(authTimeout);mostrarErroTela('Erro de configuração. Redirecionando...');setTimeout(redirecionarLogin,3000);});}catch(e){console.error('Auth setup error:',e);clearTimeout(authTimeout);mostrarErroTela('Erro crítico. Redirecionando...');setTimeout(redirecionarLogin,3000);}
+// ══ TODAS AS DEMAIS FUNÇÕES (idênticas à v22.1) ══
 async function limparEventosAntigos(){if(!grupoId)return;const agora=new Date();const seteDiasAtras=new Date(agora);seteDiasAtras.setDate(seteDiasAtras.getDate()-7);try{const snap=await db.collection('eventos').where('grupo_id','==',grupoId).get();const evs=snap.docs.filter(d=>{const e=d.data();return e.data_hora&&new Date(e.data_hora)<seteDiasAtras;});for(const ev of evs)await ev.ref.delete();}catch(e){}}
 function verificarCadastroCompleto(){if(!eu)return false;if(!eu.nome_completo||eu.nome_completo.trim().length<5||!eu.cargo){document.getElementById('cadastro-nome').value=eu.nome_completo||'';document.getElementById('cadastro-cargo').value=eu.cargo||'';document.getElementById('cadastro-email').value=eu.email||'';document.getElementById('completar-cadastro-ov').classList.add('on');return false;}if(eu.nome_completo.trim().split(/\s+/).length<2){document.getElementById('cadastro-nome').value=eu.nome_completo||'';document.getElementById('cadastro-cargo').value=eu.cargo||'';document.getElementById('cadastro-email').value=eu.email||'';document.getElementById('cadastro-erro').textContent='⚠️ Informe nome e sobrenome';document.getElementById('cadastro-erro').style.display='block';document.getElementById('completar-cadastro-ov').classList.add('on');return false;}return true;}
 async function completarCadastro(){const nome=document.getElementById('cadastro-nome').value.trim();const cargo=document.getElementById('cadastro-cargo').value.trim();const email=document.getElementById('cadastro-email').value.trim();const erroEl=document.getElementById('cadastro-erro');if(!nome||nome.length<3){erroEl.textContent='⚠️ Informe seu nome completo';erroEl.style.display='block';return;}const palavras=nome.split(/\s+/);if(palavras.length<2){erroEl.textContent='⚠️ Por favor, informe nome e sobrenome';erroEl.style.display='block';return;}if(!cargo||cargo.length<2){erroEl.textContent='⚠️ Informe seu cargo';erroEl.style.display='block';return;}try{await db.collection('usuarios').doc(eu.uid).update({nome_completo:nome,cargo:cargo,email:email||null,nomes_conhecidos:firebase.firestore.FieldValue.arrayUnion(nome)});eu.nome_completo=nome;eu.cargo=cargo;eu.email=email;document.getElementById('h-user').textContent=nome+' · '+cargo;document.getElementById('completar-cadastro-ov').classList.remove('on');mostrarToast('✅ Cadastro atualizado!');if(grupoId)carregarEventos();renderizarCardGrupos();}catch(error){console.error('Erro ao salvar:',error);erroEl.textContent='Erro ao salvar. Tente novamente.';erroEl.style.display='block';}}
