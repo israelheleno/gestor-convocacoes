@@ -363,7 +363,7 @@
 
 <footer>
   <p>Desenvolvido por <strong>IHC Solutions</strong></p>
-  <p>© 2026 Gestor de Convocações — v21.6</p>
+  <p>© 2026 Gestor de Convocações — v21.7</p>
 </footer>
 
 <div class="overlay" id="mod-ev" onclick="if(event.target===this) fecharMod()"><div class="sheet"><div class="handle" onclick="fecharMod()"></div><input type="text" class="mod-titulo-input" id="mod-tit" placeholder="Título do evento"><input type="text" class="mod-sub-input" id="mod-sub" placeholder="Data e hora"><div class="mod-sec"><h3>Convocados <span id="admin-badge-conv" style="display:none" class="admin-badge">Admin</span></h3><div id="mod-conv"></div></div><div style="display:flex;gap:8px;margin-top:16px"><button class="btn-ag" id="mod-ag" style="flex:1;margin-top:0">📅 Agenda</button><button id="mod-trocar" style="flex:1;padding:12px;background:#fff7ed;color:#c2410c;border:1.5px solid #fed7aa;border-radius:10px;font-size:14px;cursor:pointer;font-weight:600;display:none;">🔄 Trocar</button></div><button class="btn-salvar-edicao-evento" id="mod-salvar-edicao" style="display:none" onclick="salvarEdicaoEvento()">💾 Salvar alterações</button><button class="btn-del" id="mod-del" style="display:none">🗑 Excluir</button><button class="btn-cancel" style="margin-top:10px;width:100%" onclick="fecharMod()">Fechar</button></div></div>
@@ -436,14 +436,8 @@ async function migrarGruposSeNecessario(){
   let precisaMigrar=false;
   let grupoIdAntigo=data.grupo_id;
   if(grupoIdAntigo){
-    if(!data.grupos||!Array.isArray(data.grupos)||data.grupos.length===0){
-      precisaMigrar=true;
-    }else{
-      await userRef.update({grupo_id:firebase.firestore.FieldValue.delete()});
-      eu.grupos=data.grupos;
-      eu.grupo_id=null;
-      return;
-    }
+    if(!data.grupos||!Array.isArray(data.grupos)||data.grupos.length===0){precisaMigrar=true;}
+    else{await userRef.update({grupo_id:firebase.firestore.FieldValue.delete()});eu.grupos=data.grupos;eu.grupo_id=null;return;}
   }
   if(precisaMigrar&&grupoIdAntigo){
     try{
@@ -453,21 +447,11 @@ async function migrarGruposSeNecessario(){
         const admins=gData.admins||[gData.criado_por];
         const isAdmin=admins.includes(eu.uid)||gData.criado_por===eu.uid;
         const novoGrupo={id:grupoIdAntigo,nome:gData.nome||'Meu Grupo',is_admin:isAdmin};
-        await userRef.update({
-          grupos:firebase.firestore.FieldValue.arrayUnion(novoGrupo),
-          grupo_id:firebase.firestore.FieldValue.delete()
-        });
-        eu.grupos=[novoGrupo];
-        eu.grupo_id=null;
-      }else{
-        await userRef.update({grupo_id:firebase.firestore.FieldValue.delete()});
-        eu.grupos=[];
-        eu.grupo_id=null;
-      }
+        await userRef.update({grupos:firebase.firestore.FieldValue.arrayUnion(novoGrupo),grupo_id:firebase.firestore.FieldValue.delete()});
+        eu.grupos=[novoGrupo];eu.grupo_id=null;
+      }else{await userRef.update({grupo_id:firebase.firestore.FieldValue.delete()});eu.grupos=[];eu.grupo_id=null;}
     }catch(e){console.error('Erro na migração:',e);}
-  }else if(data.grupos){
-    eu.grupos=data.grupos;
-  }
+  }else if(data.grupos){eu.grupos=data.grupos;}
 }
 
 function renderizarCardGrupos(){
@@ -477,10 +461,7 @@ function renderizarCardGrupos(){
     badge.textContent='0';
     container.innerHTML=`
       <p style="color:var(--light);text-align:center;margin-bottom:12px">Você ainda não está em nenhum grupo.</p>
-      <div class="busca-grupo">
-        <input type="text" id="busca-grupo-input" placeholder="Buscar grupo existente...">
-        <button onclick="buscarGrupos()">🔍 Buscar</button>
-      </div>
+      <div class="busca-grupo"><input type="text" id="busca-grupo-input" placeholder="Buscar grupo existente..."><button onclick="buscarGrupos()">🔍 Buscar</button></div>
       <div class="resultados-busca" id="resultados-busca"></div>
       <button class="btn-criar" onclick="criarGrupo()">+ Criar novo grupo</button>`;
   }else{
@@ -490,87 +471,37 @@ function renderizarCardGrupos(){
     const isAdmin=grupoAtivo.is_admin;
     container.innerHTML=`
       <div class="grupo-header" onclick="toggleListaGrupos()">
-        <div class="grupo-nome">
-          📁 ${grupoAtivo.nome}
-          ${isAdmin?'<span class="admin-badge" style="margin-left:6px">Admin</span>':''}
-        </div>
+        <div class="grupo-nome">📁 ${grupoAtivo.nome}${isAdmin?'<span class="admin-badge" style="margin-left:6px">Admin</span>':''}</div>
         <span class="seta" id="seta-grupos">▼</span>
       </div>
       <div class="grupo-info">${totalMembros} membro(s)</div>
       <div class="grupo-lista-expandida" id="lista-grupos-expandida">
-        ${eu.grupos.map(g=>`
-          <div class="grupo-item-exp ${g.id===grupoAtivo.id?'ativo':''}" onclick="selecionarGrupoAtivo('${g.id}')">
-            <span>📁 ${g.nome} ${g.is_admin?'🛡️':''}</span>
-            <button class="btn-sair-grupo" onclick="event.stopPropagation();sairDoGrupo('${g.id}','${g.nome}')">🚪 Sair</button>
-          </div>`).join('')}
+        ${eu.grupos.map(g=>`<div class="grupo-item-exp ${g.id===grupoAtivo.id?'ativo':''}" onclick="selecionarGrupoAtivo('${g.id}')"><span>📁 ${g.nome} ${g.is_admin?'🛡️':''}</span><button class="btn-sair-grupo" onclick="event.stopPropagation();sairDoGrupo('${g.id}','${g.nome}')">🚪 Sair</button></div>`).join('')}
       </div>
-      <div class="grupo-acoes">
-        <button class="btn-criar" style="margin-top:0;flex:1" onclick="criarGrupo()">+ Criar novo grupo</button>
-      </div>
-      <div class="busca-grupo">
-        <input type="text" id="busca-grupo-input" placeholder="Buscar grupo existente...">
-        <button onclick="buscarGrupos()">🔍 Buscar</button>
-      </div>
+      <div class="grupo-acoes"><button class="btn-criar" style="margin-top:0;flex:1" onclick="criarGrupo()">+ Criar novo grupo</button></div>
+      <div class="busca-grupo"><input type="text" id="busca-grupo-input" placeholder="Buscar grupo existente..."><button onclick="buscarGrupos()">🔍 Buscar</button></div>
       <div class="resultados-busca" id="resultados-busca"></div>`;
   }
 }
 
-function toggleListaGrupos(){
-  const lista=document.getElementById('lista-grupos-expandida');
-  const seta=document.getElementById('seta-grupos');
-  if(!lista||!seta)return;
-  lista.classList.toggle('show');
-  seta.classList.toggle('open');
-}
-
-async function selecionarGrupoAtivo(gId){
-  const grupo=eu.grupos.find(g=>g.id===gId);
-  if(!grupo)return;
-  grupoAtivo=grupo;
-  grupoId=gId;
-  eu.is_admin=grupo.is_admin;
-  document.getElementById('btn-fab-admin').classList.toggle('on',eu.is_admin);
-  document.getElementById('btn-para-outro').style.display=eu.is_admin?'block':'none';
-  renderizarCardGrupos();
-  carregarEventos();
-  carregarFerias();
-  verificarAprovacoes();
-  mostrarToast(`✅ Grupo ativo: ${grupo.nome}`);
-}
-
+function toggleListaGrupos(){const lista=document.getElementById('lista-grupos-expandida');const seta=document.getElementById('seta-grupos');if(!lista||!seta)return;lista.classList.toggle('show');seta.classList.toggle('open');}
+async function selecionarGrupoAtivo(gId){const grupo=eu.grupos.find(g=>g.id===gId);if(!grupo)return;grupoAtivo=grupo;grupoId=gId;eu.is_admin=grupo.is_admin;document.getElementById('btn-fab-admin').classList.toggle('on',eu.is_admin);document.getElementById('btn-para-outro').style.display=eu.is_admin?'block':'none';renderizarCardGrupos();carregarEventos();carregarFerias();verificarAprovacoes();mostrarToast(`✅ Grupo ativo: ${grupo.nome}`);}
 async function buscarGrupos(){
   const termo=document.getElementById('busca-grupo-input').value.trim().toLowerCase();
   const container=document.getElementById('resultados-busca');
   if(!termo||termo.length<2){container.classList.remove('show');return;}
   const snap=await db.collection('grupos').get();
   const resultados=[];
-  snap.forEach(doc=>{
-    const g=doc.data();
-    if(g.nome&&g.nome.toLowerCase().includes(termo)){
-      const jaMembro=eu.grupos&&eu.grupos.some(x=>x.id===doc.id);
-      resultados.push({id:doc.id,nome:g.nome,membros:g.membros||0,jaMembro});
-    }
-  });
-  if(resultados.length===0){
-    container.innerHTML='<p style="padding:12px;color:var(--light);text-align:center">Nenhum grupo encontrado.</p>';
-  }else{
-    container.innerHTML=resultados.map(r=>`
-      <div class="resultado-item">
-        <div><strong>${r.nome}</strong><br><small>${r.membros} membro(s)</small></div>
-        ${r.jaMembro?'<span class="ja-membro">✅ Já é membro</span>':`<button class="btn-solicitar" onclick="solicitarEntradaGrupo('${r.id}','${r.nome}')">Solicitar entrada</button>`}
-      </div>`).join('');
-  }
+  snap.forEach(doc=>{const g=doc.data();if(g.nome&&g.nome.toLowerCase().includes(termo)){const jaMembro=eu.grupos&&eu.grupos.some(x=>x.id===doc.id);resultados.push({id:doc.id,nome:g.nome,membros:g.membros||0,jaMembro});}});
+  container.innerHTML=resultados.length===0?'<p style="padding:12px;color:var(--light);text-align:center">Nenhum grupo encontrado.</p>':resultados.map(r=>`<div class="resultado-item"><div><strong>${r.nome}</strong><br><small>${r.membros} membro(s)</small></div>${r.jaMembro?'<span class="ja-membro">✅ Já é membro</span>':`<button class="btn-solicitar" onclick="solicitarEntradaGrupo('${r.id}','${r.nome}')">Solicitar entrada</button>`}</div>`).join('');
   container.classList.add('show');
 }
-
 function solicitarEntradaGrupo(gId,gNome){
   document.getElementById('ms-tit').textContent='Entrar em '+gNome;
   document.getElementById('ms-desc').textContent='Você solicitará entrada neste grupo.';
   document.getElementById('ms-ov').classList.add('on');
   document.getElementById('ms-ok').onclick=async()=>{
-    await db.collection('usuarios').doc(eu.uid).update({
-      grupos:firebase.firestore.FieldValue.arrayUnion({id:gId,nome:gNome,is_admin:false})
-    });
+    await db.collection('usuarios').doc(eu.uid).update({grupos:firebase.firestore.FieldValue.arrayUnion({id:gId,nome:gNome,is_admin:false})});
     const s=await db.collection('grupos').doc(gId).get();
     await db.collection('grupos').doc(gId).update({membros:(s.data().membros||0)+1});
     if(!eu.grupos)eu.grupos=[];
@@ -578,12 +509,10 @@ function solicitarEntradaGrupo(gId,gNome){
     if(!grupoAtivo){grupoAtivo=eu.grupos[0];grupoId=gId;}
     document.getElementById('ms-ov').classList.remove('on');
     document.getElementById('resultados-busca').classList.remove('show');
-    renderizarCardGrupos();
-    carregarEventos();
+    renderizarCardGrupos();carregarEventos();
     mostrarToast('✅ Entrada solicitada!');
   };
 }
-
 async function criarGrupo(){
   const n=prompt('Nome do grupo:');
   if(!n||!n.trim())return;
@@ -593,16 +522,12 @@ async function criarGrupo(){
   if(!eu.grupos)eu.grupos=[];
   eu.grupos.push(novoGrupo);
   await db.collection('usuarios').doc(eu.uid).update({grupos:eu.grupos,is_admin:true});
-  grupoAtivo=novoGrupo;
-  grupoId=ref.id;
-  eu.is_admin=true;
+  grupoAtivo=novoGrupo;grupoId=ref.id;eu.is_admin=true;
   document.getElementById('btn-fab-admin').classList.add('on');
   document.getElementById('btn-para-outro').style.display='block';
-  renderizarCardGrupos();
-  carregarEventos();
+  renderizarCardGrupos();carregarEventos();
   mostrarToast('✅ Grupo criado!');
 }
-
 async function sairDoGrupo(gId,gNome){
   if(!confirm(`Sair do grupo "${gNome}"?`))return;
   const grupo=eu.grupos.find(g=>g.id===gId);
@@ -612,34 +537,17 @@ async function sairDoGrupo(gId,gNome){
   const gData=gSnap.data();
   const admins=gData.admins||[gData.criado_por];
   const membrosAtuais=gData.membros||1;
-  if(membrosAtuais<=1){
-    await db.collection('grupos').doc(gId).delete();
-    removerGrupoLocal(gId);
-    mostrarToast('✅ Grupo excluído (era o único membro).');
-    return;
-  }
-  if(grupo.is_admin&&admins.filter(a=>eu.grupos.some(g=>g.id===a||a===eu.uid)).length<=1){
-    mostrarToast('⚠️ Promova outro administrador antes de sair.');
-    return;
-  }
+  if(membrosAtuais<=1){await db.collection('grupos').doc(gId).delete();removerGrupoLocal(gId);mostrarToast('✅ Grupo excluído (era o único membro).');return;}
+  if(grupo.is_admin&&admins.filter(a=>eu.grupos.some(g=>g.id===a||a===eu.uid)).length<=1){mostrarToast('⚠️ Promova outro administrador antes de sair.');return;}
   await db.collection('usuarios').doc(eu.uid).update({grupos:eu.grupos.filter(g=>g.id!==gId)});
   await db.collection('grupos').doc(gId).update({membros:Math.max(0,membrosAtuais-1)});
-  if(grupo.is_admin){
-    const novosAdmins=admins.filter(a=>a!==eu.uid);
-    await db.collection('grupos').doc(gId).update({admins:novosAdmins});
-  }
+  if(grupo.is_admin){const novosAdmins=admins.filter(a=>a!==eu.uid);await db.collection('grupos').doc(gId).update({admins:novosAdmins});}
   removerGrupoLocal(gId);
   mostrarToast('✅ Você saiu do grupo.');
 }
-
 function removerGrupoLocal(gId){
   eu.grupos=eu.grupos.filter(g=>g.id!==gId);
-  if(grupoAtivo&&grupoAtivo.id===gId){
-    grupoAtivo=eu.grupos.length>0?eu.grupos[0]:null;
-    grupoId=grupoAtivo?grupoAtivo.id:null;
-    eu.is_admin=grupoAtivo?grupoAtivo.is_admin:false;
-    document.getElementById('btn-fab-admin').classList.toggle('on',eu.is_admin);
-  }
+  if(grupoAtivo&&grupoAtivo.id===gId){grupoAtivo=eu.grupos.length>0?eu.grupos[0]:null;grupoId=grupoAtivo?grupoAtivo.id:null;eu.is_admin=grupoAtivo?grupoAtivo.is_admin:false;document.getElementById('btn-fab-admin').classList.toggle('on',eu.is_admin);}
   renderizarCardGrupos();
   if(grupoId)carregarEventos();else{
     document.getElementById('lst-ev').innerHTML='<p style="color:var(--light);padding:20px;text-align:center">Entre em um grupo para ver convocações.</p>';
@@ -650,17 +558,14 @@ function removerGrupoLocal(gId){
 let authTimeout;
 const loadingScreen=document.getElementById('loading-screen');
 const loadingError=document.getElementById('loading-error');
-
 function mostrarErroTela(msg){if(loadingError){loadingError.textContent=msg;loadingError.style.display='block';}}
 function redirecionarLogin(){if(loadingScreen.style.display!=='none')loadingScreen.style.display='none';window.location.replace('login.html');}
-
 authTimeout=setTimeout(()=>{mostrarErroTela('Tempo limite excedido. Redirecionando...');setTimeout(redirecionarLogin,2000);},10000);
 
 try{
   auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL).then(()=>{
     auth.onAuthStateChanged(async user=>{
-      clearTimeout(authTimeout);
-      loadingScreen.style.display='none';
+      clearTimeout(authTimeout);loadingScreen.style.display='none';
       if(!user){window.location.replace('login.html');return;}
       try{
         const snap=await db.collection('usuarios').doc(user.uid).get();
@@ -671,11 +576,7 @@ try{
         const snap2=await db.collection('usuarios').doc(user.uid).get();
         eu={uid:user.uid,...snap2.data()};
         gruposUsuario=eu.grupos||[];
-        if(gruposUsuario.length>0){
-          grupoAtivo=gruposUsuario[0];
-          grupoId=grupoAtivo.id;
-          eu.is_admin=grupoAtivo.is_admin;
-        }
+        if(gruposUsuario.length>0){grupoAtivo=gruposUsuario[0];grupoId=grupoAtivo.id;eu.is_admin=grupoAtivo.is_admin;}
         document.getElementById('btn-fab-admin').classList.toggle('on',eu.is_admin);
         document.getElementById('btn-para-outro').style.display=eu.is_admin?'block':'none';
         verificarInstalacao();iniciarNotificacoes();
@@ -688,25 +589,13 @@ try{
   }).catch(e=>{console.error('Persistence error:',e);clearTimeout(authTimeout);mostrarErroTela('Erro de configuração. Redirecionando...');setTimeout(redirecionarLogin,3000);});
 }catch(e){console.error('Auth setup error:',e);clearTimeout(authTimeout);mostrarErroTela('Erro crítico. Redirecionando...');setTimeout(redirecionarLogin,3000);}
 
-async function limparEventosAntigos(){
-  if(!grupoId)return;const agora=new Date();const seteDiasAtras=new Date(agora);seteDiasAtras.setDate(seteDiasAtras.getDate()-7);
-  try{const snap=await db.collection('eventos').where('grupo_id','==',grupoId).get();const evs=snap.docs.filter(d=>{const e=d.data();return e.data_hora&&new Date(e.data_hora)<seteDiasAtras;});for(const ev of evs)await ev.ref.delete();}catch(e){}
-}
-
+async function limparEventosAntigos(){if(!grupoId)return;const agora=new Date();const seteDiasAtras=new Date(agora);seteDiasAtras.setDate(seteDiasAtras.getDate()-7);try{const snap=await db.collection('eventos').where('grupo_id','==',grupoId).get();const evs=snap.docs.filter(d=>{const e=d.data();return e.data_hora&&new Date(e.data_hora)<seteDiasAtras;});for(const ev of evs)await ev.ref.delete();}catch(e){}}
 function verificarCadastroCompleto(){
   if(!eu)return false;
-  if(!eu.nome_completo||eu.nome_completo.trim().length<5||!eu.cargo){
-    document.getElementById('cadastro-nome').value=eu.nome_completo||'';document.getElementById('cadastro-cargo').value=eu.cargo||'';document.getElementById('cadastro-email').value=eu.email||'';
-    document.getElementById('completar-cadastro-ov').classList.add('on');return false;
-  }
-  if(eu.nome_completo.trim().split(/\s+/).length<2){
-    document.getElementById('cadastro-nome').value=eu.nome_completo||'';document.getElementById('cadastro-cargo').value=eu.cargo||'';document.getElementById('cadastro-email').value=eu.email||'';
-    document.getElementById('cadastro-erro').textContent='⚠️ Informe nome e sobrenome';document.getElementById('cadastro-erro').style.display='block';
-    document.getElementById('completar-cadastro-ov').classList.add('on');return false;
-  }
+  if(!eu.nome_completo||eu.nome_completo.trim().length<5||!eu.cargo){document.getElementById('cadastro-nome').value=eu.nome_completo||'';document.getElementById('cadastro-cargo').value=eu.cargo||'';document.getElementById('cadastro-email').value=eu.email||'';document.getElementById('completar-cadastro-ov').classList.add('on');return false;}
+  if(eu.nome_completo.trim().split(/\s+/).length<2){document.getElementById('cadastro-nome').value=eu.nome_completo||'';document.getElementById('cadastro-cargo').value=eu.cargo||'';document.getElementById('cadastro-email').value=eu.email||'';document.getElementById('cadastro-erro').textContent='⚠️ Informe nome e sobrenome';document.getElementById('cadastro-erro').style.display='block';document.getElementById('completar-cadastro-ov').classList.add('on');return false;}
   return true;
 }
-
 async function completarCadastro(){
   const nome=document.getElementById('cadastro-nome').value.trim();
   const cargo=document.getElementById('cadastro-cargo').value.trim();
@@ -727,12 +616,7 @@ async function completarCadastro(){
   }catch(error){console.error('Erro ao salvar:',error);erroEl.textContent='Erro ao salvar. Tente novamente.';erroEl.style.display='block';}
 }
 
-async function sincronizarSaldo(){
-  const snap=await db.collection('usuarios').doc(eu.uid).get();const data=snap.data();
-  if(data.saldo&&data.saldo.usos){await db.collection('usuarios').doc(eu.uid).update({'saldo.usos':firebase.firestore.FieldValue.delete()});}
-  carregarSaldo();mostrarToast('✅ Saldo sincronizado!');
-}
-
+async function sincronizarSaldo(){const snap=await db.collection('usuarios').doc(eu.uid).get();const data=snap.data();if(data.saldo&&data.saldo.usos){await db.collection('usuarios').doc(eu.uid).update({'saldo.usos':firebase.firestore.FieldValue.delete()});}carregarSaldo();mostrarToast('✅ Saldo sincronizado!');}
 async function carregarSaldo(){
   const container=document.getElementById('saldo-container');container.innerHTML='<div class="skel"></div>';
   const snap=await db.collection('usuarios').doc(eu.uid).get();const data=snap.data();
@@ -750,8 +634,7 @@ async function carregarSaldo(){
   const usadoLicenca=usos.filter(u=>u.tipo==='licenca').reduce((s,u)=>s+(u.dias||0),0),restanteLicenca=Math.max(0,totalLicenca-usadoLicenca);
   let periodosHtml='';
   periodosFerias.forEach(p=>{const usado=usos.filter(u=>u.tipo==='ferias'&&u.periodo===p.periodo).reduce((s,u)=>s+(u.dias||0),0);periodosHtml+=`<span style="display:inline-block;margin-right:8px;font-size:11px;background:#fdf2f8;padding:2px 6px;border-radius:4px;">${p.periodo}: ${Math.max(0,(p.total||30)-usado)}/${p.total||30}d</span>`;});
-  container.innerHTML=`
-    <div class="card"><div class="card-titulo">💰 Meu Saldo <span class="badge">Individual</span></div>
+  container.innerHTML=`<div class="card"><div class="card-titulo">💰 Meu Saldo <span class="badge">Individual</span></div>
     <div class="saldo-card"><div class="saldo-header"><div class="saldo-icon ferias">🏖️</div><div class="saldo-info"><div class="saldo-tipo">Férias</div><div class="saldo-dias" style="color:#ec4899">${restanteFerias} / ${totalFerias} dias</div><div class="saldo-sub">${periodosHtml}</div></div></div><div class="saldo-bar"><div class="saldo-bar-fill ferias" style="width:${totalFerias>0?(restanteFerias/totalFerias)*100:0}%"></div></div></div>
     <div class="saldo-card"><div class="saldo-header"><div class="saldo-icon abono">⏱️</div><div class="saldo-info"><div class="saldo-tipo">Abonos</div><div class="saldo-dias" style="color:#06b6d4">${restanteAbono} / ${totalAbono}</div></div></div><div class="saldo-bar"><div class="saldo-bar-fill abono" style="width:${totalAbono>0?(restanteAbono/totalAbono)*100:0}%"></div></div></div>
     <div class="saldo-card"><div class="saldo-header"><div class="saldo-icon licenca">🏆</div><div class="saldo-info"><div class="saldo-tipo">Licença Prêmio</div><div class="saldo-dias" style="color:#f59e0b">${restanteLicenca} / ${totalLicenca} dias</div></div></div><div class="saldo-bar"><div class="saldo-bar-fill licenca" style="width:${totalLicenca>0?(restanteLicenca/totalLicenca)*100:0}%"></div></div></div>
@@ -771,9 +654,7 @@ async function salvarAjusteSaldo(){
   const licencaVal=parseInt(document.getElementById('ajuste-licenca').value);
   saldoUsuario.licenca=isNaN(licencaVal)?90:Math.max(0,Math.min(180,licencaVal));
   await db.collection('usuarios').doc(eu.uid).update({saldo:{ferias:saldoUsuario.ferias,abono:saldoUsuario.abono,licenca:saldoUsuario.licenca}});
-  fecharAjusteSaldo();
-  mostrarToast('✅ Saldo atualizado!');
-  await carregarSaldo();
+  fecharAjusteSaldo();mostrarToast('✅ Saldo atualizado!');await carregarSaldo();
 }
 
 async function carregarFerias(){
@@ -795,49 +676,28 @@ async function carregarFerias(){
     lst.appendChild(div);
   });
 }
-
 async function excluirAusenciaGrupo(id){if(!confirm('Excluir este período?'))return;await db.collection('ausencias').doc(id).delete();mostrarToast('✅ Excluído!');carregarFerias();}
-
 async function abrirSelecaoUsuario(){
   usuarioSelecionadoFerias=null;
   const lista=document.getElementById('lista-usuarios-ferias');lista.innerHTML='';
   const snap=await db.collection('usuarios').where('grupo_id','==',grupoId).get();
   const usuarios=snap.docs.map(d=>({uid:d.id,...d.data()}));
-  usuarios.forEach(u=>{
-    const div=document.createElement('div');div.className='usuario-item';
-    div.innerHTML=`<span>👤</span><div><div style="font-weight:500">${u.nome_completo}</div><div style="font-size:12px;color:var(--light)">${u.cargo||''}</div></div>`;
-    div.onclick=()=>{lista.querySelectorAll('.usuario-item').forEach(el=>el.classList.remove('selecionado'));div.classList.add('selecionado');usuarioSelecionadoFerias=u;};
-    lista.appendChild(div);
-  });
+  usuarios.forEach(u=>{const div=document.createElement('div');div.className='usuario-item';div.innerHTML=`<span>👤</span><div><div style="font-weight:500">${u.nome_completo}</div><div style="font-size:12px;color:var(--light)">${u.cargo||''}</div></div>`;div.onclick=()=>{lista.querySelectorAll('.usuario-item').forEach(el=>el.classList.remove('selecionado'));div.classList.add('selecionado');usuarioSelecionadoFerias=u;};lista.appendChild(div);});
   document.getElementById('selecionar-usuario-ov').classList.add('on');
 }
 function fecharSelecaoUsuario(){document.getElementById('selecionar-usuario-ov').classList.remove('on');usuarioSelecionadoFerias=null;}
-function confirmarSelecaoUsuario(){
-  if(!usuarioSelecionadoFerias){mostrarToast('⚠️ Selecione um usuário');return;}
-  const usuario=usuarioSelecionadoFerias;
-  fecharSelecaoUsuario();
-  usuarioSelecionadoFerias=usuario;
-  abrirFormFerias();
-}
+function confirmarSelecaoUsuario(){if(!usuarioSelecionadoFerias){mostrarToast('⚠️ Selecione um usuário');return;}const usuario=usuarioSelecionadoFerias;fecharSelecaoUsuario();usuarioSelecionadoFerias=usuario;abrirFormFerias();}
 function iniciarAddFerias(){document.getElementById('ferias-consent-desc').textContent='Registrar seu próprio período.';document.getElementById('ferias-consent-ov').classList.add('on');usuarioSelecionadoFerias=null;}
 function iniciarAddFeriasPara(usuario){document.getElementById('ferias-consent-desc').textContent=`Registrar período para: ${usuario.nome_completo}`;document.getElementById('ferias-consent-ov').classList.add('on');usuarioSelecionadoFerias=usuario;}
-
 async function atualizarOpcoesPeriodo(){
   const tipo=document.getElementById('ferias-tipo').value;
   const selectEl=document.getElementById('ferias-periodo-select');
   const textEl=document.getElementById('ferias-periodo-text');
-  if(tipo==='ferias'){
-    textEl.style.display='none';selectEl.style.display='block';selectEl.innerHTML='';
-    const snap=await db.collection('usuarios').doc(eu.uid).get();const data=snap.data();
-    const saldo=data.saldo||{ferias:[{periodo:'Período atual',total:30}]};
-    const periodos=saldo.ferias||[{periodo:'Período atual',total:30}];
-    periodos.forEach(p=>{const opt=document.createElement('option');opt.value=p.periodo;opt.textContent=`${p.periodo} (${p.total||30} dias)`;selectEl.appendChild(opt);});
-  }else{selectEl.style.display='none';textEl.style.display='block';}
+  if(tipo==='ferias'){textEl.style.display='none';selectEl.style.display='block';selectEl.innerHTML='';const snap=await db.collection('usuarios').doc(eu.uid).get();const data=snap.data();const saldo=data.saldo||{ferias:[{periodo:'Período atual',total:30}]};const periodos=saldo.ferias||[{periodo:'Período atual',total:30}];periodos.forEach(p=>{const opt=document.createElement('option');opt.value=p.periodo;opt.textContent=`${p.periodo} (${p.total||30} dias)`;selectEl.appendChild(opt);});}
+  else{selectEl.style.display='none';textEl.style.display='block';}
 }
-
 function abrirFormFerias(){
-  document.getElementById('ferias-consent-ov').classList.remove('on');
-  document.getElementById('ferias-form-ov').classList.add('on');
+  document.getElementById('ferias-consent-ov').classList.remove('on');document.getElementById('ferias-form-ov').classList.add('on');
   document.getElementById('ferias-ini').value="";document.getElementById('ferias-fim').value="";
   document.getElementById('ferias-dias').value="1";document.getElementById('ferias-periodo-text').value="";
   document.getElementById('ferias-tipo').value="abono";document.getElementById('ferias-erro').style.display='none';
@@ -845,13 +705,7 @@ function abrirFormFerias(){
   const paraEl=document.getElementById('ferias-form-para');
   if(usuarioSelecionadoFerias){paraEl.textContent=`👤 Para: ${usuarioSelecionadoFerias.nome_completo}`;paraEl.style.display='block';}else{paraEl.style.display='none';}
 }
-
-function calcularDataTermino(){
-  const iniVal=document.getElementById('ferias-ini').value;
-  const dias=parseInt(document.getElementById('ferias-dias').value)||1;
-  if(iniVal&&dias>0){const dt=new Date(iniVal+"T12:00:00");dt.setDate(dt.getDate()+dias-1);document.getElementById('ferias-fim').value=dt.toISOString().split('T')[0];}
-}
-
+function calcularDataTermino(){const iniVal=document.getElementById('ferias-ini').value;const dias=parseInt(document.getElementById('ferias-dias').value)||1;if(iniVal&&dias>0){const dt=new Date(iniVal+"T12:00:00");dt.setDate(dt.getDate()+dias-1);document.getElementById('ferias-fim').value=dt.toISOString().split('T')[0];}}
 async function salvarFerias(){
   const tipo=document.getElementById('ferias-tipo').value;
   const periodo=tipo==='ferias'?document.getElementById('ferias-periodo-select').value:document.getElementById('ferias-periodo-text').value.trim();
@@ -871,11 +725,7 @@ async function salvarFerias(){
     const userData=userSnap.data();const userSaldo=userData.saldo||{ferias:[],abono:6,licenca:90};
     const limiteAbono=(userSaldo.abono!=null&&!isNaN(userSaldo.abono))?userSaldo.abono:6;
     if(tipo==='abono'&&usos.filter(u=>u.tipo==='abono').length>=limiteAbono){erroEl.textContent='⚠️ Abonos esgotados';erroEl.style.display='block';return;}
-    if(tipo==='licenca'){
-      const limiteLicenca=(userSaldo.licenca!=null&&!isNaN(userSaldo.licenca))?userSaldo.licenca:90;
-      const u=usos.filter(u=>u.tipo==='licenca').reduce((s,u)=>s+(u.dias||0),0);
-      if(u+dias>limiteLicenca){erroEl.textContent='⚠️ Saldo insuficiente';erroEl.style.display='block';return;}
-    }
+    if(tipo==='licenca'){const limiteLicenca=(userSaldo.licenca!=null&&!isNaN(userSaldo.licenca))?userSaldo.licenca:90;const u=usos.filter(u=>u.tipo==='licenca').reduce((s,u)=>s+(u.dias||0),0);if(u+dias>limiteLicenca){erroEl.textContent='⚠️ Saldo insuficiente';erroEl.style.display='block';return;}}
     if(tipo==='ferias'){if(typeof userSaldo.ferias==='number')userSaldo.ferias=[{periodo:'Total',total:userSaldo.ferias}];const p=userSaldo.ferias.find(p=>p.periodo===periodo);if(p){const u=usos.filter(u=>u.tipo==='ferias'&&u.periodo===periodo).reduce((s,u)=>s+(u.dias||0),0);if(u+dias>(p.total||30)){erroEl.textContent='⚠️ Saldo insuficiente';erroEl.style.display='block';return;}}}
   }
   await db.collection('ausencias').add({uid:uidDestino,nome_completo:nomeDestino,grupo_id:grupoId,tipo,periodo,dias,data_inicio:iniStr,data_fim:fimStr,criado_por:eu.uid,criado_em:firebase.firestore.FieldValue.serverTimestamp()});
@@ -883,7 +733,6 @@ async function salvarFerias(){
   usuarioSelecionadoFerias=null;
   mostrarToast("✅ Período registrado!");carregarFerias();
 }
-
 async function fetchAusencias(){if(!grupoId)return;const hojeStr=new Date().toISOString().split('T')[0];const snap=await db.collection('ausencias').where('grupo_id','==',grupoId).where('data_fim','>=',hojeStr).get();listaAusencias=snap.docs.map(d=>({id:d.id,...d.data()}));}
 function verificarStatusAusencia(uid,dataEvento){if(!uid||!dataEvento)return null;const dataStr=dataEvento.split('T')[0];return listaAusencias.find(aus=>aus.uid===uid&&aus.data_inicio<=dataStr&&aus.data_fim>=dataStr)||null;}
 
@@ -891,12 +740,7 @@ async function cruzar(nomes){
   const snapGrupos=await db.collection('usuarios').where('grupos','!=',null).get();
   const snapLegado=await db.collection('usuarios').where('grupo_id','==',grupoId).get();
   const usersMap=new Map();
-  snapGrupos.forEach(doc=>{
-    const data=doc.data();
-    const grupos=data.grupos||[];
-    const pertence=grupos.some(g=>g.id===grupoId);
-    if(pertence&&!usersMap.has(doc.id)){usersMap.set(doc.id,{uid:doc.id,...data});}
-  });
+  snapGrupos.forEach(doc=>{const data=doc.data();const grupos=data.grupos||[];const pertence=grupos.some(g=>g.id===grupoId);if(pertence&&!usersMap.has(doc.id)){usersMap.set(doc.id,{uid:doc.id,...data});}});
   snapLegado.forEach(doc=>{if(!usersMap.has(doc.id)){usersMap.set(doc.id,{uid:doc.id,...doc.data()});}});
   const users=Array.from(usersMap.values());
   const norm=s=>s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9\s]/g,'').trim();
@@ -907,17 +751,7 @@ async function cruzar(nomes){
     const nn=norm(nome);const pwNome=pwSig(nome);
     for(const u of users){const todosNomes=[u.nome_completo,...(u.nomes_conhecidos||[])];if(todosNomes.some(n=>norm(n)===nn))return{tipo:'exato',nome,usuario:u};}
     let mu=null,ms=0;
-    for(const u of users){
-      const todosNomes=[u.nome_completo,...(u.nomes_conhecidos||[])];
-      for(const nomeConhecido of todosNomes){
-        const pwUser=pwSig(nomeConhecido);
-        const pb=pwNome.filter(p=>pwUser.some(pu=>ps(p,pu)));
-        const so=pb.length/Math.max(pwNome.length,1);
-        const su=pb.length/Math.max(pwUser.length,1);
-        const sf=(so*0.5)+(su*0.5);
-        if(so>=0.7&&su>=0.5&&sf>ms){ms=sf;mu=u;}
-      }
-    }
+    for(const u of users){const todosNomes=[u.nome_completo,...(u.nomes_conhecidos||[])];for(const nomeConhecido of todosNomes){const pwUser=pwSig(nomeConhecido);const pb=pwNome.filter(p=>pwUser.some(pu=>ps(p,pu)));const so=pb.length/Math.max(pwNome.length,1);const su=pb.length/Math.max(pwUser.length,1);const sf=(so*0.5)+(su*0.5);if(so>=0.7&&su>=0.5&&sf>ms){ms=sf;mu=u;}}}
     if(mu&&ms>=0.8)return{tipo:'parcial',nome,usuario:mu,score:ms};
     if(mu&&ms>=0.5)return{tipo:'baixa_confianca',nome,usuario:mu,score:ms};
     return{tipo:'nao_encontrado',nome};
@@ -925,15 +759,7 @@ async function cruzar(nomes){
 }
 
 function editarNomeMatch(index){const match=matches[index];const novoNome=prompt('Corrigir nome:',match.nome);if(novoNome&&novoNome.trim()){match.nome=novoNome.trim();if(ocrDados&&ocrDados.nomes&&index<ocrDados.nomes.length){ocrDados.nomes[index]=match.nome;}renderMatches();mostrarToast('✅ Nome corrigido!');}}
-function renderMatches(){
-  document.getElementById('rv-matches').innerHTML=matches.length===0?'<p style="color:var(--light);padding:12px;background:#fff;border-radius:10px;">Nenhum nome.</p>':matches.map((m,i)=>{
-    const editBtn=`<button class="btn-editar-nome" onclick="editarNomeMatch(${i})" title="Editar nome">✏️</button>`;
-    if(m.tipo==='exato')return`<div class="mi ok"><div class="mi-top"><span>✅</span><div style="flex:1"><div class="mi-nome">${m.nome} ${editBtn}</div><div class="mi-sub">→ ${m.usuario.nome_completo}</div></div></div><div class="mi-btns" style="padding-left:0"><button class="btn-desvincular" onclick="desvincularMatch(${i})">⚠️ Não é ${m.usuario.nome_completo.split(' ')[0]}</button></div></div>`;
-    if(m.tipo==='parcial')return`<div class="mi av"><div class="mi-top"><span>⚠️</span><div style="flex:1"><div class="mi-nome">${m.nome} ${editBtn}</div><div class="mi-sub">Provável: ${m.usuario.nome_completo} (${Math.round(m.score*100)}%)</div></div></div><div class="mi-btns"><button class="btn-sim" onclick="confirmar(${i},true)">✓ Confirmar</button><button class="btn-nao" onclick="confirmar(${i},false)">✗ Não é</button></div></div>`;
-    if(m.tipo==='baixa_confianca')return`<div class="mi no"><div class="mi-top"><span>❓</span><div style="flex:1"><div class="mi-nome">${m.nome} ${editBtn}</div><div class="mi-sub">Talvez ${m.usuario.nome_completo}? (${Math.round(m.score*100)}%)</div></div></div><div class="mi-btns"><button class="btn-sim" onclick="confirmar(${i},true)" style="font-size:11px">✓ É ${m.usuario.nome_completo.split(' ')[0]}</button><button class="btn-nao" onclick="confirmar(${i},false)">✗ Não é</button></div></div>`;
-    return`<div class="mi no"><div class="mi-top"><span>❓</span><div style="flex:1"><div class="mi-nome">${m.nome} ${editBtn}</div><div class="mi-sub">Não encontrado</div></div></div></div>`;
-  }).join('');
-}
+function renderMatches(){document.getElementById('rv-matches').innerHTML=matches.length===0?'<p style="color:var(--light);padding:12px;background:#fff;border-radius:10px;">Nenhum nome.</p>':matches.map((m,i)=>{const editBtn=`<button class="btn-editar-nome" onclick="editarNomeMatch(${i})" title="Editar nome">✏️</button>`;if(m.tipo==='exato')return`<div class="mi ok"><div class="mi-top"><span>✅</span><div style="flex:1"><div class="mi-nome">${m.nome} ${editBtn}</div><div class="mi-sub">→ ${m.usuario.nome_completo}</div></div></div><div class="mi-btns" style="padding-left:0"><button class="btn-desvincular" onclick="desvincularMatch(${i})">⚠️ Não é ${m.usuario.nome_completo.split(' ')[0]}</button></div></div>`;if(m.tipo==='parcial')return`<div class="mi av"><div class="mi-top"><span>⚠️</span><div style="flex:1"><div class="mi-nome">${m.nome} ${editBtn}</div><div class="mi-sub">Provável: ${m.usuario.nome_completo} (${Math.round(m.score*100)}%)</div></div></div><div class="mi-btns"><button class="btn-sim" onclick="confirmar(${i},true)">✓ Confirmar</button><button class="btn-nao" onclick="confirmar(${i},false)">✗ Não é</button></div></div>`;if(m.tipo==='baixa_confianca')return`<div class="mi no"><div class="mi-top"><span>❓</span><div style="flex:1"><div class="mi-nome">${m.nome} ${editBtn}</div><div class="mi-sub">Talvez ${m.usuario.nome_completo}? (${Math.round(m.score*100)}%)</div></div></div><div class="mi-btns"><button class="btn-sim" onclick="confirmar(${i},true)" style="font-size:11px">✓ É ${m.usuario.nome_completo.split(' ')[0]}</button><button class="btn-nao" onclick="confirmar(${i},false)">✗ Não é</button></div></div>`;return`<div class="mi no"><div class="mi-top"><span>❓</span><div style="flex:1"><div class="mi-nome">${m.nome} ${editBtn}</div><div class="mi-sub">Não encontrado</div></div></div></div>`;}).join('');}
 function confirmar(i,sim){if(sim){const m=matches[i];matches[i].tipo='exato';if(m.usuario)db.collection('usuarios').doc(m.usuario.uid).update({nomes_conhecidos:firebase.firestore.FieldValue.arrayUnion(m.nome)});mostrarToast('✅ Confirmado!');}else{matches[i].tipo='nao_encontrado';matches[i].usuario=null;}renderMatches();}
 function desvincularMatch(i){if(!confirm(`Desvincular "${matches[i].nome}" de ${matches[i].usuario.nome_completo}?`))return;const u=matches[i].usuario;if(u&&u.nomes_conhecidos){const nn=u.nomes_conhecidos.filter(n=>{const norm=s=>s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9\s]/g,'').trim();return norm(n)!==norm(matches[i].nome);});db.collection('usuarios').doc(u.uid).update({nomes_conhecidos:nn});}matches[i].tipo='nao_encontrado';matches[i].usuario=null;renderMatches();mostrarToast('✅ Desvinculado!');}
 function fecharRv(){document.getElementById('rv-ov').classList.remove('on');ocrDados=null;matches=[];}
@@ -954,10 +780,7 @@ async function verificarLembretesAmanha(){
     if(!evAmanha.length)return;
     const us=await db.collection('usuarios').where('grupo_id','==',grupoId).get();
     const usuarios=us.docs.map(d=>({uid:d.id,...d.data()}));let env=0;
-    for(const ev of evAmanha){for(const n of(ev.lista_convocados||[])){const u=encontrarUsuarioPorNome(usuarios,n);
-      if(u&&u.email){const chaveEmail=`email_${u.uid}_${ev.id||ev.id_verificacao}`;if(localStorage.getItem(chaveEmail))continue;
-        try{const dt=new Date(ev.data_hora);await emailjs.send(EMAIL_CONFIG.serviceId,EMAIL_CONFIG.templateId,{to_email:u.email,nome_usuario:u.nome_completo,titulo_evento:ev.titulo_evento||'Evento',data_evento:dt.toLocaleDateString('pt-BR'),hora_evento:dt.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'}),local_evento:ev.local||'A definir'});localStorage.setItem(chaveEmail,'1');env++;}catch(e){console.warn('Falha e-mail',u.email,e);}
-    }}}
+    for(const ev of evAmanha){for(const n of(ev.lista_convocados||[])){const u=encontrarUsuarioPorNome(usuarios,n);if(u&&u.email){const chaveEmail=`email_${u.uid}_${ev.id||ev.id_verificacao}`;if(localStorage.getItem(chaveEmail))continue;try{const dt=new Date(ev.data_hora);await emailjs.send(EMAIL_CONFIG.serviceId,EMAIL_CONFIG.templateId,{to_email:u.email,nome_usuario:u.nome_completo,titulo_evento:ev.titulo_evento||'Evento',data_evento:dt.toLocaleDateString('pt-BR'),hora_evento:dt.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'}),local_evento:ev.local||'A definir'});localStorage.setItem(chaveEmail,'1');env++;}catch(e){console.warn('Falha e-mail',u.email,e);}}}}
     localStorage.setItem(chaveDia,'1');if(env>0)console.log(`${env} lembretes`);
   }catch(e){console.error('Erro verificar lembretes:',e);}
 }
@@ -982,18 +805,8 @@ async function salvarNomesAdmin(){
   await db.collection('eventos').doc(eventoAtualMod.id).update({lista_convocados:nomesEditaveis});
   eventoAtualMod.lista_convocados=[...nomesEditaveis];
   const novos=nomesEditaveis.filter(n=>!listaAntiga.includes(n));
-  if(novos.length>0){
-    const novosMatches=await cruzar(novos);
-    const dtEvento=eventoAtualMod.data_hora;
-    const titulo=eventoAtualMod.titulo_evento||'Evento';
-    for(const m of novosMatches){
-      if(m.tipo==='exato'){await db.collection('notificacoes').add({uid:m.usuario.uid,tipo:'convocado',nome_convocacao:m.nome,titulo_evento:titulo,data_hora:dtEvento,grupo_id:grupoId,respondido:false,criado_em:firebase.firestore.FieldValue.serverTimestamp()});}
-      else if(m.tipo==='parcial'||m.tipo==='baixa_confianca'){await db.collection('notificacoes').add({uid:m.usuario.uid,tipo:'confirmar',nome_convocacao:m.nome,titulo_evento:titulo,data_hora:dtEvento,grupo_id:grupoId,respondido:false,criado_em:firebase.firestore.FieldValue.serverTimestamp()});}
-    }
-  }
-  mostrarToast('✅ Salvo e notificações enviadas!');
-  carregarEventos();
-  abrirMod(eventoAtualMod);
+  if(novos.length>0){const novosMatches=await cruzar(novos);const dtEvento=eventoAtualMod.data_hora;const titulo=eventoAtualMod.titulo_evento||'Evento';for(const m of novosMatches){if(m.tipo==='exato'){await db.collection('notificacoes').add({uid:m.usuario.uid,tipo:'convocado',nome_convocacao:m.nome,titulo_evento:titulo,data_hora:dtEvento,grupo_id:grupoId,respondido:false,criado_em:firebase.firestore.FieldValue.serverTimestamp()});}else if(m.tipo==='parcial'||m.tipo==='baixa_confianca'){await db.collection('notificacoes').add({uid:m.usuario.uid,tipo:'confirmar',nome_convocacao:m.nome,titulo_evento:titulo,data_hora:dtEvento,grupo_id:grupoId,respondido:false,criado_em:firebase.firestore.FieldValue.serverTimestamp()});}}}
+  mostrarToast('✅ Salvo e notificações enviadas!');carregarEventos();abrirMod(eventoAtualMod);
 }
 
 async function abrirScanner(){if(!grupoId){alert('Entre em um grupo.');return;}document.getElementById('scan-ov').classList.add('on');try{camStream=await navigator.mediaDevices.getUserMedia({video:{facingMode:'environment'}});document.getElementById('video').srcObject=camStream;}catch{alert('Câmera indisponível.');}}
@@ -1021,10 +834,15 @@ async function processarFoto(file,fromGallery=false){
     const pi=setInterval(()=>{const cw=parseFloat(op.style.width);if(cw<80)op.style.width=(cw+5)+'%';if(cw>30&&cw<50){ot.textContent='🔍 Enviando...';os.textContent='Conectando ao servidor';}if(cw>50&&cw<70){ot.textContent='🤖 Processando...';os.textContent='IA analisando texto';}},800);
     const b64=await new Promise((res,rej)=>{const img=new Image();const url=URL.createObjectURL(file);img.onload=()=>{const MAX=1600;let w=img.width,h=img.height;if(w>MAX||h>MAX){if(w>h){h=Math.round(h*MAX/w);w=MAX;}else{w=Math.round(w*MAX/h);h=MAX;}}const c=document.createElement('canvas');c.width=w;c.height=h;c.getContext('2d').drawImage(img,0,0,w,h);URL.revokeObjectURL(url);res(c.toDataURL('image/jpeg',0.9).split(',')[1]);};img.onerror=()=>rej(new Error('Erro ao carregar imagem'));img.src=url;});
     clearInterval(pi);op.style.width='80%';ot.textContent='🔎 Lendo...';os.textContent='IA analisando';
-    const resp=await fetch('https://api.mistral.ai/v1/chat/completions',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer zQVzmFaX904lqaFwzt40BHXHfGoqSJca'},body:JSON.stringify({model:'pixtral-12b-2409',max_tokens:800,temperature:0.1,messages:[{role:'user',content:[{type:'image_url',image_url:{url:'data:image/jpeg;base64,'+b64}},{type:'text',text:'Analise esta convocação. Retorne APENAS JSON: {"titulo":"TIPO - Tema","data":"YYYY-MM-DD","hora":"HH:MM","local":"local ou null","nomes":["Nome 1","Nome 2"]}. NUNCA junte nomes.'}]}]})});
+    const resp=await fetch('https://api.mistral.ai/v1/chat/completions',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer zQVzmFaX904lqaFwzt40BHXHfGoqSJca'},body:JSON.stringify({model:'pixtral-12b-2409',max_tokens:800,temperature:0.1,messages:[{role:'user',content:[{type:'image_url',image_url:{url:'data:image/jpeg;base64,'+b64}},{type:'text',text:'Analise esta imagem de convocação. Retorne APENAS JSON: {"titulo":"Tema principal do evento (NÃO inclua a palavra CONVOCAÇÃO)","data":"YYYY-MM-DD","hora":"HH:MM","local":"local ou null","nomes":["Nome 1","Nome 2"]}. NUNCA junte nomes. NÃO use "CONVOCAÇÃO" no título.'}]}]})});
     op.style.width='90%';ot.textContent='✅ Processando...';os.textContent='Organizando dados';
     const data=await resp.json();const txtRaw=data.choices?.[0]?.message?.content||'';let parsed;
     try{parsed=JSON.parse(txtRaw.replace(/```json|```/g,'').trim());}catch{const match=txtRaw.match(/\{[\s\S]*\}/);if(match)parsed=JSON.parse(match[0]);else throw new Error('Formato inválido');}
+    // Remove "CONVOCAÇÃO" do título
+    if(parsed.titulo){
+      parsed.titulo=parsed.titulo.replace(/^CONVOCA[CÇ][AÃ]O\s*[-–—:]*\s*/i,'').trim();
+      parsed.titulo=parsed.titulo.replace(/^CONVOCACAO\s*[-–—:]*\s*/i,'').trim();
+    }
     if(parsed.nomes&&Array.isArray(parsed.nomes)){parsed.nomes=parsed.nomes.flatMap(nome=>{if(nome.includes(' e ')||nome.includes(' / '))return nome.split(/\s+e\s+|\s+\/\s+/).filter(n=>n.trim().length>2);const ns=nome.split(/(?<=[a-záéíóúãõç])(?=[A-Z])/);if(ns.length>1){const nv=[];let na='';for(let i=0;i<ns.length;i++){na+=ns[i];if(na.trim().split(/\s+/).length>=2&&i<ns.length-1){nv.push(na.trim());na='';}}if(na.trim())nv.push(na.trim());return nv.length>1?nv:[nome];}return[nome];});}
     op.style.width='100%';ot.textContent='✨ Concluído!';os.textContent='Verifique os dados';
     ocrDados={titulo:parsed.titulo||null,data_hora:(parsed.data&&parsed.hora)?`${parsed.data}T${parsed.hora}:00`:(parsed.data?`${parsed.data}T00:00:00`:null),local:parsed.local||null,nomes:Array.isArray(parsed.nomes)?parsed.nomes.filter(n=>n&&n.trim().length>2):[],id_ver:null};
