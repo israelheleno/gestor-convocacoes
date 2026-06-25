@@ -25,7 +25,7 @@
     .nav-tab.active{color:var(--blue);border-bottom-color:var(--blue)}
     main{padding:16px;max-width:480px;margin:0 auto}
 
-    /* ═══════════════ PAINEL TV (v22.4) ═══════════════ */
+    /* ═══════════════ PAINEL TV (v22.6) ═══════════════ */
     #aba-painel{background:#0f172a;color:#fff;font-family:'DM Sans',sans-serif;overflow:hidden;position:fixed;inset:0;z-index:200;display:flex;flex-direction:column;margin:0;padding:0;max-width:100vw}
     #aba-painel .painel-wrapper{width:100%;height:100%;display:flex;flex-direction:column;overflow:hidden}
     .painel-header{background:rgba(0,0,0,.4);padding:16px 40px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(255,255,255,0.08);flex-shrink:0;min-height:60px}
@@ -35,15 +35,15 @@
     .painel-status .dot{width:10px;height:10px;background:var(--green);border-radius:50%;animation:pulse 2s infinite}
     @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
     .painel-grid{display:grid;grid-template-columns:repeat(3,1fr);grid-template-rows:repeat(2,1fr);gap:30px;padding:40px;flex:1;overflow:hidden;align-content:stretch}
-    .painel-card{background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);border-left:5px solid var(--blue);border-radius:16px;padding:24px;display:flex;flex-direction:column;justify-content:flex-start;backdrop-filter:blur(10px);transition:all .5s ease;position:relative;overflow:hidden}
-    .painel-card.expirado{opacity:.2;border-left-color:var(--light)}
+    .painel-card{background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);border-left:5px solid var(--blue);border-radius:16px;padding:24px;display:flex;flex-direction:column;justify-content:flex-start;backdrop-filter:blur(10px);transition:opacity .5s ease,transform .5s ease;position:relative;overflow:hidden}
+    .painel-card.expirado{opacity:.25;border-left-color:var(--light)}
     .painel-card.removendo{opacity:0;transform:scale(.95);pointer-events:none}
     .painel-card-titulo{font-family:'Sora',sans-serif;font-size:19px;font-weight:700;color:#f1f5f9;margin-bottom:10px;line-height:1.3;overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
-    .painel-card-data{font-size:14px;color:#94a3b8;margin-bottom:14px;line-height:1.4;flex-shrink:0}
+    .painel-card-data{font-size:18px;color:#94a3b8;margin-bottom:14px;line-height:1.4;flex-shrink:0}
     .painel-card-convocados{flex:1;overflow-y:hidden;overflow-x:hidden;min-height:0;position:relative}
-    .painel-card-convocados .nomes-grid{font-size:13px;color:#cbd5e1;line-height:1.5;transition:transform 0.5s ease;will-change:transform}
+    .painel-card-convocados .nomes-grid{font-size:18px;color:#ffffff;line-height:1.5;transition:transform 0.5s ease;will-change:transform}
     .painel-card-convocados .nomes-grid.animando{transition:transform 10s linear}
-    .painel-card-convocados .nome-linha{padding:1px 0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:13px;color:#cbd5e1}
+    .painel-card-convocados .nome-linha{padding:1px 0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:18px;color:#ffffff}
     .painel-card-convocados .nome-linha::before{content:'•';margin-right:6px;color:var(--blue);font-weight:bold}
     .painel-card-convocados::-webkit-scrollbar{width:4px}
     .painel-card-convocados::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.15);border-radius:2px}
@@ -349,7 +349,7 @@
     <div class="painel-wrapper">
       <div class="painel-header"><h2>📋 Painel de Convocações</h2><div class="painel-status"><span class="dot"></span> Atualizando em tempo real</div><div class="grupo-badge" id="painel-grupo-nome">—</div></div>
       <div class="painel-grid" id="painel-grid"><div class="painel-vazio">Nenhuma convocação disponível no momento.</div></div>
-      <div class="painel-footer">Desenvolvido por <strong>IHC Solutions</strong> — © 2026 Gestor de Convocações — v22.4</div>
+      <div class="painel-footer">Desenvolvido por <strong>IHC Solutions</strong> — © 2026 Gestor de Convocações — v22.6</div>
     </div>
   </div>
 </main>
@@ -357,9 +357,8 @@
 <button id="fab" onclick="abrirScanner()"><svg viewBox="0 0 24 24"><path d="M9 3H5a2 2 0 00-2 2v4m6-6h10a2 2 0 012 2v4M9 3v18m0 0h10a2 2 0 002-2V9M9 21H5a2 2 0 01-2-2V9m0 0h18"/></svg></button>
 <button class="btn-fab-admin" id="btn-fab-admin" onclick="abrirAdmin()">🛡️</button>
 
-<footer><p>Desenvolvido por <strong>IHC Solutions</strong></p><p>© 2026 Gestor de Convocações — v22.4</p></footer>
+<footer><p>Desenvolvido por <strong>IHC Solutions</strong></p><p>© 2026 Gestor de Convocações — v22.6</p></footer>
 
-<!-- MODAIS (mantidos) -->
 <div class="overlay" id="mod-ev" onclick="if(event.target===this) fecharMod()"><div class="sheet"><div class="handle" onclick="fecharMod()"></div><input type="text" class="mod-titulo-input" id="mod-tit" placeholder="Título do evento"><input type="text" class="mod-sub-input" id="mod-sub" placeholder="Data e hora"><div class="mod-sec"><h3>Convocados <span id="admin-badge-conv" style="display:none" class="admin-badge">Admin</span></h3><div id="mod-conv"></div></div><div style="display:flex;gap:8px;margin-top:16px"><button class="btn-ag" id="mod-ag" style="flex:1;margin-top:0">📅 Agenda</button><button id="mod-trocar" style="flex:1;padding:12px;background:#fff7ed;color:#c2410c;border:1.5px solid #fed7aa;border-radius:10px;font-size:14px;cursor:pointer;font-weight:600;display:none;">🔄 Trocar</button></div><button class="btn-salvar-edicao-evento" id="mod-salvar-edicao" style="display:none" onclick="salvarEdicaoEvento()">💾 Salvar alterações</button><button class="btn-del" id="mod-del" style="display:none">🗑 Excluir</button><button class="btn-cancel" style="margin-top:10px;width:100%" onclick="fecharMod()">Fechar</button></div></div>
 <div id="trocar-ov"><div class="trocar-box"><h3>🔄 Trocar escala</h3><p id="trocar-desc"></p><div class="trocar-membros" id="trocar-lista"></div><div class="trocar-btns"><button class="btn-cancel" onclick="fecharTrocar()">Cancelar</button><button class="btn-salvar" style="background:#c2410c" id="trocar-confirmar">Confirmar</button></div></div></div>
 <div class="ov-center" id="ferias-consent-ov"><div class="box-center"><h3>Registrar Período</h3><p id="ferias-consent-desc">Registrar férias, licença ou abono.</p><div class="btns-row"><button class="btn-cancel" onclick="document.getElementById('ferias-consent-ov').classList.remove('on')">Cancelar</button><button class="btn-salvar" onclick="abrirFormFerias()">Continuar</button></div></div></div>
@@ -410,8 +409,32 @@ function iniciarPainel(){
   if(!grupoId){document.getElementById('painel-grid').innerHTML='<div class="painel-vazio">Selecione um grupo para visualizar o painel.</div>';return;}
   document.getElementById('painel-grupo-nome').textContent=grupoAtivo?grupoAtivo.nome:'—';
   if(painelListener)painelListener();
-  painelListener=db.collection('eventos').where('grupo_id','==',grupoId).onSnapshot(snap=>{const eventos=snap.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>new Date(a.data_hora)-new Date(b.data_hora));painelCache=eventos;localStorage.setItem('painelCache_'+grupoId,JSON.stringify(eventos));renderizarPainel(eventos);},err=>{console.warn('Offline — usando cache local');const cached=localStorage.getItem('painelCache_'+grupoId);if(cached)renderizarPainel(JSON.parse(cached));});
-  if(painelTimer)clearInterval(painelTimer);painelTimer=setInterval(()=>{if(painelCache.length)renderizarPainel(painelCache);},60000);
+  // Listener em tempo real do Firestore (funciona se o navegador suportar)
+  painelListener=db.collection('eventos').where('grupo_id','==',grupoId).onSnapshot(snap=>{
+    const eventos=snap.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>new Date(a.data_hora)-new Date(b.data_hora));
+    painelCache=eventos;
+    localStorage.setItem('painelCache_'+grupoId,JSON.stringify(eventos));
+    renderizarPainel(eventos);
+  },err=>{
+    console.warn('Offline — usando cache local');
+    const cached=localStorage.getItem('painelCache_'+grupoId);
+    if(cached)renderizarPainel(JSON.parse(cached));
+  });
+  if(painelTimer)clearInterval(painelTimer);
+  // A cada 60s faz uma consulta FRESCA ao Firestore (contorna limitações de Smart TV)
+  painelTimer=setInterval(async()=>{
+    if(!document.body.classList.contains('painel-ativo'))return;
+    try{
+      console.log('🔄 Atualizando painel —',new Date().toLocaleTimeString());
+      const snap=await db.collection('eventos').where('grupo_id','==',grupoId).get();
+      const eventos=snap.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>new Date(a.data_hora)-new Date(b.data_hora));
+      painelCache=eventos;
+      localStorage.setItem('painelCache_'+grupoId,JSON.stringify(eventos));
+      renderizarPainel(eventos);
+    }catch(e){
+      console.warn('Erro ao atualizar painel:',e);
+    }
+  },60000);
 }
 
 function iniciarRolagemCard(card){
@@ -419,11 +442,9 @@ function iniciarRolagemCard(card){
   const nomesGrid=container.querySelector('.nomes-grid');
   if(!container||!nomesGrid)return;
   
-  // Remove indicador antigo se existir
   const indicadorAntigo=card.querySelector('.rolagem-indicador');
   if(indicadorAntigo)indicadorAntigo.remove();
   
-  // Cria indicador de rolagem
   const indicador=document.createElement('div');
   indicador.className='rolagem-indicador';
   card.appendChild(indicador);
@@ -432,7 +453,6 @@ function iniciarRolagemCard(card){
     const containerHeight=container.clientHeight;
     const contentHeight=nomesGrid.scrollHeight;
     
-    // Se não precisa de rolagem, remove classes e sai
     if(contentHeight<=containerHeight+2){
       nomesGrid.style.transform='translateY(0)';
       nomesGrid.classList.remove('animando');
@@ -440,78 +460,75 @@ function iniciarRolagemCard(card){
       return;
     }
     
-    // Marca que precisa de rolagem
     indicador.classList.add('ativo');
     const deslocamento=contentHeight-containerHeight;
     
     function cicloRolagem(){
-      // Verifica se o card ainda está visível
-      if(!document.body.classList.contains('painel-ativo')||!card.isConnected){
-        return;
-      }
+      if(!document.body.classList.contains('painel-ativo')||!card.isConnected)return;
       
-      // Reinicia posição
       nomesGrid.classList.remove('animando');
       nomesGrid.style.transform='translateY(0)';
       
-      // Pequena pausa antes de iniciar
       const t0=setTimeout(()=>{
         if(!document.body.classList.contains('painel-ativo')||!card.isConnected)return;
-        
-        // Inicia animação de descida
         nomesGrid.classList.add('animando');
         nomesGrid.style.transform=`translateY(-${deslocamento}px)`;
         
-        // Após 10s de descida + 3s de pausa, inicia subida
         const t1=setTimeout(()=>{
           if(!document.body.classList.contains('painel-ativo')||!card.isConnected)return;
-          
-          // Pausa no final (já está parado 3s)
-          // Agora sobe
           nomesGrid.classList.remove('animando');
           nomesGrid.style.transition='transform 10s linear';
           nomesGrid.style.transform='translateY(0)';
           
-          // Após subir, pausa e reinicia ciclo
           const t2=setTimeout(()=>{
             if(!document.body.classList.contains('painel-ativo')||!card.isConnected)return;
             nomesGrid.style.transition='transform 0.5s ease';
             cicloRolagem();
-          },11000); // 10s subida + 1s margem
-          
+          },11000);
           timersRolagem.push(t2);
-        },13000); // 10s descida + 3s pausa
-        
+        },13000);
         timersRolagem.push(t1);
-      },1500); // pausa inicial no topo
-      
+      },1500);
       timersRolagem.push(t0);
     }
     
-    // Inicia o primeiro ciclo
     cicloRolagem();
   }
   
-  // Pequeno delay para garantir que o DOM foi renderizado
   const t=setTimeout(verificarRolagem,300);
   timersRolagem.push(t);
 }
 
 function renderizarPainel(eventos){
   pararRolagens();
-  const agora=new Date();const grid=document.getElementById('painel-grid');
-  const validos=eventos.filter(ev=>{const dt=new Date(ev.data_hora);return(agora-dt)/60000<30;});
-  if(!validos.length){grid.innerHTML='<div class="painel-vazio">Nenhuma convocação disponível no momento.</div>';return;}
+  const agora=new Date();
+  const grid=document.getElementById('painel-grid');
+  
+  // Filtra eventos: mantém os que ainda não passaram OU passaram há menos de 30 minutos
+  const validos=eventos.filter(ev=>{
+    if(!ev.data_hora)return false;
+    const dt=new Date(ev.data_hora);
+    const minutosDesdeEvento=(agora-dt)/60000;
+    // Evento futuro: minutosDesdeEvento é negativo → mantém
+    // Evento passado: mantém apenas se passou há menos de 30 minutos
+    return minutosDesdeEvento<30;
+  });
+  
+  if(!validos.length){
+    grid.innerHTML='<div class="painel-vazio">Nenhuma convocação disponível no momento.</div>';
+    return;
+  }
+  
   const visiveis=validos.slice(0,6);
   grid.innerHTML=visiveis.map(ev=>{
-    const dt=new Date(ev.data_hora);const passou=dt<=agora;
+    const dt=new Date(ev.data_hora);
+    const passou=dt<=agora; // true = já passou do horário → fica opaco
     const cls=passou?'painel-card expirado':'painel-card';
     const nomes=[...(ev.lista_convocados||[])].sort((a,b)=>a.localeCompare(b,'pt-BR'));
     const nomesHtml=nomes.length?nomes.map(n=>`<div class="nome-linha">${n}</div>`).join(''):'<div class="nome-linha" style="color:#64748b">Nenhum convocado</div>';
     return `<div class="${cls}" data-evento-id="${ev.id}"><div class="painel-card-titulo">${ev.titulo_evento||'Sem título'}</div><div class="painel-card-data">📅 ${fD(dt)} · 🕐 ${fH(dt)}${ev.local?' · 📍 '+ev.local:''}</div><div class="painel-card-convocados"><div class="nomes-grid">${nomesHtml}</div></div></div>`;
   }).join('');
   
-  // Inicia rolagem em cada card após renderização
   const cards=grid.querySelectorAll('.painel-card:not(.expirado)');
   cards.forEach(card=>iniciarRolagemCard(card));
 }
@@ -532,7 +549,7 @@ function redirecionarLogin(){if(loadingScreen.style.display!=='none')loadingScre
 authTimeout=setTimeout(()=>{mostrarErroTela('Tempo limite excedido. Redirecionando...');setTimeout(redirecionarLogin,2000);},10000);
 try{auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL).then(()=>{auth.onAuthStateChanged(async user=>{clearTimeout(authTimeout);loadingScreen.style.display='none';if(!user){window.location.replace('login.html');return;}try{const snap=await db.collection('usuarios').doc(user.uid).get();if(!snap.exists){window.location.replace('login.html');return;}eu={uid:user.uid,...snap.data()};document.getElementById('h-user').textContent=eu.nome_completo+' · '+eu.cargo;await migrarGruposSeNecessario();const snap2=await db.collection('usuarios').doc(user.uid).get();eu={uid:user.uid,...snap2.data()};gruposUsuario=eu.grupos||[];if(gruposUsuario.length>0){grupoAtivo=gruposUsuario[0];grupoId=grupoAtivo.id;eu.is_admin=grupoAtivo.is_admin;}document.getElementById('btn-fab-admin').classList.toggle('on',eu.is_admin);document.getElementById('btn-para-outro').style.display=eu.is_admin?'block':'none';verificarInstalacao();iniciarNotificacoes();renderizarCardGrupos();if(grupoId){carregarEventos();verificarAprovacoes();verificarNotificacoesPendentes();iniciarVerificacaoLembretes();}else{document.getElementById('lst-ev').innerHTML='<p style="color:var(--light);padding:20px;text-align:center">Entre em um grupo para ver convocações.</p>';document.getElementById('prox').innerHTML='<div class="card-vazio">Entre em um grupo para ver suas convocações.</div>';}verificarCadastroCompleto();limparEventosAntigos();}catch(err){console.error('Erro ao carregar dados:',err);mostrarToast('⚠️ Erro de conexão. Tente recarregar.');}});}).catch(e=>{console.error('Persistence error:',e);clearTimeout(authTimeout);mostrarErroTela('Erro de configuração. Redirecionando...');setTimeout(redirecionarLogin,3000);});}catch(e){console.error('Auth setup error:',e);clearTimeout(authTimeout);mostrarErroTela('Erro crítico. Redirecionando...');setTimeout(redirecionarLogin,3000);}
 
-// ══ TODAS AS DEMAIS FUNÇÕES (idênticas à v22.2) ══
+// ══ DEMAIS FUNÇÕES ══
 async function limparEventosAntigos(){if(!grupoId)return;const agora=new Date();const seteDiasAtras=new Date(agora);seteDiasAtras.setDate(seteDiasAtras.getDate()-7);try{const snap=await db.collection('eventos').where('grupo_id','==',grupoId).get();const evs=snap.docs.filter(d=>{const e=d.data();return e.data_hora&&new Date(e.data_hora)<seteDiasAtras;});for(const ev of evs)await ev.ref.delete();}catch(e){}}
 function verificarCadastroCompleto(){if(!eu)return false;if(!eu.nome_completo||eu.nome_completo.trim().length<5||!eu.cargo){document.getElementById('cadastro-nome').value=eu.nome_completo||'';document.getElementById('cadastro-cargo').value=eu.cargo||'';document.getElementById('cadastro-email').value=eu.email||'';document.getElementById('completar-cadastro-ov').classList.add('on');return false;}if(eu.nome_completo.trim().split(/\s+/).length<2){document.getElementById('cadastro-nome').value=eu.nome_completo||'';document.getElementById('cadastro-cargo').value=eu.cargo||'';document.getElementById('cadastro-email').value=eu.email||'';document.getElementById('cadastro-erro').textContent='⚠️ Informe nome e sobrenome';document.getElementById('cadastro-erro').style.display='block';document.getElementById('completar-cadastro-ov').classList.add('on');return false;}return true;}
 async function completarCadastro(){const nome=document.getElementById('cadastro-nome').value.trim();const cargo=document.getElementById('cadastro-cargo').value.trim();const email=document.getElementById('cadastro-email').value.trim();const erroEl=document.getElementById('cadastro-erro');if(!nome||nome.length<3){erroEl.textContent='⚠️ Informe seu nome completo';erroEl.style.display='block';return;}const palavras=nome.split(/\s+/);if(palavras.length<2){erroEl.textContent='⚠️ Por favor, informe nome e sobrenome';erroEl.style.display='block';return;}if(!cargo||cargo.length<2){erroEl.textContent='⚠️ Informe seu cargo';erroEl.style.display='block';return;}try{await db.collection('usuarios').doc(eu.uid).update({nome_completo:nome,cargo:cargo,email:email||null,nomes_conhecidos:firebase.firestore.FieldValue.arrayUnion(nome)});eu.nome_completo=nome;eu.cargo=cargo;eu.email=email;document.getElementById('h-user').textContent=nome+' · '+cargo;document.getElementById('completar-cadastro-ov').classList.remove('on');mostrarToast('✅ Cadastro atualizado!');if(grupoId)carregarEventos();renderizarCardGrupos();}catch(error){console.error('Erro ao salvar:',error);erroEl.textContent='Erro ao salvar. Tente novamente.';erroEl.style.display='block';}}
