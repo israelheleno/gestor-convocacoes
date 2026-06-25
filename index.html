@@ -25,19 +25,20 @@
     .nav-tab.active{color:var(--blue);border-bottom-color:var(--blue)}
     main{padding:16px;max-width:480px;margin:0 auto}
 
-    /* ═══════════════ PAINEL TV (v22.8) ═══════════════ */
+    /* ═══════════════ PAINEL TV (v22.10) ═══════════════ */
     #aba-painel{background:#0f172a;color:#fff;font-family:'DM Sans',sans-serif;overflow:hidden;position:fixed;inset:0;z-index:200;display:flex;flex-direction:column;margin:0;padding:0;max-width:100vw}
     #aba-painel .painel-wrapper{width:100%;height:100%;display:flex;flex-direction:column;overflow:hidden}
-    .painel-header{background:rgba(0,0,0,.4);padding:16px 40px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(255,255,255,0.08);flex-shrink:0;min-height:60px}
+    .painel-header{background:rgba(0,0,0,.4);padding:16px 40px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(255,255,255,0.08);flex-shrink:0;min-height:60px;flex-wrap:wrap;gap:12px}
     .painel-header h2{font-family:'Sora',sans-serif;font-size:24px;font-weight:700;color:#e2e8f0}
     .painel-header .grupo-badge{background:var(--blue);color:#fff;font-size:14px;padding:6px 16px;border-radius:20px;font-weight:600}
     .painel-status{display:flex;align-items:center;gap:8px;font-size:14px;color:#94a3b8}
     .painel-status .dot{width:10px;height:10px;background:var(--green);border-radius:50%;animation:pulse 2s infinite}
+    .painel-relogio{display:flex;align-items:center;gap:14px;color:#e2e8f0;font-family:'DM Sans',sans-serif}
+    .painel-relogio .data-texto{font-size:13px;color:#94a3b8}
+    .painel-relogio .hora-texto{font-size:22px;font-weight:700;color:#fff;letter-spacing:2px}
     @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
     .painel-grid{display:grid;grid-template-columns:repeat(3,1fr);grid-template-rows:repeat(2,1fr);gap:30px;padding:40px;flex:1;overflow:hidden;align-content:stretch}
-    .painel-card{background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);border-left:5px solid var(--blue);border-radius:16px;padding:24px;display:flex;flex-direction:column;justify-content:flex-start;backdrop-filter:blur(10px);transition:opacity .5s ease,transform .5s ease;position:relative;overflow:hidden}
-    .painel-card.expirado{opacity:.25;border-left-color:var(--light)}
-    .painel-card.removendo{opacity:0;transform:scale(.95);pointer-events:none}
+    .painel-card{background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);border-left:5px solid var(--blue);border-radius:16px;padding:24px;display:flex;flex-direction:column;justify-content:flex-start;backdrop-filter:blur(10px);position:relative;overflow:hidden}
     .painel-card-titulo{font-family:'Sora',sans-serif;font-size:19px;font-weight:700;color:#f1f5f9;margin-bottom:10px;line-height:1.3;overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
     .painel-card-data{font-size:18px;color:#94a3b8;margin-bottom:14px;line-height:1.4;flex-shrink:0}
     .painel-card-convocados{flex:1;overflow-y:hidden;overflow-x:hidden;min-height:0;position:relative}
@@ -45,8 +46,6 @@
     .painel-card-convocados .nomes-grid.animando{transition:transform 10s linear}
     .painel-card-convocados .nome-linha{padding:1px 0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:18px;color:#ffffff}
     .painel-card-convocados .nome-linha::before{content:'•';margin-right:6px;color:var(--blue);font-weight:bold}
-    .painel-card-convocados::-webkit-scrollbar{width:4px}
-    .painel-card-convocados::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.15);border-radius:2px}
     .painel-card .rolagem-indicador{position:absolute;bottom:8px;right:12px;width:6px;height:6px;background:rgba(255,255,255,0.3);border-radius:50%;opacity:0;transition:opacity 0.5s}
     .painel-card .rolagem-indicador.ativo{opacity:1;animation:piscar-indicador 2s infinite}
     @keyframes piscar-indicador{0%,100%{opacity:0.3}50%{opacity:1}}
@@ -60,7 +59,6 @@
     .card{background:var(--w);border-radius:16px;padding:18px;margin-bottom:16px;box-shadow:0 2px 10px rgba(30,58,138,.06)}
     .card-titulo{font-family:'Sora',sans-serif;font-size:14px;font-weight:700;color:var(--blue);margin-bottom:12px;display:flex;align-items:center;justify-content:space-between}
     .badge{background:var(--blue);color:#fff;font-size:11px;padding:3px 9px;border-radius:20px;font-weight:600}
-    .banner-aviso{background:#fff7ed;border:1px solid #fed7aa;border-radius:12px;padding:12px 14px;margin-bottom:16px;display:flex;align-items:center;gap:10px;font-size:12px;color:#c2410c}
     .grupo-header{display:flex;align-items:center;justify-content:space-between;cursor:pointer;padding:4px 0}
     .grupo-header .grupo-nome{font-size:14px;font-weight:600;color:var(--blue);display:flex;align-items:center;gap:6px}
     .grupo-header .seta{font-size:12px;transition:transform .2s;display:inline-block}
@@ -347,9 +345,17 @@
   <div id="aba-saldo" class="aba-content" style="display:none"><div id="saldo-container"><div class="skel"></div></div></div>
   <div id="aba-painel" class="aba-content" style="display:none">
     <div class="painel-wrapper">
-      <div class="painel-header"><h2>📋 Painel de Convocações</h2><div class="painel-status"><span class="dot"></span> Atualizando em tempo real</div><div class="grupo-badge" id="painel-grupo-nome">—</div></div>
+      <div class="painel-header">
+        <h2>📋 Painel de Convocações</h2>
+        <div class="painel-status"><span class="dot"></span> Atualizando em tempo real</div>
+        <div class="painel-relogio">
+          <span class="data-texto" id="painel-data-texto"></span>
+          <span class="hora-texto" id="painel-hora-texto"></span>
+        </div>
+        <div class="grupo-badge" id="painel-grupo-nome">—</div>
+      </div>
       <div class="painel-grid" id="painel-grid"><div class="painel-vazio">Nenhuma convocação disponível no momento.</div></div>
-      <div class="painel-footer">Desenvolvido por <strong>IHC Solutions</strong> — © 2026 Gestor de Convocações — v22.8</div>
+      <div class="painel-footer">Desenvolvido por <strong>IHC Solutions</strong> — © 2026 Gestor de Convocações — v22.10</div>
     </div>
   </div>
 </main>
@@ -357,7 +363,7 @@
 <button id="fab" onclick="abrirScanner()"><svg viewBox="0 0 24 24"><path d="M9 3H5a2 2 0 00-2 2v4m6-6h10a2 2 0 012 2v4M9 3v18m0 0h10a2 2 0 002-2V9M9 21H5a2 2 0 01-2-2V9m0 0h18"/></svg></button>
 <button class="btn-fab-admin" id="btn-fab-admin" onclick="abrirAdmin()">🛡️</button>
 
-<footer><p>Desenvolvido por <strong>IHC Solutions</strong></p><p>© 2026 Gestor de Convocações — v22.8</p></footer>
+<footer><p>Desenvolvido por <strong>IHC Solutions</strong></p><p>© 2026 Gestor de Convocações — v22.10</p></footer>
 
 <div class="overlay" id="mod-ev" onclick="if(event.target===this) fecharMod()"><div class="sheet"><div class="handle" onclick="fecharMod()"></div><input type="text" class="mod-titulo-input" id="mod-tit" placeholder="Título do evento"><input type="text" class="mod-sub-input" id="mod-sub" placeholder="Data e hora"><div class="mod-sec"><h3>Convocados <span id="admin-badge-conv" style="display:none" class="admin-badge">Admin</span></h3><div id="mod-conv"></div></div><div style="display:flex;gap:8px;margin-top:16px"><button class="btn-ag" id="mod-ag" style="flex:1;margin-top:0">📅 Agenda</button><button id="mod-trocar" style="flex:1;padding:12px;background:#fff7ed;color:#c2410c;border:1.5px solid #fed7aa;border-radius:10px;font-size:14px;cursor:pointer;font-weight:600;display:none;">🔄 Trocar</button></div><button class="btn-salvar-edicao-evento" id="mod-salvar-edicao" style="display:none" onclick="salvarEdicaoEvento()">💾 Salvar alterações</button><button class="btn-del" id="mod-del" style="display:none">🗑 Excluir</button><button class="btn-cancel" style="margin-top:10px;width:100%" onclick="fecharMod()">Fechar</button></div></div>
 <div id="trocar-ov"><div class="trocar-box"><h3>🔄 Trocar escala</h3><p id="trocar-desc"></p><div class="trocar-membros" id="trocar-lista"></div><div class="trocar-btns"><button class="btn-cancel" onclick="fecharTrocar()">Cancelar</button><button class="btn-salvar" style="background:#c2410c" id="trocar-confirmar">Confirmar</button></div></div></div>
@@ -387,7 +393,7 @@ const EMAIL_CONFIG={publicKey:'mXZPykI5Nr2COjWr0',serviceId:'service_pam1xgd',te
 let eu=null,grupoId=null,gruposUsuario=[],grupoAtivo=null,ocrDados=null,matches=[],camStream=null,eventoTroca=null,substitutoSelecionado=null,eventoAtualMod=null,nomesEditaveis=[];
 let notifAtual=null,filaNotifs=[],listaAusencias=[],membroEditando=null,saldoUsuario={ferias:[],abono:6,licenca:90};
 let toastTimeout,periodosAjuste=[],usuarioSelecionadoFerias=null,usuariosGrupo=[];
-let painelListener=null,painelCache=[],painelTimer=null,timersRolagem=[];
+let painelListener=null,painelCache=[],painelTimer=null,timersRolagem=[],relogioTimer=null;
 
 function mostrarToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');clearTimeout(toastTimeout);toastTimeout=setTimeout(()=>t.classList.remove('show'),2500);}
 function lev(a,b){if(a===b)return 0;const m=a.length,n=b.length;const dp=Array.from({length:m+1},(_,i)=>[i,...Array(n).fill(0)]);for(let j=0;j<=n;j++)dp[0][j]=j;for(let i=1;i<=m;i++)for(let j=1;j<=n;j++)dp[i][j]=a[i-1]===b[j-1]?dp[i-1][j-1]:1+Math.min(dp[i-1][j],dp[i][j-1],dp[i-1][j-1]);return dp[m][n];}
@@ -396,21 +402,38 @@ function mostrarAba(aba,el){
   document.getElementById('aba-'+aba).style.display='block';
   document.querySelectorAll('.nav-tab').forEach(e=>e.classList.remove('active'));
   if(el)el.classList.add('active');
-  if(aba==='painel'){document.body.classList.add('painel-ativo');iniciarPainel();}
-  else{document.body.classList.remove('painel-ativo');pararRolagens();if(painelListener)painelListener();painelListener=null;if(painelTimer)clearInterval(painelTimer);}
+  if(aba==='painel'){document.body.classList.add('painel-ativo');iniciarPainel();iniciarRelogio();}
+  else{document.body.classList.remove('painel-ativo');pararRolagens();if(painelListener)painelListener();painelListener=null;if(painelTimer)clearInterval(painelTimer);pararRelogio();}
   if(aba==='ferias'){carregarFerias();if(eu&&eu.is_admin)document.getElementById('btn-para-outro').style.display='block';}
   if(aba==='saldo')carregarSaldo();
 }
 try{emailjs.init(EMAIL_CONFIG.publicKey);}catch(e){console.warn('EmailJS init error:',e);}
 
 function pararRolagens(){timersRolagem.forEach(t=>clearTimeout(t));timersRolagem=[];}
+function pararRelogio(){if(relogioTimer){clearInterval(relogioTimer);relogioTimer=null;}}
+
+function iniciarRelogio(){
+  function atualizarRelogio(){
+    const agora=new Date();
+    const diasSem=['dom','seg','ter','qua','qui','sex','sáb'];
+    const meses=['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'];
+    const dataTexto=diasSem[agora.getDay()]+' '+agora.getDate()+' de '+meses[agora.getMonth()];
+    const horaTexto=agora.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+    const dataEl=document.getElementById('painel-data-texto');
+    const horaEl=document.getElementById('painel-hora-texto');
+    if(dataEl)dataEl.textContent=dataTexto;
+    if(horaEl)horaEl.textContent=horaTexto;
+  }
+  atualizarRelogio();
+  relogioTimer=setInterval(atualizarRelogio,1000);
+}
 
 function iniciarPainel(){
   if(!grupoId){document.getElementById('painel-grid').innerHTML='<div class="painel-vazio">Selecione um grupo para visualizar o painel.</div>';return;}
   document.getElementById('painel-grupo-nome').textContent=grupoAtivo?grupoAtivo.nome:'—';
   if(painelListener)painelListener();
   painelListener=db.collection('eventos').where('grupo_id','==',grupoId).onSnapshot(snap=>{
-    const eventos=snap.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>new Date(a.data_hora)-new Date(b.data_hora));
+    const eventos=snap.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>new Date(a.data_hora).getTime()-new Date(b.data_hora).getTime());
     painelCache=eventos;
     localStorage.setItem('painelCache_'+grupoId,JSON.stringify(eventos));
     renderizarPainel(eventos);
@@ -424,7 +447,7 @@ function iniciarPainel(){
     if(!document.body.classList.contains('painel-ativo'))return;
     try{
       const snap=await db.collection('eventos').where('grupo_id','==',grupoId).get();
-      const eventos=snap.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>new Date(a.data_hora)-new Date(b.data_hora));
+      const eventos=snap.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>new Date(a.data_hora).getTime()-new Date(b.data_hora).getTime());
       painelCache=eventos;
       localStorage.setItem('painelCache_'+grupoId,JSON.stringify(eventos));
       renderizarPainel(eventos);
@@ -432,7 +455,7 @@ function iniciarPainel(){
       console.warn('Erro ao atualizar painel:',e);
       if(painelCache.length)renderizarPainel(painelCache);
     }
-  },30000);
+  },15000);
 }
 
 function iniciarRolagemCard(card){
@@ -499,14 +522,14 @@ function iniciarRolagemCard(card){
 
 function renderizarPainel(eventos){
   pararRolagens();
-  const agora=new Date();
+  const agora=Date.now();
   const grid=document.getElementById('painel-grid');
   
   const validos=eventos.filter(ev=>{
     if(!ev.data_hora)return false;
-    const dt=new Date(ev.data_hora);
+    const dt=new Date(ev.data_hora).getTime();
     const minutosDesdeEvento=(agora-dt)/60000;
-    return minutosDesdeEvento<30;
+    return minutosDesdeEvento<15;
   });
   
   if(!validos.length){
@@ -516,15 +539,16 @@ function renderizarPainel(eventos){
   
   const visiveis=validos.slice(0,6);
   grid.innerHTML=visiveis.map(ev=>{
-    const dt=new Date(ev.data_hora);
+    const dt=new Date(ev.data_hora).getTime();
     const passou=dt<=agora;
-    const cls=passou?'painel-card expirado':'painel-card';
+    const opacity=passou?'0.25':'1';
+    const borderColor=passou?'#94a3b8':'var(--blue)';
     const nomes=[...(ev.lista_convocados||[])].sort((a,b)=>a.localeCompare(b,'pt-BR'));
     const nomesHtml=nomes.length?nomes.map(n=>'<div class="nome-linha">'+n+'</div>').join(''):'<div class="nome-linha" style="color:#64748b">Nenhum convocado</div>';
-    return '<div class="'+cls+'" data-evento-id="'+ev.id+'"><div class="painel-card-titulo">'+(ev.titulo_evento||'Sem título')+'</div><div class="painel-card-data">📅 '+fD(dt)+' · 🕐 '+fH(dt)+(ev.local?' · 📍 '+ev.local:'')+'</div><div class="painel-card-convocados"><div class="nomes-grid">'+nomesHtml+'</div></div></div>';
+    return '<div class="painel-card" style="opacity:'+opacity+';border-left-color:'+borderColor+'" data-evento-id="'+ev.id+'"><div class="painel-card-titulo">'+(ev.titulo_evento||'Sem título')+'</div><div class="painel-card-data">📅 '+fD(new Date(ev.data_hora))+' · 🕐 '+fH(new Date(ev.data_hora))+(ev.local?' · 📍 '+ev.local:'')+'</div><div class="painel-card-convocados"><div class="nomes-grid">'+nomesHtml+'</div></div></div>';
   }).join('');
   
-  const cards=grid.querySelectorAll('.painel-card:not(.expirado)');
+  const cards=grid.querySelectorAll('.painel-card[style*="opacity:1"]');
   cards.forEach(card=>iniciarRolagemCard(card));
 }
 
