@@ -364,16 +364,15 @@
         <div class="painel-right"><div class="painel-relogio"><span class="data-texto" id="painel-data-texto"></span></div><div class="grupo-badge" id="painel-grupo-nome">—</div></div>
       </div>
       <div class="painel-grid" id="painel-grid"><div class="painel-vazio">Nenhuma convocação disponível no momento.</div></div>
-      <div class="painel-footer">Desenvolvido por <strong>IHC Solutions</strong> — © 2026 Gestor de Convocações — v23.5</div>
+      <div class="painel-footer">Desenvolvido por <strong>IHC Solutions</strong> — © 2026 Gestor de Convocações — v23.6</div>
     </div>
   </div>
 </main>
 
 <button id="fab" onclick="abrirScanner()"><svg viewBox="0 0 24 24"><path d="M9 3H5a2 2 0 00-2 2v4m6-6h10a2 2 0 012 2v4M9 3v18m0 0h10a2 2 0 002-2V9M9 21H5a2 2 0 01-2-2V9m0 0h18"/></svg></button>
 <button class="btn-fab-admin" id="btn-fab-admin" onclick="abrirAdmin()">🛡️</button>
-<footer><p>Desenvolvido por <strong>IHC Solutions</strong></p><p>© 2026 Gestor de Convocações — v23.5</p></footer>
+<footer><p>Desenvolvido por <strong>IHC Solutions</strong></p><p>© 2026 Gestor de Convocações — v23.6</p></footer>
 
-<!-- MODAIS (mantidos iguais) -->
 <div class="overlay" id="mod-ev" onclick="if(event.target===this) fecharMod()"><div class="sheet"><div class="handle" onclick="fecharMod()"></div><input type="text" class="mod-titulo-input" id="mod-tit" placeholder="Título do evento"><input type="text" class="mod-sub-input" id="mod-sub" placeholder="Data e hora"><div class="mod-sec"><h3>Convocados <span id="admin-badge-conv" style="display:none" class="admin-badge">Admin</span></h3><div id="mod-conv"></div></div><div style="display:flex;gap:8px;margin-top:16px"><button class="btn-ag" id="mod-ag" style="flex:1;margin-top:0">📅 Agenda</button><button id="mod-trocar" style="flex:1;padding:12px;background:#fff7ed;color:#c2410c;border:1.5px solid #fed7aa;border-radius:10px;font-size:14px;cursor:pointer;font-weight:600;display:none;">🔄 Trocar</button></div><button class="btn-salvar-edicao-evento" id="mod-salvar-edicao" style="display:none" onclick="salvarEdicaoEvento()">💾 Salvar alterações</button><button class="btn-del" id="mod-del" style="display:none">🗑 Excluir</button><button class="btn-cancel" style="margin-top:10px;width:100%" onclick="fecharMod()">Fechar</button></div></div>
 <div id="trocar-ov"><div class="trocar-box"><h3>🔄 Trocar escala</h3><p id="trocar-desc"></p><div class="trocar-membros" id="trocar-lista"></div><div class="trocar-btns"><button class="btn-cancel" onclick="fecharTrocar()">Cancelar</button><button class="btn-salvar" style="background:#c2410c" id="trocar-confirmar">Confirmar</button></div></div></div>
 <div class="ov-center" id="ferias-consent-ov"><div class="box-center"><h3>Registrar Período</h3><p id="ferias-consent-desc">Registrar férias, licença ou abono.</p><div class="btns-row"><button class="btn-cancel" onclick="document.getElementById('ferias-consent-ov').classList.remove('on')">Cancelar</button><button class="btn-salvar" onclick="abrirFormFerias()">Continuar</button></div></div></div>
@@ -411,7 +410,6 @@ const loadingError=document.getElementById('loading-error');
 const btnRecarregar=document.getElementById('btn-recarregar');
 function showError(msg){loadingMsg.textContent='Erro ao carregar';loadingError.textContent=msg;loadingError.style.display='block';btnRecarregar.style.display='block';document.querySelector('#loading-screen .spinner').style.display='none';}
 
-// Autenticação simplificada
 let authResolvido=false;
 const SEGURANCA_TIMEOUT=setTimeout(()=>{if(!authResolvido){authResolvido=true;showError('Tempo limite. Recarregue a página.');}},8000);
 const userAtual=auth.currentUser;
@@ -472,7 +470,6 @@ function iniciarRelogio(){
   at();relogioTimer=setInterval(at,1000);
 }
 
-// ═══════════ CORREÇÃO: removida parseDataHoraLocal, usando new Date() simples ═══════════
 function iniciarPainel(){
   if(!grupoId){document.getElementById('painel-grid').innerHTML='<div class="painel-vazio">Selecione um grupo para visualizar o painel.</div>';return;}
   document.getElementById('painel-grupo-nome').textContent=grupoAtivo?grupoAtivo.nome:'—';
@@ -532,13 +529,99 @@ function renderizarPainel(eventos){
   grid.innerHTML=visiveis.map(ev=>{
     const dt=new Date(ev.data_hora);
     const passou=dt<=agora;
-    const nomes=[...(ev.lista_convocados||[])].sort((a,b)=>a.localeCompare(b,'pt-BR'));
+    // ═════ NOMES MANTÉM ORDEM ORIGINAL (sem sort) ═════
+    const nomes=[...(ev.lista_convocados||[])];
     const nh=nomes.length?nomes.map(n=>'<div class="nome-linha">'+n+'</div>').join(''):'<div class="nome-linha" style="color:#64748b">Nenhum convocado</div>';
     return '<div class="painel-card" style="opacity:'+(passou?'0.25':'1')+';border-left-color:'+(passou?'#94a3b8':'var(--blue)')+'" data-evento-id="'+ev.id+'"><div class="painel-card-titulo">'+(ev.titulo_evento||'Sem título')+'</div><div class="painel-card-data">📅 '+fD(dt)+' · 🕐 '+fH(dt)+(ev.local?' · 📍 '+ev.local:'')+'</div><div class="painel-card-convocados"><div class="nomes-grid">'+nh+'</div></div></div>';
   }).join('');
   const cards=grid.querySelectorAll('.painel-card[style*="opacity:1"]');
   cards.forEach(card=>iniciarRolagemCard(card));
 }
+
+// ═══════════ CORREÇÃO: salvarEdicaoEvento com logs e fallback ═══════════
+async function salvarEdicaoEvento(){
+  if(!eventoAtualMod){mostrarToast('⚠️ Nenhum evento selecionado');return;}
+  if(!eu||!eu.is_admin){mostrarToast('⚠️ Apenas administradores');return;}
+  
+  const novoTitulo=document.getElementById('mod-tit').value.trim();
+  if(!novoTitulo){mostrarToast('⚠️ Informe o título');return;}
+  
+  try{
+    console.log('💾 Salvando título:',novoTitulo,'para evento:',eventoAtualMod.id);
+    await db.collection('eventos').doc(eventoAtualMod.id).update({titulo_evento:novoTitulo});
+    eventoAtualMod.titulo_evento=novoTitulo;
+    
+    // Atualiza cache local
+    const idx=painelCache.findIndex(e=>e.id===eventoAtualMod.id);
+    if(idx>=0)painelCache[idx].titulo_evento=novoTitulo;
+    
+    mostrarToast('✅ Evento atualizado!');
+    carregarEventos();
+    fecharMod();
+    setTimeout(()=>abrirMod(eventoAtualMod),300);
+  }catch(e){
+    console.error('❌ Erro ao salvar título:',e);
+    mostrarToast('⚠️ Erro ao salvar. Tente novamente.');
+  }
+}
+
+// ═══════════ CORREÇÃO: abrirMod com título editável garantido ═══════════
+function abrirMod(ev){
+  eventoAtualMod=ev;
+  const dt=new Date(ev.data_hora);
+  document.getElementById('mod-tit').value=ev.titulo_evento||'';
+  document.getElementById('mod-sub').value=fD(dt)+' às '+fH(dt)+(ev.local?' · '+ev.local:'');
+  
+  const ti=document.getElementById('mod-tit');
+  const si=document.getElementById('mod-sub');
+  const bs=document.getElementById('mod-salvar-edicao');
+  
+  if(eu&&eu.is_admin){
+    ti.readOnly=false;
+    ti.style.borderBottom='2px dashed var(--blue)';
+    ti.style.cursor='text';
+    bs.style.display='block';
+    bs.textContent='💾 Salvar alterações';
+    console.log('✅ Admin detectado — título editável');
+  }else{
+    ti.readOnly=true;
+    ti.style.borderBottom='none';
+    ti.style.cursor='default';
+    bs.style.display='none';
+  }
+  
+  const ab=document.getElementById('admin-badge-conv');
+  if(eu&&eu.is_admin){
+    ab.style.display='inline-block';
+    renderizarNomesAdmin(ev);
+  }else{
+    ab.style.display='none';
+    db.collection('usuarios').where('grupo_id','==',grupoId).get().then(s=>{
+      const us=s.docs.map(d=>d.data());
+      const norm=s=>s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9\s]/g,'').trim();
+      document.getElementById('mod-conv').innerHTML=(ev.lista_convocados||[]).map(n=>{
+        const nn=norm(n);let uid=null;
+        for(const u of us){if([u.nome_completo,...(u.nomes_conhecidos||[])].some(x=>norm(x)===nn)){uid=u.uid;break;}}
+        let av='';
+        if(uid){const ia=verificarStatusAusencia(uid,ev.data_hora);if(ia){let ic=ia.tipo==='ferias'?'🏖️':(ia.tipo==='licenca'?'🏆':'⏱️');av='<div class="aviso-ferias">'+ic+' Atenção: Convocado está de '+ia.tipo+' neste dia!</div>';}}
+        return'<div class="conv-linha"><div style="display:flex;align-items:center;gap:10px;width:100%"><div class="conv-icon"><svg viewBox="0 0 24 24"><path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/></svg></div><span class="conv-nome">'+n+'</span></div>'+av+'</div>';
+      }).join('');
+    });
+  }
+  
+  const agr=new Date();
+  const evFut=dt>agr;
+  const euConv=(ev.lista_convocados||[]).some(n=>euSouConvocadoNome(n));
+  const bt=document.getElementById('mod-trocar');
+  if(euConv&&evFut){bt.style.display='block';bt.onclick=()=>abrirTrocar(ev);}
+  else{bt.style.display='none';}
+  document.getElementById('mod-ag').onclick=()=>ics(ev);
+  document.getElementById('mod-del').style.display=eu&&eu.is_admin?'block':'none';
+  document.getElementById('mod-del').onclick=()=>{if(!eu||!eu.is_admin)return;if(confirm('Excluir?')){db.collection('eventos').doc(ev.id).delete().then(()=>{fecharMod();carregarEventos();mostrarToast('Excluída');});}};
+  document.getElementById('mod-ev').classList.add('on');
+}
+
+function fecharMod(){document.getElementById('mod-ev').classList.remove('on');eventoAtualMod=null;nomesEditaveis=[];}
 
 // ══ DEMAIS FUNÇÕES ══
 async function migrarGruposSeNecessario(){if(!eu)return;const userRef=db.collection('usuarios').doc(eu.uid);const snap=await userRef.get();const data=snap.data();if(!data)return;let precisaMigrar=false,grupoIdAntigo=data.grupo_id;if(grupoIdAntigo){if(!data.grupos||!Array.isArray(data.grupos)||data.grupos.length===0)precisaMigrar=true;else{await userRef.update({grupo_id:firebase.firestore.FieldValue.delete()});eu.grupos=data.grupos;eu.grupo_id=null;return;}}if(precisaMigrar&&grupoIdAntigo){try{const gSnap=await db.collection('grupos').doc(grupoIdAntigo).get();if(gSnap.exists){const gData=gSnap.data();const admins=gData.admins||[gData.criado_por];const isAdmin=admins.includes(eu.uid)||gData.criado_por===eu.uid;const novoGrupo={id:grupoIdAntigo,nome:gData.nome||'Meu Grupo',is_admin:isAdmin};await userRef.update({grupos:firebase.firestore.FieldValue.arrayUnion(novoGrupo),grupo_id:firebase.firestore.FieldValue.delete()});eu.grupos=[novoGrupo];eu.grupo_id=null;}else{await userRef.update({grupo_id:firebase.firestore.FieldValue.delete()});eu.grupos=[];eu.grupo_id=null;}}catch(e){console.error('Erro na migração:',e);}}else if(data.grupos){eu.grupos=data.grupos;}}
@@ -581,7 +664,7 @@ function confirmar(i,sim){if(sim){const m=matches[i];matches[i].tipo='exato';if(
 function desvincularMatch(i){if(!confirm('Desvincular "'+matches[i].nome+'" de '+matches[i].usuario.nome_completo+'?'))return;const u=matches[i].usuario;if(u&&u.nomes_conhecidos){const nn=u.nomes_conhecidos.filter(n=>{const norm=s=>s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9\s]/g,'').trim();return norm(n)!==norm(matches[i].nome);});db.collection('usuarios').doc(u.uid).update({nomes_conhecidos:nn});}matches[i].tipo='nao_encontrado';matches[i].usuario=null;renderMatches();mostrarToast('✅ Desvinculado!');}
 function fecharRv(){document.getElementById('rv-ov').classList.remove('on');ocrDados=null;matches=[];}
 async function salvar(){const t=document.getElementById('rv-tit').value.trim();const d=document.getElementById('rv-data').value;if(!t||!d){alert('Preencha título e data.');return;}await db.collection('eventos').add({id_verificacao:ocrDados?.id_ver||null,titulo_evento:t,data_hora:d+':00',local:document.getElementById('rv-loc').value.trim(),lista_convocados:ocrDados?.nomes||[],grupo_id:grupoId,criado_por:eu.uid,criado_em:firebase.firestore.FieldValue.serverTimestamp()});fecharRv();const dtF=new Date(d+':00').toLocaleDateString('pt-BR',{day:'2-digit',month:'short',year:'numeric'});const ex=matches.filter(m=>m.tipo==='exato');for(const m of ex){await db.collection('notificacoes').add({uid:m.usuario.uid,tipo:'convocado',nome_convocacao:m.nome,titulo_evento:t,data_hora:d+':00',grupo_id:grupoId,respondido:false,criado_em:firebase.firestore.FieldValue.serverTimestamp()});if(m.usuario.uid===eu.uid)enviarNotificacaoPush('📋 Convocado!',t+' — '+dtF);}const pa=matches.filter(m=>m.tipo==='parcial'||m.tipo==='baixa_confianca');for(const m of pa){await db.collection('notificacoes').add({uid:m.usuario.uid,tipo:'confirmar',nome_convocacao:m.nome,titulo_evento:t,data_hora:d+':00',grupo_id:grupoId,respondido:false,criado_em:firebase.firestore.FieldValue.serverTimestamp()});}mostrarToast('✅ Salvo!');carregarEventos();verificarNotificacoesPendentes();}
-async function salvarEdicaoEvento(){if(!eventoAtualMod||!eu.is_admin)return;const novoTitulo=document.getElementById('mod-tit').value.trim();if(!novoTitulo){mostrarToast('⚠️ Informe o título');return;}try{await db.collection('eventos').doc(eventoAtualMod.id).update({titulo_evento:novoTitulo});eventoAtualMod.titulo_evento=novoTitulo;mostrarToast('✅ Evento atualizado!');carregarEventos();abrirMod(eventoAtualMod);}catch(e){console.error(e);alert('Erro ao salvar.');}}
+async function salvarEdicaoEventoOld(){if(!eventoAtualMod||!eu.is_admin)return;const novoTitulo=document.getElementById('mod-tit').value.trim();if(!novoTitulo){mostrarToast('⚠️ Informe o título');return;}try{await db.collection('eventos').doc(eventoAtualMod.id).update({titulo_evento:novoTitulo});eventoAtualMod.titulo_evento=novoTitulo;mostrarToast('✅ Evento atualizado!');carregarEventos();abrirMod(eventoAtualMod);}catch(e){console.error(e);alert('Erro ao salvar.');}}
 let intervaloVerificacaoEmail=null;
 function iniciarVerificacaoLembretes(){if(intervaloVerificacaoEmail)clearInterval(intervaloVerificacaoEmail);verificarLembretesAmanha();intervaloVerificacaoEmail=setInterval(verificarLembretesAmanha,6*60*60*1000);}
 async function verificarLembretesAmanha(){if(!grupoId)return;const hoje=new Date();const chaveDia='lembretes_enviados_'+hoje.toISOString().split('T')[0];if(localStorage.getItem(chaveDia))return;const amanha=new Date(hoje);amanha.setDate(amanha.getDate()+1);const amanhaStr=amanha.toISOString().split('T')[0];try{const evs=await db.collection('eventos').where('grupo_id','==',grupoId).get();const evAmanha=evs.docs.map(d=>({id:d.id,...d.data()})).filter(e=>e.data_hora&&e.data_hora.startsWith(amanhaStr));if(!evAmanha.length)return;const us=await db.collection('usuarios').where('grupo_id','==',grupoId).get();const usuarios=us.docs.map(d=>({uid:d.id,...d.data()}));let env=0;for(const ev of evAmanha){for(const n of(ev.lista_convocados||[])){const u=encontrarUsuarioPorNome(usuarios,n);if(u&&u.email){const chaveEmail='email_'+u.uid+'_'+(ev.id||ev.id_verificacao);if(localStorage.getItem(chaveEmail))continue;try{const dt=new Date(ev.data_hora);await emailjs.send(EMAIL_CONFIG.serviceId,EMAIL_CONFIG.templateId,{to_email:u.email,nome_usuario:u.nome_completo,titulo_evento:ev.titulo_evento||'Evento',data_evento:dt.toLocaleDateString('pt-BR'),hora_evento:dt.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'}),local_evento:ev.local||'A definir'});localStorage.setItem(chaveEmail,'1');env++;}catch(e){console.warn('Falha e-mail',u.email,e);}}}}localStorage.setItem(chaveDia,'1');if(env>0)console.log(env+' lembretes');}catch(e){console.error('Erro verificar lembretes:',e);}}
@@ -591,8 +674,6 @@ async function aprovar(uid,nome){await db.collection('usuarios').doc(uid).update
 async function recusar(uid){const s=await db.collection('grupos').doc(grupoId).get();const sol=s.data().solicitacoes||{};delete sol[uid];await db.collection('grupos').doc(grupoId).update({solicitacoes:sol});await db.collection('usuarios').doc(uid).update({solicitacoes:[]});verificarAprovacoes();}
 async function carregarEventos(){if(!grupoId)return;const snap=await db.collection('eventos').where('grupo_id','==',grupoId).get();const agora=new Date();const evs=snap.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>new Date(a.data_hora)-new Date(b.data_hora));document.getElementById('total').textContent=evs.length+' total';const norm=s=>s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9\s]/g,'').trim();const st=new Set(['de','da','do','das','dos','e','a','o','as','os']);const pw=s=>norm(s).split(/\s+/).filter(p=>p.length>1&&!st.has(p));const euN=[eu.nome_completo,...(eu.nomes_conhecidos||[])];const euPw=pw(eu.nome_completo);function euSou(l){return(l||[]).some(n=>{if(euN.some(en=>norm(en)===norm(n)))return true;const pn=pw(n);const ec=pn.filter(p=>euPw.some(pe=>p===pe||(p.length>=5&&lev(p,pe)<=1)));return ec.length/Math.max(pn.length,1)>=0.55;});}const mp=evs.filter(e=>new Date(e.data_hora)>agora&&euSou(e.lista_convocados));const ms=evs.filter(e=>new Date(e.data_hora)>agora&&(e.substitutos||[]).some(s=>s.uid===eu.uid));const el=document.getElementById('prox');if(!mp.length&&!ms.length){el.innerHTML='<div class="card-vazio">Sem convocações próximas.</div>';}else{el.innerHTML=[...mp.map((ev,i)=>{const dt=new Date(ev.data_hora);const es=JSON.stringify(ev).replace(/'/g,"&#39;");return'<div class="card-prox"><div class="prox-label">'+(i===0?'SUA PRÓXIMA':'TAMBÉM CONVOCADO')+'</div><div class="prox-titulo" onclick=\'abrirMod('+es+')\'>'+(ev.titulo_evento||'Evento')+'</div><div class="prox-meta"><span>📅 '+fD(dt)+'</span><span>🕐 '+fH(dt)+'</span></div><div style="display:flex;gap:8px;"><button class="btn-agenda" style="flex:1" onclick=\'ics('+es+')\'>📅 Agendar</button><button class="btn-trocar-prox" style="flex:1" onclick=\'abrirTrocar('+es+')\'>🔄 Trocar</button></div></div>';}),...ms.map(ev=>{const dt=new Date(ev.data_hora);const es=JSON.stringify(ev).replace(/'/g,"&#39;");const sub=ev.substitutos.find(s=>s.uid===eu.uid);return'<div class="card-prox-sub"><div class="sub-badge">🔄 SUBSTITUIÇÃO</div><div class="prox-titulo" onclick=\'abrirMod('+es+')\'>'+(ev.titulo_evento||'Evento')+'</div><div style="font-size:12px;opacity:.8;margin-bottom:10px">Substituindo: '+sub.substituindo+'</div><div class="prox-meta"><span>📅 '+fD(dt)+'</span><span>🕐 '+fH(dt)+'</span></div><div style="display:flex;gap:8px;"><button class="btn-agenda" style="flex:1;background:#d97706" onclick=\'ics('+es+')\'>📅 Agendar</button><button class="btn-trocar-prox" style="flex:1" onclick=\'abrirTrocar('+es+')\'>🔄 Trocar</button></div></div>';})].join('');}const lst=document.getElementById('lst-ev');if(!evs.length){lst.innerHTML='<p style="color:var(--light);padding:20px;text-align:center">Nenhuma convocação.</p>';return;}lst.innerHTML='';const fut=evs.filter(e=>new Date(e.data_hora)>agora);const pas=evs.filter(e=>new Date(e.data_hora)<=agora).reverse();[...fut,...pas].forEach(ev=>lst.appendChild(criarCard(ev)));}
 function criarCard(ev){const dt=new Date(ev.data_hora);const pa=dt<=new Date();const w=document.createElement('div');w.className='ev-wrap';w.innerHTML='<div class="ev-bg"><div class="ev-bg-l"><span>👁</span></div>'+(eu.is_admin?'<div class="ev-bg-r"><span>🗑</span></div>':'')+'</div><div class="ev-card" style="border-left-color:'+(pa?'#94a3b8':'var(--blue)')+';opacity:'+(pa?'.7':'1')+'"><div class="ev-titulo">'+(ev.titulo_evento||'Sem título')+(pa?' <span style="font-size:11px;color:#94a3b8">(encerrado)</span>':'')+'</div><div class="ev-meta"><span>📅 '+fD(dt)+'</span><span>🕐 '+fH(dt)+'</span></div><div class="ev-conv">'+(ev.lista_convocados||[]).length+' convocado(s)</div></div>';const card=w.querySelector('.ev-card');let sx=0,dx=0,mov=false;card.addEventListener('touchstart',e=>{sx=e.touches[0].clientX;mov=false},{passive:true});card.addEventListener('touchmove',e=>{dx=e.touches[0].clientX-sx;mov=true;if(!eu.is_admin&&dx<0)dx=0;if(Math.abs(dx)>8){card.style.transition='none';card.style.transform='translateX('+Math.max(-100,Math.min(100,dx))+'px)';}},{passive:true});card.addEventListener('touchend',()=>{card.style.transition='transform .2s ease';if(dx<-60&&eu.is_admin){if(confirm('Excluir?'))db.collection('eventos').doc(ev.id).delete().then(()=>carregarEventos());else card.style.transform='translateX(0)';}else if(dx>60){card.style.transform='translateX(0)';abrirMod(ev);}else{card.style.transform='translateX(0)';if(!mov)abrirMod(ev);}dx=0;});card.addEventListener('click',()=>{if(!mov)abrirMod(ev);});return w;}
-function abrirMod(ev){eventoAtualMod=ev;const dt=new Date(ev.data_hora);document.getElementById('mod-tit').value=ev.titulo_evento||'';document.getElementById('mod-sub').value=fD(dt)+' às '+fH(dt)+(ev.local?' · '+ev.local:'');const ti=document.getElementById('mod-tit');const si=document.getElementById('mod-sub');const bs=document.getElementById('mod-salvar-edicao');if(eu.is_admin){ti.readOnly=false;si.readOnly=true;ti.style.borderBottom='2px dashed var(--border)';bs.style.display='block';}else{ti.readOnly=true;si.readOnly=true;ti.style.borderBottom='none';bs.style.display='none';}const ab=document.getElementById('admin-badge-conv');if(eu.is_admin){ab.style.display='inline-block';renderizarNomesAdmin(ev);}else{ab.style.display='none';db.collection('usuarios').where('grupo_id','==',grupoId).get().then(s=>{const us=s.docs.map(d=>d.data());const norm=s=>s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9\s]/g,'').trim();document.getElementById('mod-conv').innerHTML=(ev.lista_convocados||[]).map(n=>{const nn=norm(n);let uid=null;for(const u of us){if([u.nome_completo,...(u.nomes_conhecidos||[])].some(x=>norm(x)===nn)){uid=u.uid;break;}}let av='';if(uid){const ia=verificarStatusAusencia(uid,ev.data_hora);if(ia){let ic=ia.tipo==='ferias'?'🏖️':(ia.tipo==='licenca'?'🏆':'⏱️');av='<div class="aviso-ferias">'+ic+' Atenção: Convocado está de '+ia.tipo+' neste dia!</div>';}}return'<div class="conv-linha"><div style="display:flex;align-items:center;gap:10px;width:100%"><div class="conv-icon"><svg viewBox="0 0 24 24"><path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/></svg></div><span class="conv-nome">'+n+'</span></div>'+av+'</div>';}).join('');});}const agr=new Date();const evFut=dt>agr;const euConv=(ev.lista_convocados||[]).some(n=>euSouConvocadoNome(n));const bt=document.getElementById('mod-trocar');if(euConv&&evFut){bt.style.display='block';bt.onclick=()=>abrirTrocar(ev);}else{bt.style.display='none';}document.getElementById('mod-ag').onclick=()=>ics(ev);document.getElementById('mod-del').style.display=eu.is_admin?'block':'none';document.getElementById('mod-del').onclick=()=>{if(!eu.is_admin)return;if(confirm('Excluir?')){db.collection('eventos').doc(ev.id).delete().then(()=>{fecharMod();carregarEventos();mostrarToast('Excluída');});}};document.getElementById('mod-ev').classList.add('on');}
-function fecharMod(){document.getElementById('mod-ev').classList.remove('on');eventoAtualMod=null;nomesEditaveis=[];}
 function renderizarNomesAdminUI(){const c=document.getElementById('mod-conv');c.innerHTML=nomesEditaveis.map((n,i)=>'<div class="conv-linha" style="flex-direction:column;gap:6px"><div style="display:flex;align-items:center;gap:10px"><div class="conv-icon"><svg viewBox="0 0 24 24"><path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/></svg></div><span class="conv-nome editable" contenteditable="true" onblur="atualizarNomeAdmin('+i+',this.textContent)">'+n+'</span><button class="btn-remover-nome" onclick="removerNomeAdmin('+i+')">✕</button></div></div>').join('')+'<div style="display:flex;gap:8px;margin-top:8px"><input type="text" class="input-novo-nome" id="input-novo-nome" placeholder="Adicionar nome..." style="flex:1"><button class="btn-salvar" onclick="adicionarNomeAdmin()" style="width:auto;padding:10px 16px">+</button></div><button class="btn-salvar-nomes" onclick="salvarNomesAdmin()">💾 Salvar</button>';}
 function renderizarNomesAdmin(ev){nomesEditaveis=[...(ev.lista_convocados||[])];renderizarNomesAdminUI();}
 function atualizarNomeAdmin(i,n){if(n&&n.trim())nomesEditaveis[i]=n.trim();}
