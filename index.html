@@ -359,34 +359,20 @@
   <div id="aba-painel" class="aba-content" style="display:none">
     <div class="painel-wrapper">
       <div class="painel-header">
-        <div class="painel-left">
-          <h2>📋 Painel de Convocações</h2>
-          <div class="painel-relogio">
-            <span class="hora-texto" id="painel-hora-texto"></span>
-          </div>
-        </div>
-        <div class="painel-center">
-          <div class="painel-status"><span class="dot"></span> Atualizando em tempo real</div>
-        </div>
-        <div class="painel-right">
-          <div class="painel-relogio">
-            <span class="data-texto" id="painel-data-texto"></span>
-          </div>
-          <div class="grupo-badge" id="painel-grupo-nome">—</div>
-        </div>
+        <div class="painel-left"><h2>📋 Painel de Convocações</h2><div class="painel-relogio"><span class="hora-texto" id="painel-hora-texto"></span></div></div>
+        <div class="painel-center"><div class="painel-status"><span class="dot"></span> Atualizando em tempo real</div></div>
+        <div class="painel-right"><div class="painel-relogio"><span class="data-texto" id="painel-data-texto"></span></div><div class="grupo-badge" id="painel-grupo-nome">—</div></div>
       </div>
       <div class="painel-grid" id="painel-grid"><div class="painel-vazio">Nenhuma convocação disponível no momento.</div></div>
-      <div class="painel-footer">Desenvolvido por <strong>IHC Solutions</strong> — © 2026 Gestor de Convocações — v23.3</div>
+      <div class="painel-footer">Desenvolvido por <strong>IHC Solutions</strong> — © 2026 Gestor de Convocações — v23.4</div>
     </div>
   </div>
 </main>
 
 <button id="fab" onclick="abrirScanner()"><svg viewBox="0 0 24 24"><path d="M9 3H5a2 2 0 00-2 2v4m6-6h10a2 2 0 012 2v4M9 3v18m0 0h10a2 2 0 002-2V9M9 21H5a2 2 0 01-2-2V9m0 0h18"/></svg></button>
 <button class="btn-fab-admin" id="btn-fab-admin" onclick="abrirAdmin()">🛡️</button>
+<footer><p>Desenvolvido por <strong>IHC Solutions</strong></p><p>© 2026 Gestor de Convocações — v23.4</p></footer>
 
-<footer><p>Desenvolvido por <strong>IHC Solutions</strong></p><p>© 2026 Gestor de Convocações — v23.3</p></footer>
-
-<!-- ═══════════ MODAIS ═══════════ -->
 <div class="overlay" id="mod-ev" onclick="if(event.target===this) fecharMod()"><div class="sheet"><div class="handle" onclick="fecharMod()"></div><input type="text" class="mod-titulo-input" id="mod-tit" placeholder="Título do evento"><input type="text" class="mod-sub-input" id="mod-sub" placeholder="Data e hora"><div class="mod-sec"><h3>Convocados <span id="admin-badge-conv" style="display:none" class="admin-badge">Admin</span></h3><div id="mod-conv"></div></div><div style="display:flex;gap:8px;margin-top:16px"><button class="btn-ag" id="mod-ag" style="flex:1;margin-top:0">📅 Agenda</button><button id="mod-trocar" style="flex:1;padding:12px;background:#fff7ed;color:#c2410c;border:1.5px solid #fed7aa;border-radius:10px;font-size:14px;cursor:pointer;font-weight:600;display:none;">🔄 Trocar</button></div><button class="btn-salvar-edicao-evento" id="mod-salvar-edicao" style="display:none" onclick="salvarEdicaoEvento()">💾 Salvar alterações</button><button class="btn-del" id="mod-del" style="display:none">🗑 Excluir</button><button class="btn-cancel" style="margin-top:10px;width:100%" onclick="fecharMod()">Fechar</button></div></div>
 <div id="trocar-ov"><div class="trocar-box"><h3>🔄 Trocar escala</h3><p id="trocar-desc"></p><div class="trocar-membros" id="trocar-lista"></div><div class="trocar-btns"><button class="btn-cancel" onclick="fecharTrocar()">Cancelar</button><button class="btn-salvar" style="background:#c2410c" id="trocar-confirmar">Confirmar</button></div></div></div>
 <div class="ov-center" id="ferias-consent-ov"><div class="box-center"><h3>Registrar Período</h3><p id="ferias-consent-desc">Registrar férias, licença ou abono.</p><div class="btns-row"><button class="btn-cancel" onclick="document.getElementById('ferias-consent-ov').classList.remove('on')">Cancelar</button><button class="btn-salvar" onclick="abrirFormFerias()">Continuar</button></div></div></div>
@@ -405,14 +391,21 @@
 <div class="modal-overlay" id="installModal"><div class="modal-content"><span class="close-modal" onclick="closeInstallModal()">✕</span><h2 style="color: var(--blue); margin-top: 5px; font-size: 18px; text-transform: uppercase;">Instalação do App</h2><div id="step-os"><p style="font-size:12px;color:var(--light);margin-bottom:20px;text-align:center">Selecione o seu sistema para ver como instalar gratuitamente:</p><div class="os-container"><div class="os-card" onclick="showGuide('android')"><div class="os-icon">🤖</div><div class="os-title">ANDROID</div></div><div class="os-card" onclick="showGuide('ios')"><div class="os-icon">🍎</div><div class="os-title">IPHONE</div></div></div></div><div id="guide-android" class="guide-content"><div class="guide-step"><div class="icon-wrapper">⋮</div><div>Clique nos <strong>Três Pontos</strong> no canto superior do seu navegador Chrome.</div></div><div class="guide-step"><div class="icon-wrapper">➕</div><div>Selecione a opção <strong>"Adicionar à tela inicial"</strong>.</div></div><div class="guide-step"><div class="icon-wrapper">✓</div><div>Confirme clicando em <strong>Instalar</strong>.</div></div><button class="btn-back" onclick="resetInstallModal()">← Voltar</button></div><div id="guide-ios" class="guide-content"><div class="guide-step"><div class="icon-wrapper">↗</div><div>Clique no ícone de <strong>Compartilhar</strong> na barra inferior do Safari.</div></div><div class="guide-step"><div class="icon-wrapper">➕</div><div>Role a lista e clique em <strong>"Adicionar à Tela de Início"</strong>.</div></div><div class="guide-step"><div class="icon-wrapper">✓</div><div>Confirme clicando em <strong>Adicionar</strong> no canto superior direito.</div></div><button class="btn-back" onclick="resetInstallModal()">← Voltar</button></div></div></div>
 <div class="ov-center" id="tv-aviso-ov"><div class="box-center" style="text-align:center"><div style="font-size:48px;margin-bottom:12px">📺</div><h3>Aba destinada à Smart TV</h3><p style="font-size:14px;color:var(--light);margin-bottom:16px">Esta aba é otimizada para exibição em televisores.<br>Use o botão <strong>✕</strong> no canto superior direito ou a tecla <strong>Voltar</strong> para sair.</p><label style="display:flex;align-items:center;justify-content:center;gap:8px;font-size:13px;margin-bottom:18px;cursor:pointer"><input type="checkbox" id="tv-aviso-check" onchange="salvarPreferenciaTV()"> Não mostrar novamente</label><button class="btn-salvar" onclick="fecharAvisoTV()" style="width:100%">Entendi</button></div></div>
 
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 <script>
-// ═══════════ INICIALIZAÇÃO FIREBASE (timeout curto) ═══════════
-const MAX_STARTUP_TIME=4000;
-let firebaseReady=false;
-let authResolved=false;
+// ═══════════ INICIALIZAÇÃO SIMPLES (sem timeouts complexos) ═══════════
+try{firebase.initializeApp({apiKey:"AIzaSyAOpV5NFydHWwUwQKg0MANqMHVcXVDDqpQ",authDomain:"gestor-convocacoes-89823.firebaseapp.com",projectId:"gestor-convocacoes-89823",storageBucket:"gestor-convocacoes-89823.firebasestorage.app",messagingSenderId:"212389113483",appId:"1:212389113483:web:eb97eefe621df0cba66e8e"});}catch(e){document.getElementById('loading-screen').innerHTML='<p style="color:var(--red);padding:20px;text-align:center">Erro Firebase.</p>';throw e;}
+
+const auth=firebase.auth();
+const db=firebase.firestore();
+const EMAIL_CONFIG={publicKey:'mXZPykI5Nr2COjWr0',serviceId:'service_pam1xgd',templateId:'template_3926tbq'};
+let eu=null,grupoId=null,gruposUsuario=[],grupoAtivo=null,ocrDados=null,matches=[],camStream=null,eventoTroca=null,substitutoSelecionado=null,eventoAtualMod=null,nomesEditaveis=[];
+let notifAtual=null,filaNotifs=[],listaAusencias=[],membroEditando=null,saldoUsuario={ferias:[],abono:6,licenca:90};
+let toastTimeout,periodosAjuste=[],usuarioSelecionadoFerias=null,usuariosGrupo=[];
+let painelListener=null,painelCache=[],painelTimer=null,timersRolagem=[],relogioTimer=null;
 
 const loadingScreen=document.getElementById('loading-screen');
 const loadingMsg=document.getElementById('loading-msg');
@@ -427,99 +420,65 @@ function showError(msg){
   document.querySelector('#loading-screen .spinner').style.display='none';
 }
 
-// Timeout global de segurança
-const globalTimeout=setTimeout(()=>{
-  if(!authResolved)showError('Tempo limite excedido. Verifique sua conexão.');
-},MAX_STARTUP_TIME);
+// ═══════════ FLUXO DE AUTENTICAÇÃO CORRIGIDO ═══════════
+let authResolvido=false;
+const SEGURANCA_TIMEOUT=setTimeout(()=>{
+  if(!authResolvido){authResolvido=true;showError('Tempo limite. Recarregue a página.');}
+},8000);
 
-// Inicializa Firebase
-try{
-  firebase.initializeApp({
-    apiKey:"AIzaSyAOpV5NFydHWwUwQKg0MANqMHVcXVDDqpQ",
-    authDomain:"gestor-convocacoes-89823.firebaseapp.com",
-    projectId:"gestor-convocacoes-89823",
-    storageBucket:"gestor-convocacoes-89823.firebasestorage.app",
-    messagingSenderId:"212389113483",
-    appId:"1:212389113483:web:eb97eefe621df0cba66e8e"
+// 1. Tenta auth.currentUser (síncrono, sem callbacks)
+const userAtual=auth.currentUser;
+if(userAtual){
+  // Usuário já está logado! Carrega os dados imediatamente
+  authResolvido=true;
+  clearTimeout(SEGURANCA_TIMEOUT);
+  loadingMsg.textContent='Carregando seus dados...';
+  carregarUsuario(userAtual);
+}else{
+  // 2. Registra onAuthStateChanged como fallback
+  loadingMsg.textContent='Verificando autenticação...';
+  auth.onAuthStateChanged(user=>{
+    if(authResolvido)return;
+    authResolvido=true;
+    clearTimeout(SEGURANCA_TIMEOUT);
+    if(!user){window.location.replace('login.html');return;}
+    carregarUsuario(user);
   });
-  firebaseReady=true;
-  loadingMsg.textContent='Conectando...';
-}catch(e){
-  showError('Falha ao iniciar Firebase.');
-  throw e;
 }
 
-const auth=firebase.auth();
-const db=firebase.firestore();
-const EMAIL_CONFIG={publicKey:'mXZPykI5Nr2COjWr0',serviceId:'service_pam1xgd',templateId:'template_3926tbq'};
-let eu=null,grupoId=null,gruposUsuario=[],grupoAtivo=null,ocrDados=null,matches=[],camStream=null,eventoTroca=null,substitutoSelecionado=null,eventoAtualMod=null,nomesEditaveis=[];
-let notifAtual=null,filaNotifs=[],listaAusencias=[],membroEditando=null,saldoUsuario={ferias:[],abono:6,licenca:90};
-let toastTimeout,periodosAjuste=[],usuarioSelecionadoFerias=null,usuariosGrupo=[];
-let painelListener=null,painelCache=[],painelTimer=null,timersRolagem=[],relogioTimer=null;
-
-// Inicia autenticação imediatamente
-(function iniciarAuth(){
-  if(!firebaseReady){setTimeout(iniciarAuth,100);return;}
-  
-  // Tenta setPersistence com timeout
-  const persistPromise=new Promise((_,reject)=>{
-    setTimeout(()=>reject(new Error('timeout')),2000);
-  });
-  
-  Promise.race([auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL),persistPromise])
-  .catch(()=>auth.setPersistence(firebase.auth.Auth.Persistence.SESSION))
-  .catch(()=>{/* segue sem persistência */})
-  .finally(()=>{
-    loadingMsg.textContent='Verificando...';
+async function carregarUsuario(user){
+  try{
+    const snap=await db.collection('usuarios').doc(user.uid).get();
+    if(!snap.exists){window.location.replace('login.html');return;}
     
-    let authTimeout=setTimeout(()=>{
-      if(!authResolved){authResolved=true;clearTimeout(globalTimeout);showError('Servidor não respondeu.');}
-    },3000);
+    eu={uid:user.uid,...snap.data()};
+    document.getElementById('h-user').textContent=eu.nome_completo+' · '+eu.cargo;
+    await migrarGruposSeNecessario();
+    const snap2=await db.collection('usuarios').doc(user.uid).get();
+    eu={uid:user.uid,...snap2.data()};
+    gruposUsuario=eu.grupos||[];
     
-    auth.onAuthStateChanged(async user=>{
-      if(authResolved)return;
-      authResolved=true;
-      clearTimeout(authTimeout);
-      clearTimeout(globalTimeout);
-      
-      if(!user){window.location.replace('login.html');return;}
-      
-      try{
-        loadingMsg.textContent='Carregando dados...';
-        const snap=await db.collection('usuarios').doc(user.uid).get();
-        if(!snap.exists){window.location.replace('login.html');return;}
-        
-        eu={uid:user.uid,...snap.data()};
-        document.getElementById('h-user').textContent=eu.nome_completo+' · '+eu.cargo;
-        await migrarGruposSeNecessario();
-        const snap2=await db.collection('usuarios').doc(user.uid).get();
-        eu={uid:user.uid,...snap2.data()};
-        gruposUsuario=eu.grupos||[];
-        
-        if(gruposUsuario.length>0){grupoAtivo=gruposUsuario[0];grupoId=grupoAtivo.id;eu.is_admin=grupoAtivo.is_admin;}
-        
-        document.getElementById('btn-fab-admin').classList.toggle('on',eu.is_admin);
-        document.getElementById('btn-para-outro').style.display=eu.is_admin?'block':'none';
-        loadingScreen.style.display='none';
-        
-        verificarInstalacao();
-        iniciarNotificacoes();
-        renderizarCardGrupos();
-        
-        if(grupoId){carregarEventos();verificarAprovacoes();verificarNotificacoesPendentes();iniciarVerificacaoLembretes();}
-        else{document.getElementById('lst-ev').innerHTML='<p style="color:var(--light);padding:20px;text-align:center">Entre em um grupo para ver convocações.</p>';document.getElementById('prox').innerHTML='<div class="card-vazio">Entre em um grupo para ver suas convocações.</div>';}
-        
-        verificarCadastroCompleto();
-        limparEventosAntigos();
-      }catch(err){console.error(err);showError('Erro ao carregar dados.');}
-    });
-  });
-})();
+    if(gruposUsuario.length>0){grupoAtivo=gruposUsuario[0];grupoId=grupoAtivo.id;eu.is_admin=grupoAtivo.is_admin;}
+    
+    document.getElementById('btn-fab-admin').classList.toggle('on',eu.is_admin);
+    document.getElementById('btn-para-outro').style.display=eu.is_admin?'block':'none';
+    loadingScreen.style.display='none';
+    
+    verificarInstalacao();
+    iniciarNotificacoes();
+    renderizarCardGrupos();
+    
+    if(grupoId){carregarEventos();verificarAprovacoes();verificarNotificacoesPendentes();iniciarVerificacaoLembretes();}
+    else{document.getElementById('lst-ev').innerHTML='<p style="color:var(--light);padding:20px;text-align:center">Entre em um grupo para ver convocações.</p>';document.getElementById('prox').innerHTML='<div class="card-vazio">Entre em um grupo para ver suas convocações.</div>';}
+    
+    verificarCadastroCompleto();
+    limparEventosAntigos();
+  }catch(err){console.error(err);showError('Erro ao carregar dados.');}
+}
 
 // ═══════════ FUNÇÕES BÁSICAS ═══════════
 function mostrarToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');clearTimeout(toastTimeout);toastTimeout=setTimeout(()=>t.classList.remove('show'),2500);}
 function lev(a,b){if(a===b)return 0;const m=a.length,n=b.length;const dp=Array.from({length:m+1},(_,i)=>[i,...Array(n).fill(0)]);for(let j=0;j<=n;j++)dp[0][j]=j;for(let i=1;i<=m;i++)for(let j=1;j<=n;j++)dp[i][j]=a[i-1]===b[j-1]?dp[i-1][j-1]:1+Math.min(dp[i-1][j],dp[i][j-1],dp[i-1][j-1]);return dp[m][n];}
-
 function mostrarAba(aba,el){
   if(aba==='painel'&&!localStorage.getItem('tv_aviso_visto')){
     document.getElementById('tv-aviso-ov').classList.add('on');
@@ -534,27 +493,24 @@ function mostrarAba(aba,el){
   if(aba==='ferias'){carregarFerias();if(eu&&eu.is_admin)document.getElementById('btn-para-outro').style.display='block';}
   if(aba==='saldo')carregarSaldo();
 }
-
 function fecharAvisoTV(){document.getElementById('tv-aviso-ov').classList.remove('on');}
 function salvarPreferenciaTV(){if(document.getElementById('tv-aviso-check').checked)localStorage.setItem('tv_aviso_visto','1');else localStorage.removeItem('tv_aviso_visto');}
 function sairPainelTV(){document.body.classList.remove('painel-ativo');pararRolagens();if(painelListener)painelListener();painelListener=null;if(painelTimer)clearInterval(painelTimer);pararRelogio();document.getElementById('aba-painel').style.display='none';document.getElementById('aba-convocacoes').style.display='block';document.querySelectorAll('.nav-tab').forEach(e=>e.classList.remove('active'));document.querySelector('.nav-tab:first-child').classList.add('active');}
-
 try{emailjs.init(EMAIL_CONFIG.publicKey);}catch(e){console.warn('EmailJS:',e);}
 
 function pararRolagens(){timersRolagem.forEach(t=>clearTimeout(t));timersRolagem=[];}
 function pararRelogio(){if(relogioTimer){clearInterval(relogioTimer);relogioTimer=null;}}
-
 function iniciarRelogio(){
-  function atualizar(){
-    const agora=new Date();
+  function at(){
+    const a=new Date();
     const ds=['dom','seg','ter','qua','qui','sex','sáb'];
     const ms=['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'];
     const d=document.getElementById('painel-data-texto');
     const h=document.getElementById('painel-hora-texto');
-    if(d)d.textContent=ds[agora.getDay()]+' '+agora.getDate()+' de '+ms[agora.getMonth()];
-    if(h)h.textContent=agora.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+    if(d)d.textContent=ds[a.getDay()]+' '+a.getDate()+' de '+ms[a.getMonth()];
+    if(h)h.textContent=a.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
   }
-  atualizar();relogioTimer=setInterval(atualizar,1000);
+  at();relogioTimer=setInterval(at,1000);
 }
 
 function parseDataHoraLocal(s){
@@ -626,7 +582,6 @@ function renderizarPainel(eventos){
   cards.forEach(card=>iniciarRolagemCard(card));
 }
 
-// ═══════════ DEMAIS FUNÇÕES ═══════════
 async function migrarGruposSeNecessario(){if(!eu)return;const userRef=db.collection('usuarios').doc(eu.uid);const snap=await userRef.get();const data=snap.data();if(!data)return;let precisaMigrar=false,grupoIdAntigo=data.grupo_id;if(grupoIdAntigo){if(!data.grupos||!Array.isArray(data.grupos)||data.grupos.length===0)precisaMigrar=true;else{await userRef.update({grupo_id:firebase.firestore.FieldValue.delete()});eu.grupos=data.grupos;eu.grupo_id=null;return;}}if(precisaMigrar&&grupoIdAntigo){try{const gSnap=await db.collection('grupos').doc(grupoIdAntigo).get();if(gSnap.exists){const gData=gSnap.data();const admins=gData.admins||[gData.criado_por];const isAdmin=admins.includes(eu.uid)||gData.criado_por===eu.uid;const novoGrupo={id:grupoIdAntigo,nome:gData.nome||'Meu Grupo',is_admin:isAdmin};await userRef.update({grupos:firebase.firestore.FieldValue.arrayUnion(novoGrupo),grupo_id:firebase.firestore.FieldValue.delete()});eu.grupos=[novoGrupo];eu.grupo_id=null;}else{await userRef.update({grupo_id:firebase.firestore.FieldValue.delete()});eu.grupos=[];eu.grupo_id=null;}}catch(e){console.error('Erro na migração:',e);}}else if(data.grupos){eu.grupos=data.grupos;}}
 function renderizarCardGrupos(){const container=document.getElementById('grp-content');const badge=document.getElementById('grp-badge');if(!eu.grupos||eu.grupos.length===0){badge.textContent='0';container.innerHTML='<p style="color:var(--light);text-align:center;margin-bottom:12px">Você ainda não está em nenhum grupo.</p><div class="busca-grupo"><input type="text" id="busca-grupo-input" placeholder="Buscar grupo existente..."><button onclick="buscarGrupos()">🔍 Buscar</button></div><div class="resultados-busca" id="resultados-busca"></div><button class="btn-criar" onclick="criarGrupo()">+ Criar novo grupo</button>';}else{if(!grupoAtivo)grupoAtivo=eu.grupos[0];const totalMembros=grupoAtivo.totalMembros||'?';badge.textContent=totalMembros;const isAdmin=grupoAtivo.is_admin;container.innerHTML='<div class="grupo-header" onclick="toggleListaGrupos()"><div class="grupo-nome">📁 '+grupoAtivo.nome+(isAdmin?'<span class="admin-badge" style="margin-left:6px">Admin</span>':'')+'</div><span class="seta" id="seta-grupos">▼</span></div><div class="grupo-info">'+totalMembros+' membro(s)</div><div class="grupo-lista-expandida" id="lista-grupos-expandida">'+eu.grupos.map(g=>'<div class="grupo-item-exp '+(g.id===grupoAtivo.id?'ativo':'')+'" onclick="selecionarGrupoAtivo(\''+g.id+'\')"><span>📁 '+g.nome+' '+(g.is_admin?'🛡️':'')+'</span><button class="btn-sair-grupo" onclick="event.stopPropagation();sairDoGrupo(\''+g.id+'\',\''+g.nome+'\')">🚪 Sair</button></div>').join('')+'</div><div class="grupo-acoes"><button class="btn-criar" style="margin-top:0;flex:1" onclick="criarGrupo()">+ Criar novo grupo</button></div><div class="busca-grupo"><input type="text" id="busca-grupo-input" placeholder="Buscar grupo existente..."><button onclick="buscarGrupos()">🔍 Buscar</button></div><div class="resultados-busca" id="resultados-busca"></div>';}}
 function toggleListaGrupos(){const lista=document.getElementById('lista-grupos-expandida');const seta=document.getElementById('seta-grupos');if(!lista||!seta)return;if(lista.classList.contains('show')){lista.classList.remove('show');seta.classList.remove('open');}else{lista.classList.add('show');seta.classList.add('open');}}
@@ -636,6 +591,8 @@ function solicitarEntradaGrupo(gId,gNome){document.getElementById('ms-tit').text
 async function criarGrupo(){const n=prompt('Nome do grupo:');if(!n||!n.trim())return;const nome=n.trim();const ref=await db.collection('grupos').add({nome,criado_por:eu.uid,criado_em:firebase.firestore.FieldValue.serverTimestamp(),membros:1,admins:[eu.uid]});const novoGrupo={id:ref.id,nome,is_admin:true};if(!eu.grupos)eu.grupos=[];eu.grupos.push(novoGrupo);await db.collection('usuarios').doc(eu.uid).update({grupos:eu.grupos,is_admin:true});grupoAtivo=novoGrupo;grupoId=ref.id;eu.is_admin=true;document.getElementById('btn-fab-admin').classList.add('on');document.getElementById('btn-para-outro').style.display='block';renderizarCardGrupos();carregarEventos();if(document.body.classList.contains('painel-ativo'))iniciarPainel();mostrarToast('✅ Grupo criado!');}
 async function sairDoGrupo(gId,gNome){if(!confirm('Sair do grupo "'+gNome+'"?'))return;const grupo=eu.grupos.find(g=>g.id===gId);if(!grupo)return;const gSnap=await db.collection('grupos').doc(gId).get();if(!gSnap.exists){removerGrupoLocal(gId);return;}const gData=gSnap.data();const admins=gData.admins||[gData.criado_por];const membrosAtuais=gData.membros||1;if(membrosAtuais<=1){await db.collection('grupos').doc(gId).delete();removerGrupoLocal(gId);mostrarToast('✅ Grupo excluído (era o único membro).');return;}if(grupo.is_admin&&admins.filter(a=>eu.grupos.some(g=>g.id===a||a===eu.uid)).length<=1){mostrarToast('⚠️ Promova outro administrador antes de sair.');return;}await db.collection('usuarios').doc(eu.uid).update({grupos:eu.grupos.filter(g=>g.id!==gId)});await db.collection('grupos').doc(gId).update({membros:Math.max(0,membrosAtuais-1)});if(grupo.is_admin){const novosAdmins=admins.filter(a=>a!==eu.uid);await db.collection('grupos').doc(gId).update({admins:novosAdmins});}removerGrupoLocal(gId);mostrarToast('✅ Você saiu do grupo.');}
 function removerGrupoLocal(gId){eu.grupos=eu.grupos.filter(g=>g.id!==gId);if(grupoAtivo&&grupoAtivo.id===gId){grupoAtivo=eu.grupos.length>0?eu.grupos[0]:null;grupoId=grupoAtivo?grupoAtivo.id:null;eu.is_admin=grupoAtivo?grupoAtivo.is_admin:false;document.getElementById('btn-fab-admin').classList.toggle('on',eu.is_admin);}renderizarCardGrupos();if(grupoId){carregarEventos();if(document.body.classList.contains('painel-ativo'))iniciarPainel();}else{document.getElementById('lst-ev').innerHTML='<p style="color:var(--light);padding:20px;text-align:center">Entre em um grupo para ver convocações.</p>';document.getElementById('prox').innerHTML='<div class="card-vazio">Entre em um grupo para ver suas convocações.</div>';if(painelListener)painelListener();painelListener=null;document.getElementById('painel-grid').innerHTML='<div class="painel-vazio">Selecione um grupo para visualizar o painel.</div>';}}
+
+// ══ DEMAIS FUNÇÕES ══
 async function limparEventosAntigos(){if(!grupoId)return;const agora=new Date();const seteDiasAtras=new Date(agora);seteDiasAtras.setDate(seteDiasAtras.getDate()-7);try{const snap=await db.collection('eventos').where('grupo_id','==',grupoId).get();const evs=snap.docs.filter(d=>{const e=d.data();return e.data_hora&&new Date(e.data_hora)<seteDiasAtras;});for(const ev of evs)await ev.ref.delete();}catch(e){}}
 function verificarCadastroCompleto(){if(!eu)return false;if(!eu.nome_completo||eu.nome_completo.trim().length<5||!eu.cargo){document.getElementById('cadastro-nome').value=eu.nome_completo||'';document.getElementById('cadastro-cargo').value=eu.cargo||'';document.getElementById('cadastro-email').value=eu.email||'';document.getElementById('completar-cadastro-ov').classList.add('on');return false;}if(eu.nome_completo.trim().split(/\s+/).length<2){document.getElementById('cadastro-nome').value=eu.nome_completo||'';document.getElementById('cadastro-cargo').value=eu.cargo||'';document.getElementById('cadastro-email').value=eu.email||'';document.getElementById('cadastro-erro').textContent='⚠️ Informe nome e sobrenome';document.getElementById('cadastro-erro').style.display='block';document.getElementById('completar-cadastro-ov').classList.add('on');return false;}return true;}
 async function completarCadastro(){const nome=document.getElementById('cadastro-nome').value.trim();const cargo=document.getElementById('cadastro-cargo').value.trim();const email=document.getElementById('cadastro-email').value.trim();const erroEl=document.getElementById('cadastro-erro');if(!nome||nome.length<3){erroEl.textContent='⚠️ Informe seu nome completo';erroEl.style.display='block';return;}const palavras=nome.split(/\s+/);if(palavras.length<2){erroEl.textContent='⚠️ Por favor, informe nome e sobrenome';erroEl.style.display='block';return;}if(!cargo||cargo.length<2){erroEl.textContent='⚠️ Informe seu cargo';erroEl.style.display='block';return;}try{await db.collection('usuarios').doc(eu.uid).update({nome_completo:nome,cargo:cargo,email:email||null,nomes_conhecidos:firebase.firestore.FieldValue.arrayUnion(nome)});eu.nome_completo=nome;eu.cargo=cargo;eu.email=email;document.getElementById('h-user').textContent=nome+' · '+cargo;document.getElementById('completar-cadastro-ov').classList.remove('on');mostrarToast('✅ Cadastro atualizado!');if(grupoId)carregarEventos();renderizarCardGrupos();}catch(error){console.error('Erro ao salvar:',error);erroEl.textContent='Erro ao salvar. Tente novamente.';erroEl.style.display='block';}}
