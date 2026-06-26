@@ -364,15 +364,16 @@
         <div class="painel-right"><div class="painel-relogio"><span class="data-texto" id="painel-data-texto"></span></div><div class="grupo-badge" id="painel-grupo-nome">—</div></div>
       </div>
       <div class="painel-grid" id="painel-grid"><div class="painel-vazio">Nenhuma convocação disponível no momento.</div></div>
-      <div class="painel-footer">Desenvolvido por <strong>IHC Solutions</strong> — © 2026 Gestor de Convocações — v23.4</div>
+      <div class="painel-footer">Desenvolvido por <strong>IHC Solutions</strong> — © 2026 Gestor de Convocações — v23.5</div>
     </div>
   </div>
 </main>
 
 <button id="fab" onclick="abrirScanner()"><svg viewBox="0 0 24 24"><path d="M9 3H5a2 2 0 00-2 2v4m6-6h10a2 2 0 012 2v4M9 3v18m0 0h10a2 2 0 002-2V9M9 21H5a2 2 0 01-2-2V9m0 0h18"/></svg></button>
 <button class="btn-fab-admin" id="btn-fab-admin" onclick="abrirAdmin()">🛡️</button>
-<footer><p>Desenvolvido por <strong>IHC Solutions</strong></p><p>© 2026 Gestor de Convocações — v23.4</p></footer>
+<footer><p>Desenvolvido por <strong>IHC Solutions</strong></p><p>© 2026 Gestor de Convocações — v23.5</p></footer>
 
+<!-- MODAIS (mantidos iguais) -->
 <div class="overlay" id="mod-ev" onclick="if(event.target===this) fecharMod()"><div class="sheet"><div class="handle" onclick="fecharMod()"></div><input type="text" class="mod-titulo-input" id="mod-tit" placeholder="Título do evento"><input type="text" class="mod-sub-input" id="mod-sub" placeholder="Data e hora"><div class="mod-sec"><h3>Convocados <span id="admin-badge-conv" style="display:none" class="admin-badge">Admin</span></h3><div id="mod-conv"></div></div><div style="display:flex;gap:8px;margin-top:16px"><button class="btn-ag" id="mod-ag" style="flex:1;margin-top:0">📅 Agenda</button><button id="mod-trocar" style="flex:1;padding:12px;background:#fff7ed;color:#c2410c;border:1.5px solid #fed7aa;border-radius:10px;font-size:14px;cursor:pointer;font-weight:600;display:none;">🔄 Trocar</button></div><button class="btn-salvar-edicao-evento" id="mod-salvar-edicao" style="display:none" onclick="salvarEdicaoEvento()">💾 Salvar alterações</button><button class="btn-del" id="mod-del" style="display:none">🗑 Excluir</button><button class="btn-cancel" style="margin-top:10px;width:100%" onclick="fecharMod()">Fechar</button></div></div>
 <div id="trocar-ov"><div class="trocar-box"><h3>🔄 Trocar escala</h3><p id="trocar-desc"></p><div class="trocar-membros" id="trocar-lista"></div><div class="trocar-btns"><button class="btn-cancel" onclick="fecharTrocar()">Cancelar</button><button class="btn-salvar" style="background:#c2410c" id="trocar-confirmar">Confirmar</button></div></div></div>
 <div class="ov-center" id="ferias-consent-ov"><div class="box-center"><h3>Registrar Período</h3><p id="ferias-consent-desc">Registrar férias, licença ou abono.</p><div class="btns-row"><button class="btn-cancel" onclick="document.getElementById('ferias-consent-ov').classList.remove('on')">Cancelar</button><button class="btn-salvar" onclick="abrirFormFerias()">Continuar</button></div></div></div>
@@ -396,11 +397,8 @@
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 <script>
-// ═══════════ INICIALIZAÇÃO SIMPLES (sem timeouts complexos) ═══════════
 try{firebase.initializeApp({apiKey:"AIzaSyAOpV5NFydHWwUwQKg0MANqMHVcXVDDqpQ",authDomain:"gestor-convocacoes-89823.firebaseapp.com",projectId:"gestor-convocacoes-89823",storageBucket:"gestor-convocacoes-89823.firebasestorage.app",messagingSenderId:"212389113483",appId:"1:212389113483:web:eb97eefe621df0cba66e8e"});}catch(e){document.getElementById('loading-screen').innerHTML='<p style="color:var(--red);padding:20px;text-align:center">Erro Firebase.</p>';throw e;}
-
-const auth=firebase.auth();
-const db=firebase.firestore();
+const auth=firebase.auth();const db=firebase.firestore();
 const EMAIL_CONFIG={publicKey:'mXZPykI5Nr2COjWr0',serviceId:'service_pam1xgd',templateId:'template_3926tbq'};
 let eu=null,grupoId=null,gruposUsuario=[],grupoAtivo=null,ocrDados=null,matches=[],camStream=null,eventoTroca=null,substitutoSelecionado=null,eventoAtualMod=null,nomesEditaveis=[];
 let notifAtual=null,filaNotifs=[],listaAusencias=[],membroEditando=null,saldoUsuario={ferias:[],abono:6,licenca:90};
@@ -411,79 +409,40 @@ const loadingScreen=document.getElementById('loading-screen');
 const loadingMsg=document.getElementById('loading-msg');
 const loadingError=document.getElementById('loading-error');
 const btnRecarregar=document.getElementById('btn-recarregar');
+function showError(msg){loadingMsg.textContent='Erro ao carregar';loadingError.textContent=msg;loadingError.style.display='block';btnRecarregar.style.display='block';document.querySelector('#loading-screen .spinner').style.display='none';}
 
-function showError(msg){
-  loadingMsg.textContent='Erro ao carregar';
-  loadingError.textContent=msg;
-  loadingError.style.display='block';
-  btnRecarregar.style.display='block';
-  document.querySelector('#loading-screen .spinner').style.display='none';
-}
-
-// ═══════════ FLUXO DE AUTENTICAÇÃO CORRIGIDO ═══════════
+// Autenticação simplificada
 let authResolvido=false;
-const SEGURANCA_TIMEOUT=setTimeout(()=>{
-  if(!authResolvido){authResolvido=true;showError('Tempo limite. Recarregue a página.');}
-},8000);
-
-// 1. Tenta auth.currentUser (síncrono, sem callbacks)
+const SEGURANCA_TIMEOUT=setTimeout(()=>{if(!authResolvido){authResolvido=true;showError('Tempo limite. Recarregue a página.');}},8000);
 const userAtual=auth.currentUser;
-if(userAtual){
-  // Usuário já está logado! Carrega os dados imediatamente
-  authResolvido=true;
-  clearTimeout(SEGURANCA_TIMEOUT);
-  loadingMsg.textContent='Carregando seus dados...';
-  carregarUsuario(userAtual);
-}else{
-  // 2. Registra onAuthStateChanged como fallback
-  loadingMsg.textContent='Verificando autenticação...';
-  auth.onAuthStateChanged(user=>{
-    if(authResolvido)return;
-    authResolvido=true;
-    clearTimeout(SEGURANCA_TIMEOUT);
-    if(!user){window.location.replace('login.html');return;}
-    carregarUsuario(user);
-  });
-}
+if(userAtual){authResolvido=true;clearTimeout(SEGURANCA_TIMEOUT);loadingMsg.textContent='Carregando seus dados...';carregarUsuario(userAtual);}
+else{loadingMsg.textContent='Verificando autenticação...';auth.onAuthStateChanged(user=>{if(authResolvido)return;authResolvido=true;clearTimeout(SEGURANCA_TIMEOUT);if(!user){window.location.replace('login.html');return;}carregarUsuario(user);});}
 
 async function carregarUsuario(user){
   try{
     const snap=await db.collection('usuarios').doc(user.uid).get();
     if(!snap.exists){window.location.replace('login.html');return;}
-    
     eu={uid:user.uid,...snap.data()};
     document.getElementById('h-user').textContent=eu.nome_completo+' · '+eu.cargo;
     await migrarGruposSeNecessario();
     const snap2=await db.collection('usuarios').doc(user.uid).get();
     eu={uid:user.uid,...snap2.data()};
     gruposUsuario=eu.grupos||[];
-    
     if(gruposUsuario.length>0){grupoAtivo=gruposUsuario[0];grupoId=grupoAtivo.id;eu.is_admin=grupoAtivo.is_admin;}
-    
     document.getElementById('btn-fab-admin').classList.toggle('on',eu.is_admin);
     document.getElementById('btn-para-outro').style.display=eu.is_admin?'block':'none';
     loadingScreen.style.display='none';
-    
-    verificarInstalacao();
-    iniciarNotificacoes();
-    renderizarCardGrupos();
-    
+    verificarInstalacao();iniciarNotificacoes();renderizarCardGrupos();
     if(grupoId){carregarEventos();verificarAprovacoes();verificarNotificacoesPendentes();iniciarVerificacaoLembretes();}
     else{document.getElementById('lst-ev').innerHTML='<p style="color:var(--light);padding:20px;text-align:center">Entre em um grupo para ver convocações.</p>';document.getElementById('prox').innerHTML='<div class="card-vazio">Entre em um grupo para ver suas convocações.</div>';}
-    
-    verificarCadastroCompleto();
-    limparEventosAntigos();
+    verificarCadastroCompleto();limparEventosAntigos();
   }catch(err){console.error(err);showError('Erro ao carregar dados.');}
 }
 
-// ═══════════ FUNÇÕES BÁSICAS ═══════════
 function mostrarToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');clearTimeout(toastTimeout);toastTimeout=setTimeout(()=>t.classList.remove('show'),2500);}
 function lev(a,b){if(a===b)return 0;const m=a.length,n=b.length;const dp=Array.from({length:m+1},(_,i)=>[i,...Array(n).fill(0)]);for(let j=0;j<=n;j++)dp[0][j]=j;for(let i=1;i<=m;i++)for(let j=1;j<=n;j++)dp[i][j]=a[i-1]===b[j-1]?dp[i-1][j-1]:1+Math.min(dp[i-1][j],dp[i][j-1],dp[i-1][j-1]);return dp[m][n];}
 function mostrarAba(aba,el){
-  if(aba==='painel'&&!localStorage.getItem('tv_aviso_visto')){
-    document.getElementById('tv-aviso-ov').classList.add('on');
-    document.getElementById('tv-aviso-check').checked=false;
-  }
+  if(aba==='painel'&&!localStorage.getItem('tv_aviso_visto')){document.getElementById('tv-aviso-ov').classList.add('on');document.getElementById('tv-aviso-check').checked=false;}
   document.querySelectorAll('.aba-content').forEach(e=>e.style.display='none');
   document.getElementById('aba-'+aba).style.display='block';
   document.querySelectorAll('.nav-tab').forEach(e=>e.classList.remove('active'));
@@ -513,20 +472,14 @@ function iniciarRelogio(){
   at();relogioTimer=setInterval(at,1000);
 }
 
-function parseDataHoraLocal(s){
-  const p=s.split('T');if(p.length!==2)return new Date(s).getTime();
-  const dt=new Date(p[0]+'T'+p[1].substring(0,8));
-  const off=new Date(p[0]+'T12:00:00').getTimezoneOffset();
-  return dt.getTime()+(off*60*1000);
-}
-
+// ═══════════ CORREÇÃO: removida parseDataHoraLocal, usando new Date() simples ═══════════
 function iniciarPainel(){
   if(!grupoId){document.getElementById('painel-grid').innerHTML='<div class="painel-vazio">Selecione um grupo para visualizar o painel.</div>';return;}
   document.getElementById('painel-grupo-nome').textContent=grupoAtivo?grupoAtivo.nome:'—';
   localStorage.removeItem('painelCache_'+grupoId);
   if(painelListener)painelListener();
   painelListener=db.collection('eventos').where('grupo_id','==',grupoId).onSnapshot(snap=>{
-    const evs=snap.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>parseDataHoraLocal(a.data_hora)-parseDataHoraLocal(b.data_hora));
+    const evs=snap.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>new Date(a.data_hora)-new Date(b.data_hora));
     painelCache=evs;renderizarPainel(evs);
   },()=>{if(painelCache.length)renderizarPainel(painelCache);});
   if(painelTimer)clearInterval(painelTimer);
@@ -534,7 +487,7 @@ function iniciarPainel(){
     if(!document.body.classList.contains('painel-ativo'))return;
     try{
       const snap=await db.collection('eventos').where('grupo_id','==',grupoId).get();
-      const evs=snap.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>parseDataHoraLocal(a.data_hora)-parseDataHoraLocal(b.data_hora));
+      const evs=snap.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>new Date(a.data_hora)-new Date(b.data_hora));
       painelCache=evs;renderizarPainel(evs);
     }catch(e){if(painelCache.length)renderizarPainel(painelCache);}
   },15000);
@@ -566,22 +519,28 @@ function iniciarRolagemCard(card){
 
 function renderizarPainel(eventos){
   pararRolagens();
-  const agora=Date.now();
+  const agora=new Date();
   const grid=document.getElementById('painel-grid');
-  const validos=eventos.filter(ev=>{if(!ev.data_hora)return false;const dt=parseDataHoraLocal(ev.data_hora);return(agora-dt)/60000<15;});
+  const validos=eventos.filter(ev=>{
+    if(!ev.data_hora)return false;
+    const dt=new Date(ev.data_hora);
+    const minutosDesdeEvento=(agora-dt)/60000;
+    return minutosDesdeEvento<15;
+  });
   if(!validos.length){grid.innerHTML='<div class="painel-vazio">Nenhuma convocação disponível no momento.</div>';return;}
   const visiveis=validos.slice(0,6);
   grid.innerHTML=visiveis.map(ev=>{
-    const dt=parseDataHoraLocal(ev.data_hora);
+    const dt=new Date(ev.data_hora);
     const passou=dt<=agora;
     const nomes=[...(ev.lista_convocados||[])].sort((a,b)=>a.localeCompare(b,'pt-BR'));
     const nh=nomes.length?nomes.map(n=>'<div class="nome-linha">'+n+'</div>').join(''):'<div class="nome-linha" style="color:#64748b">Nenhum convocado</div>';
-    return '<div class="painel-card" style="opacity:'+(passou?'0.25':'1')+';border-left-color:'+(passou?'#94a3b8':'var(--blue)')+'" data-evento-id="'+ev.id+'"><div class="painel-card-titulo">'+(ev.titulo_evento||'Sem título')+'</div><div class="painel-card-data">📅 '+fD(new Date(dt))+' · 🕐 '+fH(new Date(dt))+(ev.local?' · 📍 '+ev.local:'')+'</div><div class="painel-card-convocados"><div class="nomes-grid">'+nh+'</div></div></div>';
+    return '<div class="painel-card" style="opacity:'+(passou?'0.25':'1')+';border-left-color:'+(passou?'#94a3b8':'var(--blue)')+'" data-evento-id="'+ev.id+'"><div class="painel-card-titulo">'+(ev.titulo_evento||'Sem título')+'</div><div class="painel-card-data">📅 '+fD(dt)+' · 🕐 '+fH(dt)+(ev.local?' · 📍 '+ev.local:'')+'</div><div class="painel-card-convocados"><div class="nomes-grid">'+nh+'</div></div></div>';
   }).join('');
   const cards=grid.querySelectorAll('.painel-card[style*="opacity:1"]');
   cards.forEach(card=>iniciarRolagemCard(card));
 }
 
+// ══ DEMAIS FUNÇÕES ══
 async function migrarGruposSeNecessario(){if(!eu)return;const userRef=db.collection('usuarios').doc(eu.uid);const snap=await userRef.get();const data=snap.data();if(!data)return;let precisaMigrar=false,grupoIdAntigo=data.grupo_id;if(grupoIdAntigo){if(!data.grupos||!Array.isArray(data.grupos)||data.grupos.length===0)precisaMigrar=true;else{await userRef.update({grupo_id:firebase.firestore.FieldValue.delete()});eu.grupos=data.grupos;eu.grupo_id=null;return;}}if(precisaMigrar&&grupoIdAntigo){try{const gSnap=await db.collection('grupos').doc(grupoIdAntigo).get();if(gSnap.exists){const gData=gSnap.data();const admins=gData.admins||[gData.criado_por];const isAdmin=admins.includes(eu.uid)||gData.criado_por===eu.uid;const novoGrupo={id:grupoIdAntigo,nome:gData.nome||'Meu Grupo',is_admin:isAdmin};await userRef.update({grupos:firebase.firestore.FieldValue.arrayUnion(novoGrupo),grupo_id:firebase.firestore.FieldValue.delete()});eu.grupos=[novoGrupo];eu.grupo_id=null;}else{await userRef.update({grupo_id:firebase.firestore.FieldValue.delete()});eu.grupos=[];eu.grupo_id=null;}}catch(e){console.error('Erro na migração:',e);}}else if(data.grupos){eu.grupos=data.grupos;}}
 function renderizarCardGrupos(){const container=document.getElementById('grp-content');const badge=document.getElementById('grp-badge');if(!eu.grupos||eu.grupos.length===0){badge.textContent='0';container.innerHTML='<p style="color:var(--light);text-align:center;margin-bottom:12px">Você ainda não está em nenhum grupo.</p><div class="busca-grupo"><input type="text" id="busca-grupo-input" placeholder="Buscar grupo existente..."><button onclick="buscarGrupos()">🔍 Buscar</button></div><div class="resultados-busca" id="resultados-busca"></div><button class="btn-criar" onclick="criarGrupo()">+ Criar novo grupo</button>';}else{if(!grupoAtivo)grupoAtivo=eu.grupos[0];const totalMembros=grupoAtivo.totalMembros||'?';badge.textContent=totalMembros;const isAdmin=grupoAtivo.is_admin;container.innerHTML='<div class="grupo-header" onclick="toggleListaGrupos()"><div class="grupo-nome">📁 '+grupoAtivo.nome+(isAdmin?'<span class="admin-badge" style="margin-left:6px">Admin</span>':'')+'</div><span class="seta" id="seta-grupos">▼</span></div><div class="grupo-info">'+totalMembros+' membro(s)</div><div class="grupo-lista-expandida" id="lista-grupos-expandida">'+eu.grupos.map(g=>'<div class="grupo-item-exp '+(g.id===grupoAtivo.id?'ativo':'')+'" onclick="selecionarGrupoAtivo(\''+g.id+'\')"><span>📁 '+g.nome+' '+(g.is_admin?'🛡️':'')+'</span><button class="btn-sair-grupo" onclick="event.stopPropagation();sairDoGrupo(\''+g.id+'\',\''+g.nome+'\')">🚪 Sair</button></div>').join('')+'</div><div class="grupo-acoes"><button class="btn-criar" style="margin-top:0;flex:1" onclick="criarGrupo()">+ Criar novo grupo</button></div><div class="busca-grupo"><input type="text" id="busca-grupo-input" placeholder="Buscar grupo existente..."><button onclick="buscarGrupos()">🔍 Buscar</button></div><div class="resultados-busca" id="resultados-busca"></div>';}}
 function toggleListaGrupos(){const lista=document.getElementById('lista-grupos-expandida');const seta=document.getElementById('seta-grupos');if(!lista||!seta)return;if(lista.classList.contains('show')){lista.classList.remove('show');seta.classList.remove('open');}else{lista.classList.add('show');seta.classList.add('open');}}
@@ -591,8 +550,6 @@ function solicitarEntradaGrupo(gId,gNome){document.getElementById('ms-tit').text
 async function criarGrupo(){const n=prompt('Nome do grupo:');if(!n||!n.trim())return;const nome=n.trim();const ref=await db.collection('grupos').add({nome,criado_por:eu.uid,criado_em:firebase.firestore.FieldValue.serverTimestamp(),membros:1,admins:[eu.uid]});const novoGrupo={id:ref.id,nome,is_admin:true};if(!eu.grupos)eu.grupos=[];eu.grupos.push(novoGrupo);await db.collection('usuarios').doc(eu.uid).update({grupos:eu.grupos,is_admin:true});grupoAtivo=novoGrupo;grupoId=ref.id;eu.is_admin=true;document.getElementById('btn-fab-admin').classList.add('on');document.getElementById('btn-para-outro').style.display='block';renderizarCardGrupos();carregarEventos();if(document.body.classList.contains('painel-ativo'))iniciarPainel();mostrarToast('✅ Grupo criado!');}
 async function sairDoGrupo(gId,gNome){if(!confirm('Sair do grupo "'+gNome+'"?'))return;const grupo=eu.grupos.find(g=>g.id===gId);if(!grupo)return;const gSnap=await db.collection('grupos').doc(gId).get();if(!gSnap.exists){removerGrupoLocal(gId);return;}const gData=gSnap.data();const admins=gData.admins||[gData.criado_por];const membrosAtuais=gData.membros||1;if(membrosAtuais<=1){await db.collection('grupos').doc(gId).delete();removerGrupoLocal(gId);mostrarToast('✅ Grupo excluído (era o único membro).');return;}if(grupo.is_admin&&admins.filter(a=>eu.grupos.some(g=>g.id===a||a===eu.uid)).length<=1){mostrarToast('⚠️ Promova outro administrador antes de sair.');return;}await db.collection('usuarios').doc(eu.uid).update({grupos:eu.grupos.filter(g=>g.id!==gId)});await db.collection('grupos').doc(gId).update({membros:Math.max(0,membrosAtuais-1)});if(grupo.is_admin){const novosAdmins=admins.filter(a=>a!==eu.uid);await db.collection('grupos').doc(gId).update({admins:novosAdmins});}removerGrupoLocal(gId);mostrarToast('✅ Você saiu do grupo.');}
 function removerGrupoLocal(gId){eu.grupos=eu.grupos.filter(g=>g.id!==gId);if(grupoAtivo&&grupoAtivo.id===gId){grupoAtivo=eu.grupos.length>0?eu.grupos[0]:null;grupoId=grupoAtivo?grupoAtivo.id:null;eu.is_admin=grupoAtivo?grupoAtivo.is_admin:false;document.getElementById('btn-fab-admin').classList.toggle('on',eu.is_admin);}renderizarCardGrupos();if(grupoId){carregarEventos();if(document.body.classList.contains('painel-ativo'))iniciarPainel();}else{document.getElementById('lst-ev').innerHTML='<p style="color:var(--light);padding:20px;text-align:center">Entre em um grupo para ver convocações.</p>';document.getElementById('prox').innerHTML='<div class="card-vazio">Entre em um grupo para ver suas convocações.</div>';if(painelListener)painelListener();painelListener=null;document.getElementById('painel-grid').innerHTML='<div class="painel-vazio">Selecione um grupo para visualizar o painel.</div>';}}
-
-// ══ DEMAIS FUNÇÕES ══
 async function limparEventosAntigos(){if(!grupoId)return;const agora=new Date();const seteDiasAtras=new Date(agora);seteDiasAtras.setDate(seteDiasAtras.getDate()-7);try{const snap=await db.collection('eventos').where('grupo_id','==',grupoId).get();const evs=snap.docs.filter(d=>{const e=d.data();return e.data_hora&&new Date(e.data_hora)<seteDiasAtras;});for(const ev of evs)await ev.ref.delete();}catch(e){}}
 function verificarCadastroCompleto(){if(!eu)return false;if(!eu.nome_completo||eu.nome_completo.trim().length<5||!eu.cargo){document.getElementById('cadastro-nome').value=eu.nome_completo||'';document.getElementById('cadastro-cargo').value=eu.cargo||'';document.getElementById('cadastro-email').value=eu.email||'';document.getElementById('completar-cadastro-ov').classList.add('on');return false;}if(eu.nome_completo.trim().split(/\s+/).length<2){document.getElementById('cadastro-nome').value=eu.nome_completo||'';document.getElementById('cadastro-cargo').value=eu.cargo||'';document.getElementById('cadastro-email').value=eu.email||'';document.getElementById('cadastro-erro').textContent='⚠️ Informe nome e sobrenome';document.getElementById('cadastro-erro').style.display='block';document.getElementById('completar-cadastro-ov').classList.add('on');return false;}return true;}
 async function completarCadastro(){const nome=document.getElementById('cadastro-nome').value.trim();const cargo=document.getElementById('cadastro-cargo').value.trim();const email=document.getElementById('cadastro-email').value.trim();const erroEl=document.getElementById('cadastro-erro');if(!nome||nome.length<3){erroEl.textContent='⚠️ Informe seu nome completo';erroEl.style.display='block';return;}const palavras=nome.split(/\s+/);if(palavras.length<2){erroEl.textContent='⚠️ Por favor, informe nome e sobrenome';erroEl.style.display='block';return;}if(!cargo||cargo.length<2){erroEl.textContent='⚠️ Informe seu cargo';erroEl.style.display='block';return;}try{await db.collection('usuarios').doc(eu.uid).update({nome_completo:nome,cargo:cargo,email:email||null,nomes_conhecidos:firebase.firestore.FieldValue.arrayUnion(nome)});eu.nome_completo=nome;eu.cargo=cargo;eu.email=email;document.getElementById('h-user').textContent=nome+' · '+cargo;document.getElementById('completar-cadastro-ov').classList.remove('on');mostrarToast('✅ Cadastro atualizado!');if(grupoId)carregarEventos();renderizarCardGrupos();}catch(error){console.error('Erro ao salvar:',error);erroEl.textContent='Erro ao salvar. Tente novamente.';erroEl.style.display='block';}}
