@@ -363,16 +363,15 @@
         <div class="painel-right"><div class="painel-relogio"><span class="data-texto" id="painel-data-texto"></span></div><div class="grupo-badge" id="painel-grupo-nome">—</div></div>
       </div>
       <div class="painel-grid" id="painel-grid"><div class="painel-vazio">Nenhuma convocação disponível no momento.</div></div>
-      <div class="painel-footer">Desenvolvido por <strong>IHC Solutions</strong> — © 2026 Gestor de Convocações — v23.10</div>
+      <div class="painel-footer">Desenvolvido por <strong>IHC Solutions</strong> — © 2026 Gestor de Convocações — v24.0</div>
     </div>
   </div>
 </main>
 
 <button id="fab" onclick="abrirScanner()"><svg viewBox="0 0 24 24"><path d="M9 3H5a2 2 0 00-2 2v4m6-6h10a2 2 0 012 2v4M9 3v18m0 0h10a2 2 0 002-2V9M9 21H5a2 2 0 01-2-2V9m0 0h18"/></svg></button>
 <button class="btn-fab-admin" id="btn-fab-admin" onclick="abrirAdmin()">🛡️</button>
-<footer><p>Desenvolvido por <strong>IHC Solutions</strong></p><p>© 2026 Gestor de Convocações — v23.10</p></footer>
+<footer><p>Desenvolvido por <strong>IHC Solutions</strong></p><p>© 2026 Gestor de Convocações — v24.0</p></footer>
 
-<!-- MODAIS (idênticos à v23.9) -->
 <div class="overlay" id="mod-ev" onclick="if(event.target===this) fecharMod()"><div class="sheet"><div class="handle" onclick="fecharMod()"></div><input type="text" class="mod-titulo-input" id="mod-tit" placeholder="Título do evento"><input type="text" class="mod-sub-input" id="mod-sub" placeholder="Data e hora"><div class="mod-sec"><h3>Convocados <span id="admin-badge-conv" style="display:none" class="admin-badge">Admin</span></h3><div id="mod-conv"></div></div><div style="display:flex;gap:8px;margin-top:16px"><button class="btn-ag" id="mod-ag" style="flex:1;margin-top:0">📅 Agenda</button><button id="mod-trocar" style="flex:1;padding:12px;background:#fff7ed;color:#c2410c;border:1.5px solid #fed7aa;border-radius:10px;font-size:14px;cursor:pointer;font-weight:600;display:none;">🔄 Trocar</button></div><button class="btn-salvar-nomes" onclick="salvarTudoEvento()" style="display:none;width:100%;padding:10px;background:var(--blue);color:#fff;border:none;border-radius:10px;font-size:13px;cursor:pointer;margin-top:8px;font-family:'Sora',sans-serif;font-weight:600" id="btn-salvar-tudo">💾 Salvar</button><button class="btn-del" id="mod-del" style="display:none">🗑 Excluir</button><button class="btn-cancel" style="margin-top:10px;width:100%" onclick="fecharMod()">Fechar</button></div></div>
 <div id="trocar-ov"><div class="trocar-box"><h3>🔄 Trocar escala</h3><p id="trocar-desc"></p><div class="trocar-membros" id="trocar-lista"></div><div class="trocar-btns"><button class="btn-cancel" onclick="fecharTrocar()">Cancelar</button><button class="btn-salvar" style="background:#c2410c" id="trocar-confirmar">Confirmar</button></div></div></div>
 <div class="ov-center" id="ferias-consent-ov"><div class="box-center"><h3>Registrar Período</h3><p id="ferias-consent-desc">Registrar férias, licença ou abono.</p><div class="btns-row"><button class="btn-cancel" onclick="document.getElementById('ferias-consent-ov').classList.remove('on')">Cancelar</button><button class="btn-salvar" onclick="abrirFormFerias()">Continuar</button></div></div></div>
@@ -593,7 +592,6 @@ function abrirMod(ev){
 }
 function fecharMod(){document.getElementById('mod-ev').classList.remove('on');eventoAtualMod=null;nomesEditaveis=[];}
 
-// ══ DEMAIS FUNÇÕES ══
 async function migrarGruposSeNecessario(){if(!eu)return;const userRef=db.collection('usuarios').doc(eu.uid);const snap=await userRef.get();const data=snap.data();if(!data)return;let precisaMigrar=false,grupoIdAntigo=data.grupo_id;if(grupoIdAntigo){if(!data.grupos||!Array.isArray(data.grupos)||data.grupos.length===0)precisaMigrar=true;else{await userRef.update({grupo_id:firebase.firestore.FieldValue.delete()});eu.grupos=data.grupos;eu.grupo_id=null;return;}}if(precisaMigrar&&grupoIdAntigo){try{const gSnap=await db.collection('grupos').doc(grupoIdAntigo).get();if(gSnap.exists){const gData=gSnap.data();const admins=gData.admins||[gData.criado_por];const isAdmin=admins.includes(eu.uid)||gData.criado_por===eu.uid;const novoGrupo={id:grupoIdAntigo,nome:gData.nome||'Meu Grupo',is_admin:isAdmin};await userRef.update({grupos:firebase.firestore.FieldValue.arrayUnion(novoGrupo),grupo_id:firebase.firestore.FieldValue.delete()});eu.grupos=[novoGrupo];eu.grupo_id=null;}else{await userRef.update({grupo_id:firebase.firestore.FieldValue.delete()});eu.grupos=[];eu.grupo_id=null;}}catch(e){console.error('Erro na migração:',e);}}else if(data.grupos){eu.grupos=data.grupos;}}
 function renderizarCardGrupos(){const container=document.getElementById('grp-content');const badge=document.getElementById('grp-badge');if(!eu.grupos||eu.grupos.length===0){badge.textContent='0';container.innerHTML='<p style="color:var(--light);text-align:center;margin-bottom:12px">Você ainda não está em nenhum grupo.</p><div class="busca-grupo"><input type="text" id="busca-grupo-input" placeholder="Buscar grupo existente..."><button onclick="buscarGrupos()">🔍 Buscar</button></div><div class="resultados-busca" id="resultados-busca"></div><button class="btn-criar" onclick="criarGrupo()">+ Criar novo grupo</button>';}else{if(!grupoAtivo)grupoAtivo=eu.grupos[0];const totalMembros=grupoAtivo.totalMembros||'?';badge.textContent=totalMembros;const isAdmin=grupoAtivo.is_admin;container.innerHTML='<div class="grupo-header" onclick="toggleListaGrupos()"><div class="grupo-nome">📁 '+grupoAtivo.nome+(isAdmin?'<span class="admin-badge" style="margin-left:6px">Admin</span>':'')+'</div><span class="seta" id="seta-grupos">▼</span></div><div class="grupo-info">'+totalMembros+' membro(s)</div><div class="grupo-lista-expandida" id="lista-grupos-expandida">'+eu.grupos.map(g=>'<div class="grupo-item-exp '+(g.id===grupoAtivo.id?'ativo':'')+'" onclick="selecionarGrupoAtivo(\''+g.id+'\')"><span>📁 '+g.nome+' '+(g.is_admin?'🛡️':'')+'</span><button class="btn-sair-grupo" onclick="event.stopPropagation();sairDoGrupo(\''+g.id+'\',\''+g.nome+'\')">🚪 Sair</button></div>').join('')+'</div><div class="grupo-acoes"><button class="btn-criar" style="margin-top:0;flex:1" onclick="criarGrupo()">+ Criar novo grupo</button></div><div class="busca-grupo"><input type="text" id="busca-grupo-input" placeholder="Buscar grupo existente..."><button onclick="buscarGrupos()">🔍 Buscar</button></div><div class="resultados-busca" id="resultados-busca"></div>';}}
 function toggleListaGrupos(){const lista=document.getElementById('lista-grupos-expandida');const seta=document.getElementById('seta-grupos');if(!lista||!seta)return;if(lista.classList.contains('show')){lista.classList.remove('show');seta.classList.remove('open');}else{lista.classList.add('show');seta.classList.add('open');}}
@@ -607,7 +605,7 @@ async function limparEventosAntigos(){if(!grupoId)return;const agora=new Date();
 function verificarCadastroCompleto(){if(!eu)return false;if(!eu.nome_completo||eu.nome_completo.trim().length<5||!eu.cargo){document.getElementById('cadastro-nome').value=eu.nome_completo||'';document.getElementById('cadastro-cargo').value=eu.cargo||'';document.getElementById('cadastro-email').value=eu.email||'';document.getElementById('completar-cadastro-ov').classList.add('on');return false;}if(eu.nome_completo.trim().split(/\s+/).length<2){document.getElementById('cadastro-nome').value=eu.nome_completo||'';document.getElementById('cadastro-cargo').value=eu.cargo||'';document.getElementById('cadastro-email').value=eu.email||'';document.getElementById('cadastro-erro').textContent='⚠️ Informe nome e sobrenome';document.getElementById('cadastro-erro').style.display='block';document.getElementById('completar-cadastro-ov').classList.add('on');return false;}return true;}
 async function completarCadastro(){const nome=document.getElementById('cadastro-nome').value.trim();const cargo=document.getElementById('cadastro-cargo').value.trim();const email=document.getElementById('cadastro-email').value.trim();const erroEl=document.getElementById('cadastro-erro');if(!nome||nome.length<3){erroEl.textContent='⚠️ Informe seu nome completo';erroEl.style.display='block';return;}const palavras=nome.split(/\s+/);if(palavras.length<2){erroEl.textContent='⚠️ Por favor, informe nome e sobrenome';erroEl.style.display='block';return;}if(!cargo||cargo.length<2){erroEl.textContent='⚠️ Informe seu cargo';erroEl.style.display='block';return;}try{await db.collection('usuarios').doc(eu.uid).update({nome_completo:nome,cargo:cargo,email:email||null,nomes_conhecidos:firebase.firestore.FieldValue.arrayUnion(nome)});eu.nome_completo=nome;eu.cargo=cargo;eu.email=email;document.getElementById('h-user').textContent=nome+' · '+cargo;document.getElementById('completar-cadastro-ov').classList.remove('on');mostrarToast('✅ Cadastro atualizado!');if(grupoId)carregarEventos();renderizarCardGrupos();}catch(error){console.error('Erro ao salvar:',error);erroEl.textContent='Erro ao salvar. Tente novamente.';erroEl.style.display='block';}}
 
-// ═══════════ carregarSaldo CORRIGIDO (texto usa totais fixos) ═══════════
+// ═══════════ carregarSaldo CORRIGIDO - v24.0 ═══════════
 async function carregarSaldo(){
   const container=document.getElementById('saldo-container');
   container.innerHTML='<div class="skel"></div>';
@@ -621,24 +619,26 @@ async function carregarSaldo(){
   const ausenciasSnap=await db.collection('ausencias').where('uid','==',eu.uid).get();
   const usos=ausenciasSnap.docs.map(d=>({id:d.id,...d.data()}));
   
-  // TOTAIS FIXOS
+  // TOTAIS FIXOS (para barra e denominador do texto)
   const TOTAL_FERIAS_POR_PERIODO=30;
   const TOTAL_ABONOS=6;
   const TOTAL_LICENCA=90;
   
-  // O total disponível é o que o usuário digitou
+  // FÉRIAS: total disponível = soma do que o usuário digitou em cada período
   const totalFerias=periodosFerias.reduce((s,p)=>s+(p.total||0),0);
   const usadoFerias=usos.filter(u=>u.tipo==='ferias').reduce((s,u)=>s+(u.dias||0),0);
   const restanteFerias=Math.max(0,totalFerias-usadoFerias);
-  
-  // Para texto e barra: máximo é períodos × 30
   const totalTextoFerias=periodosFerias.length*TOTAL_FERIAS_POR_PERIODO;
   
+  // ABONOS: o usuário digita quanto tem disponível HOJE (já descontado o que gastou antes do sistema)
+  const disponivelAbono=saldoUsuario.abono!=null&&!isNaN(saldoUsuario.abono)?saldoUsuario.abono:TOTAL_ABONOS;
   const usadoAbono=usos.filter(u=>u.tipo==='abono').length;
-  const restanteAbono=Math.max(0,TOTAL_ABONOS-usadoAbono);
+  const restanteAbono=Math.max(0,disponivelAbono-usadoAbono);
   
+  // LICENÇA: o usuário digita quanto tem disponível HOJE (já descontado o que gastou antes do sistema)
+  const disponivelLicenca=saldoUsuario.licenca!=null&&!isNaN(saldoUsuario.licenca)?saldoUsuario.licenca:TOTAL_LICENCA;
   const usadoLicenca=usos.filter(u=>u.tipo==='licenca').reduce((s,u)=>s+(u.dias||0),0);
-  const restanteLicenca=Math.max(0,TOTAL_LICENCA-usadoLicenca);
+  const restanteLicenca=Math.max(0,disponivelLicenca-usadoLicenca);
   
   let periodosHtml='';
   periodosFerias.forEach(p=>{
