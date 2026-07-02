@@ -363,15 +363,16 @@
         <div class="painel-right"><div class="painel-relogio"><span class="data-texto" id="painel-data-texto"></span></div><div class="grupo-badge" id="painel-grupo-nome">—</div></div>
       </div>
       <div class="painel-grid" id="painel-grid"><div class="painel-vazio">Nenhuma convocação disponível no momento.</div></div>
-      <div class="painel-footer">Desenvolvido por <strong>IHC Solutions</strong> — © 2026 Gestor de Convocações — v23.9</div>
+      <div class="painel-footer">Desenvolvido por <strong>IHC Solutions</strong> — © 2026 Gestor de Convocações — v23.10</div>
     </div>
   </div>
 </main>
 
 <button id="fab" onclick="abrirScanner()"><svg viewBox="0 0 24 24"><path d="M9 3H5a2 2 0 00-2 2v4m6-6h10a2 2 0 012 2v4M9 3v18m0 0h10a2 2 0 002-2V9M9 21H5a2 2 0 01-2-2V9m0 0h18"/></svg></button>
 <button class="btn-fab-admin" id="btn-fab-admin" onclick="abrirAdmin()">🛡️</button>
-<footer><p>Desenvolvido por <strong>IHC Solutions</strong></p><p>© 2026 Gestor de Convocações — v23.9</p></footer>
+<footer><p>Desenvolvido por <strong>IHC Solutions</strong></p><p>© 2026 Gestor de Convocações — v23.10</p></footer>
 
+<!-- MODAIS (idênticos à v23.9) -->
 <div class="overlay" id="mod-ev" onclick="if(event.target===this) fecharMod()"><div class="sheet"><div class="handle" onclick="fecharMod()"></div><input type="text" class="mod-titulo-input" id="mod-tit" placeholder="Título do evento"><input type="text" class="mod-sub-input" id="mod-sub" placeholder="Data e hora"><div class="mod-sec"><h3>Convocados <span id="admin-badge-conv" style="display:none" class="admin-badge">Admin</span></h3><div id="mod-conv"></div></div><div style="display:flex;gap:8px;margin-top:16px"><button class="btn-ag" id="mod-ag" style="flex:1;margin-top:0">📅 Agenda</button><button id="mod-trocar" style="flex:1;padding:12px;background:#fff7ed;color:#c2410c;border:1.5px solid #fed7aa;border-radius:10px;font-size:14px;cursor:pointer;font-weight:600;display:none;">🔄 Trocar</button></div><button class="btn-salvar-nomes" onclick="salvarTudoEvento()" style="display:none;width:100%;padding:10px;background:var(--blue);color:#fff;border:none;border-radius:10px;font-size:13px;cursor:pointer;margin-top:8px;font-family:'Sora',sans-serif;font-weight:600" id="btn-salvar-tudo">💾 Salvar</button><button class="btn-del" id="mod-del" style="display:none">🗑 Excluir</button><button class="btn-cancel" style="margin-top:10px;width:100%" onclick="fecharMod()">Fechar</button></div></div>
 <div id="trocar-ov"><div class="trocar-box"><h3>🔄 Trocar escala</h3><p id="trocar-desc"></p><div class="trocar-membros" id="trocar-lista"></div><div class="trocar-btns"><button class="btn-cancel" onclick="fecharTrocar()">Cancelar</button><button class="btn-salvar" style="background:#c2410c" id="trocar-confirmar">Confirmar</button></div></div></div>
 <div class="ov-center" id="ferias-consent-ov"><div class="box-center"><h3>Registrar Período</h3><p id="ferias-consent-desc">Registrar férias, licença ou abono.</p><div class="btns-row"><button class="btn-cancel" onclick="document.getElementById('ferias-consent-ov').classList.remove('on')">Cancelar</button><button class="btn-salvar" onclick="abrirFormFerias()">Continuar</button></div></div></div>
@@ -536,46 +537,33 @@ function renderizarPainel(eventos){
   cards.forEach(card=>iniciarRolagemCard(card));
 }
 
-// ═══════════ BOTÃO ÚNICO: salvarTudoEvento (título + nomes) ═══════════
 async function salvarTudoEvento(){
   if(!eventoAtualMod){mostrarToast('⚠️ Nenhum evento selecionado');return;}
   if(!eu||!eu.is_admin){mostrarToast('⚠️ Apenas administradores');return;}
-  
   const novoTitulo=document.getElementById('mod-tit').value.trim();
   if(!novoTitulo){mostrarToast('⚠️ Informe o título');return;}
-  
-  // 1. Salva o título
   try{
     await db.collection('eventos').doc(eventoAtualMod.id).update({titulo_evento:novoTitulo});
     eventoAtualMod.titulo_evento=novoTitulo;
     const idx=painelCache.findIndex(e=>e.id===eventoAtualMod.id);
     if(idx>=0)painelCache[idx].titulo_evento=novoTitulo;
   }catch(e){console.error('Erro ao salvar título:',e);mostrarToast('⚠️ Erro ao salvar título');return;}
-  
-  // 2. Salva os nomes (se houve alteração)
   const listaAntiga=eventoAtualMod.lista_convocados||[];
   if(JSON.stringify(nomesEditaveis)!==JSON.stringify(listaAntiga)){
     try{
       await db.collection('eventos').doc(eventoAtualMod.id).update({lista_convocados:nomesEditaveis});
       eventoAtualMod.lista_convocados=[...nomesEditaveis];
-      
-      // Notifica novos convocados
       const novos=nomesEditaveis.filter(n=>!listaAntiga.includes(n));
       if(novos.length>0){
         const novosMatches=await cruzar(novos);
         const dtEvento=eventoAtualMod.data_hora;
-        const titulo=novoTitulo;
         for(const m of novosMatches){
-          if(m.tipo==='exato'){
-            await db.collection('notificacoes').add({uid:m.usuario.uid,tipo:'convocado',nome_convocacao:m.nome,titulo_evento:titulo,data_hora:dtEvento,grupo_id:grupoId,respondido:false,criado_em:firebase.firestore.FieldValue.serverTimestamp()});
-          }else if(m.tipo==='parcial'||m.tipo==='baixa_confianca'){
-            await db.collection('notificacoes').add({uid:m.usuario.uid,tipo:'confirmar',nome_convocacao:m.nome,titulo_evento:titulo,data_hora:dtEvento,grupo_id:grupoId,respondido:false,criado_em:firebase.firestore.FieldValue.serverTimestamp()});
-          }
+          if(m.tipo==='exato'){await db.collection('notificacoes').add({uid:m.usuario.uid,tipo:'convocado',nome_convocacao:m.nome,titulo_evento:novoTitulo,data_hora:dtEvento,grupo_id:grupoId,respondido:false,criado_em:firebase.firestore.FieldValue.serverTimestamp()});}
+          else if(m.tipo==='parcial'||m.tipo==='baixa_confianca'){await db.collection('notificacoes').add({uid:m.usuario.uid,tipo:'confirmar',nome_convocacao:m.nome,titulo_evento:novoTitulo,data_hora:dtEvento,grupo_id:grupoId,respondido:false,criado_em:firebase.firestore.FieldValue.serverTimestamp()});}
         }
       }
     }catch(e){console.error('Erro ao salvar nomes:',e);mostrarToast('⚠️ Erro ao salvar nomes');return;}
   }
-  
   mostrarToast('✅ Evento atualizado!');
   carregarEventos();
   fecharMod();
@@ -619,6 +607,7 @@ async function limparEventosAntigos(){if(!grupoId)return;const agora=new Date();
 function verificarCadastroCompleto(){if(!eu)return false;if(!eu.nome_completo||eu.nome_completo.trim().length<5||!eu.cargo){document.getElementById('cadastro-nome').value=eu.nome_completo||'';document.getElementById('cadastro-cargo').value=eu.cargo||'';document.getElementById('cadastro-email').value=eu.email||'';document.getElementById('completar-cadastro-ov').classList.add('on');return false;}if(eu.nome_completo.trim().split(/\s+/).length<2){document.getElementById('cadastro-nome').value=eu.nome_completo||'';document.getElementById('cadastro-cargo').value=eu.cargo||'';document.getElementById('cadastro-email').value=eu.email||'';document.getElementById('cadastro-erro').textContent='⚠️ Informe nome e sobrenome';document.getElementById('cadastro-erro').style.display='block';document.getElementById('completar-cadastro-ov').classList.add('on');return false;}return true;}
 async function completarCadastro(){const nome=document.getElementById('cadastro-nome').value.trim();const cargo=document.getElementById('cadastro-cargo').value.trim();const email=document.getElementById('cadastro-email').value.trim();const erroEl=document.getElementById('cadastro-erro');if(!nome||nome.length<3){erroEl.textContent='⚠️ Informe seu nome completo';erroEl.style.display='block';return;}const palavras=nome.split(/\s+/);if(palavras.length<2){erroEl.textContent='⚠️ Por favor, informe nome e sobrenome';erroEl.style.display='block';return;}if(!cargo||cargo.length<2){erroEl.textContent='⚠️ Informe seu cargo';erroEl.style.display='block';return;}try{await db.collection('usuarios').doc(eu.uid).update({nome_completo:nome,cargo:cargo,email:email||null,nomes_conhecidos:firebase.firestore.FieldValue.arrayUnion(nome)});eu.nome_completo=nome;eu.cargo=cargo;eu.email=email;document.getElementById('h-user').textContent=nome+' · '+cargo;document.getElementById('completar-cadastro-ov').classList.remove('on');mostrarToast('✅ Cadastro atualizado!');if(grupoId)carregarEventos();renderizarCardGrupos();}catch(error){console.error('Erro ao salvar:',error);erroEl.textContent='Erro ao salvar. Tente novamente.';erroEl.style.display='block';}}
 
+// ═══════════ carregarSaldo CORRIGIDO (texto usa totais fixos) ═══════════
 async function carregarSaldo(){
   const container=document.getElementById('saldo-container');
   container.innerHTML='<div class="skel"></div>';
@@ -627,35 +616,51 @@ async function carregarSaldo(){
   saldoUsuario=data.saldo||{ferias:[],abono:6,licenca:90};
   if(typeof saldoUsuario.ferias==='number')saldoUsuario.ferias=[{periodo:'Total',total:saldoUsuario.ferias}];
   if(!Array.isArray(saldoUsuario.ferias)||saldoUsuario.ferias.length===0)saldoUsuario.ferias=[{periodo:'Período atual',total:30}];
+  
   const periodosFerias=saldoUsuario.ferias||[];
   const ausenciasSnap=await db.collection('ausencias').where('uid','==',eu.uid).get();
   const usos=ausenciasSnap.docs.map(d=>({id:d.id,...d.data()}));
-  const TOTAL_FERIAS_POR_PERIODO=30,TOTAL_ABONOS=6,TOTAL_LICENCA=90;
+  
+  // TOTAIS FIXOS
+  const TOTAL_FERIAS_POR_PERIODO=30;
+  const TOTAL_ABONOS=6;
+  const TOTAL_LICENCA=90;
+  
+  // O total disponível é o que o usuário digitou
   const totalFerias=periodosFerias.reduce((s,p)=>s+(p.total||0),0);
   const usadoFerias=usos.filter(u=>u.tipo==='ferias').reduce((s,u)=>s+(u.dias||0),0);
   const restanteFerias=Math.max(0,totalFerias-usadoFerias);
-  const totalBarraFerias=periodosFerias.length*TOTAL_FERIAS_POR_PERIODO;
-  const totalAbono=saldoUsuario.abono!=null&&!isNaN(saldoUsuario.abono)?saldoUsuario.abono:TOTAL_ABONOS;
+  
+  // Para texto e barra: máximo é períodos × 30
+  const totalTextoFerias=periodosFerias.length*TOTAL_FERIAS_POR_PERIODO;
+  
   const usadoAbono=usos.filter(u=>u.tipo==='abono').length;
-  const restanteAbono=Math.max(0,totalAbono-usadoAbono);
-  const totalLicenca=saldoUsuario.licenca!=null&&!isNaN(saldoUsuario.licenca)?saldoUsuario.licenca:TOTAL_LICENCA;
+  const restanteAbono=Math.max(0,TOTAL_ABONOS-usadoAbono);
+  
   const usadoLicenca=usos.filter(u=>u.tipo==='licenca').reduce((s,u)=>s+(u.dias||0),0);
-  const restanteLicenca=Math.max(0,totalLicenca-usadoLicenca);
+  const restanteLicenca=Math.max(0,TOTAL_LICENCA-usadoLicenca);
+  
   let periodosHtml='';
-  periodosFerias.forEach(p=>{const usado=usos.filter(u=>u.tipo==='ferias'&&u.periodo===p.periodo).reduce((s,u)=>s+(u.dias||0),0);periodosHtml+='<span style="display:inline-block;margin-right:8px;font-size:11px;background:#fdf2f8;padding:2px 6px;border-radius:4px;">'+p.periodo+': '+Math.max(0,(p.total||30)-usado)+'/'+(p.total||30)+'d</span>';});
+  periodosFerias.forEach(p=>{
+    const usado=usos.filter(u=>u.tipo==='ferias'&&u.periodo===p.periodo).reduce((s,u)=>s+(u.dias||0),0);
+    periodosHtml+='<span style="display:inline-block;margin-right:8px;font-size:11px;background:#fdf2f8;padding:2px 6px;border-radius:4px;">'+p.periodo+': '+Math.max(0,TOTAL_FERIAS_POR_PERIODO-usado)+'/'+TOTAL_FERIAS_POR_PERIODO+'d</span>';
+  });
+  
   container.innerHTML='<div class="card"><div class="card-titulo">💰 Meu Saldo <span class="badge">Individual</span></div>'+
-    '<div class="saldo-card"><div class="saldo-header"><div class="saldo-icon ferias">🏖️</div><div class="saldo-info"><div class="saldo-tipo">Férias</div><div class="saldo-dias" style="color:#ec4899">'+restanteFerias+' / '+totalFerias+' dias</div><div class="saldo-sub">'+periodosHtml+'</div></div></div><div class="saldo-bar"><div class="saldo-bar-fill ferias" style="width:'+(totalBarraFerias>0?Math.min(100,(restanteFerias/totalBarraFerias)*100):0)+'%"></div></div></div>'+
-    '<div class="saldo-card"><div class="saldo-header"><div class="saldo-icon abono">⏱️</div><div class="saldo-info"><div class="saldo-tipo">Abonos</div><div class="saldo-dias" style="color:#06b6d4">'+restanteAbono+' / '+totalAbono+'</div></div></div><div class="saldo-bar"><div class="saldo-bar-fill abono" style="width:'+(TOTAL_ABONOS>0?Math.min(100,(restanteAbono/TOTAL_ABONOS)*100):0)+'%"></div></div></div>'+
-    '<div class="saldo-card"><div class="saldo-header"><div class="saldo-icon licenca">🏆</div><div class="saldo-info"><div class="saldo-tipo">Licença Prêmio</div><div class="saldo-dias" style="color:#f59e0b">'+restanteLicenca+' / '+totalLicenca+' dias</div></div></div><div class="saldo-bar"><div class="saldo-bar-fill licenca" style="width:'+(TOTAL_LICENCA>0?Math.min(100,(restanteLicenca/TOTAL_LICENCA)*100):0)+'%"></div></div></div>'+
+    '<div class="saldo-card"><div class="saldo-header"><div class="saldo-icon ferias">🏖️</div><div class="saldo-info"><div class="saldo-tipo">Férias</div><div class="saldo-dias" style="color:#ec4899">'+restanteFerias+' / '+totalTextoFerias+' dias</div><div class="saldo-sub">'+periodosHtml+'</div></div></div><div class="saldo-bar"><div class="saldo-bar-fill ferias" style="width:'+(totalTextoFerias>0?Math.min(100,(restanteFerias/totalTextoFerias)*100):0)+'%"></div></div></div>'+
+    '<div class="saldo-card"><div class="saldo-header"><div class="saldo-icon abono">⏱️</div><div class="saldo-info"><div class="saldo-tipo">Abonos</div><div class="saldo-dias" style="color:#06b6d4">'+restanteAbono+' / '+TOTAL_ABONOS+'</div></div></div><div class="saldo-bar"><div class="saldo-bar-fill abono" style="width:'+(TOTAL_ABONOS>0?Math.min(100,(restanteAbono/TOTAL_ABONOS)*100):0)+'%"></div></div></div>'+
+    '<div class="saldo-card"><div class="saldo-header"><div class="saldo-icon licenca">🏆</div><div class="saldo-info"><div class="saldo-tipo">Licença Prêmio</div><div class="saldo-dias" style="color:#f59e0b">'+restanteLicenca+' / '+TOTAL_LICENCA+' dias</div></div></div><div class="saldo-bar"><div class="saldo-bar-fill licenca" style="width:'+(TOTAL_LICENCA>0?Math.min(100,(restanteLicenca/TOTAL_LICENCA)*100):0)+'%"></div></div></div>'+
     '<button class="btn-ajustar-saldo" onclick="abrirAjusteSaldo()">⚙️ Ajustar</button></div>'+
     (usos.length>0?'<div class="card"><div class="card-titulo">📋 Períodos Registrados</div>'+usos.sort((a,b)=>new Date(a.data_inicio)-new Date(b.data_inicio)).map(u=>{let icone=u.tipo==='ferias'?'🏖️':(u.tipo==='licenca'?'🏆':'⏱️');return'<div class="uso-item '+u.tipo+'"><div class="uso-dias">'+u.dias+'d</div><div class="uso-info"><div style="font-weight:600;font-size:13px">'+icone+' '+(u.periodo||u.tipo)+'</div><div class="uso-periodo">'+(u.data_inicio?new Date(u.data_inicio+'T12:00:00').toLocaleDateString('pt-BR'):'?')+' → '+(u.data_fim?new Date(u.data_fim+'T12:00:00').toLocaleDateString('pt-BR'):'?')+'</div></div></div>';}).join('')+'</div>':'');
 }
+
 function abrirAjusteSaldo(){periodosAjuste=JSON.parse(JSON.stringify(saldoUsuario.ferias||[{periodo:'Período atual',total:30}]));document.getElementById('ajuste-abono').value=saldoUsuario.abono!=null?saldoUsuario.abono:6;document.getElementById('ajuste-licenca').value=saldoUsuario.licenca!=null?saldoUsuario.licenca:90;renderizarPeriodosAjuste();document.getElementById('saldo-ajuste-ov').classList.add('on');}
 function fecharAjusteSaldo(){document.getElementById('saldo-ajuste-ov').classList.remove('on');}
 function renderizarPeriodosAjuste(){const c=document.getElementById('ajuste-periodos-ferias');c.innerHTML=periodosAjuste.map((p,i)=>'<div class="ajuste-periodo"><input type="text" value="'+(p.periodo||'')+'" placeholder="Nome" onchange="periodosAjuste['+i+'].periodo=this.value" style="flex:2"><input type="number" value="'+(p.total||30)+'" min="0" max="60" placeholder="Dias" onchange="periodosAjuste['+i+'].total=parseInt(this.value)||0" style="flex:1"><button class="btn-remover" onclick="removerPeriodoAjuste('+i+')">🗑</button></div>').join('');}
 function adicionarPeriodoNoAjuste(){periodosAjuste.push({periodo:'Novo período',total:30});renderizarPeriodosAjuste();}
 function removerPeriodoAjuste(index){if(periodosAjuste.length<=1){mostrarToast('⚠️ Mantenha pelo menos 1 período');return;}periodosAjuste.splice(index,1);renderizarPeriodosAjuste();}
 async function salvarAjusteSaldo(){saldoUsuario.ferias=periodosAjuste;const abonoVal=parseInt(document.getElementById('ajuste-abono').value);saldoUsuario.abono=isNaN(abonoVal)?6:Math.max(0,Math.min(6,abonoVal));const licencaVal=parseInt(document.getElementById('ajuste-licenca').value);saldoUsuario.licenca=isNaN(licencaVal)?90:Math.max(0,Math.min(180,licencaVal));await db.collection('usuarios').doc(eu.uid).update({saldo:{ferias:saldoUsuario.ferias,abono:saldoUsuario.abono,licenca:saldoUsuario.licenca}});fecharAjusteSaldo();mostrarToast('✅ Saldo atualizado!');await carregarSaldo();}
+
 async function carregarFerias(){if(!grupoId)return;const lst=document.getElementById('lst-ausencias');lst.innerHTML='<div class="skel"></div>';const snapUs=await db.collection('usuarios').where('grupo_id','==',grupoId).get();usuariosGrupo=snapUs.docs.map(d=>({uid:d.id,...d.data()}));const snap=await db.collection('ausencias').where('grupo_id','==',grupoId).get();const todasAusencias=snap.docs.map(d=>({id:d.id,...d.data()}));lst.innerHTML='';if(todasAusencias.length===0){lst.innerHTML='<p style="color:var(--light);padding:20px;text-align:center">Nenhum período registrado no grupo.</p>';return;}todasAusencias.sort((a,b)=>new Date(a.data_inicio)-new Date(b.data_inicio));todasAusencias.forEach(aus=>{let dtIni=new Date(aus.data_inicio+"T12:00:00"),dtFim=new Date(aus.data_fim+"T12:00:00");let icone=aus.tipo==='ferias'?'🏖️':(aus.tipo==='licenca'?'🏆':'⏱️');const div=document.createElement('div');div.className='aus-card tipo-'+aus.tipo;const nomeUsuario=aus.nome_completo||'Usuário';const podeExcluir=eu.is_admin||eu.uid===aus.uid;div.innerHTML='<div class="aus-icon">'+icone+'</div><div class="aus-info"><div class="aus-nome">'+(aus.periodo||aus.tipo)+' - '+(aus.dias||'?')+' dia(s)</div><div class="aus-detalhe">'+dtIni.toLocaleDateString('pt-BR')+' → '+dtFim.toLocaleDateString('pt-BR')+'</div><div class="aus-tipo">'+aus.tipo+'</div><div class="aus-usuario">👤 '+nomeUsuario+'</div></div>'+(podeExcluir?'<button class="btn-excluir-ausencia" onclick="excluirAusenciaGrupo(\''+aus.id+'\')">🗑️</button>':'');lst.appendChild(div);});}
 async function excluirAusenciaGrupo(id){if(!confirm('Excluir este período?'))return;await db.collection('ausencias').doc(id).delete();mostrarToast('✅ Excluído!');carregarFerias();}
 async function abrirSelecaoUsuario(){usuarioSelecionadoFerias=null;const lista=document.getElementById('lista-usuarios-ferias');lista.innerHTML='';const snap=await db.collection('usuarios').where('grupo_id','==',grupoId).get();const usuarios=snap.docs.map(d=>({uid:d.id,...d.data()}));usuarios.forEach(u=>{const div=document.createElement('div');div.className='usuario-item';div.innerHTML='<span>👤</span><div><div style="font-weight:500">'+u.nome_completo+'</div><div style="font-size:12px;color:var(--light)">'+(u.cargo||'')+'</div></div>';div.onclick=()=>{lista.querySelectorAll('.usuario-item').forEach(el=>el.classList.remove('selecionado'));div.classList.add('selecionado');usuarioSelecionadoFerias=u;};lista.appendChild(div);});document.getElementById('selecionar-usuario-ov').classList.add('on');}
