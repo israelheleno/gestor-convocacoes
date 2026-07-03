@@ -350,14 +350,14 @@
   <div id="aba-convocacoes" class="aba-content"><div id="sec-apv" style="display:none;margin-bottom:16px"><div class="sec-titulo">🔔 Solicitações</div><div id="lst-apv"></div></div><div class="card"><div class="card-titulo">👥 Grupos <span class="badge" id="grp-badge">—</span></div><div id="grp-content"></div></div><div class="sec-titulo" style="margin-bottom:10px">Próxima convocação</div><div id="prox"></div><div class="sec-titulo" style="margin-top:20px">Todas <span style="font-size:12px;color:var(--light)" id="total"></span></div><div id="lst-ev"><div class="skel"></div></div></div>
   <div id="aba-ferias" class="aba-content" style="display:none"><div class="card"><div class="card-titulo">📋 Períodos do Grupo</div><button class="btn-meu-periodo" onclick="iniciarAddFerias()">+ Meu Período</button><button class="btn-para-outro" id="btn-para-outro" style="display:none" onclick="abrirSelecaoUsuario()">👤 Adicionar para outro usuário</button></div><div id="lst-ausencias"></div></div>
   <div id="aba-saldo" class="aba-content" style="display:none"><div id="saldo-container"><div class="skel"></div></div></div>
-  <div id="aba-painel" class="aba-content" style="display:none"><div class="painel-wrapper"><div class="painel-header"><div class="painel-left"><h2>📋 Painel de Convocações</h2><div class="painel-relogio"><span class="hora-texto" id="painel-hora-texto"></span></div></div><div class="painel-center"><div class="painel-status"><span class="dot"></span> Atualizando em tempo real</div></div><div class="painel-right"><div class="painel-relogio"><span class="data-texto" id="painel-data-texto"></span></div><div class="grupo-badge" id="painel-grupo-nome">—</div></div></div><div class="painel-grid" id="painel-grid"><div class="painel-vazio">Nenhuma convocação disponível no momento.</div></div><div class="painel-footer">Desenvolvido por <strong>IHC Solutions</strong> — © 2026 Gestor de Convocações — v25.9</div></div></div>
+  <div id="aba-painel" class="aba-content" style="display:none"><div class="painel-wrapper"><div class="painel-header"><div class="painel-left"><h2>📋 Painel de Convocações</h2><div class="painel-relogio"><span class="hora-texto" id="painel-hora-texto"></span></div></div><div class="painel-center"><div class="painel-status"><span class="dot"></span> Atualizando em tempo real</div></div><div class="painel-right"><div class="painel-relogio"><span class="data-texto" id="painel-data-texto"></span></div><div class="grupo-badge" id="painel-grupo-nome">—</div></div></div><div class="painel-grid" id="painel-grid"><div class="painel-vazio">Nenhuma convocação disponível no momento.</div></div><div class="painel-footer">Desenvolvido por <strong>IHC Solutions</strong> — © 2026 Gestor de Convocações — v26.0</div></div></div>
 </main>
 
 <button id="fab" onclick="abrirScanner()"><svg viewBox="0 0 24 24"><path d="M9 3H5a2 2 0 00-2 2v4m6-6h10a2 2 0 012 2v4M9 3v18m0 0h10a2 2 0 002-2V9M9 21H5a2 2 0 01-2-2V9m0 0h18"/></svg></button>
 <button class="btn-fab-admin" id="btn-fab-admin" onclick="abrirAdmin()">🛡️</button>
-<footer><p>Desenvolvido por <strong>IHC Solutions</strong></p><p>© 2026 Gestor de Convocações — v25.9</p></footer>
+<footer><p>Desenvolvido por <strong>IHC Solutions</strong></p><p>© 2026 Gestor de Convocações — v26.0</p></footer>
 
-<!-- Modais - mantidos iguais -->
+<!-- Modais -->
 <div class="overlay" id="mod-ev" onclick="if(event.target===this) fecharMod()"><div class="sheet"><div class="handle" onclick="fecharMod()"></div><input type="text" class="mod-titulo-input" id="mod-tit" placeholder="Título do evento"><input type="text" class="mod-sub-input" id="mod-sub" placeholder="Data e hora"><div class="mod-sec"><h3>Convocados <span id="admin-badge-conv" style="display:none" class="admin-badge">Admin</span></h3><div id="mod-conv"></div></div><div style="display:flex;gap:8px;margin-top:16px"><button class="btn-ag" id="mod-ag" style="flex:1;margin-top:0">📅 Agenda</button><button id="mod-trocar" style="flex:1;padding:12px;background:#fff7ed;color:#c2410c;border:1.5px solid #fed7aa;border-radius:10px;font-size:14px;cursor:pointer;font-weight:600;display:none;">🔄 Trocar</button></div><button class="btn-salvar-nomes" onclick="salvarTudoEvento()" style="display:none;width:100%;padding:10px;background:var(--blue);color:#fff;border:none;border-radius:10px;font-size:13px;cursor:pointer;margin-top:8px;font-family:'Sora',sans-serif;font-weight:600" id="btn-salvar-tudo">💾 Salvar</button><button class="btn-del" id="mod-del" style="display:none">🗑 Excluir</button><button class="btn-cancel" style="margin-top:10px;width:100%" onclick="fecharMod()">Fechar</button></div></div>
 <div id="trocar-ov"><div class="trocar-box"><h3>🔄 Trocar escala</h3><p id="trocar-desc"></p><div class="trocar-membros" id="trocar-lista"></div><div class="trocar-btns"><button class="btn-cancel" onclick="fecharTrocar()">Cancelar</button><button class="btn-salvar" style="background:#c2410c" id="trocar-confirmar">Confirmar</button></div></div></div>
 <div class="ov-center" id="ferias-consent-ov"><div class="box-center"><h3>Registrar Período</h3><p id="ferias-consent-desc">Registrar férias, licença ou abono.</p><div class="btns-row"><button class="btn-cancel" onclick="document.getElementById('ferias-consent-ov').classList.remove('on')">Cancelar</button><button class="btn-salvar" onclick="abrirFormFerias()">Continuar</button></div></div></div>
@@ -455,7 +455,7 @@ function toggleNomeEscala(nome){const idx=nomesSelecionadosEscala.indexOf(nome);
 function adicionarNomeEscala(){const input=document.getElementById('escala-nome-externo');const nome=input.value.trim();if(!nome)return;if(!nomesSelecionadosEscala.includes(nome))nomesSelecionadosEscala.push(nome);const extras=document.getElementById('escala-nomes-extras');extras.innerHTML+='<span style="display:inline-block;background:#fff7ed;padding:4px 10px;border-radius:8px;margin:2px;font-size:12px">'+nome+' <button onclick="this.parentElement.remove();nomesSelecionadosEscala=nomesSelecionadosEscala.filter(n=>n!==\''+nome.replace(/'/g,"\\'")+'\')" style="background:none;border:none;color:var(--red);cursor:pointer;font-weight:bold">✕</button></span>';input.value='';renderizarListaNomesEscala();}
 async function salvarEscala(){const titulo=document.getElementById('escala-titulo').value.trim();const data=document.getElementById('escala-data').value;const local=document.getElementById('escala-local').value.trim();if(!titulo){mostrarToast('⚠️ Informe o título');return;}if(!data){mostrarToast('⚠️ Informe a data e hora');return;}if(nomesSelecionadosEscala.length===0){mostrarToast('⚠️ Selecione pelo menos um nome');return;}try{await db.collection('eventos').add({titulo_evento:titulo,data_hora:data+':00',local:local,tipo:'escala',lista_convocados:nomesSelecionadosEscala,grupo_id:grupoId,criado_por:eu.uid,criado_em:firebase.firestore.FieldValue.serverTimestamp()});mostrarToast('✅ Escala criada!');fecharCriacaoEscala();carregarEventos();if(document.body.classList.contains('painel-ativo'))iniciarPainel();}catch(e){console.error(e);mostrarToast('⚠️ Erro ao criar escala');}}
 
-// ═══════════ SALDO v25.9 (CORRIGIDO - CARD PEQUENO) ═══════════
+// ═══════════ SALDO v26.0 (CORRIGIDO - CARD PRINCIPAL) ═══════════
 function parseDataBR(str){if(!str||str.trim().length<8)return null;const partes=str.split('/');if(partes.length!==3)return null;const dia=parseInt(partes[0]),mes=parseInt(partes[1])-1,ano=parseInt(partes[2]);if(isNaN(dia)||isNaN(mes)||isNaN(ano))return null;return new Date(ano,mes,dia,12,0,0);}
 function calcularProximoAniversario(dataAdmissao){const hoje=new Date();let prox=new Date(dataAdmissao);prox.setFullYear(hoje.getFullYear());if(prox<=hoje)prox.setFullYear(hoje.getFullYear()+1);return prox;}
 function calcularProximoQuinquenio(dataAdmissao){const hoje=new Date();let prox=new Date(dataAdmissao);while(prox<=hoje)prox.setFullYear(prox.getFullYear()+5);return prox;}
@@ -473,10 +473,11 @@ async function carregarSaldo(){
   const vendeuFerias=saldoUsuario.vendeu_ferias||false;
   const totalDoPeriodo=vendeuFerias?20:30;
 
-  // Férias: soma do que o usuário digitou em cada período
-  const totalFerias=periodosFerias.reduce((s,p)=>s+(p.total||0),0);
-  const usadoFerias=usos.filter(u=>u.tipo==='ferias').reduce((s,u)=>s+(u.dias||0),0);
-  const restanteFerias=Math.max(0,totalFerias-usadoFerias);
+  // Férias: restante = soma dos saldos líquidos de cada período
+  const restanteFerias=periodosFerias.reduce((s,p)=>{
+    const usadoNoPeriodo=usos.filter(u=>u.tipo==='ferias'&&u.periodo===p.periodo).reduce((s,u)=>s+(u.dias||0),0);
+    return s+Math.max(0,(p.total||30)-usadoNoPeriodo);
+  },0);
   const totalTextoFerias=periodosFerias.length*TOTAL_FERIAS_POR_PERIODO;
 
   // Abonos
@@ -494,13 +495,11 @@ async function carregarSaldo(){
   let infoProxFerias='',infoQuinquenio='';
   if(dataAdmissao){const dt=parseDataBR(dataAdmissao);if(dt){const prox=calcularProximoAniversario(dt);infoProxFerias='<div style="font-size:11px;color:var(--blue);margin-top:4px;">📅 Próximo período: '+prox.toLocaleDateString('pt-BR')+' (+'+totalDoPeriodo+' dias)</div>';const proxQ=calcularProximoQuinquenio(dt);infoQuinquenio='<div style="font-size:11px;color:var(--blue);margin-top:4px;">🏆 Próximo quinquênio: '+proxQ.toLocaleDateString('pt-BR')+' (+90 dias)</div>';}}
 
-  // ═════ CORREÇÃO: Cards pequenos ═════
+  // Cards pequenos
   let periodosHtml='';
   periodosFerias.forEach(p=>{
-    const usadoNoPeriodo=usos.filter(u=>u.tipo==='ferias'&&u.periodo===p.periodo).reduce((s,u)=>s+(u.dias||0),0);
     const digitadoPeloUsuario=p.total||30;
-    const restanteNoPeriodo=Math.max(0,digitadoPeloUsuario-usadoNoPeriodo);
-    periodosHtml+='<span style="display:inline-block;margin-right:8px;font-size:11px;background:#fdf2f8;padding:2px 6px;border-radius:4px;">'+p.periodo+': '+restanteNoPeriodo+'/'+totalDoPeriodo+'d</span>';
+    periodosHtml+='<span style="display:inline-block;margin-right:8px;font-size:11px;background:#fdf2f8;padding:2px 6px;border-radius:4px;">'+p.periodo+': '+digitadoPeloUsuario+'/'+totalDoPeriodo+'d</span>';
   });
 
   const admissaoDisplay=dataAdmissao?'<div style="font-size:12px;color:var(--light);margin-bottom:12px">📅 Admissão: '+dataAdmissao+'</div>':'';
