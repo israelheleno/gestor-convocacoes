@@ -300,15 +300,8 @@
     .btn-ajustar-saldo{width:100%;padding:10px;background:transparent;border:1.5px solid var(--blue);color:var(--blue);border-radius:10px;font-size:13px;cursor:pointer;margin-top:8px;font-weight:600}
     .ajuste-bloco{margin-bottom:16px;padding:14px;background:#f8fafc;border-radius:12px;border:1px solid var(--border)}
     .ajuste-bloco h4{font-size:13px;font-weight:700;color:var(--blue);margin-bottom:10px}
-    .ajuste-periodo{display:flex;gap:8px;align-items:center;margin-bottom:6px}
-    .ajuste-periodo input{flex:1;padding:8px 10px;border:1.5px solid var(--border);border-radius:8px;font-size:13px}
-    .ajuste-periodo .btn-remover{background:transparent;border:none;color:var(--red);cursor:pointer;font-size:16px}
-    .btn-add-ajuste{padding:8px 14px;background:transparent;border:1.5px dashed var(--blue);color:var(--blue);border-radius:8px;font-size:12px;cursor:pointer;width:100%}
     .info-texto{font-size:12px;color:var(--light);margin-top:4px;line-height:1.4}
-    #periodos-ferias-container input[type="checkbox"],#quinquenios-container input[type="radio"]{width:16px;height:16px;cursor:pointer}
-    #periodos-ferias-container label,#quinquenios-container label{user-select:none}
-    .venda-linha{display:flex;align-items:center;justify-content:space-between;padding:8px 10px;border-bottom:1px solid #f1f5f9;font-size:13px}
-    .venda-options{display:flex;gap:16px}
+    .info-destaque{font-size:13px;color:var(--blue);font-weight:600;margin-top:6px;padding:8px 12px;background:#eff6ff;border-radius:8px}
     footer{text-align:center;padding:16px;color:var(--light);font-size:11px;border-top:1px solid var(--border);margin-top:20px}
     footer strong{color:var(--blue)}
     .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:10000;display:none;align-items:center;justify-content:center;padding:20px}
@@ -333,6 +326,7 @@
     .nome-check-item.selecionado{background:#eff6ff;font-weight:600;color:var(--blue)}
     .nome-check-item .check-box{width:20px;height:20px;border:2px solid var(--border);border-radius:4px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
     .nome-check-item.selecionado .check-box{background:var(--blue);border-color:var(--blue);color:#fff;font-size:12px}
+    .ajuda-admissao{font-size:11px;color:var(--light);margin-top:3px}
   </style>
 </head>
 <body>
@@ -375,15 +369,16 @@
         <div class="painel-right"><div class="painel-relogio"><span class="data-texto" id="painel-data-texto"></span></div><div class="grupo-badge" id="painel-grupo-nome">—</div></div>
       </div>
       <div class="painel-grid" id="painel-grid"><div class="painel-vazio">Nenhuma convocação disponível no momento.</div></div>
-      <div class="painel-footer">Desenvolvido por <strong>IHC Solutions</strong> — © 2026 Gestor de Convocações — v25.2</div>
+      <div class="painel-footer">Desenvolvido por <strong>IHC Solutions</strong> — © 2026 Gestor de Convocações — v25.4</div>
     </div>
   </div>
 </main>
 
 <button id="fab" onclick="abrirScanner()"><svg viewBox="0 0 24 24"><path d="M9 3H5a2 2 0 00-2 2v4m6-6h10a2 2 0 012 2v4M9 3v18m0 0h10a2 2 0 002-2V9M9 21H5a2 2 0 01-2-2V9m0 0h18"/></svg></button>
 <button class="btn-fab-admin" id="btn-fab-admin" onclick="abrirAdmin()">🛡️</button>
-<footer><p>Desenvolvido por <strong>IHC Solutions</strong></p><p>© 2026 Gestor de Convocações — v25.2</p></footer>
+<footer><p>Desenvolvido por <strong>IHC Solutions</strong></p><p>© 2026 Gestor de Convocações — v25.4</p></footer>
 
+<!-- Modais mantidos iguais -->
 <div class="overlay" id="mod-ev" onclick="if(event.target===this) fecharMod()"><div class="sheet"><div class="handle" onclick="fecharMod()"></div><input type="text" class="mod-titulo-input" id="mod-tit" placeholder="Título do evento"><input type="text" class="mod-sub-input" id="mod-sub" placeholder="Data e hora"><div class="mod-sec"><h3>Convocados <span id="admin-badge-conv" style="display:none" class="admin-badge">Admin</span></h3><div id="mod-conv"></div></div><div style="display:flex;gap:8px;margin-top:16px"><button class="btn-ag" id="mod-ag" style="flex:1;margin-top:0">📅 Agenda</button><button id="mod-trocar" style="flex:1;padding:12px;background:#fff7ed;color:#c2410c;border:1.5px solid #fed7aa;border-radius:10px;font-size:14px;cursor:pointer;font-weight:600;display:none;">🔄 Trocar</button></div><button class="btn-salvar-nomes" onclick="salvarTudoEvento()" style="display:none;width:100%;padding:10px;background:var(--blue);color:#fff;border:none;border-radius:10px;font-size:13px;cursor:pointer;margin-top:8px;font-family:'Sora',sans-serif;font-weight:600" id="btn-salvar-tudo">💾 Salvar</button><button class="btn-del" id="mod-del" style="display:none">🗑 Excluir</button><button class="btn-cancel" style="margin-top:10px;width:100%" onclick="fecharMod()">Fechar</button></div></div>
 <div id="trocar-ov"><div class="trocar-box"><h3>🔄 Trocar escala</h3><p id="trocar-desc"></p><div class="trocar-membros" id="trocar-lista"></div><div class="trocar-btns"><button class="btn-cancel" onclick="fecharTrocar()">Cancelar</button><button class="btn-salvar" style="background:#c2410c" id="trocar-confirmar">Confirmar</button></div></div></div>
 <div class="ov-center" id="ferias-consent-ov"><div class="box-center"><h3>Registrar Período</h3><p id="ferias-consent-desc">Registrar férias, licença ou abono.</p><div class="btns-row"><button class="btn-cancel" onclick="document.getElementById('ferias-consent-ov').classList.remove('on')">Cancelar</button><button class="btn-salvar" onclick="abrirFormFerias()">Continuar</button></div></div></div>
@@ -407,31 +402,65 @@
 </div>
 <div id="ocr-ov"><div class="ocr-spinner"></div><div class="ocr-texto" id="ocr-texto">📸 Analisando...</div><div class="ocr-barra"><div class="ocr-preenchimento" id="ocr-preenchimento"></div></div></div>
 <div id="rv-ov"><div class="rv-hd"><button class="btn-x" onclick="fecharRv()">✕</button><h2>Conferir dados</h2></div><div class="rv-body"><div class="rv-lbl">Título</div><div class="rv-val"><input type="text" id="rv-tit"/></div><div class="rv-lbl">Data/hora</div><div class="rv-val"><input type="datetime-local" id="rv-data"/></div><div class="rv-lbl">Local</div><div class="rv-val"><input type="text" id="rv-loc"/></div><div class="rv-lbl">Convocados</div><div id="rv-matches"></div><div class="rv-btns"><button class="btn-cancel" onclick="fecharRv()">Cancelar</button><button class="btn-salvar" onclick="salvar()">✓ Salvar</button></div></div></div>
-
 <div class="ov-center" id="criar-manual-ov">
-  <div class="box-center">
-    <h3>✏️ Criar Evento</h3>
-    <div class="field"><label>Tipo</label><select id="manual-tipo"><option value="convocacao">📋 Convocação</option><option value="escala">📅 Escala</option></select></div>
-    <div class="field"><label>Título</label><input type="text" id="manual-titulo" placeholder="Ex: Plantão Final de Semana"/></div>
-    <div class="field"><label>Data e Hora</label><input type="datetime-local" id="manual-data"/></div>
-    <div class="field"><label>Local</label><input type="text" id="manual-local" placeholder="Ex: Sala de Reuniões"/></div>
-    <div class="field"><label>Selecionar Convocados</label></div>
-    <div class="lista-nomes-manual" id="lista-nomes-manual"></div>
-    <div class="field" style="margin-top:8px"><label>Adicionar nome externo</label><div style="display:flex;gap:8px"><input type="text" id="manual-nome-externo" placeholder="Nome completo" style="flex:1"><button class="btn-salvar" onclick="adicionarNomeManual()" style="width:auto;padding:11px 16px">+</button></div></div>
-    <div style="margin-bottom:12px" id="manual-nomes-extras"></div>
-    <div class="btns-row"><button class="btn-cancel" onclick="fecharCriacaoManual()">Cancelar</button><button class="btn-salvar" onclick="salvarEventoManual()">💾 Criar</button></div>
-  </div>
+  <div class="box-center"><h3>✏️ Criar Evento</h3><div class="field"><label>Tipo</label><select id="manual-tipo"><option value="convocacao">📋 Convocação</option><option value="escala">📅 Escala</option></select></div><div class="field"><label>Título</label><input type="text" id="manual-titulo" placeholder="Ex: Plantão Final de Semana"/></div><div class="field"><label>Data e Hora</label><input type="datetime-local" id="manual-data"/></div><div class="field"><label>Local</label><input type="text" id="manual-local" placeholder="Ex: Sala de Reuniões"/></div><div class="field"><label>Selecionar Convocados</label></div><div class="lista-nomes-manual" id="lista-nomes-manual"></div><div class="field" style="margin-top:8px"><label>Adicionar nome externo</label><div style="display:flex;gap:8px"><input type="text" id="manual-nome-externo" placeholder="Nome completo" style="flex:1"><button class="btn-salvar" onclick="adicionarNomeManual()" style="width:auto;padding:11px 16px">+</button></div></div><div style="margin-bottom:12px" id="manual-nomes-extras"></div><div class="btns-row"><button class="btn-cancel" onclick="fecharCriacaoManual()">Cancelar</button><button class="btn-salvar" onclick="salvarEventoManual()">💾 Criar</button></div></div>
 </div>
 
+<!-- ═══════════ MODAL DE AJUSTE DE SALDO v25.4 ═══════════ -->
 <div class="ov-center" id="saldo-ajuste-ov">
   <div class="box-center">
     <h3>⚙️ Ajustar Saldo</h3>
-    <p style="font-size:13px;color:var(--light);margin-bottom:16px">Configure sua data de admissão, vendas e saldos atuais.</p>
-    <div class="field"><label>📅 Data de Admissão</label><input type="date" id="ajuste-admissao"/></div>
-    <div class="ajuste-bloco"><h4>🏖️ Períodos Aquisitivos de Férias</h4><div id="periodos-ferias-container" style="max-height:250px;overflow-y:auto;margin-bottom:8px;"><p style="font-size:12px;color:var(--light);text-align:center;">Informe a data de admissão primeiro</p></div><div class="field" style="margin-top:12px;"><label>🏖️ Férias disponíveis agora (ajuste manual)</label><input type="number" id="ajuste-ferias" min="0" max="999" placeholder="Ex: 15"/></div><p class="info-texto" id="info-ferias"></p></div>
-    <div class="ajuste-bloco"><h4>⏱️ Abonos</h4><div class="field" style="margin-bottom:0"><label>Disponíveis agora (máx. 6/ano)</label><input type="number" id="ajuste-abono" min="0" max="6" placeholder="Ex: 3"/></div><p class="info-texto">Renova em 1º de janeiro (6 por ano).</p></div>
-    <div class="ajuste-bloco"><h4>🏆 Licença Prêmio (Quinquênios)</h4><div id="quinquenios-container" style="max-height:200px;overflow-y:auto;margin-bottom:8px;"><p style="font-size:12px;color:var(--light);text-align:center;">Informe a data de admissão primeiro</p></div><div class="field" style="margin-top:12px;"><label>🏆 Licença disponível agora (ajuste manual)</label><input type="number" id="ajuste-licenca" min="0" max="999" placeholder="Ex: 60"/></div><p class="info-texto" id="info-licenca"></p></div>
-    <div class="btns-row"><button class="btn-cancel" onclick="fecharAjusteSaldo()">Cancelar</button><button class="btn-salvar" onclick="salvarAjusteSaldo()">💾 Salvar</button></div>
+    <p style="font-size:13px;color:var(--light);margin-bottom:16px">Data de admissão para cálculos futuros e saldo atual.</p>
+    
+    <div class="field">
+      <label>📅 Data de Admissão</label>
+      <input type="text" id="ajuste-admissao" placeholder="DD/MM/AAAA" maxlength="10"/>
+      <div class="ajuda-admissao">Exemplo: 15/03/2020</div>
+    </div>
+    
+    <div class="ajuste-bloco">
+      <h4>🏖️ Férias</h4>
+      <div class="field">
+        <label>Saldo atual de férias</label>
+        <input type="number" id="ajuste-ferias" min="0" max="999" placeholder="Ex: 15"/>
+      </div>
+      <div class="info-destaque" id="info-prox-ferias"></div>
+      <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;margin-top:8px;color:var(--text);">
+        <input type="checkbox" id="ajuste-vende-ferias" style="accent-color:#ec4899;width:16px;height:16px;">
+        Vendi 10 dias (próximo período terá 20 dias)
+      </label>
+    </div>
+    
+    <div class="ajuste-bloco">
+      <h4>⏱️ Abonos</h4>
+      <div class="field" style="margin-bottom:0">
+        <label>Disponíveis agora (máx. 6/ano)</label>
+        <input type="number" id="ajuste-abono" min="0" max="6" placeholder="Ex: 3"/>
+      </div>
+      <p class="info-texto" id="info-abono">Renova automaticamente em 1º de janeiro (6 por ano).</p>
+    </div>
+    
+    <div class="ajuste-bloco">
+      <h4>🏆 Licença Prêmio</h4>
+      <div class="field">
+        <label>Saldo atual de licença</label>
+        <input type="number" id="ajuste-licenca" min="0" max="999" placeholder="Ex: 60"/>
+      </div>
+      <div class="info-destaque" id="info-quinquenios"></div>
+      <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;margin-top:8px;color:var(--text);">
+        <input type="checkbox" id="ajuste-vende-licenca30" style="accent-color:#f59e0b;width:16px;height:16px;">
+        Vendi 30 dias da licença
+      </label>
+      <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;color:var(--text);">
+        <input type="checkbox" id="ajuste-vende-licenca60" style="accent-color:#f59e0b;width:16px;height:16px;">
+        Vendi 60 dias da licença
+      </label>
+    </div>
+    
+    <div class="btns-row">
+      <button class="btn-cancel" onclick="fecharAjusteSaldo()">Cancelar</button>
+      <button class="btn-salvar" onclick="salvarAjusteSaldo()">💾 Salvar</button>
+    </div>
   </div>
 </div>
 
@@ -452,7 +481,6 @@ let notifAtual=null,filaNotifs=[],listaAusencias=[],membroEditando=null;
 let toastTimeout,usuarioSelecionadoFerias=null,usuariosGrupo=[];
 let painelListener=null,painelCache=[],painelTimer=null,timersRolagem=[],relogioTimer=null;
 let nomesManuais=[],nomesSelecionados=[];
-let periodosFeriasEstado=[],quinqueniosEstado=[];
 
 const loadingScreen=document.getElementById('loading-screen');
 const loadingMsg=document.getElementById('loading-msg');
@@ -518,83 +546,28 @@ try{emailjs.init(EMAIL_CONFIG.publicKey);}catch(e){console.warn('EmailJS:',e);}
 function pararRolagens(){timersRolagem.forEach(t=>clearTimeout(t));timersRolagem=[];}
 function pararRelogio(){if(relogioTimer){clearInterval(relogioTimer);relogioTimer=null;}}
 function iniciarRelogio(){
-  function at(){
-    const a=new Date();
-    const ds=['dom','seg','ter','qua','qui','sex','sáb'];
-    const ms=['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'];
-    const d=document.getElementById('painel-data-texto');
-    const h=document.getElementById('painel-hora-texto');
-    if(d)d.textContent=ds[a.getDay()]+' '+a.getDate()+' de '+ms[a.getMonth()];
-    if(h)h.textContent=a.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
-  }
+  function at(){const a=new Date();const ds=['dom','seg','ter','qua','qui','sex','sáb'];const ms=['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'];document.getElementById('painel-data-texto').textContent=ds[a.getDay()]+' '+a.getDate()+' de '+ms[a.getMonth()];document.getElementById('painel-hora-texto').textContent=a.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit',second:'2-digit'});}
   at();relogioTimer=setInterval(at,1000);
 }
-
 function iniciarPainel(){
   if(!grupoId){document.getElementById('painel-grid').innerHTML='<div class="painel-vazio">Selecione um grupo para visualizar o painel.</div>';return;}
   document.getElementById('painel-grupo-nome').textContent=grupoAtivo?grupoAtivo.nome:'—';
   if(painelListener)painelListener();
-  painelListener=db.collection('eventos').where('grupo_id','==',grupoId).onSnapshot(snap=>{
-    const evs=snap.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>new Date(a.data_hora)-new Date(b.data_hora));
-    painelCache=evs;renderizarPainel(evs);
-  },()=>{if(painelCache.length)renderizarPainel(painelCache);});
+  painelListener=db.collection('eventos').where('grupo_id','==',grupoId).onSnapshot(snap=>{painelCache=snap.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>new Date(a.data_hora)-new Date(b.data_hora));renderizarPainel(painelCache);},()=>{if(painelCache.length)renderizarPainel(painelCache);});
   if(painelTimer)clearInterval(painelTimer);
-  painelTimer=setInterval(async()=>{
-    if(!document.body.classList.contains('painel-ativo'))return;
-    try{const snap=await db.collection('eventos').where('grupo_id','==',grupoId).get();const evs=snap.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>new Date(a.data_hora)-new Date(b.data_hora));painelCache=evs;renderizarPainel(evs);}catch(e){if(painelCache.length)renderizarPainel(painelCache);}
-  },15000);
+  painelTimer=setInterval(async()=>{if(!document.body.classList.contains('painel-ativo'))return;try{const snap=await db.collection('eventos').where('grupo_id','==',grupoId).get();painelCache=snap.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>new Date(a.data_hora)-new Date(b.data_hora));renderizarPainel(painelCache);}catch(e){if(painelCache.length)renderizarPainel(painelCache);}},15000);
 }
-
-function iniciarRolagemCard(card){
-  const c=card.querySelector('.painel-card-convocados');
-  const g=c.querySelector('.nomes-grid');
-  if(!c||!g)return;
-  const old=card.querySelector('.rolagem-indicador');if(old)old.remove();
-  const ind=document.createElement('div');ind.className='rolagem-indicador';card.appendChild(ind);
-  function verif(){
-    const ch=c.clientHeight,gh=g.scrollHeight;
-    if(gh<=ch+2){g.style.transform='translateY(0)';g.classList.remove('animando');ind.classList.remove('ativo');return;}
-    ind.classList.add('ativo');const d=gh-ch;
-    function ciclo(){
-      if(!document.body.classList.contains('painel-ativo')||!card.isConnected)return;
-      g.classList.remove('animando');g.style.transform='translateY(0)';
-      const t0=setTimeout(()=>{if(!document.body.classList.contains('painel-ativo')||!card.isConnected)return;g.classList.add('animando');g.style.transform='translateY(-'+d+'px)';
-        const t1=setTimeout(()=>{if(!document.body.classList.contains('painel-ativo')||!card.isConnected)return;g.classList.remove('animando');g.style.transition='transform 10s linear';g.style.transform='translateY(0)';
-          const t2=setTimeout(()=>{if(!document.body.classList.contains('painel-ativo')||!card.isConnected)return;g.style.transition='transform 0.5s ease';ciclo();},11000);timersRolagem.push(t2);
-        },13000);timersRolagem.push(t1);
-      },1500);timersRolagem.push(t0);
-    }
-    ciclo();
-  }
-  setTimeout(verif,300);
-}
-
-function renderizarPainel(eventos){
-  pararRolagens();
-  const agora=new Date();
-  const grid=document.getElementById('painel-grid');
-  const validos=eventos.filter(ev=>{if(!ev.data_hora)return false;const dt=new Date(ev.data_hora);return(agora-dt)/60000<15;});
-  if(!validos.length){grid.innerHTML='<div class="painel-vazio">Nenhuma convocação disponível no momento.</div>';return;}
-  const visiveis=validos.slice(0,6);
-  grid.innerHTML=visiveis.map(ev=>{
-    const dt=new Date(ev.data_hora);const passou=dt<=agora;const nomes=[...(ev.lista_convocados||[])];const isEscala=ev.tipo==='escala';
-    const classeExtra=isEscala?' escala':'';const borderColor=passou?'#94a3b8':(isEscala?'var(--orange)':'var(--blue)');
-    const nh=nomes.length?nomes.map(n=>'<div class="nome-linha">'+n+'</div>').join(''):'<div class="nome-linha" style="color:#64748b">Nenhum convocado</div>';
-    return'<div class="painel-card'+classeExtra+'" style="opacity:'+(passou?'0.25':'1')+';border-left-color:'+borderColor+'" data-evento-id="'+ev.id+'"><div class="painel-card-titulo">'+(ev.titulo_evento||'Sem título')+'</div><div class="painel-card-data">📅 '+fD(dt)+' · 🕐 '+fH(dt)+(ev.local?' · 📍 '+ev.local:'')+'</div><div class="painel-card-convocados"><div class="nomes-grid">'+nh+'</div></div></div>';
-  }).join('');
-  grid.querySelectorAll('.painel-card[style*="opacity:1"]').forEach(card=>iniciarRolagemCard(card));
-}
+function renderizarPainel(eventos){pararRolagens();const agora=new Date();const grid=document.getElementById('painel-grid');const validos=eventos.filter(ev=>ev.data_hora&&(agora-new Date(ev.data_hora))/60000<15);if(!validos.length){grid.innerHTML='<div class="painel-vazio">Nenhuma convocação disponível no momento.</div>';return;}grid.innerHTML=validos.slice(0,6).map(ev=>{const dt=new Date(ev.data_hora);const passou=dt<=agora;const isEscala=ev.tipo==='escala';const nh=(ev.lista_convocados||[]).map(n=>'<div class="nome-linha">'+n+'</div>').join('')||'<div class="nome-linha" style="color:#64748b">Nenhum convocado</div>';return'<div class="painel-card'+(isEscala?' escala':'')+'" style="opacity:'+(passou?'0.25':'1')+';border-left-color:'+(passou?'#94a3b8':(isEscala?'var(--orange)':'var(--blue)'))+'"><div class="painel-card-titulo">'+(ev.titulo_evento||'Sem título')+'</div><div class="painel-card-data">📅 '+fD(dt)+' · 🕐 '+fH(dt)+(ev.local?' · 📍 '+ev.local:'')+'</div><div class="painel-card-convocados"><div class="nomes-grid">'+nh+'</div></div></div>';}).join('');grid.querySelectorAll('.painel-card[style*="opacity:1"]').forEach(card=>{const c=card.querySelector('.painel-card-convocados');const g=c.querySelector('.nomes-grid');if(!c||!g)return;const ind=document.createElement('div');ind.className='rolagem-indicador';card.appendChild(ind);const verif=()=>{const ch=c.clientHeight,gh=g.scrollHeight;if(gh<=ch+2){g.style.transform='translateY(0)';ind.classList.remove('ativo');return;}ind.classList.add('ativo');const d=gh-ch;const ciclo=()=>{if(!document.body.classList.contains('painel-ativo')||!card.isConnected)return;g.classList.remove('animando');g.style.transform='translateY(0)';const t0=setTimeout(()=>{g.classList.add('animando');g.style.transform='translateY(-'+d+'px)';const t1=setTimeout(()=>{g.classList.remove('animando');g.style.transition='transform 10s linear';g.style.transform='translateY(0)';const t2=setTimeout(()=>{g.style.transition='transform 0.5s ease';ciclo();},11000);timersRolagem.push(t2);},13000);timersRolagem.push(t1);},1500);timersRolagem.push(t0);};ciclo();};setTimeout(verif,300);});}
 
 // ═══════════ GRUPOS ═══════════
-async function migrarGruposSeNecessario(){if(!eu)return;const userRef=db.collection('usuarios').doc(eu.uid);const snap=await userRef.get();const data=snap.data();if(!data)return;let precisaMigrar=false,grupoIdAntigo=data.grupo_id;if(grupoIdAntigo){if(!data.grupos||!Array.isArray(data.grupos)||data.grupos.length===0)precisaMigrar=true;else{await userRef.update({grupo_id:firebase.firestore.FieldValue.delete()});eu.grupos=data.grupos;eu.grupo_id=null;return;}}if(precisaMigrar&&grupoIdAntigo){try{const gSnap=await db.collection('grupos').doc(grupoIdAntigo).get();if(gSnap.exists){const gData=gSnap.data();const admins=gData.admins||[gData.criado_por];const isAdmin=admins.includes(eu.uid)||gData.criado_por===eu.uid;const novoGrupo={id:grupoIdAntigo,nome:gData.nome||'Meu Grupo',is_admin:isAdmin};await userRef.update({grupos:firebase.firestore.FieldValue.arrayUnion(novoGrupo),grupo_id:firebase.firestore.FieldValue.delete()});eu.grupos=[novoGrupo];eu.grupo_id=null;}else{await userRef.update({grupo_id:firebase.firestore.FieldValue.delete()});eu.grupos=[];eu.grupo_id=null;}}catch(e){console.error('Erro na migração:',e);}}else if(data.grupos){eu.grupos=data.grupos;}}
-
+async function migrarGruposSeNecessario(){if(!eu)return;const userRef=db.collection('usuarios').doc(eu.uid);const snap=await userRef.get();const data=snap.data();if(!data)return;let precisaMigrar=false,grupoIdAntigo=data.grupo_id;if(grupoIdAntigo){if(!data.grupos||!Array.isArray(data.grupos)||data.grupos.length===0)precisaMigrar=true;else{await userRef.update({grupo_id:firebase.firestore.FieldValue.delete()});eu.grupos=data.grupos;return;}}if(precisaMigrar&&grupoIdAntigo){try{const gSnap=await db.collection('grupos').doc(grupoIdAntigo).get();if(gSnap.exists){const gData=gSnap.data();const admins=gData.admins||[gData.criado_por];const isAdmin=admins.includes(eu.uid)||gData.criado_por===eu.uid;await userRef.update({grupos:firebase.firestore.FieldValue.arrayUnion({id:grupoIdAntigo,nome:gData.nome||'Meu Grupo',is_admin:isAdmin}),grupo_id:firebase.firestore.FieldValue.delete()});eu.grupos=[{id:grupoIdAntigo,nome:gData.nome||'Meu Grupo',is_admin:isAdmin}];}else{await userRef.update({grupo_id:firebase.firestore.FieldValue.delete()});eu.grupos=[];}}catch(e){console.error(e);}}else if(data.grupos){eu.grupos=data.grupos;}}
 function renderizarCardGrupos(){const container=document.getElementById('grp-content');const badge=document.getElementById('grp-badge');if(!eu.grupos||eu.grupos.length===0){badge.textContent='0';container.innerHTML='<p style="color:var(--light);text-align:center;margin-bottom:12px">Você ainda não está em nenhum grupo.</p><div class="busca-grupo"><input type="text" id="busca-grupo-input" placeholder="Buscar grupo existente..."><button onclick="buscarGrupos()">🔍 Buscar</button></div><div class="resultados-busca" id="resultados-busca"></div><button class="btn-criar" onclick="criarGrupo()">+ Criar novo grupo</button>';}else{if(!grupoAtivo)grupoAtivo=eu.grupos[0];badge.textContent=grupoAtivo.totalMembros||'?';container.innerHTML='<div class="grupo-header" onclick="toggleListaGrupos()"><div class="grupo-nome">📁 '+grupoAtivo.nome+(grupoAtivo.is_admin?'<span class="admin-badge">Admin</span>':'')+'</div><span class="seta" id="seta-grupos">▼</span></div><div class="grupo-info">'+(grupoAtivo.totalMembros||'?')+' membro(s)</div><div class="grupo-lista-expandida" id="lista-grupos-expandida">'+eu.grupos.map(g=>'<div class="grupo-item-exp '+(g.id===grupoAtivo.id?'ativo':'')+'" onclick="selecionarGrupoAtivo(\''+g.id+'\')"><span>📁 '+g.nome+' '+(g.is_admin?'🛡️':'')+'</span><button class="btn-sair-grupo" onclick="event.stopPropagation();sairDoGrupo(\''+g.id+'\',\''+g.nome+'\')">🚪 Sair</button></div>').join('')+'</div><div class="grupo-acoes"><button class="btn-criar" style="margin-top:0;flex:1" onclick="criarGrupo()">+ Criar novo grupo</button></div><div class="busca-grupo"><input type="text" id="busca-grupo-input" placeholder="Buscar grupo existente..."><button onclick="buscarGrupos()">🔍 Buscar</button></div><div class="resultados-busca" id="resultados-busca"></div>';}}
-function toggleListaGrupos(){const lista=document.getElementById('lista-grupos-expandida');const seta=document.getElementById('seta-grupos');if(!lista||!seta)return;if(lista.classList.contains('show')){lista.classList.remove('show');seta.classList.remove('open');}else{lista.classList.add('show');seta.classList.add('open');}}
+function toggleListaGrupos(){const lista=document.getElementById('lista-grupos-expandida');const seta=document.getElementById('seta-grupos');if(!lista||!seta)return;lista.classList.toggle('show');seta.classList.toggle('open');}
 async function selecionarGrupoAtivo(gId){const grupo=eu.grupos.find(g=>g.id===gId);if(!grupo)return;grupoAtivo=grupo;grupoId=gId;eu.is_admin=grupo.is_admin;document.getElementById('btn-fab-admin').classList.toggle('on',eu.is_admin);document.getElementById('btn-para-outro').style.display=eu.is_admin?'block':'none';document.getElementById('btn-criar-manual-scan').style.display=eu.is_admin?'flex':'none';renderizarCardGrupos();carregarEventos();carregarFerias();verificarAprovacoes();if(document.body.classList.contains('painel-ativo'))iniciarPainel();mostrarToast('✅ Grupo ativo: '+grupo.nome);}
 async function buscarGrupos(){const termo=document.getElementById('busca-grupo-input').value.trim().toLowerCase();const container=document.getElementById('resultados-busca');if(!termo||termo.length<2){container.classList.remove('show');return;}const snap=await db.collection('grupos').get();const resultados=[];snap.forEach(doc=>{const g=doc.data();if(g.nome&&g.nome.toLowerCase().includes(termo)){const jaMembro=eu.grupos&&eu.grupos.some(x=>x.id===doc.id);resultados.push({id:doc.id,nome:g.nome,membros:g.membros||0,jaMembro});}});container.innerHTML=resultados.length===0?'<p style="padding:12px;color:var(--light);text-align:center">Nenhum grupo encontrado.</p>':resultados.map(r=>'<div class="resultado-item"><div><strong>'+r.nome+'</strong><br><small>'+r.membros+' membro(s)</small></div>'+(r.jaMembro?'<span class="ja-membro">✅ Já é membro</span>':'<button class="btn-solicitar" onclick="solicitarEntradaGrupo(\''+r.id+'\',\''+r.nome+'\')">Solicitar entrada</button>')+'</div>').join('');container.classList.add('show');}
 function solicitarEntradaGrupo(gId,gNome){document.getElementById('ms-tit').textContent='Entrar em '+gNome;document.getElementById('ms-desc').textContent='Você solicitará entrada neste grupo.';document.getElementById('ms-ov').classList.add('on');document.getElementById('ms-ok').onclick=async()=>{await db.collection('usuarios').doc(eu.uid).update({grupos:firebase.firestore.FieldValue.arrayUnion({id:gId,nome:gNome,is_admin:false})});const s=await db.collection('grupos').doc(gId).get();await db.collection('grupos').doc(gId).update({membros:(s.data().membros||0)+1});if(!eu.grupos)eu.grupos=[];eu.grupos.push({id:gId,nome:gNome,is_admin:false});if(!grupoAtivo){grupoAtivo=eu.grupos[0];grupoId=gId;}document.getElementById('ms-ov').classList.remove('on');document.getElementById('resultados-busca').classList.remove('show');renderizarCardGrupos();carregarEventos();mostrarToast('✅ Entrada solicitada!');};}
 async function criarGrupo(){const n=prompt('Nome do grupo:');if(!n||!n.trim())return;const nome=n.trim();const ref=await db.collection('grupos').add({nome,criado_por:eu.uid,criado_em:firebase.firestore.FieldValue.serverTimestamp(),membros:1,admins:[eu.uid]});const novoGrupo={id:ref.id,nome,is_admin:true};if(!eu.grupos)eu.grupos=[];eu.grupos.push(novoGrupo);await db.collection('usuarios').doc(eu.uid).update({grupos:eu.grupos,is_admin:true});grupoAtivo=novoGrupo;grupoId=ref.id;eu.is_admin=true;document.getElementById('btn-fab-admin').classList.add('on');document.getElementById('btn-para-outro').style.display='block';document.getElementById('btn-criar-manual-scan').style.display='flex';renderizarCardGrupos();carregarEventos();if(document.body.classList.contains('painel-ativo'))iniciarPainel();mostrarToast('✅ Grupo criado!');}
-async function sairDoGrupo(gId,gNome){if(!confirm('Sair do grupo "'+gNome+'"?'))return;const grupo=eu.grupos.find(g=>g.id===gId);if(!grupo)return;const gSnap=await db.collection('grupos').doc(gId).get();if(!gSnap.exists){removerGrupoLocal(gId);return;}const gData=gSnap.data();const membrosAtuais=gData.membros||1;if(membrosAtuais<=1){await db.collection('grupos').doc(gId).delete();removerGrupoLocal(gId);mostrarToast('✅ Grupo excluído.');return;}await db.collection('usuarios').doc(eu.uid).update({grupos:eu.grupos.filter(g=>g.id!==gId)});await db.collection('grupos').doc(gId).update({membros:Math.max(0,membrosAtuais-1)});removerGrupoLocal(gId);mostrarToast('✅ Você saiu do grupo.');}
+async function sairDoGrupo(gId,gNome){if(!confirm('Sair do grupo "'+gNome+'"?'))return;const grupo=eu.grupos.find(g=>g.id===gId);if(!grupo)return;const gSnap=await db.collection('grupos').doc(gId).get();if(!gSnap.exists){removerGrupoLocal(gId);return;}const membrosAtuais=gSnap.data().membros||1;if(membrosAtuais<=1){await db.collection('grupos').doc(gId).delete();removerGrupoLocal(gId);mostrarToast('✅ Grupo excluído.');return;}await db.collection('usuarios').doc(eu.uid).update({grupos:eu.grupos.filter(g=>g.id!==gId)});await db.collection('grupos').doc(gId).update({membros:Math.max(0,membrosAtuais-1)});removerGrupoLocal(gId);mostrarToast('✅ Você saiu do grupo.');}
 function removerGrupoLocal(gId){eu.grupos=eu.grupos.filter(g=>g.id!==gId);if(grupoAtivo&&grupoAtivo.id===gId){grupoAtivo=eu.grupos.length>0?eu.grupos[0]:null;grupoId=grupoAtivo?grupoAtivo.id:null;eu.is_admin=grupoAtivo?grupoAtivo.is_admin:false;document.getElementById('btn-fab-admin').classList.toggle('on',eu.is_admin);document.getElementById('btn-criar-manual-scan').style.display=eu.is_admin?'flex':'none';}renderizarCardGrupos();if(grupoId){carregarEventos();if(document.body.classList.contains('painel-ativo'))iniciarPainel();}else{document.getElementById('lst-ev').innerHTML='<p style="color:var(--light);padding:20px;text-align:center">Entre em um grupo para ver convocações.</p>';document.getElementById('prox').innerHTML='<div class="card-vazio">Entre em um grupo para ver suas convocações.</div>';if(painelListener)painelListener();painelListener=null;document.getElementById('painel-grid').innerHTML='<div class="painel-vazio">Selecione um grupo para visualizar o painel.</div>';}}
 
 // ═══════════ EVENTOS ═══════════
@@ -604,11 +577,11 @@ function criarCard(ev){const dt=new Date(ev.data_hora);const pa=dt<=new Date();c
 function abrirMod(ev){eventoAtualMod=ev;const dt=new Date(ev.data_hora);document.getElementById('mod-tit').value=ev.titulo_evento||'';document.getElementById('mod-sub').value=fD(dt)+' às '+fH(dt)+(ev.local?' · '+ev.local:'');const ti=document.getElementById('mod-tit');const bs=document.getElementById('btn-salvar-tudo');if(eu&&eu.is_admin){ti.readOnly=false;ti.style.borderBottom='2px dashed var(--blue)';ti.style.cursor='text';bs.style.display='block';bs.textContent='💾 Salvar';}else{ti.readOnly=true;ti.style.borderBottom='none';ti.style.cursor='default';bs.style.display='none';}const ab=document.getElementById('admin-badge-conv');if(eu&&eu.is_admin){ab.style.display='inline-block';renderizarNomesAdmin(ev);}else{ab.style.display='none';db.collection('usuarios').where('grupo_id','==',grupoId).get().then(s=>{const us=s.docs.map(d=>d.data());const norm=s=>s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9\s]/g,'').trim();document.getElementById('mod-conv').innerHTML=(ev.lista_convocados||[]).map(n=>{const nn=norm(n);let uid=null;for(const u of us){if([u.nome_completo,...(u.nomes_conhecidos||[])].some(x=>norm(x)===nn)){uid=u.uid;break;}}let av='';if(uid){const ia=verificarStatusAusencia(uid,ev.data_hora);if(ia){let ic=ia.tipo==='ferias'?'🏖️':(ia.tipo==='licenca'?'🏆':'⏱️');av='<div class="aviso-ferias">'+ic+' Atenção: Convocado está de '+ia.tipo+' neste dia!</div>';}}return'<div class="conv-linha"><div style="display:flex;align-items:center;gap:10px;width:100%"><div class="conv-icon"><svg viewBox="0 0 24 24"><path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/></svg></div><span class="conv-nome">'+n+'</span></div>'+av+'</div>';}).join('');});}const agr=new Date();const evFut=dt>agr;const euConv=(ev.lista_convocados||[]).some(n=>euSouConvocadoNome(n));const bt=document.getElementById('mod-trocar');if(euConv&&evFut){bt.style.display='block';bt.onclick=()=>abrirTrocar(ev);}else{bt.style.display='none';}document.getElementById('mod-ag').onclick=()=>ics(ev);document.getElementById('mod-del').style.display=eu&&eu.is_admin?'block':'none';document.getElementById('mod-del').onclick=()=>{if(!eu||!eu.is_admin)return;if(confirm('Excluir?')){db.collection('eventos').doc(ev.id).delete().then(()=>{fecharMod();carregarEventos();mostrarToast('Excluída');});}};document.getElementById('mod-ev').classList.add('on');}
 function fecharMod(){document.getElementById('mod-ev').classList.remove('on');eventoAtualMod=null;nomesEditaveis=[];}
 function renderizarNomesAdmin(ev){nomesEditaveis=[...(ev.lista_convocados||[])];renderizarNomesAdminUI();}
-function renderizarNomesAdminUI(){const c=document.getElementById('mod-conv');c.innerHTML=nomesEditaveis.map((n,i)=>'<div class="conv-linha" style="flex-direction:column;gap:6px"><div style="display:flex;align-items:center;gap:10px"><div class="conv-icon"><svg viewBox="0 0 24 24"><path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/></svg></div><span class="conv-nome editable" contenteditable="true" onblur="atualizarNomeAdmin('+i+',this.textContent)">'+n+'</span><button class="btn-remover-nome" onclick="removerNomeAdmin('+i+')">✕</button></div></div>').join('')+'<div style="display:flex;gap:8px;margin-top:8px"><input type="text" class="input-novo-nome" id="input-novo-nome" placeholder="Adicionar nome..." style="flex:1"><button class="btn-salvar" onclick="adicionarNomeAdmin()" style="width:auto;padding:10px 16px">+</button></div>';}
+function renderizarNomesAdminUI(){const c=document.getElementById('mod-conv');c.innerHTML=nomesEditaveis.map((n,i)=>'<div class="conv-linha"><div class="conv-icon"><svg viewBox="0 0 24 24"><path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/></svg></div><span class="conv-nome editable" contenteditable="true" onblur="atualizarNomeAdmin('+i+',this.textContent)">'+n+'</span><button class="btn-remover-nome" onclick="removerNomeAdmin('+i+')">✕</button></div>').join('')+'<div style="display:flex;gap:8px;margin-top:8px"><input type="text" class="input-novo-nome" id="input-novo-nome" placeholder="Adicionar nome..." style="flex:1"><button class="btn-salvar" onclick="adicionarNomeAdmin()" style="width:auto;padding:10px 16px">+</button></div>';}
 function atualizarNomeAdmin(i,n){if(n&&n.trim())nomesEditaveis[i]=n.trim();}
 function removerNomeAdmin(i){if(confirm('Remover?')){nomesEditaveis.splice(i,1);renderizarNomesAdminUI();}}
 function adicionarNomeAdmin(){const n=document.getElementById('input-novo-nome').value.trim();if(!n)return;nomesEditaveis.push(n);renderizarNomesAdminUI();mostrarToast('Adicionado');}
-async function salvarTudoEvento(){if(!eventoAtualMod||!eu||!eu.is_admin)return;const novoTitulo=document.getElementById('mod-tit').value.trim();if(!novoTitulo)return;try{await db.collection('eventos').doc(eventoAtualMod.id).update({titulo_evento:novoTitulo});eventoAtualMod.titulo_evento=novoTitulo;}catch(e){console.error(e);}const listaAntiga=eventoAtualMod.lista_convocados||[];if(JSON.stringify(nomesEditaveis)!==JSON.stringify(listaAntiga)){try{await db.collection('eventos').doc(eventoAtualMod.id).update({lista_convocados:nomesEditaveis});eventoAtualMod.lista_convocados=[...nomesEditaveis];}catch(e){console.error(e);}}mostrarToast('✅ Evento atualizado!');carregarEventos();fecharMod();setTimeout(()=>abrirMod(eventoAtualMod),300);}
+async function salvarTudoEvento(){if(!eventoAtualMod||!eu||!eu.is_admin)return;const novoTitulo=document.getElementById('mod-tit').value.trim();if(!novoTitulo)return;try{await db.collection('eventos').doc(eventoAtualMod.id).update({titulo_evento:novoTitulo});}catch(e){}if(JSON.stringify(nomesEditaveis)!==JSON.stringify(eventoAtualMod.lista_convocados||[])){try{await db.collection('eventos').doc(eventoAtualMod.id).update({lista_convocados:nomesEditaveis});eventoAtualMod.lista_convocados=[...nomesEditaveis];}catch(e){}}mostrarToast('✅ Evento atualizado!');carregarEventos();fecharMod();setTimeout(()=>abrirMod(eventoAtualMod),300);}
 
 // ═══════════ CRIAÇÃO MANUAL ═══════════
 function abrirCriacaoManual(){if(!eu||!eu.is_admin){mostrarToast('⚠️ Apenas administradores');return;}fecharScanner();document.getElementById('manual-titulo').value='';document.getElementById('manual-data').value='';document.getElementById('manual-local').value='';document.getElementById('manual-nome-externo').value='';document.getElementById('manual-nomes-extras').innerHTML='';document.getElementById('manual-tipo').value='convocacao';nomesManuais=[];nomesSelecionados=[];carregarListaNomesManual();document.getElementById('criar-manual-ov').classList.add('on');}
@@ -624,9 +597,9 @@ async function abrirScanner(){if(!grupoId){alert('Entre em um grupo.');return;}d
 function fecharScanner(){document.getElementById('scan-ov').classList.remove('on');if(camStream){camStream.getTracks().forEach(t=>t.stop());camStream=null;}}
 function capturar(){const v=document.getElementById('video');const c=document.createElement('canvas');c.width=v.videoWidth;c.height=v.videoHeight;c.getContext('2d').drawImage(v,0,0);c.toBlob(b=>processarFoto(b),'image/jpeg',.9);}
 function processarArquivoGaleria(input){if(!input.files||!input.files[0])return;const file=input.files[0];if(file.size===0){mostrarToast('⚠️ Arquivo vazio.');return;}const loadingOverlay=document.getElementById('scan-loading');if(loadingOverlay)loadingOverlay.classList.add('show');mostrarToast('📤 Processando...');setTimeout(()=>{processarFoto(file,true);},500);input.value='';}
-async function processarFoto(file,fromGallery=false){if(!file||!file.size)return;if(fromGallery){const loadingOverlay=document.getElementById('scan-loading');if(loadingOverlay)loadingOverlay.classList.remove('show');}fecharScanner();const oo=document.getElementById('ocr-ov');const ot=document.getElementById('ocr-texto');const op=document.getElementById('ocr-preenchimento');oo.classList.add('on');op.style.width='10%';ot.textContent='📸 Preparando...';try{const pi=setInterval(()=>{const cw=parseFloat(op.style.width);if(cw<80)op.style.width=(cw+5)+'%';},800);const b64=await new Promise((res,rej)=>{const img=new Image();const url=URL.createObjectURL(file);img.onload=()=>{const MAX=1600;let w=img.width,h=img.height;if(w>MAX||h>MAX){if(w>h){h=Math.round(h*MAX/w);w=MAX;}else{w=Math.round(w*MAX/h);h=MAX;}}const c=document.createElement('canvas');c.width=w;c.height=h;c.getContext('2d').drawImage(img,0,0,w,h);URL.revokeObjectURL(url);res(c.toDataURL('image/jpeg',0.9).split(',')[1]);};img.onerror=()=>rej(new Error('Erro ao carregar imagem'));img.src=url;});clearInterval(pi);op.style.width='80%';ot.textContent='🔎 Lendo...';const resp=await fetch('https://api.mistral.ai/v1/chat/completions',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer zQVzmFaX904lqaFwzt40BHXHfGoqSJca'},body:JSON.stringify({model:'pixtral-12b-2409',max_tokens:800,temperature:0.1,messages:[{role:'user',content:[{type:'image_url',image_url:{url:'data:image/jpeg;base64,'+b64}},{type:'text',text:'Analise esta imagem de convocação. Retorne APENAS JSON: {"titulo":"Tema principal do evento (NÃO inclua a palavra CONVOCAÇÃO)","data":"YYYY-MM-DD","hora":"HH:MM","local":"local ou null","nomes":["Nome 1","Nome 2"]}.'}]}]})});op.style.width='90%';ot.textContent='✅ Processando...';const data=await resp.json();const txtRaw=data.choices?.[0]?.message?.content||'';let parsed;try{parsed=JSON.parse(txtRaw.replace(/```json|```/g,'').trim());}catch{const match=txtRaw.match(/\{[\s\S]*\}/);if(match)parsed=JSON.parse(match[0]);else throw new Error('Formato inválido');}if(parsed.titulo){parsed.titulo=parsed.titulo.replace(/^CONVOCA[CÇ][AÃ]O\s*[-–—:]*\s*/i,'').trim();}if(parsed.nomes&&Array.isArray(parsed.nomes)){parsed.nomes=parsed.nomes.flatMap(nome=>{if(nome.includes(' e ')||nome.includes(' / '))return nome.split(/\s+e\s+|\s+\/\s+/).filter(n=>n.trim().length>2);return[nome];});}op.style.width='100%';ot.textContent='✨ Concluído!';ocrDados={titulo:parsed.titulo||null,data_hora:(parsed.data&&parsed.hora)?parsed.data+'T'+parsed.hora+':00':(parsed.data?parsed.data+'T00:00:00':null),local:parsed.local||null,nomes:Array.isArray(parsed.nomes)?parsed.nomes.filter(n=>n&&n.trim().length>2):[],id_ver:null};if(parsed.data&&parsed.hora&&parsed.titulo)ocrDados.id_ver=parsed.data.replace(/-/g,'')+parsed.hora.replace(':','')+parsed.titulo.toUpperCase().replace(/[^A-Z0-9]/g,'').substring(0,10);await new Promise(r=>setTimeout(r,800));}catch(e){oo.classList.remove('on');alert('Erro: '+e.message);return;}oo.classList.remove('on');if(ocrDados.id_ver){const dup=await db.collection('eventos').where('id_verificacao','==',ocrDados.id_ver).where('grupo_id','==',grupoId).get();if(!dup.empty){alert('⚠️ Já cadastrado!');return;}}matches=await cruzar(ocrDados.nomes);document.getElementById('rv-tit').value=ocrDados.titulo||'';document.getElementById('rv-data').value=ocrDados.data_hora?ocrDados.data_hora.substring(0,16):'';document.getElementById('rv-loc').value=ocrDados.local||'';renderMatches();document.getElementById('rv-ov').classList.add('on');}
-async function cruzar(nomes){const snapGrupos=await db.collection('usuarios').where('grupos','!=',null).get();const snapLegado=await db.collection('usuarios').where('grupo_id','==',grupoId).get();const usersMap=new Map();snapGrupos.forEach(doc=>{const data=doc.data();if((data.grupos||[]).some(g=>g.id===grupoId))usersMap.set(doc.id,{uid:doc.id,...data});});snapLegado.forEach(doc=>{if(!usersMap.has(doc.id))usersMap.set(doc.id,{uid:doc.id,...doc.data()});});const users=Array.from(usersMap.values());const norm=s=>s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9\s]/g,'').trim();const st=new Set(['de','da','do','das','dos','e','a','o','as','os']);const pwSig=s=>norm(s).split(/\s+/).filter(p=>p.length>1&&!st.has(p));function ps(a,b){if(a===b)return true;if(a.length<5||b.length<5)return false;if(Math.abs(a.length-b.length)>1)return false;return lev(a,b)<=1;}return nomes.map(nome=>{const nn=norm(nome);const pwNome=pwSig(nome);for(const u of users){if([u.nome_completo,...(u.nomes_conhecidos||[])].some(n=>norm(n)===nn))return{tipo:'exato',nome,usuario:u};}let mu=null,ms=0;for(const u of users){for(const nc of[u.nome_completo,...(u.nomes_conhecidos||[])]){const pwUser=pwSig(nc);const pb=pwNome.filter(p=>pwUser.some(pu=>ps(p,pu)));const so=pb.length/Math.max(pwNome.length,1);const su=pb.length/Math.max(pwUser.length,1);const sf=(so*0.5)+(su*0.5);if(so>=0.7&&su>=0.5&&sf>ms){ms=sf;mu=u;}}}if(mu&&ms>=0.8)return{tipo:'parcial',nome,usuario:mu,score:ms};if(mu&&ms>=0.5)return{tipo:'baixa_confianca',nome,usuario:mu,score:ms};return{tipo:'nao_encontrado',nome};});}
-function renderMatches(){document.getElementById('rv-matches').innerHTML=matches.length===0?'<p style="color:var(--light);padding:12px;">Nenhum nome.</p>':matches.map((m,i)=>{const editBtn='<button class="btn-editar-nome" onclick="editarNomeMatch('+i+')">✏️</button>';if(m.tipo==='exato')return'<div class="mi ok"><div class="mi-top"><span>✅</span><div style="flex:1"><div>'+m.nome+' '+editBtn+'</div><div style="font-size:12px;color:var(--light)">→ '+m.usuario.nome_completo+'</div></div></div></div>';if(m.tipo==='parcial')return'<div class="mi av"><div class="mi-top"><span>⚠️</span><div style="flex:1"><div>'+m.nome+' '+editBtn+'</div><div style="font-size:12px;color:var(--light)">Provável: '+m.usuario.nome_completo+' ('+Math.round(m.score*100)+'%)</div></div></div><div class="mi-btns"><button class="btn-sim" onclick="confirmar('+i+',true)">✓ Confirmar</button><button class="btn-nao" onclick="confirmar('+i+',false)">✗ Não é</button></div></div>';return'<div class="mi no"><div class="mi-top"><span>❓</span><div style="flex:1"><div>'+m.nome+' '+editBtn+'</div><div style="font-size:12px;color:var(--light)">Não encontrado</div></div></div></div>';}).join('');}
+async function processarFoto(file,fromGallery=false){if(!file||!file.size)return;if(fromGallery){const loadingOverlay=document.getElementById('scan-loading');if(loadingOverlay)loadingOverlay.classList.remove('show');}fecharScanner();const oo=document.getElementById('ocr-ov');oo.classList.add('on');document.getElementById('ocr-preenchimento').style.width='10%';document.getElementById('ocr-texto').textContent='📸 Preparando...';try{const pi=setInterval(()=>{const cw=parseFloat(document.getElementById('ocr-preenchimento').style.width);if(cw<80)document.getElementById('ocr-preenchimento').style.width=(cw+5)+'%';},800);const b64=await new Promise((res,rej)=>{const img=new Image();const url=URL.createObjectURL(file);img.onload=()=>{const MAX=1600;let w=img.width,h=img.height;if(w>MAX||h>MAX){if(w>h){h=Math.round(h*MAX/w);w=MAX;}else{w=Math.round(w*MAX/h);h=MAX;}}const c=document.createElement('canvas');c.width=w;c.height=h;c.getContext('2d').drawImage(img,0,0,w,h);URL.revokeObjectURL(url);res(c.toDataURL('image/jpeg',0.9).split(',')[1]);};img.onerror=()=>rej(new Error('Erro ao carregar imagem'));img.src=url;});clearInterval(pi);document.getElementById('ocr-preenchimento').style.width='80%';document.getElementById('ocr-texto').textContent='🔎 Lendo...';const resp=await fetch('https://api.mistral.ai/v1/chat/completions',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer zQVzmFaX904lqaFwzt40BHXHfGoqSJca'},body:JSON.stringify({model:'pixtral-12b-2409',max_tokens:800,temperature:0.1,messages:[{role:'user',content:[{type:'image_url',image_url:{url:'data:image/jpeg;base64,'+b64}},{type:'text',text:'Analise esta imagem de convocação. Retorne APENAS JSON: {"titulo":"Tema principal","data":"YYYY-MM-DD","hora":"HH:MM","local":"local ou null","nomes":["Nome 1","Nome 2"]}.'}]}]})});const data=await resp.json();const txtRaw=data.choices?.[0]?.message?.content||'';let parsed;try{parsed=JSON.parse(txtRaw.replace(/```json|```/g,'').trim());}catch{const match=txtRaw.match(/\{[\s\S]*\}/);if(match)parsed=JSON.parse(match[0]);else throw new Error('Formato inválido');}if(parsed.titulo)parsed.titulo=parsed.titulo.replace(/^CONVOCA[CÇ][AÃ]O\s*[-–—:]*\s*/i,'').trim();document.getElementById('ocr-preenchimento').style.width='100%';document.getElementById('ocr-texto').textContent='✨ Concluído!';ocrDados={titulo:parsed.titulo||null,data_hora:(parsed.data&&parsed.hora)?parsed.data+'T'+parsed.hora+':00':null,local:parsed.local||null,nomes:Array.isArray(parsed.nomes)?parsed.nomes.filter(n=>n&&n.trim().length>2):[]};await new Promise(r=>setTimeout(r,800));}catch(e){oo.classList.remove('on');alert('Erro: '+e.message);return;}oo.classList.remove('on');matches=await cruzar(ocrDados.nomes);document.getElementById('rv-tit').value=ocrDados.titulo||'';document.getElementById('rv-data').value=ocrDados.data_hora?ocrDados.data_hora.substring(0,16):'';document.getElementById('rv-loc').value=ocrDados.local||'';renderMatches();document.getElementById('rv-ov').classList.add('on');}
+async function cruzar(nomes){const snapGrupos=await db.collection('usuarios').where('grupos','!=',null).get();const snapLegado=await db.collection('usuarios').where('grupo_id','==',grupoId).get();const usersMap=new Map();snapGrupos.forEach(doc=>{const data=doc.data();if((data.grupos||[]).some(g=>g.id===grupoId))usersMap.set(doc.id,{uid:doc.id,...data});});snapLegado.forEach(doc=>{if(!usersMap.has(doc.id))usersMap.set(doc.id,{uid:doc.id,...doc.data()});});const users=Array.from(usersMap.values());const norm=s=>s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9\s]/g,'').trim();const st=new Set(['de','da','do','das','dos','e','a','o','as','os']);const pwSig=s=>norm(s).split(/\s+/).filter(p=>p.length>1&&!st.has(p));function ps(a,b){if(a===b)return true;if(a.length<5||b.length<5)return false;if(Math.abs(a.length-b.length)>1)return false;return lev(a,b)<=1;}return nomes.map(nome=>{const nn=norm(nome);for(const u of users){if([u.nome_completo,...(u.nomes_conhecidos||[])].some(n=>norm(n)===nn))return{tipo:'exato',nome,usuario:u};}let mu=null,ms=0;for(const u of users){for(const nc of[u.nome_completo,...(u.nomes_conhecidos||[])]){const pwUser=pwSig(nc);const pb=pwSig(nome).filter(p=>pwUser.some(pu=>ps(p,pu)));const so=pb.length/Math.max(pwSig(nome).length,1);const su=pb.length/Math.max(pwUser.length,1);const sf=(so*0.5)+(su*0.5);if(so>=0.7&&su>=0.5&&sf>ms){ms=sf;mu=u;}}}if(mu&&ms>=0.8)return{tipo:'parcial',nome,usuario:mu,score:ms};if(mu&&ms>=0.5)return{tipo:'baixa_confianca',nome,usuario:mu,score:ms};return{tipo:'nao_encontrado',nome};});}
+function renderMatches(){document.getElementById('rv-matches').innerHTML=matches.length===0?'<p style="color:var(--light);padding:12px;">Nenhum nome.</p>':matches.map((m,i)=>{const editBtn='<button class="btn-editar-nome" onclick="editarNomeMatch('+i+')">✏️</button>';if(m.tipo==='exato')return'<div class="mi ok"><div class="mi-top"><span>✅</span><div style="flex:1"><div>'+m.nome+' '+editBtn+'</div><div style="font-size:12px;color:var(--light)">→ '+m.usuario.nome_completo+'</div></div></div></div>';if(m.tipo==='parcial')return'<div class="mi av"><div class="mi-top"><span>⚠️</span><div style="flex:1"><div>'+m.nome+' '+editBtn+'</div><div style="font-size:12px;color:var(--light)">Provável: '+m.usuario.nome_completo+' ('+Math.round(m.score*100)+'%)</div></div></div><div class="mi-btns"><button class="btn-sim" onclick="confirmar('+i+',true)">✓ Confirmar</button><button class="btn-nao" onclick="confirmar('+i+',false)">✗ Não é</button></div></div>';return'<div class="mi no"><div class="mi-top"><span>❓</span><div style="flex:1"><div>'+m.nome+' '+editBtn+'</div></div></div></div>';}).join('');}
 function editarNomeMatch(index){const m=matches[index];const nn=prompt('Corrigir nome:',m.nome);if(nn&&nn.trim()){m.nome=nn.trim();if(ocrDados&&ocrDados.nomes)ocrDados.nomes[index]=m.nome;renderMatches();}}
 function confirmar(i,sim){if(sim){const m=matches[i];matches[i].tipo='exato';if(m.usuario)db.collection('usuarios').doc(m.usuario.uid).update({nomes_conhecidos:firebase.firestore.FieldValue.arrayUnion(m.nome)});}else{matches[i].tipo='nao_encontrado';matches[i].usuario=null;}renderMatches();}
 function fecharRv(){document.getElementById('rv-ov').classList.remove('on');ocrDados=null;matches=[];}
@@ -641,15 +614,17 @@ async function abrirSelecaoUsuario(){usuarioSelecionadoFerias=null;const lista=d
 function fecharSelecaoUsuario(){document.getElementById('selecionar-usuario-ov').classList.remove('on');usuarioSelecionadoFerias=null;}
 function confirmarSelecaoUsuario(){if(!usuarioSelecionadoFerias){mostrarToast('⚠️ Selecione um usuário');return;}const usuario=usuarioSelecionadoFerias;fecharSelecaoUsuario();usuarioSelecionadoFerias=usuario;abrirFormFerias();}
 function iniciarAddFerias(){document.getElementById('ferias-consent-desc').textContent='Registrar seu próprio período.';document.getElementById('ferias-consent-ov').classList.add('on');usuarioSelecionadoFerias=null;}
-async function atualizarOpcoesPeriodo(){const tipo=document.getElementById('ferias-tipo').value;const selectEl=document.getElementById('ferias-periodo-select');const textEl=document.getElementById('ferias-periodo-text');if(tipo==='ferias'){textEl.style.display='none';selectEl.style.display='block';selectEl.innerHTML='';const snap=await db.collection('usuarios').doc(eu.uid).get();const data=snap.data();const dataAdmissao=data.data_admissao;let periodos=[];if(dataAdmissao){periodos=calcularPeriodosAquisitivos(dataAdmissao);}else{periodos=(data.saldo?.periodos_ferias)||[{periodo:'Período atual',total:30}];}periodos.forEach(p=>{const opt=document.createElement('option');opt.value=p.periodo;opt.textContent=p.periodo+' ('+(30-(p.vendeu||0))+' dias)';selectEl.appendChild(opt);});}else{selectEl.style.display='none';textEl.style.display='block';}}
+async function atualizarOpcoesPeriodo(){const tipo=document.getElementById('ferias-tipo').value;const selectEl=document.getElementById('ferias-periodo-select');const textEl=document.getElementById('ferias-periodo-text');if(tipo==='ferias'){textEl.style.display='none';selectEl.style.display='block';selectEl.innerHTML='';const snap=await db.collection('usuarios').doc(eu.uid).get();const data=snap.data();const periodos=(data.saldo?.periodos_ferias)||[];if(periodos.length===0){const opt=document.createElement('option');opt.value='';opt.textContent='Nenhum período cadastrado';selectEl.appendChild(opt);}else{periodos.forEach(p=>{const opt=document.createElement('option');opt.value=p.periodo;opt.textContent=p.periodo+' ('+(p.total-(p.vendeu||0))+' dias)';selectEl.appendChild(opt);});}}else{selectEl.style.display='none';textEl.style.display='block';}}
 function abrirFormFerias(){document.getElementById('ferias-consent-ov').classList.remove('on');document.getElementById('ferias-form-ov').classList.add('on');document.getElementById('ferias-ini').value="";document.getElementById('ferias-fim').value="";document.getElementById('ferias-dias').value="1";document.getElementById('ferias-periodo-text').value="";document.getElementById('ferias-tipo').value="abono";document.getElementById('ferias-erro').style.display='none';atualizarOpcoesPeriodo();const paraEl=document.getElementById('ferias-form-para');if(usuarioSelecionadoFerias){paraEl.textContent='👤 Para: '+usuarioSelecionadoFerias.nome_completo;paraEl.style.display='block';}else{paraEl.style.display='none';}}
 function calcularDataTermino(){const iniVal=document.getElementById('ferias-ini').value;const dias=parseInt(document.getElementById('ferias-dias').value)||1;if(iniVal&&dias>0){const dt=new Date(iniVal+"T12:00:00");dt.setDate(dt.getDate()+dias-1);document.getElementById('ferias-fim').value=dt.toISOString().split('T')[0];}}
 async function salvarFerias(){const tipo=document.getElementById('ferias-tipo').value;const periodo=tipo==='ferias'?document.getElementById('ferias-periodo-select').value:document.getElementById('ferias-periodo-text').value.trim();const dias=parseInt(document.getElementById('ferias-dias').value)||1;const iniStr=document.getElementById('ferias-ini').value;const fimStr=document.getElementById('ferias-fim').value;const erroEl=document.getElementById('ferias-erro');if(!periodo||!iniStr||!fimStr){erroEl.textContent='⚠️ Preencha todos os campos';erroEl.style.display='block';return;}const uidDestino=usuarioSelecionadoFerias?usuarioSelecionadoFerias.uid:eu.uid;const nomeDestino=usuarioSelecionadoFerias?usuarioSelecionadoFerias.nome_completo:eu.nome_completo;await db.collection('ausencias').add({uid:uidDestino,nome_completo:nomeDestino,grupo_id:grupoId,tipo,periodo,dias,data_inicio:iniStr,data_fim:fimStr,criado_por:eu.uid,criado_em:firebase.firestore.FieldValue.serverTimestamp()});document.getElementById('ferias-form-ov').classList.remove('on');usuarioSelecionadoFerias=null;mostrarToast("✅ Período registrado!");carregarFerias();carregarSaldo();}
 
-// ═══════════ SALDO v25.2 - COMPATÍVEL COM DADOS ANTIGOS ═══════════
-function calcularPeriodosAquisitivos(dataAdmissao){const hoje=new Date();const admissao=new Date(dataAdmissao+'T12:00:00');const periodos=[];let inicio=new Date(admissao);while(inicio<hoje){const fim=new Date(inicio);fim.setFullYear(fim.getFullYear()+1);const a1=inicio.getFullYear().toString().slice(2);const a2=fim.getFullYear().toString().slice(2);periodos.push({periodo:a1+'/'+a2,total:30,vendeu:0});inicio=new Date(fim);}return periodos;}
-function calcularQuinquenios(dataAdmissao){const hoje=new Date();const admissao=new Date(dataAdmissao+'T12:00:00');const anos=(hoje-admissao)/(365.25*24*60*60*1000);const totalQuinquenios=Math.floor(anos/5);const quinquenios=[];for(let i=1;i<=totalQuinquenios;i++){quinquenios.push({numero:i,total:90,vendeu:0});}return quinquenios;}
-function proximaDataAdmissao(dataAdmissao){const hoje=new Date();const admissao=new Date(dataAdmissao+'T12:00:00');let proxima=new Date(admissao);while(proxima<=hoje){proxima.setFullYear(proxima.getFullYear()+1);}return proxima.toLocaleDateString('pt-BR');}
+// ═══════════ SALDO v25.4 - PRESERVA DADOS + CÁLCULO FUTURO ═══════════
+function parseDataBR(str){if(!str||str.trim().length<8)return null;const partes=str.split('/');if(partes.length!==3)return null;const dia=parseInt(partes[0]),mes=parseInt(partes[1])-1,ano=parseInt(partes[2]);if(isNaN(dia)||isNaN(mes)||isNaN(ano))return null;return new Date(ano,mes,dia,12,0,0);}
+
+function calcularProximoAniversario(dataAdmissao){const hoje=new Date();let prox=new Date(dataAdmissao);prox.setFullYear(hoje.getFullYear());if(prox<=hoje)prox.setFullYear(hoje.getFullYear()+1);return prox;}
+
+function calcularProximoQuinquenio(dataAdmissao){const hoje=new Date();let prox=new Date(dataAdmissao);while(prox<=hoje)prox.setFullYear(prox.getFullYear()+5);return prox;}
 
 async function carregarSaldo(){
   const container=document.getElementById('saldo-container');
@@ -662,58 +637,43 @@ async function carregarSaldo(){
   const usos=ausenciasSnap.docs.map(d=>({id:d.id,...d.data()}));
   const TOTAL_ABONOS=6;
   
-  // ═════ FÉRIAS - Compatibilidade com dados antigos ═════
-  let periodosFerias=[];
-  if(saldoData.periodos_ferias&&Array.isArray(saldoData.periodos_ferias)&&saldoData.periodos_ferias.length>0){periodosFerias=saldoData.periodos_ferias;}
-  else if(saldoData.ferias&&Array.isArray(saldoData.ferias)&&saldoData.ferias.length>0){periodosFerias=saldoData.ferias.map(p=>({periodo:p.periodo||'Período',total:p.total||30,vendeu:p.vendeu||0}));}
-  else if(dataAdmissao){periodosFerias=calcularPeriodosAquisitivos(dataAdmissao);}
-  else{periodosFerias=[{periodo:'Período atual',total:30,vendeu:0}];}
-  
-  let disponivelFerias;
+  // Férias - PRESERVA o que já foi digitado
+  let disponivelFerias=15;
   if(saldoData.ferias_disponivel!=null&&saldoData.ferias_disponivel!==undefined){disponivelFerias=parseInt(saldoData.ferias_disponivel)||0;}
-  else{disponivelFerias=periodosFerias.reduce((s,p)=>s+(30-(p.vendeu||0)),0);}
+  else if(saldoData.ferias!=null&&saldoData.ferias!==undefined){disponivelFerias=parseInt(saldoData.ferias)||15;}
   
-  const usadoFerias=usos.filter(u=>u.tipo==='ferias').reduce((s,u)=>s+(u.dias||0),0);
-  const restanteFerias=Math.max(0,disponivelFerias-usadoFerias);
-  
-  // ═════ ABONOS ═════
-  let disponivelAbono;
+  // Abonos - PRESERVA
+  let disponivelAbono=TOTAL_ABONOS;
   if(saldoData.abono_disponivel!=null&&saldoData.abono_disponivel!==undefined){disponivelAbono=parseInt(saldoData.abono_disponivel)||0;}
   else if(saldoData.abono!=null&&saldoData.abono!==undefined){disponivelAbono=parseInt(saldoData.abono)||TOTAL_ABONOS;}
-  else{disponivelAbono=TOTAL_ABONOS;}
   
+  // Licença - PRESERVA
+  let disponivelLicenca=0;
+  if(saldoData.licenca_disponivel!=null&&saldoData.licenca_disponivel!==undefined){disponivelLicenca=parseInt(saldoData.licenca_disponivel)||0;}
+  else if(saldoData.licenca!=null&&saldoData.licenca!==undefined){disponivelLicenca=parseInt(saldoData.licenca)||0;}
+  
+  // Usado
+  const usadoFerias=usos.filter(u=>u.tipo==='ferias').reduce((s,u)=>s+(u.dias||0),0);
+  const restanteFerias=Math.max(0,disponivelFerias-usadoFerias);
   const usadoAbono=usos.filter(u=>u.tipo==='abono'&&new Date(u.data_inicio+'T12:00:00').getFullYear()===new Date().getFullYear()).length;
   const restanteAbono=Math.max(0,disponivelAbono-usadoAbono);
-  
-  // ═════ LICENÇA ═════
-  let quinquenios=[];
-  if(saldoData.quinquenios&&Array.isArray(saldoData.quinquenios)&&saldoData.quinquenios.length>0){quinquenios=saldoData.quinquenios;}
-  else if(dataAdmissao){quinquenios=calcularQuinquenios(dataAdmissao);}
-  else{quinquenios=[];}
-  
-  const totalLicencaCalculado=quinquenios.reduce((s,q)=>s+(90-(q.vendeu||0)),0);
-  let disponivelLicenca;
-  if(saldoData.licenca_disponivel!=null&&saldoData.licenca_disponivel!==undefined){disponivelLicenca=parseInt(saldoData.licenca_disponivel)||0;}
-  else if(saldoData.licenca!=null&&saldoData.licenca!==undefined){disponivelLicenca=parseInt(saldoData.licenca)||totalLicencaCalculado;}
-  else{disponivelLicenca=totalLicencaCalculado;}
-  
   const usadoLicenca=usos.filter(u=>u.tipo==='licenca').reduce((s,u)=>s+(u.dias||0),0);
   const restanteLicenca=Math.max(0,disponivelLicenca-usadoLicenca);
   
-  // Montar HTML
-  let periodosFeriasHtml='';
-  if(periodosFerias.length>0){periodosFeriasHtml=periodosFerias.map(p=>{const totalEfetivo=30-(p.vendeu||0);const usado=usos.filter(u=>u.tipo==='ferias'&&u.periodo===p.periodo).reduce((s,u)=>s+(u.dias||0),0);const restante=Math.max(0,totalEfetivo-usado);const vendeuTexto=(p.vendeu||0)>0?' (vendidos '+p.vendeu+')':'';return'<span style="display:inline-block;margin-right:6px;margin-bottom:4px;font-size:11px;background:#fdf2f8;padding:3px 7px;border-radius:4px;">'+p.periodo+': '+restante+'/'+totalEfetivo+'d'+vendeuTexto+'</span>';}).join('');}
+  // Info de próximos períodos
+  let infoProxFerias='';
+  if(dataAdmissao){const dt=parseDataBR(dataAdmissao);if(dt){const prox=calcularProximoAniversario(dt);infoProxFerias='📅 Próximo período: '+prox.toLocaleDateString('pt-BR')+' (+30 dias)';}}
   
-  let quinqueniosHtml='';
-  if(quinquenios.length>0){quinqueniosHtml=quinquenios.map(q=>{const totalEfetivo=90-(q.vendeu||0);const vendeuTexto=(q.vendeu||0)>0?' (vendidos '+q.vendeu+')':'';return'<span style="display:inline-block;margin-right:6px;margin-bottom:4px;font-size:11px;background:#ecfeff;padding:3px 7px;border-radius:4px;">'+q.numero+'º quinq.: '+totalEfetivo+'/90d'+vendeuTexto+'</span>';}).join('');}
+  let infoQuinquenio='';
+  if(dataAdmissao){const dt=parseDataBR(dataAdmissao);if(dt){const prox=calcularProximoQuinquenio(dt);infoQuinquenio='🏆 Próximo quinquênio: '+prox.toLocaleDateString('pt-BR')+' (+90 dias)';}}
   
-  const proxAdmissao=dataAdmissao?proximaDataAdmissao(dataAdmissao):'';
+  let infoAbono='Renova automaticamente em 1º de janeiro (6 por ano).';
   
   container.innerHTML='<div class="card"><div class="card-titulo">💰 Meu Saldo <span class="badge">Individual</span></div>'+
-    (dataAdmissao?'<div style="font-size:12px;color:var(--light);margin-bottom:12px">📅 Admissão: '+new Date(dataAdmissao+'T12:00:00').toLocaleDateString('pt-BR')+(proxAdmissao?' · Próximo período: '+proxAdmissao:'')+'</div>':'')+
-    '<div class="saldo-card"><div class="saldo-header"><div class="saldo-icon ferias">🏖️</div><div class="saldo-info"><div class="saldo-tipo">Férias</div><div class="saldo-dias" style="color:#ec4899">'+restanteFerias+' / '+periodosFerias.reduce((s,p)=>s+(30-(p.vendeu||0)),0)+' dias</div><div class="saldo-sub">'+periodosFeriasHtml+'</div></div></div><div class="saldo-bar"><div class="saldo-bar-fill ferias" style="width:'+(periodosFerias.reduce((s,p)=>s+(30-(p.vendeu||0)),0)>0?Math.min(100,(restanteFerias/periodosFerias.reduce((s,p)=>s+(30-(p.vendeu||0)),0))*100):0)+'%"></div></div></div>'+
-    '<div class="saldo-card"><div class="saldo-header"><div class="saldo-icon abono">⏱️</div><div class="saldo-info"><div class="saldo-tipo">Abonos</div><div class="saldo-dias" style="color:#06b6d4">'+restanteAbono+' / '+TOTAL_ABONOS+'</div></div></div><div class="saldo-bar"><div class="saldo-bar-fill abono" style="width:'+(TOTAL_ABONOS>0?Math.min(100,(restanteAbono/TOTAL_ABONOS)*100):0)+'%"></div></div></div>'+
-    '<div class="saldo-card"><div class="saldo-header"><div class="saldo-icon licenca">🏆</div><div class="saldo-info"><div class="saldo-tipo">Licença Prêmio</div><div class="saldo-dias" style="color:#f59e0b">'+restanteLicenca+' / '+(quinquenios.length>0?quinquenios.reduce((s,q)=>s+(90-(q.vendeu||0)),0):disponivelLicenca)+' dias</div><div class="saldo-sub">'+quinqueniosHtml+'</div></div></div><div class="saldo-bar"><div class="saldo-bar-fill licenca" style="width:'+((quinquenios.length>0?quinquenios.reduce((s,q)=>s+(90-(q.vendeu||0)),0):disponivelLicenca)>0?Math.min(100,(restanteLicenca/(quinquenios.length>0?quinquenios.reduce((s,q)=>s+(90-(q.vendeu||0)),0):disponivelLicenca))*100):0)+'%"></div></div></div>'+
+    (dataAdmissao?'<div style="font-size:12px;color:var(--light);margin-bottom:12px">📅 Admissão: '+dataAdmissao+'</div>':'')+
+    '<div class="saldo-card"><div class="saldo-header"><div class="saldo-icon ferias">🏖️</div><div class="saldo-info"><div class="saldo-tipo">Férias</div><div class="saldo-dias" style="color:#ec4899">'+restanteFerias+' dias disponíveis</div>'+(infoProxFerias?'<div class="saldo-sub">'+infoProxFerias+'</div>':'')+'</div></div><div class="saldo-bar"><div class="saldo-bar-fill ferias" style="width:'+(disponivelFerias>0?Math.min(100,(restanteFerias/disponivelFerias)*100):0)+'%"></div></div></div>'+
+    '<div class="saldo-card"><div class="saldo-header"><div class="saldo-icon abono">⏱️</div><div class="saldo-info"><div class="saldo-tipo">Abonos</div><div class="saldo-dias" style="color:#06b6d4">'+restanteAbono+' / '+TOTAL_ABONOS+'</div><div class="saldo-sub">'+infoAbono+'</div></div></div><div class="saldo-bar"><div class="saldo-bar-fill abono" style="width:'+(TOTAL_ABONOS>0?Math.min(100,(restanteAbono/TOTAL_ABONOS)*100):0)+'%"></div></div></div>'+
+    '<div class="saldo-card"><div class="saldo-header"><div class="saldo-icon licenca">🏆</div><div class="saldo-info"><div class="saldo-tipo">Licença Prêmio</div><div class="saldo-dias" style="color:#f59e0b">'+restanteLicenca+' dias disponíveis</div>'+(infoQuinquenio?'<div class="saldo-sub">'+infoQuinquenio+'</div>':'')+'</div></div><div class="saldo-bar"><div class="saldo-bar-fill licenca" style="width:'+(disponivelLicenca>0?Math.min(100,(restanteLicenca/disponivelLicenca)*100):0)+'%"></div></div></div>'+
     '<button class="btn-ajustar-saldo" onclick="abrirAjusteSaldo()">⚙️ Ajustar</button></div>'+
     (usos.length>0?'<div class="card"><div class="card-titulo">📋 Períodos Registrados</div>'+usos.sort((a,b)=>new Date(b.data_inicio)-new Date(a.data_inicio)).map(u=>{let icone=u.tipo==='ferias'?'🏖️':(u.tipo==='licenca'?'🏆':'⏱️');return'<div class="uso-item '+u.tipo+'"><div class="uso-dias">'+(u.dias||'?')+'d</div><div class="uso-info"><div style="font-weight:600;font-size:13px">'+icone+' '+(u.periodo||u.tipo)+'</div><div class="uso-periodo">'+(u.data_inicio?new Date(u.data_inicio+'T12:00:00').toLocaleDateString('pt-BR'):'?')+' → '+(u.data_fim?new Date(u.data_fim+'T12:00:00').toLocaleDateString('pt-BR'):'?')+'</div></div></div>';}).join('')+'</div>':'');
 }
@@ -722,61 +682,66 @@ async function abrirAjusteSaldo(){
   const snap=await db.collection('usuarios').doc(eu.uid).get();
   const data=snap.data()||{};
   const saldoData=data.saldo||{};
-  const dataAdmissao=data.data_admissao||'';
-  document.getElementById('ajuste-admissao').value=dataAdmissao;
-  document.getElementById('ajuste-ferias').value=(saldoData.ferias_disponivel!=null&&saldoData.ferias_disponivel!==undefined)?saldoData.ferias_disponivel:'';
-  document.getElementById('ajuste-abono').value=(saldoData.abono_disponivel!=null&&saldoData.abono_disponivel!==undefined)?saldoData.abono_disponivel:(saldoData.abono!=null?saldoData.abono:'');
-  document.getElementById('ajuste-licenca').value=(saldoData.licenca_disponivel!=null&&saldoData.licenca_disponivel!==undefined)?saldoData.licenca_disponivel:(saldoData.licenca!=null?saldoData.licenca:'');
   
-  if(saldoData.periodos_ferias&&Array.isArray(saldoData.periodos_ferias)&&saldoData.periodos_ferias.length>0){periodosFeriasEstado=JSON.parse(JSON.stringify(saldoData.periodos_ferias));}
-  else if(saldoData.ferias&&Array.isArray(saldoData.ferias)&&saldoData.ferias.length>0){periodosFeriasEstado=saldoData.ferias.map(p=>({periodo:p.periodo||'Período',total:30,vendeu:p.vendeu||0}));}
-  else if(dataAdmissao){periodosFeriasEstado=calcularPeriodosAquisitivos(dataAdmissao);}
-  else{periodosFeriasEstado=[];}
+  document.getElementById('ajuste-admissao').value=data.data_admissao||'';
   
-  if(saldoData.quinquenios&&Array.isArray(saldoData.quinquenios)&&saldoData.quinquenios.length>0){quinqueniosEstado=JSON.parse(JSON.stringify(saldoData.quinquenios));}
-  else if(dataAdmissao){quinqueniosEstado=calcularQuinquenios(dataAdmissao);}
-  else{quinqueniosEstado=[];}
+  // PRESERVA valores existentes
+  document.getElementById('ajuste-ferias').value=saldoData.ferias_disponivel!=null?saldoData.ferias_disponivel:(saldoData.ferias||15);
+  document.getElementById('ajuste-abono').value=saldoData.abono_disponivel!=null?saldoData.abono_disponivel:(saldoData.abono||6);
+  document.getElementById('ajuste-licenca').value=saldoData.licenca_disponivel!=null?saldoData.licenca_disponivel:(saldoData.licenca||0);
   
-  renderizarPeriodosFeriasAjuste();
-  renderizarQuinqueniosAjuste();
-  atualizarInfoAjuste();
+  document.getElementById('ajuste-vende-ferias').checked=saldoData.vendeu_ferias||false;
+  document.getElementById('ajuste-vende-licenca30').checked=saldoData.vendeu_licenca30||false;
+  document.getElementById('ajuste-vende-licenca60').checked=saldoData.vendeu_licenca60||false;
+  
+  atualizarInfosAjuste();
   document.getElementById('saldo-ajuste-ov').classList.add('on');
 }
 
-function fecharAjusteSaldo(){document.getElementById('saldo-ajuste-ov').classList.remove('on');periodosFeriasEstado=[];quinqueniosEstado=[];}
+function fecharAjusteSaldo(){document.getElementById('saldo-ajuste-ov').classList.remove('on');}
 
-function renderizarPeriodosFeriasAjuste(){
-  const container=document.getElementById('periodos-ferias-container');
-  if(periodosFeriasEstado.length===0){container.innerHTML='<p style="font-size:12px;color:var(--light);text-align:center;padding:12px;">Nenhum período aquisitivo. Informe a data de admissão.</p>';return;}
-  container.innerHTML=periodosFeriasEstado.map((p,i)=>{const totalEfetivo=30-(p.vendeu||0);const vendeu=(p.vendeu||0)>0;return'<div class="venda-linha"><div style="display:flex;align-items:center;gap:8px;"><span style="font-weight:600;min-width:55px;">'+(p.periodo||'Período '+(i+1))+'</span><span style="color:'+(vendeu?'#ec4899':'var(--text)')+';">'+totalEfetivo+'d</span></div><label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:12px;color:'+(vendeu?'#ec4899':'var(--light)')+';"><input type="checkbox" '+(vendeu?'checked':'')+' onchange="toggleVendaFerias('+i+',this.checked)" style="accent-color:#ec4899;">Vendi 10 dias</label></div>';}).join('');
+function atualizarInfosAjuste(){
+  const dataAdmissao=document.getElementById('ajuste-admissao').value;
+  const infoFerias=document.getElementById('info-prox-ferias');
+  const infoQuinquenios=document.getElementById('info-quinquenios');
+  const infoAbono=document.getElementById('info-abono');
+  
+  if(dataAdmissao&&dataAdmissao.trim().length>=8){
+    const dt=parseDataBR(dataAdmissao);
+    if(dt){
+      const proxFerias=calcularProximoAniversario(dt);
+      const vendeu=document.getElementById('ajuste-vende-ferias').checked;
+      infoFerias.textContent='📅 Próximo período: '+proxFerias.toLocaleDateString('pt-BR')+' (+'+(vendeu?20:30)+' dias)';
+      
+      const proxQuinq=calcularProximoQuinquenio(dt);
+      infoQuinquenios.textContent='🏆 Próximo quinquênio: '+proxQuinq.toLocaleDateString('pt-BR')+' (+90 dias)';
+    }else{
+      infoFerias.textContent='⚠️ Data inválida';
+      infoQuinquenios.textContent='⚠️ Data inválida';
+    }
+  }else{
+    infoFerias.textContent='Informe a data de admissão para ver próximos períodos';
+    infoQuinquenios.textContent='Informe a data de admissão para ver próximos quinquênios';
+  }
+  
+  infoAbono.textContent='Renova automaticamente em 1º de janeiro (6 por ano).';
 }
 
-function renderizarQuinqueniosAjuste(){
-  const container=document.getElementById('quinquenios-container');
-  if(quinqueniosEstado.length===0){container.innerHTML='<p style="font-size:12px;color:var(--light);text-align:center;padding:12px;">Nenhum quinquênio completo. Informe a data de admissão.</p>';return;}
-  container.innerHTML=quinqueniosEstado.map((q,i)=>{const v30=(q.vendeu||0)===30;const v60=(q.vendeu||0)===60;const nv=(q.vendeu||0)===0;const te=90-(q.vendeu||0);return'<div style="padding:8px 10px;border-bottom:1px solid #f1f5f9;font-size:13px;"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;"><span style="font-weight:600;">'+(q.numero||(i+1))+'º quinquênio</span><span style="color:'+((q.vendeu||0)>0?'#f59e0b':'var(--text)')+';">'+te+'d</span></div><div class="venda-options"><label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:12px;color:'+(v30?'#f59e0b':'var(--light)')+';"><input type="radio" name="vq-'+i+'" '+(v30?'checked':'')+' onchange="toggleVendaLicenca('+i+',30)" style="accent-color:#f59e0b;">Vendi 30</label><label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:12px;color:'+(v60?'#f59e0b':'var(--light)')+';"><input type="radio" name="vq-'+i+'" '+(v60?'checked':'')+' onchange="toggleVendaLicenca('+i+',60)" style="accent-color:#f59e0b;">Vendi 60</label><label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:12px;color:'+(nv?'var(--text)':'var(--light)')+';"><input type="radio" name="vq-'+i+'" '+(nv?'checked':'')+' onchange="toggleVendaLicenca('+i+',0)" style="accent-color:var(--blue);">Não vendi</label></div></div>';}).join('');
-}
-
-function toggleVendaFerias(index,vendeu){if(index>=0&&index<periodosFeriasEstado.length){periodosFeriasEstado[index].vendeu=vendeu?10:0;atualizarInfoAjuste();renderizarPeriodosFeriasAjuste();}}
-function toggleVendaLicenca(index,dias){if(index>=0&&index<quinqueniosEstado.length){quinqueniosEstado[index].vendeu=dias;atualizarInfoAjuste();renderizarQuinqueniosAjuste();}}
-
-function atualizarInfoAjuste(){
-  const da=document.getElementById('ajuste-admissao').value;
-  if(periodosFeriasEstado.length>0){const tf=periodosFeriasEstado.reduce((s,p)=>s+(30-(p.vendeu||0)),0);document.getElementById('info-ferias').textContent='Total automático: '+tf+' dias ('+periodosFeriasEstado.length+' períodos)';document.getElementById('ajuste-ferias').placeholder='Automático: '+tf;}
-  if(quinqueniosEstado.length>0){const tl=quinqueniosEstado.reduce((s,q)=>s+(90-(q.vendeu||0)),0);document.getElementById('info-licenca').textContent='Total automático: '+tl+' dias ('+quinqueniosEstado.length+' quinquênios)';document.getElementById('ajuste-licenca').placeholder='Automático: '+tl;}
-  if(da){const np=calcularPeriodosAquisitivos(da);np.forEach(p=>{const e=periodosFeriasEstado.find(x=>x.periodo===p.periodo);if(e)p.vendeu=e.vendeu||0;});periodosFeriasEstado=np;const nq=calcularQuinquenios(da);nq.forEach(q=>{const e=quinqueniosEstado.find(x=>x.numero===q.numero);if(e)q.vendeu=e.vendeu||0;});quinqueniosEstado=nq;renderizarPeriodosFeriasAjuste();renderizarQuinqueniosAjuste();}
-}
-document.getElementById('ajuste-admissao').addEventListener('change',atualizarInfoAjuste);
+document.getElementById('ajuste-admissao').addEventListener('input',atualizarInfosAjuste);
+document.getElementById('ajuste-vende-ferias').addEventListener('change',atualizarInfosAjuste);
 
 async function salvarAjusteSaldo(){
-  const da=document.getElementById('ajuste-admissao').value;
-  const fm=parseInt(document.getElementById('ajuste-ferias').value);
-  const ab=parseInt(document.getElementById('ajuste-abono').value)||0;
-  const lm=parseInt(document.getElementById('ajuste-licenca').value);
-  const tfa=periodosFeriasEstado.reduce((s,p)=>s+(30-(p.vendeu||0)),0);
-  const tla=quinqueniosEstado.reduce((s,q)=>s+(90-(q.vendeu||0)),0);
-  const ud={saldo:{ferias_disponivel:!isNaN(fm)?fm:tfa,abono_disponivel:Math.min(6,ab),licenca_disponivel:!isNaN(lm)?lm:tla,periodos_ferias:periodosFeriasEstado,quinquenios:quinqueniosEstado}};
-  if(da)ud.data_admissao=da;
+  const dataAdmissao=document.getElementById('ajuste-admissao').value.trim();
+  const ferias=parseInt(document.getElementById('ajuste-ferias').value)||15;
+  const abono=parseInt(document.getElementById('ajuste-abono').value)||6;
+  const licenca=parseInt(document.getElementById('ajuste-licenca').value)||0;
+  const vendeuFerias=document.getElementById('ajuste-vende-ferias').checked;
+  const vendeuLicenca30=document.getElementById('ajuste-vende-licenca30').checked;
+  const vendeuLicenca60=document.getElementById('ajuste-vende-licenca60').checked;
+  
+  const ud={saldo:{ferias_disponivel:ferias,abono_disponivel:Math.min(6,abono),licenca_disponivel:licenca,vendeu_ferias:vendeuFerias,vendeu_licenca30:vendeuLicenca30,vendeu_licenca60:vendeuLicenca60}};
+  if(dataAdmissao)ud.data_admissao=dataAdmissao;
+  
   try{await db.collection('usuarios').doc(eu.uid).update(ud);fecharAjusteSaldo();mostrarToast('✅ Saldo atualizado!');await carregarSaldo();}catch(e){console.error(e);mostrarToast('⚠️ Erro ao salvar.');}
 }
 
@@ -802,8 +767,8 @@ async function aprovar(uid,nome){await db.collection('usuarios').doc(uid).update
 async function recusar(uid){const s=await db.collection('grupos').doc(grupoId).get();const sol=s.data().solicitacoes||{};delete sol[uid];await db.collection('grupos').doc(grupoId).update({solicitacoes:sol});await db.collection('usuarios').doc(uid).update({solicitacoes:[]});verificarAprovacoes();}
 
 // ═══════════ PERFIL E CADASTRO ═══════════
-function verificarCadastroCompleto(){if(!eu)return false;if(!eu.nome_completo||eu.nome_completo.trim().length<5||!eu.cargo){document.getElementById('cadastro-nome').value=eu.nome_completo||'';document.getElementById('cadastro-cargo').value=eu.cargo||'';document.getElementById('cadastro-email').value=eu.email||'';document.getElementById('completar-cadastro-ov').classList.add('on');return false;}if(eu.nome_completo.trim().split(/\s+/).length<2){document.getElementById('cadastro-nome').value=eu.nome_completo||'';document.getElementById('cadastro-cargo').value=eu.cargo||'';document.getElementById('cadastro-email').value=eu.email||'';document.getElementById('cadastro-erro').textContent='⚠️ Informe nome e sobrenome';document.getElementById('cadastro-erro').style.display='block';document.getElementById('completar-cadastro-ov').classList.add('on');return false;}return true;}
-async function completarCadastro(){const nome=document.getElementById('cadastro-nome').value.trim();const cargo=document.getElementById('cadastro-cargo').value.trim();const email=document.getElementById('cadastro-email').value.trim();const erroEl=document.getElementById('cadastro-erro');if(!nome||nome.length<3||!cargo||cargo.length<2){erroEl.textContent='⚠️ Preencha nome e cargo';erroEl.style.display='block';return;}try{await db.collection('usuarios').doc(eu.uid).update({nome_completo:nome,cargo:cargo,email:email||null,nomes_conhecidos:firebase.firestore.FieldValue.arrayUnion(nome)});eu.nome_completo=nome;eu.cargo=cargo;eu.email=email;document.getElementById('h-user').textContent=nome+' · '+cargo;document.getElementById('completar-cadastro-ov').classList.remove('on');mostrarToast('✅ Cadastro atualizado!');if(grupoId)carregarEventos();renderizarCardGrupos();}catch(error){erroEl.textContent='Erro ao salvar.';erroEl.style.display='block';}}
+function verificarCadastroCompleto(){if(!eu)return false;if(!eu.nome_completo||eu.nome_completo.trim().length<5||!eu.cargo){document.getElementById('cadastro-nome').value=eu.nome_completo||'';document.getElementById('cadastro-cargo').value=eu.cargo||'';document.getElementById('cadastro-email').value=eu.email||'';document.getElementById('completar-cadastro-ov').classList.add('on');return false;}return true;}
+async function completarCadastro(){const nome=document.getElementById('cadastro-nome').value.trim();const cargo=document.getElementById('cadastro-cargo').value.trim();const email=document.getElementById('cadastro-email').value.trim();if(!nome||nome.length<3||!cargo||cargo.length<2){document.getElementById('cadastro-erro').textContent='⚠️ Preencha nome e cargo';document.getElementById('cadastro-erro').style.display='block';return;}try{await db.collection('usuarios').doc(eu.uid).update({nome_completo:nome,cargo:cargo,email:email||null,nomes_conhecidos:firebase.firestore.FieldValue.arrayUnion(nome)});eu.nome_completo=nome;eu.cargo=cargo;eu.email=email;document.getElementById('h-user').textContent=nome+' · '+cargo;document.getElementById('completar-cadastro-ov').classList.remove('on');mostrarToast('✅ Cadastro atualizado!');if(grupoId)carregarEventos();renderizarCardGrupos();}catch(error){document.getElementById('cadastro-erro').textContent='Erro ao salvar.';document.getElementById('cadastro-erro').style.display='block';}}
 function abrirPerfil(){abrirEditarNome(eu.uid,eu.nome_completo||'',eu.cargo||'',true);}
 function fecharPerfil(){fecharEditarNome();}
 async function salvarPerfil(){await salvarEdicaoNome();}
