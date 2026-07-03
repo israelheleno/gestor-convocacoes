@@ -302,6 +302,11 @@
     .ajuste-bloco h4{font-size:13px;font-weight:700;color:var(--blue);margin-bottom:10px}
     .info-texto{font-size:12px;color:var(--light);margin-top:4px;line-height:1.4}
     .info-destaque{font-size:13px;color:var(--blue);font-weight:600;margin-top:6px;padding:8px 12px;background:#eff6ff;border-radius:8px}
+    .ajuda-admissao{font-size:11px;color:var(--light);margin-top:3px}
+    .venda-label{display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;margin-top:8px;color:var(--text)}
+    .venda-label input[type="checkbox"]{width:16px;height:16px;cursor:pointer}
+    .venda-label input[type="checkbox"].ferias{accent-color:#ec4899}
+    .venda-label input[type="checkbox"].licenca{accent-color:#f59e0b}
     footer{text-align:center;padding:16px;color:var(--light);font-size:11px;border-top:1px solid var(--border);margin-top:20px}
     footer strong{color:var(--blue)}
     .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:10000;display:none;align-items:center;justify-content:center;padding:20px}
@@ -326,7 +331,6 @@
     .nome-check-item.selecionado{background:#eff6ff;font-weight:600;color:var(--blue)}
     .nome-check-item .check-box{width:20px;height:20px;border:2px solid var(--border);border-radius:4px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
     .nome-check-item.selecionado .check-box{background:var(--blue);border-color:var(--blue);color:#fff;font-size:12px}
-    .ajuda-admissao{font-size:11px;color:var(--light);margin-top:3px}
   </style>
 </head>
 <body>
@@ -369,16 +373,16 @@
         <div class="painel-right"><div class="painel-relogio"><span class="data-texto" id="painel-data-texto"></span></div><div class="grupo-badge" id="painel-grupo-nome">—</div></div>
       </div>
       <div class="painel-grid" id="painel-grid"><div class="painel-vazio">Nenhuma convocação disponível no momento.</div></div>
-      <div class="painel-footer">Desenvolvido por <strong>IHC Solutions</strong> — © 2026 Gestor de Convocações — v25.4</div>
+      <div class="painel-footer">Desenvolvido por <strong>IHC Solutions</strong> — © 2026 Gestor de Convocações — v25.5</div>
     </div>
   </div>
 </main>
 
 <button id="fab" onclick="abrirScanner()"><svg viewBox="0 0 24 24"><path d="M9 3H5a2 2 0 00-2 2v4m6-6h10a2 2 0 012 2v4M9 3v18m0 0h10a2 2 0 002-2V9M9 21H5a2 2 0 01-2-2V9m0 0h18"/></svg></button>
 <button class="btn-fab-admin" id="btn-fab-admin" onclick="abrirAdmin()">🛡️</button>
-<footer><p>Desenvolvido por <strong>IHC Solutions</strong></p><p>© 2026 Gestor de Convocações — v25.4</p></footer>
+<footer><p>Desenvolvido por <strong>IHC Solutions</strong></p><p>© 2026 Gestor de Convocações — v25.5</p></footer>
 
-<!-- Modais mantidos iguais -->
+<!-- Modais principais -->
 <div class="overlay" id="mod-ev" onclick="if(event.target===this) fecharMod()"><div class="sheet"><div class="handle" onclick="fecharMod()"></div><input type="text" class="mod-titulo-input" id="mod-tit" placeholder="Título do evento"><input type="text" class="mod-sub-input" id="mod-sub" placeholder="Data e hora"><div class="mod-sec"><h3>Convocados <span id="admin-badge-conv" style="display:none" class="admin-badge">Admin</span></h3><div id="mod-conv"></div></div><div style="display:flex;gap:8px;margin-top:16px"><button class="btn-ag" id="mod-ag" style="flex:1;margin-top:0">📅 Agenda</button><button id="mod-trocar" style="flex:1;padding:12px;background:#fff7ed;color:#c2410c;border:1.5px solid #fed7aa;border-radius:10px;font-size:14px;cursor:pointer;font-weight:600;display:none;">🔄 Trocar</button></div><button class="btn-salvar-nomes" onclick="salvarTudoEvento()" style="display:none;width:100%;padding:10px;background:var(--blue);color:#fff;border:none;border-radius:10px;font-size:13px;cursor:pointer;margin-top:8px;font-family:'Sora',sans-serif;font-weight:600" id="btn-salvar-tudo">💾 Salvar</button><button class="btn-del" id="mod-del" style="display:none">🗑 Excluir</button><button class="btn-cancel" style="margin-top:10px;width:100%" onclick="fecharMod()">Fechar</button></div></div>
 <div id="trocar-ov"><div class="trocar-box"><h3>🔄 Trocar escala</h3><p id="trocar-desc"></p><div class="trocar-membros" id="trocar-lista"></div><div class="trocar-btns"><button class="btn-cancel" onclick="fecharTrocar()">Cancelar</button><button class="btn-salvar" style="background:#c2410c" id="trocar-confirmar">Confirmar</button></div></div></div>
 <div class="ov-center" id="ferias-consent-ov"><div class="box-center"><h3>Registrar Período</h3><p id="ferias-consent-desc">Registrar férias, licença ou abono.</p><div class="btns-row"><button class="btn-cancel" onclick="document.getElementById('ferias-consent-ov').classList.remove('on')">Cancelar</button><button class="btn-salvar" onclick="abrirFormFerias()">Continuar</button></div></div></div>
@@ -402,65 +406,18 @@
 </div>
 <div id="ocr-ov"><div class="ocr-spinner"></div><div class="ocr-texto" id="ocr-texto">📸 Analisando...</div><div class="ocr-barra"><div class="ocr-preenchimento" id="ocr-preenchimento"></div></div></div>
 <div id="rv-ov"><div class="rv-hd"><button class="btn-x" onclick="fecharRv()">✕</button><h2>Conferir dados</h2></div><div class="rv-body"><div class="rv-lbl">Título</div><div class="rv-val"><input type="text" id="rv-tit"/></div><div class="rv-lbl">Data/hora</div><div class="rv-val"><input type="datetime-local" id="rv-data"/></div><div class="rv-lbl">Local</div><div class="rv-val"><input type="text" id="rv-loc"/></div><div class="rv-lbl">Convocados</div><div id="rv-matches"></div><div class="rv-btns"><button class="btn-cancel" onclick="fecharRv()">Cancelar</button><button class="btn-salvar" onclick="salvar()">✓ Salvar</button></div></div></div>
-<div class="ov-center" id="criar-manual-ov">
-  <div class="box-center"><h3>✏️ Criar Evento</h3><div class="field"><label>Tipo</label><select id="manual-tipo"><option value="convocacao">📋 Convocação</option><option value="escala">📅 Escala</option></select></div><div class="field"><label>Título</label><input type="text" id="manual-titulo" placeholder="Ex: Plantão Final de Semana"/></div><div class="field"><label>Data e Hora</label><input type="datetime-local" id="manual-data"/></div><div class="field"><label>Local</label><input type="text" id="manual-local" placeholder="Ex: Sala de Reuniões"/></div><div class="field"><label>Selecionar Convocados</label></div><div class="lista-nomes-manual" id="lista-nomes-manual"></div><div class="field" style="margin-top:8px"><label>Adicionar nome externo</label><div style="display:flex;gap:8px"><input type="text" id="manual-nome-externo" placeholder="Nome completo" style="flex:1"><button class="btn-salvar" onclick="adicionarNomeManual()" style="width:auto;padding:11px 16px">+</button></div></div><div style="margin-bottom:12px" id="manual-nomes-extras"></div><div class="btns-row"><button class="btn-cancel" onclick="fecharCriacaoManual()">Cancelar</button><button class="btn-salvar" onclick="salvarEventoManual()">💾 Criar</button></div></div>
-</div>
+<div class="ov-center" id="criar-manual-ov"><div class="box-center"><h3>✏️ Criar Evento</h3><div class="field"><label>Tipo</label><select id="manual-tipo"><option value="convocacao">📋 Convocação</option><option value="escala">📅 Escala</option></select></div><div class="field"><label>Título</label><input type="text" id="manual-titulo" placeholder="Ex: Plantão Final de Semana"/></div><div class="field"><label>Data e Hora</label><input type="datetime-local" id="manual-data"/></div><div class="field"><label>Local</label><input type="text" id="manual-local" placeholder="Ex: Sala de Reuniões"/></div><div class="field"><label>Selecionar Convocados</label></div><div class="lista-nomes-manual" id="lista-nomes-manual"></div><div class="field" style="margin-top:8px"><label>Adicionar nome externo</label><div style="display:flex;gap:8px"><input type="text" id="manual-nome-externo" placeholder="Nome completo" style="flex:1"><button class="btn-salvar" onclick="adicionarNomeManual()" style="width:auto;padding:11px 16px">+</button></div></div><div style="margin-bottom:12px" id="manual-nomes-extras"></div><div class="btns-row"><button class="btn-cancel" onclick="fecharCriacaoManual()">Cancelar</button><button class="btn-salvar" onclick="salvarEventoManual()">💾 Criar</button></div></div></div>
 
-<!-- ═══════════ MODAL DE AJUSTE DE SALDO v25.4 ═══════════ -->
+<!-- Modal de Ajuste de Saldo v25.5 -->
 <div class="ov-center" id="saldo-ajuste-ov">
   <div class="box-center">
     <h3>⚙️ Ajustar Saldo</h3>
     <p style="font-size:13px;color:var(--light);margin-bottom:16px">Data de admissão para cálculos futuros e saldo atual.</p>
-    
-    <div class="field">
-      <label>📅 Data de Admissão</label>
-      <input type="text" id="ajuste-admissao" placeholder="DD/MM/AAAA" maxlength="10"/>
-      <div class="ajuda-admissao">Exemplo: 15/03/2020</div>
-    </div>
-    
-    <div class="ajuste-bloco">
-      <h4>🏖️ Férias</h4>
-      <div class="field">
-        <label>Saldo atual de férias</label>
-        <input type="number" id="ajuste-ferias" min="0" max="999" placeholder="Ex: 15"/>
-      </div>
-      <div class="info-destaque" id="info-prox-ferias"></div>
-      <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;margin-top:8px;color:var(--text);">
-        <input type="checkbox" id="ajuste-vende-ferias" style="accent-color:#ec4899;width:16px;height:16px;">
-        Vendi 10 dias (próximo período terá 20 dias)
-      </label>
-    </div>
-    
-    <div class="ajuste-bloco">
-      <h4>⏱️ Abonos</h4>
-      <div class="field" style="margin-bottom:0">
-        <label>Disponíveis agora (máx. 6/ano)</label>
-        <input type="number" id="ajuste-abono" min="0" max="6" placeholder="Ex: 3"/>
-      </div>
-      <p class="info-texto" id="info-abono">Renova automaticamente em 1º de janeiro (6 por ano).</p>
-    </div>
-    
-    <div class="ajuste-bloco">
-      <h4>🏆 Licença Prêmio</h4>
-      <div class="field">
-        <label>Saldo atual de licença</label>
-        <input type="number" id="ajuste-licenca" min="0" max="999" placeholder="Ex: 60"/>
-      </div>
-      <div class="info-destaque" id="info-quinquenios"></div>
-      <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;margin-top:8px;color:var(--text);">
-        <input type="checkbox" id="ajuste-vende-licenca30" style="accent-color:#f59e0b;width:16px;height:16px;">
-        Vendi 30 dias da licença
-      </label>
-      <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;color:var(--text);">
-        <input type="checkbox" id="ajuste-vende-licenca60" style="accent-color:#f59e0b;width:16px;height:16px;">
-        Vendi 60 dias da licença
-      </label>
-    </div>
-    
-    <div class="btns-row">
-      <button class="btn-cancel" onclick="fecharAjusteSaldo()">Cancelar</button>
-      <button class="btn-salvar" onclick="salvarAjusteSaldo()">💾 Salvar</button>
-    </div>
+    <div class="field"><label>📅 Data de Admissão</label><input type="text" id="ajuste-admissao" placeholder="DD/MM/AAAA" maxlength="10"/><div class="ajuda-admissao">Exemplo: 15/03/2020</div></div>
+    <div class="ajuste-bloco"><h4>🏖️ Férias</h4><div class="field"><label>Saldo atual de férias</label><input type="number" id="ajuste-ferias" min="0" max="999" placeholder="Ex: 15"/></div><div class="info-destaque" id="info-prox-ferias"></div><label class="venda-label"><input type="checkbox" id="ajuste-vende-ferias" class="ferias"> Vendi 10 dias (próximo período terá 20 dias)</label></div>
+    <div class="ajuste-bloco"><h4>⏱️ Abonos</h4><div class="field" style="margin-bottom:0"><label>Disponíveis agora (máx. 6/ano)</label><input type="number" id="ajuste-abono" min="0" max="6" placeholder="Ex: 3"/></div><p class="info-texto" id="info-abono">Renova automaticamente em 1º de janeiro (6 por ano).</p></div>
+    <div class="ajuste-bloco"><h4>🏆 Licença Prêmio</h4><div class="field"><label>Saldo atual de licença</label><input type="number" id="ajuste-licenca" min="0" max="999" placeholder="Ex: 60"/></div><div class="info-destaque" id="info-quinquenios"></div><label class="venda-label"><input type="checkbox" id="ajuste-vende-licenca30" class="licenca"> Vendi 30 dias da licença</label><label class="venda-label"><input type="checkbox" id="ajuste-vende-licenca60" class="licenca"> Vendi 60 dias da licença</label></div>
+    <div class="btns-row"><button class="btn-cancel" onclick="fecharAjusteSaldo()">Cancelar</button><button class="btn-salvar" onclick="salvarAjusteSaldo()">💾 Salvar</button></div>
   </div>
 </div>
 
@@ -619,11 +576,9 @@ function abrirFormFerias(){document.getElementById('ferias-consent-ov').classLis
 function calcularDataTermino(){const iniVal=document.getElementById('ferias-ini').value;const dias=parseInt(document.getElementById('ferias-dias').value)||1;if(iniVal&&dias>0){const dt=new Date(iniVal+"T12:00:00");dt.setDate(dt.getDate()+dias-1);document.getElementById('ferias-fim').value=dt.toISOString().split('T')[0];}}
 async function salvarFerias(){const tipo=document.getElementById('ferias-tipo').value;const periodo=tipo==='ferias'?document.getElementById('ferias-periodo-select').value:document.getElementById('ferias-periodo-text').value.trim();const dias=parseInt(document.getElementById('ferias-dias').value)||1;const iniStr=document.getElementById('ferias-ini').value;const fimStr=document.getElementById('ferias-fim').value;const erroEl=document.getElementById('ferias-erro');if(!periodo||!iniStr||!fimStr){erroEl.textContent='⚠️ Preencha todos os campos';erroEl.style.display='block';return;}const uidDestino=usuarioSelecionadoFerias?usuarioSelecionadoFerias.uid:eu.uid;const nomeDestino=usuarioSelecionadoFerias?usuarioSelecionadoFerias.nome_completo:eu.nome_completo;await db.collection('ausencias').add({uid:uidDestino,nome_completo:nomeDestino,grupo_id:grupoId,tipo,periodo,dias,data_inicio:iniStr,data_fim:fimStr,criado_por:eu.uid,criado_em:firebase.firestore.FieldValue.serverTimestamp()});document.getElementById('ferias-form-ov').classList.remove('on');usuarioSelecionadoFerias=null;mostrarToast("✅ Período registrado!");carregarFerias();carregarSaldo();}
 
-// ═══════════ SALDO v25.4 - PRESERVA DADOS + CÁLCULO FUTURO ═══════════
+// ═══════════ SALDO v25.5 - CORRIGIDO E DEFINITIVO ═══════════
 function parseDataBR(str){if(!str||str.trim().length<8)return null;const partes=str.split('/');if(partes.length!==3)return null;const dia=parseInt(partes[0]),mes=parseInt(partes[1])-1,ano=parseInt(partes[2]);if(isNaN(dia)||isNaN(mes)||isNaN(ano))return null;return new Date(ano,mes,dia,12,0,0);}
-
 function calcularProximoAniversario(dataAdmissao){const hoje=new Date();let prox=new Date(dataAdmissao);prox.setFullYear(hoje.getFullYear());if(prox<=hoje)prox.setFullYear(hoje.getFullYear()+1);return prox;}
-
 function calcularProximoQuinquenio(dataAdmissao){const hoje=new Date();let prox=new Date(dataAdmissao);while(prox<=hoje)prox.setFullYear(prox.getFullYear()+5);return prox;}
 
 async function carregarSaldo(){
@@ -633,47 +588,49 @@ async function carregarSaldo(){
   const data=snap.data();
   const saldoData=data.saldo||{};
   const dataAdmissao=data.data_admissao||'';
-  const ausenciasSnap=await db.collection('ausencias').where('uid','==',eu.uid).get();
-  const usos=ausenciasSnap.docs.map(d=>({id:d.id,...d.data()}));
   const TOTAL_ABONOS=6;
   
-  // Férias - PRESERVA o que já foi digitado
-  let disponivelFerias=15;
-  if(saldoData.ferias_disponivel!=null&&saldoData.ferias_disponivel!==undefined){disponivelFerias=parseInt(saldoData.ferias_disponivel)||0;}
-  else if(saldoData.ferias!=null&&saldoData.ferias!==undefined){disponivelFerias=parseInt(saldoData.ferias)||15;}
+  // Buscar TODAS as ausências do usuário (abatimento automático)
+  const ausenciasSnap=await db.collection('ausencias').where('uid','==',eu.uid).get();
+  const usos=ausenciasSnap.docs.map(d=>({id:d.id,...d.data()}));
   
-  // Abonos - PRESERVA
+  // ═════ FÉRIAS ═════
+  let disponivelFerias=0;
+  if(saldoData.ferias_disponivel!=null&&saldoData.ferias_disponivel!==undefined){disponivelFerias=parseInt(saldoData.ferias_disponivel)||0;}
+  else if(saldoData.ferias!=null&&saldoData.ferias!==undefined){disponivelFerias=parseInt(saldoData.ferias)||0;}
+  const usadoFerias=usos.filter(u=>u.tipo==='ferias').reduce((s,u)=>s+(parseInt(u.dias)||0),0);
+  const restanteFerias=Math.max(0,disponivelFerias-usadoFerias);
+  
+  // ═════ ABONOS ═════
   let disponivelAbono=TOTAL_ABONOS;
   if(saldoData.abono_disponivel!=null&&saldoData.abono_disponivel!==undefined){disponivelAbono=parseInt(saldoData.abono_disponivel)||0;}
   else if(saldoData.abono!=null&&saldoData.abono!==undefined){disponivelAbono=parseInt(saldoData.abono)||TOTAL_ABONOS;}
+  const anoAtual=new Date().getFullYear();
+  const usadoAbono=usos.filter(u=>u.tipo==='abono'&&new Date(u.data_inicio+'T12:00:00').getFullYear()===anoAtual).length;
+  const restanteAbono=Math.max(0,disponivelAbono-usadoAbono);
   
-  // Licença - PRESERVA
+  // ═════ LICENÇA ═════
   let disponivelLicenca=0;
   if(saldoData.licenca_disponivel!=null&&saldoData.licenca_disponivel!==undefined){disponivelLicenca=parseInt(saldoData.licenca_disponivel)||0;}
   else if(saldoData.licenca!=null&&saldoData.licenca!==undefined){disponivelLicenca=parseInt(saldoData.licenca)||0;}
-  
-  // Usado
-  const usadoFerias=usos.filter(u=>u.tipo==='ferias').reduce((s,u)=>s+(u.dias||0),0);
-  const restanteFerias=Math.max(0,disponivelFerias-usadoFerias);
-  const usadoAbono=usos.filter(u=>u.tipo==='abono'&&new Date(u.data_inicio+'T12:00:00').getFullYear()===new Date().getFullYear()).length;
-  const restanteAbono=Math.max(0,disponivelAbono-usadoAbono);
-  const usadoLicenca=usos.filter(u=>u.tipo==='licenca').reduce((s,u)=>s+(u.dias||0),0);
+  const usadoLicenca=usos.filter(u=>u.tipo==='licenca').reduce((s,u)=>s+(parseInt(u.dias)||0),0);
   const restanteLicenca=Math.max(0,disponivelLicenca-usadoLicenca);
   
-  // Info de próximos períodos
-  let infoProxFerias='';
-  if(dataAdmissao){const dt=parseDataBR(dataAdmissao);if(dt){const prox=calcularProximoAniversario(dt);infoProxFerias='📅 Próximo período: '+prox.toLocaleDateString('pt-BR')+' (+30 dias)';}}
+  // ═════ INFOS ═════
+  let infoProxFerias='',infoQuinquenio='';
+  if(dataAdmissao){const dt=parseDataBR(dataAdmissao);if(dt){const prox=calcularProximoAniversario(dt);const vendeu=saldoData.vendeu_ferias||false;infoProxFerias='📅 Próximo período: '+prox.toLocaleDateString('pt-BR')+' (+'+(vendeu?20:30)+' dias)';const proxQ=calcularProximoQuinquenio(dt);infoQuinquenio='🏆 Próximo quinquênio: '+proxQ.toLocaleDateString('pt-BR')+' (+90 dias)';}}
   
-  let infoQuinquenio='';
-  if(dataAdmissao){const dt=parseDataBR(dataAdmissao);if(dt){const prox=calcularProximoQuinquenio(dt);infoQuinquenio='🏆 Próximo quinquênio: '+prox.toLocaleDateString('pt-BR')+' (+90 dias)';}}
+  // ═════ BARRAS CORRIGIDAS ═════
+  const percFerias=disponivelFerias>0?Math.min(100,(restanteFerias/disponivelFerias)*100):0;
+  const percAbono=TOTAL_ABONOS>0?Math.min(100,(restanteAbono/TOTAL_ABONOS)*100):0;
+  const percLicenca=disponivelLicenca>0?Math.min(100,(restanteLicenca/disponivelLicenca)*100):0;
   
-  let infoAbono='Renova automaticamente em 1º de janeiro (6 por ano).';
-  
-  container.innerHTML='<div class="card"><div class="card-titulo">💰 Meu Saldo <span class="badge">Individual</span></div>'+
+  container.innerHTML=
+    '<div class="card"><div class="card-titulo">💰 Meu Saldo <span class="badge">Individual</span></div>'+
     (dataAdmissao?'<div style="font-size:12px;color:var(--light);margin-bottom:12px">📅 Admissão: '+dataAdmissao+'</div>':'')+
-    '<div class="saldo-card"><div class="saldo-header"><div class="saldo-icon ferias">🏖️</div><div class="saldo-info"><div class="saldo-tipo">Férias</div><div class="saldo-dias" style="color:#ec4899">'+restanteFerias+' dias disponíveis</div>'+(infoProxFerias?'<div class="saldo-sub">'+infoProxFerias+'</div>':'')+'</div></div><div class="saldo-bar"><div class="saldo-bar-fill ferias" style="width:'+(disponivelFerias>0?Math.min(100,(restanteFerias/disponivelFerias)*100):0)+'%"></div></div></div>'+
-    '<div class="saldo-card"><div class="saldo-header"><div class="saldo-icon abono">⏱️</div><div class="saldo-info"><div class="saldo-tipo">Abonos</div><div class="saldo-dias" style="color:#06b6d4">'+restanteAbono+' / '+TOTAL_ABONOS+'</div><div class="saldo-sub">'+infoAbono+'</div></div></div><div class="saldo-bar"><div class="saldo-bar-fill abono" style="width:'+(TOTAL_ABONOS>0?Math.min(100,(restanteAbono/TOTAL_ABONOS)*100):0)+'%"></div></div></div>'+
-    '<div class="saldo-card"><div class="saldo-header"><div class="saldo-icon licenca">🏆</div><div class="saldo-info"><div class="saldo-tipo">Licença Prêmio</div><div class="saldo-dias" style="color:#f59e0b">'+restanteLicenca+' dias disponíveis</div>'+(infoQuinquenio?'<div class="saldo-sub">'+infoQuinquenio+'</div>':'')+'</div></div><div class="saldo-bar"><div class="saldo-bar-fill licenca" style="width:'+(disponivelLicenca>0?Math.min(100,(restanteLicenca/disponivelLicenca)*100):0)+'%"></div></div></div>'+
+    '<div class="saldo-card"><div class="saldo-header"><div class="saldo-icon ferias">🏖️</div><div class="saldo-info"><div class="saldo-tipo">Férias</div><div class="saldo-dias" style="color:#ec4899">'+restanteFerias+' / '+disponivelFerias+' dias</div>'+(infoProxFerias?'<div class="saldo-sub">'+infoProxFerias+'</div>':'')+'</div></div><div class="saldo-bar"><div class="saldo-bar-fill ferias" style="width:'+percFerias+'%"></div></div></div>'+
+    '<div class="saldo-card"><div class="saldo-header"><div class="saldo-icon abono">⏱️</div><div class="saldo-info"><div class="saldo-tipo">Abonos</div><div class="saldo-dias" style="color:#06b6d4">'+restanteAbono+' / '+TOTAL_ABONOS+'</div><div class="saldo-sub">Renova 1º de janeiro ('+TOTAL_ABONOS+'/ano)</div></div></div><div class="saldo-bar"><div class="saldo-bar-fill abono" style="width:'+percAbono+'%"></div></div></div>'+
+    '<div class="saldo-card"><div class="saldo-header"><div class="saldo-icon licenca">🏆</div><div class="saldo-info"><div class="saldo-tipo">Licença Prêmio</div><div class="saldo-dias" style="color:#f59e0b">'+restanteLicenca+' / '+disponivelLicenca+' dias</div>'+(infoQuinquenio?'<div class="saldo-sub">'+infoQuinquenio+'</div>':'')+'</div></div><div class="saldo-bar"><div class="saldo-bar-fill licenca" style="width:'+percLicenca+'%"></div></div></div>'+
     '<button class="btn-ajustar-saldo" onclick="abrirAjusteSaldo()">⚙️ Ajustar</button></div>'+
     (usos.length>0?'<div class="card"><div class="card-titulo">📋 Períodos Registrados</div>'+usos.sort((a,b)=>new Date(b.data_inicio)-new Date(a.data_inicio)).map(u=>{let icone=u.tipo==='ferias'?'🏖️':(u.tipo==='licenca'?'🏆':'⏱️');return'<div class="uso-item '+u.tipo+'"><div class="uso-dias">'+(u.dias||'?')+'d</div><div class="uso-info"><div style="font-weight:600;font-size:13px">'+icone+' '+(u.periodo||u.tipo)+'</div><div class="uso-periodo">'+(u.data_inicio?new Date(u.data_inicio+'T12:00:00').toLocaleDateString('pt-BR'):'?')+' → '+(u.data_fim?new Date(u.data_fim+'T12:00:00').toLocaleDateString('pt-BR'):'?')+'</div></div></div>';}).join('')+'</div>':'');
 }
@@ -682,18 +639,13 @@ async function abrirAjusteSaldo(){
   const snap=await db.collection('usuarios').doc(eu.uid).get();
   const data=snap.data()||{};
   const saldoData=data.saldo||{};
-  
   document.getElementById('ajuste-admissao').value=data.data_admissao||'';
-  
-  // PRESERVA valores existentes
-  document.getElementById('ajuste-ferias').value=saldoData.ferias_disponivel!=null?saldoData.ferias_disponivel:(saldoData.ferias||15);
+  document.getElementById('ajuste-ferias').value=saldoData.ferias_disponivel!=null?saldoData.ferias_disponivel:(saldoData.ferias||0);
   document.getElementById('ajuste-abono').value=saldoData.abono_disponivel!=null?saldoData.abono_disponivel:(saldoData.abono||6);
   document.getElementById('ajuste-licenca').value=saldoData.licenca_disponivel!=null?saldoData.licenca_disponivel:(saldoData.licenca||0);
-  
   document.getElementById('ajuste-vende-ferias').checked=saldoData.vendeu_ferias||false;
   document.getElementById('ajuste-vende-licenca30').checked=saldoData.vendeu_licenca30||false;
   document.getElementById('ajuste-vende-licenca60').checked=saldoData.vendeu_licenca60||false;
-  
   atualizarInfosAjuste();
   document.getElementById('saldo-ajuste-ov').classList.add('on');
 }
@@ -704,27 +656,16 @@ function atualizarInfosAjuste(){
   const dataAdmissao=document.getElementById('ajuste-admissao').value;
   const infoFerias=document.getElementById('info-prox-ferias');
   const infoQuinquenios=document.getElementById('info-quinquenios');
-  const infoAbono=document.getElementById('info-abono');
-  
   if(dataAdmissao&&dataAdmissao.trim().length>=8){
     const dt=parseDataBR(dataAdmissao);
     if(dt){
       const proxFerias=calcularProximoAniversario(dt);
       const vendeu=document.getElementById('ajuste-vende-ferias').checked;
       infoFerias.textContent='📅 Próximo período: '+proxFerias.toLocaleDateString('pt-BR')+' (+'+(vendeu?20:30)+' dias)';
-      
-      const proxQuinq=calcularProximoQuinquenio(dt);
-      infoQuinquenios.textContent='🏆 Próximo quinquênio: '+proxQuinq.toLocaleDateString('pt-BR')+' (+90 dias)';
-    }else{
-      infoFerias.textContent='⚠️ Data inválida';
-      infoQuinquenios.textContent='⚠️ Data inválida';
-    }
-  }else{
-    infoFerias.textContent='Informe a data de admissão para ver próximos períodos';
-    infoQuinquenios.textContent='Informe a data de admissão para ver próximos quinquênios';
-  }
-  
-  infoAbono.textContent='Renova automaticamente em 1º de janeiro (6 por ano).';
+      const proxQ=calcularProximoQuinquenio(dt);
+      infoQuinquenios.textContent='🏆 Próximo quinquênio: '+proxQ.toLocaleDateString('pt-BR')+' (+90 dias)';
+    }else{infoFerias.textContent='⚠️ Data inválida';infoQuinquenios.textContent='⚠️ Data inválida';}
+  }else{infoFerias.textContent='Informe a data de admissão';infoQuinquenios.textContent='Informe a data de admissão';}
 }
 
 document.getElementById('ajuste-admissao').addEventListener('input',atualizarInfosAjuste);
@@ -732,16 +673,14 @@ document.getElementById('ajuste-vende-ferias').addEventListener('change',atualiz
 
 async function salvarAjusteSaldo(){
   const dataAdmissao=document.getElementById('ajuste-admissao').value.trim();
-  const ferias=parseInt(document.getElementById('ajuste-ferias').value)||15;
-  const abono=parseInt(document.getElementById('ajuste-abono').value)||6;
+  const ferias=parseInt(document.getElementById('ajuste-ferias').value)||0;
+  const abono=parseInt(document.getElementById('ajuste-abono').value)||0;
   const licenca=parseInt(document.getElementById('ajuste-licenca').value)||0;
   const vendeuFerias=document.getElementById('ajuste-vende-ferias').checked;
   const vendeuLicenca30=document.getElementById('ajuste-vende-licenca30').checked;
   const vendeuLicenca60=document.getElementById('ajuste-vende-licenca60').checked;
-  
   const ud={saldo:{ferias_disponivel:ferias,abono_disponivel:Math.min(6,abono),licenca_disponivel:licenca,vendeu_ferias:vendeuFerias,vendeu_licenca30:vendeuLicenca30,vendeu_licenca60:vendeuLicenca60}};
   if(dataAdmissao)ud.data_admissao=dataAdmissao;
-  
   try{await db.collection('usuarios').doc(eu.uid).update(ud);fecharAjusteSaldo();mostrarToast('✅ Saldo atualizado!');await carregarSaldo();}catch(e){console.error(e);mostrarToast('⚠️ Erro ao salvar.');}
 }
 
