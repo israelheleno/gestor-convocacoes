@@ -339,29 +339,10 @@
 </head>
 <body>
 
-<div id="loading-screen">
-  <div class="spinner"></div>
-  <p class="msg" id="loading-msg">Carregando...</p>
-  <p class="msg" id="loading-error" style="color:var(--red);display:none;font-size:12px"></p>
-  <button class="btn-recarregar" id="btn-recarregar" onclick="location.reload()">🔄 Tentar novamente</button>
-</div>
-
-<header>
-  <div class="h-top"><div class="h-logo"><svg viewBox="0 0 24 24"><path d="M17 3H7C5.9 3 5 3.9 5 5v16l7-3 7 3V5c0-1.1-.9-2-2-2zm0 15l-5-2.18L7 18V5h10v13z"/></svg><span>Gestor de Convocações</span></div><button class="btn-sair" onclick="sair()">Sair</button></div>
-  <div class="h-sub" id="h-user" onclick="abrirPerfil()" style="cursor:pointer">Carregando...</div>
-</header>
-
-<div id="banner-instalar" style="display:none;background:#EFF6FF;border-bottom:1px solid #BFDBFE;padding:10px 16px;">
-  <button onclick="abrirModalInstalar()" style="width:100%;padding:11px;background:var(--blue);color:white;border:none;border-radius:12px;font-family:'Sora',sans-serif;font-size:14px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;">📱 Instalar App no Celular</button>
-</div>
-
-<div class="nav-tabs">
-  <div class="nav-tab active" onclick="mostrarAba('convocacoes',this)">📋 Convocações</div>
-  <div class="nav-tab" onclick="mostrarAba('ferias',this)">🏖️ Férias</div>
-  <div class="nav-tab" onclick="mostrarAba('saldo',this)">💰 Saldo</div>
-  <div class="nav-tab" onclick="mostrarAba('painel',this)">📺 TV</div>
-</div>
-
+<div id="loading-screen"><div class="spinner"></div><p class="msg" id="loading-msg">Carregando...</p><p class="msg" id="loading-error" style="color:var(--red);display:none;font-size:12px"></p><button class="btn-recarregar" id="btn-recarregar" onclick="location.reload()">🔄 Tentar novamente</button></div>
+<header><div class="h-top"><div class="h-logo"><svg viewBox="0 0 24 24"><path d="M17 3H7C5.9 3 5 3.9 5 5v16l7-3 7 3V5c0-1.1-.9-2-2-2zm0 15l-5-2.18L7 18V5h10v13z"/></svg><span>Gestor de Convocações</span></div><button class="btn-sair" onclick="sair()">Sair</button></div><div class="h-sub" id="h-user" onclick="abrirPerfil()" style="cursor:pointer">Carregando...</div></header>
+<div id="banner-instalar" style="display:none;background:#EFF6FF;border-bottom:1px solid #BFDBFE;padding:10px 16px;"><button onclick="abrirModalInstalar()" style="width:100%;padding:11px;background:var(--blue);color:white;border:none;border-radius:12px;font-family:'Sora',sans-serif;font-size:14px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;">📱 Instalar App no Celular</button></div>
+<div class="nav-tabs"><div class="nav-tab active" onclick="mostrarAba('convocacoes',this)">📋 Convocações</div><div class="nav-tab" onclick="mostrarAba('ferias',this)">🏖️ Férias</div><div class="nav-tab" onclick="mostrarAba('saldo',this)">💰 Saldo</div><div class="nav-tab" onclick="mostrarAba('painel',this)">📺 TV</div></div>
 <div class="toast" id="toast"></div>
 <button class="btn-sair-tv" onclick="sairPainelTV()" title="Sair da TV">✕</button>
 
@@ -369,23 +350,14 @@
   <div id="aba-convocacoes" class="aba-content"><div id="sec-apv" style="display:none;margin-bottom:16px"><div class="sec-titulo">🔔 Solicitações</div><div id="lst-apv"></div></div><div class="card"><div class="card-titulo">👥 Grupos <span class="badge" id="grp-badge">—</span></div><div id="grp-content"></div></div><div class="sec-titulo" style="margin-bottom:10px">Próxima convocação</div><div id="prox"></div><div class="sec-titulo" style="margin-top:20px">Todas <span style="font-size:12px;color:var(--light)" id="total"></span></div><div id="lst-ev"><div class="skel"></div></div></div>
   <div id="aba-ferias" class="aba-content" style="display:none"><div class="card"><div class="card-titulo">📋 Períodos do Grupo</div><button class="btn-meu-periodo" onclick="iniciarAddFerias()">+ Meu Período</button><button class="btn-para-outro" id="btn-para-outro" style="display:none" onclick="abrirSelecaoUsuario()">👤 Adicionar para outro usuário</button></div><div id="lst-ausencias"></div></div>
   <div id="aba-saldo" class="aba-content" style="display:none"><div id="saldo-container"><div class="skel"></div></div></div>
-  <div id="aba-painel" class="aba-content" style="display:none">
-    <div class="painel-wrapper">
-      <div class="painel-header">
-        <div class="painel-left"><h2>📋 Painel de Convocações</h2><div class="painel-relogio"><span class="hora-texto" id="painel-hora-texto"></span></div></div>
-        <div class="painel-center"><div class="painel-status"><span class="dot"></span> Atualizando em tempo real</div></div>
-        <div class="painel-right"><div class="painel-relogio"><span class="data-texto" id="painel-data-texto"></span></div><div class="grupo-badge" id="painel-grupo-nome">—</div></div>
-      </div>
-      <div class="painel-grid" id="painel-grid"><div class="painel-vazio">Nenhuma convocação disponível no momento.</div></div>
-      <div class="painel-footer">Desenvolvido por <strong>IHC Solutions</strong> — © 2026 Gestor de Convocações — v25.8</div>
-    </div>
-  </div>
+  <div id="aba-painel" class="aba-content" style="display:none"><div class="painel-wrapper"><div class="painel-header"><div class="painel-left"><h2>📋 Painel de Convocações</h2><div class="painel-relogio"><span class="hora-texto" id="painel-hora-texto"></span></div></div><div class="painel-center"><div class="painel-status"><span class="dot"></span> Atualizando em tempo real</div></div><div class="painel-right"><div class="painel-relogio"><span class="data-texto" id="painel-data-texto"></span></div><div class="grupo-badge" id="painel-grupo-nome">—</div></div></div><div class="painel-grid" id="painel-grid"><div class="painel-vazio">Nenhuma convocação disponível no momento.</div></div><div class="painel-footer">Desenvolvido por <strong>IHC Solutions</strong> — © 2026 Gestor de Convocações — v25.9</div></div></div>
 </main>
 
 <button id="fab" onclick="abrirScanner()"><svg viewBox="0 0 24 24"><path d="M9 3H5a2 2 0 00-2 2v4m6-6h10a2 2 0 012 2v4M9 3v18m0 0h10a2 2 0 002-2V9M9 21H5a2 2 0 01-2-2V9m0 0h18"/></svg></button>
 <button class="btn-fab-admin" id="btn-fab-admin" onclick="abrirAdmin()">🛡️</button>
-<footer><p>Desenvolvido por <strong>IHC Solutions</strong></p><p>© 2026 Gestor de Convocações — v25.8</p></footer>
+<footer><p>Desenvolvido por <strong>IHC Solutions</strong></p><p>© 2026 Gestor de Convocações — v25.9</p></footer>
 
+<!-- Modais - mantidos iguais -->
 <div class="overlay" id="mod-ev" onclick="if(event.target===this) fecharMod()"><div class="sheet"><div class="handle" onclick="fecharMod()"></div><input type="text" class="mod-titulo-input" id="mod-tit" placeholder="Título do evento"><input type="text" class="mod-sub-input" id="mod-sub" placeholder="Data e hora"><div class="mod-sec"><h3>Convocados <span id="admin-badge-conv" style="display:none" class="admin-badge">Admin</span></h3><div id="mod-conv"></div></div><div style="display:flex;gap:8px;margin-top:16px"><button class="btn-ag" id="mod-ag" style="flex:1;margin-top:0">📅 Agenda</button><button id="mod-trocar" style="flex:1;padding:12px;background:#fff7ed;color:#c2410c;border:1.5px solid #fed7aa;border-radius:10px;font-size:14px;cursor:pointer;font-weight:600;display:none;">🔄 Trocar</button></div><button class="btn-salvar-nomes" onclick="salvarTudoEvento()" style="display:none;width:100%;padding:10px;background:var(--blue);color:#fff;border:none;border-radius:10px;font-size:13px;cursor:pointer;margin-top:8px;font-family:'Sora',sans-serif;font-weight:600" id="btn-salvar-tudo">💾 Salvar</button><button class="btn-del" id="mod-del" style="display:none">🗑 Excluir</button><button class="btn-cancel" style="margin-top:10px;width:100%" onclick="fecharMod()">Fechar</button></div></div>
 <div id="trocar-ov"><div class="trocar-box"><h3>🔄 Trocar escala</h3><p id="trocar-desc"></p><div class="trocar-membros" id="trocar-lista"></div><div class="trocar-btns"><button class="btn-cancel" onclick="fecharTrocar()">Cancelar</button><button class="btn-salvar" style="background:#c2410c" id="trocar-confirmar">Confirmar</button></div></div></div>
 <div class="ov-center" id="ferias-consent-ov"><div class="box-center"><h3>Registrar Período</h3><p id="ferias-consent-desc">Registrar férias, licença ou abono.</p><div class="btns-row"><button class="btn-cancel" onclick="document.getElementById('ferias-consent-ov').classList.remove('on')">Cancelar</button><button class="btn-salvar" onclick="abrirFormFerias()">Continuar</button></div></div></div>
@@ -397,62 +369,15 @@
 <div id="completar-cadastro-ov"><div style="background:#fff;border-radius:24px;padding:28px 22px;width:100%;max-width:360px;"><h3 style="font-family:'Sora',sans-serif;font-size:17px;font-weight:700;color:var(--blue);margin-bottom:6px;">👋 Complete seu cadastro</h3><p style="font-size:13px;color:var(--light);margin-bottom:18px;">Precisamos do seu nome completo e cargo.</p><div class="field"><label>Nome completo</label><input type="text" id="cadastro-nome"/></div><div class="field"><label>Cargo</label><input type="text" id="cadastro-cargo"/></div><div class="field"><label>Email</label><input type="email" id="cadastro-email"/></div><p style="font-size:11px;color:var(--red);margin-bottom:12px;display:none;" id="cadastro-erro"></p><button class="btn-salvar" onclick="completarCadastro()" style="width:100%">✓ Salvar</button></div></div>
 <div id="notif-ov"><div class="notif-box"><div class="notif-emoji">🔔</div><div class="notif-titulo" id="notif-titulo"></div><div class="notif-desc" id="notif-desc"></div><div class="notif-evento"><div class="notif-evento-titulo" id="notif-ev-titulo"></div><div class="notif-evento-data" id="notif-ev-data"></div></div><div class="notif-btns"><button class="btn-cancel" onclick="responderNotif(false)">✗ Não sou eu</button><button class="btn-salvar" onclick="responderNotif(true)">✓ Sim, sou eu!</button></div></div></div>
 <div id="admin-ov"><div class="admin-hd"><button class="btn-x" onclick="fecharAdmin()">✕</button><h2>🛡️ Painel Admin</h2></div><div class="admin-body"><div class="sec-titulo">Membros <span id="admin-total"></span></div><div id="admin-membros"></div></div></div>
-<div id="scan-ov">
-  <div class="scan-hd"><button class="btn-x" onclick="fecharScanner()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:20px;height:20px"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button><span>Escanear Convocação</span></div>
-  <div class="cam-wrap"><video id="video" autoplay playsinline muted></video><div class="cam-mask"><div class="cam-box"><div class="c-bl"></div><div class="c-br"></div><div class="cam-hint">Enquadre o documento aqui</div></div></div><div id="scan-loading" class="scan-loading-overlay"><div class="scan-loading-spinner"></div><div class="scan-loading-text">Processando arquivo...</div></div></div>
-  <div class="scan-ctrl">
-    <button class="btn-cap" onclick="capturar()"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3.2"/><path d="M9 2L7.17 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2h-3.17L15 2H9zm3 15c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5z"/></svg></button>
-    <input type="file" id="file-foto" accept="image/*" style="display:none" onchange="processarArquivoGaleria(this)"/>
-    <button class="btn-gal" onclick="document.getElementById('file-foto').click()">🖼️ Escolher da galeria</button>
-    <button class="btn-criar-manual" onclick="abrirCriacaoEscala()" style="display:none" id="btn-criar-escala">✏️ Criar Escala</button>
-  </div>
-</div>
+<div id="scan-ov"><div class="scan-hd"><button class="btn-x" onclick="fecharScanner()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:20px;height:20px"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button><span>Escanear Convocação</span></div><div class="cam-wrap"><video id="video" autoplay playsinline muted></video><div class="cam-mask"><div class="cam-box"><div class="c-bl"></div><div class="c-br"></div><div class="cam-hint">Enquadre o documento aqui</div></div></div><div id="scan-loading" class="scan-loading-overlay"><div class="scan-loading-spinner"></div><div class="scan-loading-text">Processando arquivo...</div></div></div><div class="scan-ctrl"><button class="btn-cap" onclick="capturar()"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3.2"/><path d="M9 2L7.17 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2h-3.17L15 2H9zm3 15c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5z"/></svg></button><input type="file" id="file-foto" accept="image/*" style="display:none" onchange="processarArquivoGaleria(this)"/><button class="btn-gal" onclick="document.getElementById('file-foto').click()">🖼️ Escolher da galeria</button><button class="btn-criar-manual" onclick="abrirCriacaoEscala()" style="display:none" id="btn-criar-escala">✏️ Criar Escala</button></div></div>
 <div id="ocr-ov"><div class="ocr-spinner"></div><div class="ocr-texto" id="ocr-texto">📸 Analisando...</div><div class="ocr-barra"><div class="ocr-preenchimento" id="ocr-preenchimento"></div></div></div>
 <div id="rv-ov"><div class="rv-hd"><button class="btn-x" onclick="fecharRv()">✕</button><h2>Conferir dados</h2></div><div class="rv-body"><div class="rv-lbl">Título</div><div class="rv-val"><input type="text" id="rv-tit"/></div><div class="rv-lbl">Data/hora</div><div class="rv-val"><input type="datetime-local" id="rv-data"/></div><div class="rv-lbl">Local</div><div class="rv-val"><input type="text" id="rv-loc"/></div><div class="rv-lbl">Convocados</div><div id="rv-matches"></div><div class="rv-btns"><button class="btn-cancel" onclick="fecharRv()">Cancelar</button><button class="btn-salvar" onclick="salvar()">✓ Salvar</button></div></div></div>
 
 <!-- Modal de Criação de Escala -->
-<div class="ov-center" id="criar-escala-ov">
-  <div class="box-center">
-    <h3>✏️ Criar Escala</h3>
-    <div class="field"><label>Título</label><input type="text" id="escala-titulo" placeholder="Ex: Plantão Final de Semana"/></div>
-    <div class="field"><label>Data e Hora</label><input type="datetime-local" id="escala-data"/></div>
-    <div class="field"><label>Local</label><input type="text" id="escala-local" placeholder="Ex: Sala de Reuniões"/></div>
-    <div class="field"><label>Selecionar Convocados</label></div>
-    <div class="lista-nomes-manual" id="lista-nomes-escala"></div>
-    <div class="field" style="margin-top:8px"><label>Adicionar nome externo</label><div style="display:flex;gap:8px"><input type="text" id="escala-nome-externo" placeholder="Nome completo" style="flex:1"><button class="btn-salvar" onclick="adicionarNomeEscala()" style="width:auto;padding:11px 16px">+</button></div></div>
-    <div style="margin-bottom:12px" id="escala-nomes-extras"></div>
-    <div class="btns-row"><button class="btn-cancel" onclick="fecharCriacaoEscala()">Cancelar</button><button class="btn-salvar" onclick="salvarEscala()">💾 Criar Escala</button></div>
-  </div>
-</div>
+<div class="ov-center" id="criar-escala-ov"><div class="box-center"><h3>✏️ Criar Escala</h3><div class="field"><label>Título</label><input type="text" id="escala-titulo" placeholder="Ex: Plantão Final de Semana"/></div><div class="field"><label>Data e Hora</label><input type="datetime-local" id="escala-data"/></div><div class="field"><label>Local</label><input type="text" id="escala-local" placeholder="Ex: Sala de Reuniões"/></div><div class="field"><label>Selecionar Convocados</label></div><div class="lista-nomes-manual" id="lista-nomes-escala"></div><div class="field" style="margin-top:8px"><label>Adicionar nome externo</label><div style="display:flex;gap:8px"><input type="text" id="escala-nome-externo" placeholder="Nome completo" style="flex:1"><button class="btn-salvar" onclick="adicionarNomeEscala()" style="width:auto;padding:11px 16px">+</button></div></div><div style="margin-bottom:12px" id="escala-nomes-extras"></div><div class="btns-row"><button class="btn-cancel" onclick="fecharCriacaoEscala()">Cancelar</button><button class="btn-salvar" onclick="salvarEscala()">💾 Criar Escala</button></div></div></div>
 
 <!-- Modal de Ajuste de Saldo -->
-<div class="ov-center" id="saldo-ajuste-ov">
-  <div class="box-center">
-    <h3>⚙️ Ajustar Saldo</h3>
-    <p style="font-size:13px;color:var(--light);margin-bottom:16px">Configure seus saldos e data de admissão.</p>
-    <div class="field"><label>📅 Data de Admissão</label><input type="text" id="ajuste-admissao" placeholder="DD/MM/AAAA" maxlength="10"/><div class="ajuda-admissao">Exemplo: 15/03/2020</div></div>
-    <div class="ajuste-bloco">
-      <h4>🏖️ Períodos de Férias</h4>
-      <div id="ajuste-periodos-ferias"></div>
-      <button class="btn-add-ajuste" onclick="adicionarPeriodoNoAjuste()">+ Adicionar período</button>
-      <div class="info-destaque" id="info-prox-ferias" style="margin-top:10px;display:none;"></div>
-      <label class="venda-label"><input type="checkbox" id="ajuste-vende-ferias" class="ferias" onchange="atualizarInfosAjuste()"> Vendi 10 dias (próximo período terá 20 dias)</label>
-    </div>
-    <div class="ajuste-bloco">
-      <h4>⏱️ Abonos</h4>
-      <div class="field" style="margin-bottom:0"><label>Disponíveis agora (máx. 6/ano)</label><input type="number" id="ajuste-abono" min="0" max="6" value="6"/></div>
-      <p style="font-size:11px;color:var(--light);margin-top:4px;">Renova 1º de janeiro (6/ano)</p>
-    </div>
-    <div class="ajuste-bloco">
-      <h4>🏆 Licença Prêmio</h4>
-      <div class="field" style="margin-bottom:0"><label>Total de dias disponíveis</label><input type="number" id="ajuste-licenca" min="0" max="180" value="90"/></div>
-      <div class="info-destaque" id="info-quinquenios" style="margin-top:10px;display:none;"></div>
-      <label class="venda-label"><input type="checkbox" id="ajuste-vende-licenca30" class="licenca"> Vendi 30 dias da licença</label>
-      <label class="venda-label"><input type="checkbox" id="ajuste-vende-licenca60" class="licenca"> Vendi 60 dias da licença</label>
-    </div>
-    <div class="btns-row"><button class="btn-cancel" onclick="fecharAjusteSaldo()">Cancelar</button><button class="btn-salvar" onclick="salvarAjusteSaldo()">💾 Salvar</button></div>
-  </div>
-</div>
+<div class="ov-center" id="saldo-ajuste-ov"><div class="box-center"><h3>⚙️ Ajustar Saldo</h3><p style="font-size:13px;color:var(--light);margin-bottom:16px">Configure seus saldos e data de admissão.</p><div class="field"><label>📅 Data de Admissão</label><input type="text" id="ajuste-admissao" placeholder="DD/MM/AAAA" maxlength="10"/><div class="ajuda-admissao">Exemplo: 15/03/2020</div></div><div class="ajuste-bloco"><h4>🏖️ Períodos de Férias</h4><div id="ajuste-periodos-ferias"></div><button class="btn-add-ajuste" onclick="adicionarPeriodoNoAjuste()">+ Adicionar período</button><div class="info-destaque" id="info-prox-ferias" style="margin-top:10px;display:none;"></div><label class="venda-label"><input type="checkbox" id="ajuste-vende-ferias" class="ferias" onchange="atualizarInfosAjuste()"> Vendi 10 dias (próximo período terá 20 dias)</label></div><div class="ajuste-bloco"><h4>⏱️ Abonos</h4><div class="field" style="margin-bottom:0"><label>Disponíveis agora (máx. 6/ano)</label><input type="number" id="ajuste-abono" min="0" max="6" value="6"/></div><p style="font-size:11px;color:var(--light);margin-top:4px;">Renova 1º de janeiro (6/ano)</p></div><div class="ajuste-bloco"><h4>🏆 Licença Prêmio</h4><div class="field" style="margin-bottom:0"><label>Total de dias disponíveis</label><input type="number" id="ajuste-licenca" min="0" max="180" value="90"/></div><div class="info-destaque" id="info-quinquenios" style="margin-top:10px;display:none;"></div><label class="venda-label"><input type="checkbox" id="ajuste-vende-licenca30" class="licenca"> Vendi 30 dias da licença</label><label class="venda-label"><input type="checkbox" id="ajuste-vende-licenca60" class="licenca"> Vendi 60 dias da licença</label></div><div class="btns-row"><button class="btn-cancel" onclick="fecharAjusteSaldo()">Cancelar</button><button class="btn-salvar" onclick="salvarAjusteSaldo()">💾 Salvar</button></div></div></div>
 
 <div class="modal-overlay" id="installModal"><div class="modal-content"><span class="close-modal" onclick="closeInstallModal()">✕</span><h2 style="color: var(--blue); margin-top: 5px; font-size: 18px; text-transform: uppercase;">Instalação do App</h2><div id="step-os"><p style="font-size:12px;color:var(--light);margin-bottom:20px;text-align:center">Selecione o seu sistema para ver como instalar gratuitamente:</p><div class="os-container"><div class="os-card" onclick="showGuide('android')"><div class="os-icon">🤖</div><div class="os-title">ANDROID</div></div><div class="os-card" onclick="showGuide('ios')"><div class="os-icon">🍎</div><div class="os-title">IPHONE</div></div></div></div><div id="guide-android" class="guide-content"><div class="guide-step"><div class="icon-wrapper">⋮</div><div>Clique nos <strong>Três Pontos</strong> no canto superior do seu navegador Chrome.</div></div><div class="guide-step"><div class="icon-wrapper">➕</div><div>Selecione a opção <strong>"Adicionar à tela inicial"</strong>.</div></div><div class="guide-step"><div class="icon-wrapper">✓</div><div>Confirme clicando em <strong>Instalar</strong>.</div></div><button class="btn-back" onclick="resetInstallModal()">← Voltar</button></div><div id="guide-ios" class="guide-content"><div class="guide-step"><div class="icon-wrapper">↗</div><div>Clique no ícone de <strong>Compartilhar</strong> na barra inferior do Safari.</div></div><div class="guide-step"><div class="icon-wrapper">➕</div><div>Role a lista e clique em <strong>"Adicionar à Tela de Início"</strong>.</div></div><div class="guide-step"><div class="icon-wrapper">✓</div><div>Confirme clicando em <strong>Adicionar</strong> no canto superior direito.</div></div><button class="btn-back" onclick="resetInstallModal()">← Voltar</button></div></div></div>
 <div class="ov-center" id="tv-aviso-ov"><div class="box-center" style="text-align:center"><div style="font-size:48px;margin-bottom:12px">📺</div><h3>Aba destinada à Smart TV</h3><p style="font-size:14px;color:var(--light);margin-bottom:16px">Esta aba é otimizada para exibição em televisores.<br>Use o botão <strong>✕</strong> no canto superior direito ou a tecla <strong>Voltar</strong> para sair.</p><label style="display:flex;align-items:center;justify-content:center;gap:8px;font-size:13px;margin-bottom:18px;cursor:pointer"><input type="checkbox" id="tv-aviso-check" onchange="salvarPreferenciaTV()"> Não mostrar novamente</label><button class="btn-salvar" onclick="fecharAvisoTV()" style="width:100%">Entendi</button></div></div>
@@ -530,7 +455,7 @@ function toggleNomeEscala(nome){const idx=nomesSelecionadosEscala.indexOf(nome);
 function adicionarNomeEscala(){const input=document.getElementById('escala-nome-externo');const nome=input.value.trim();if(!nome)return;if(!nomesSelecionadosEscala.includes(nome))nomesSelecionadosEscala.push(nome);const extras=document.getElementById('escala-nomes-extras');extras.innerHTML+='<span style="display:inline-block;background:#fff7ed;padding:4px 10px;border-radius:8px;margin:2px;font-size:12px">'+nome+' <button onclick="this.parentElement.remove();nomesSelecionadosEscala=nomesSelecionadosEscala.filter(n=>n!==\''+nome.replace(/'/g,"\\'")+'\')" style="background:none;border:none;color:var(--red);cursor:pointer;font-weight:bold">✕</button></span>';input.value='';renderizarListaNomesEscala();}
 async function salvarEscala(){const titulo=document.getElementById('escala-titulo').value.trim();const data=document.getElementById('escala-data').value;const local=document.getElementById('escala-local').value.trim();if(!titulo){mostrarToast('⚠️ Informe o título');return;}if(!data){mostrarToast('⚠️ Informe a data e hora');return;}if(nomesSelecionadosEscala.length===0){mostrarToast('⚠️ Selecione pelo menos um nome');return;}try{await db.collection('eventos').add({titulo_evento:titulo,data_hora:data+':00',local:local,tipo:'escala',lista_convocados:nomesSelecionadosEscala,grupo_id:grupoId,criado_por:eu.uid,criado_em:firebase.firestore.FieldValue.serverTimestamp()});mostrarToast('✅ Escala criada!');fecharCriacaoEscala();carregarEventos();if(document.body.classList.contains('painel-ativo'))iniciarPainel();}catch(e){console.error(e);mostrarToast('⚠️ Erro ao criar escala');}}
 
-// ═══════════ SALDO v25.8 (CORRIGIDO) ═══════════
+// ═══════════ SALDO v25.9 (CORRIGIDO - CARD PEQUENO) ═══════════
 function parseDataBR(str){if(!str||str.trim().length<8)return null;const partes=str.split('/');if(partes.length!==3)return null;const dia=parseInt(partes[0]),mes=parseInt(partes[1])-1,ano=parseInt(partes[2]);if(isNaN(dia)||isNaN(mes)||isNaN(ano))return null;return new Date(ano,mes,dia,12,0,0);}
 function calcularProximoAniversario(dataAdmissao){const hoje=new Date();let prox=new Date(dataAdmissao);prox.setFullYear(hoje.getFullYear());if(prox<=hoje)prox.setFullYear(hoje.getFullYear()+1);return prox;}
 function calcularProximoQuinquenio(dataAdmissao){const hoje=new Date();let prox=new Date(dataAdmissao);while(prox<=hoje)prox.setFullYear(prox.getFullYear()+5);return prox;}
@@ -545,8 +470,10 @@ async function carregarSaldo(){
   const ausenciasSnap=await db.collection('ausencias').where('uid','==',eu.uid).get();
   const usos=ausenciasSnap.docs.map(d=>({id:d.id,...d.data()}));
   const TOTAL_FERIAS_POR_PERIODO=30,TOTAL_ABONOS=6,TOTAL_LICENCA=90;
+  const vendeuFerias=saldoUsuario.vendeu_ferias||false;
+  const totalDoPeriodo=vendeuFerias?20:30;
 
-  // Férias: totalFerias = soma do que o usuário DIGITOU em cada período
+  // Férias: soma do que o usuário digitou em cada período
   const totalFerias=periodosFerias.reduce((s,p)=>s+(p.total||0),0);
   const usadoFerias=usos.filter(u=>u.tipo==='ferias').reduce((s,u)=>s+(u.dias||0),0);
   const restanteFerias=Math.max(0,totalFerias-usadoFerias);
@@ -562,16 +489,21 @@ async function carregarSaldo(){
   const usadoLicenca=usos.filter(u=>u.tipo==='licenca').reduce((s,u)=>s+(u.dias||0),0);
   const restanteLicenca=Math.max(0,disponivelLicenca-usadoLicenca);
 
-  // Infos próximos períodos
+  // Infos
   const dataAdmissao=data.data_admissao||'';
   let infoProxFerias='',infoQuinquenio='';
-  if(dataAdmissao){const dt=parseDataBR(dataAdmissao);if(dt){const prox=calcularProximoAniversario(dt);const vendeu=saldoUsuario.vendeu_ferias||false;infoProxFerias='<div style="font-size:11px;color:var(--blue);margin-top:4px;">📅 Próximo período: '+prox.toLocaleDateString('pt-BR')+' (+'+(vendeu?20:30)+' dias)</div>';const proxQ=calcularProximoQuinquenio(dt);infoQuinquenio='<div style="font-size:11px;color:var(--blue);margin-top:4px;">🏆 Próximo quinquênio: '+proxQ.toLocaleDateString('pt-BR')+' (+90 dias)</div>';}}
+  if(dataAdmissao){const dt=parseDataBR(dataAdmissao);if(dt){const prox=calcularProximoAniversario(dt);infoProxFerias='<div style="font-size:11px;color:var(--blue);margin-top:4px;">📅 Próximo período: '+prox.toLocaleDateString('pt-BR')+' (+'+totalDoPeriodo+' dias)</div>';const proxQ=calcularProximoQuinquenio(dt);infoQuinquenio='<div style="font-size:11px;color:var(--blue);margin-top:4px;">🏆 Próximo quinquênio: '+proxQ.toLocaleDateString('pt-BR')+' (+90 dias)</div>';}}
 
-  // Cards pequenos dos períodos
-  let periodosHtml='';periodosFerias.forEach(p=>{const usado=usos.filter(u=>u.tipo==='ferias'&&u.periodo===p.periodo).reduce((s,u)=>s+(u.dias||0),0);const disponivelNoPeriodo=p.total||TOTAL_FERIAS_POR_PERIODO;const restanteNoPeriodo=Math.max(0,disponivelNoPeriodo-usado);periodosHtml+='<span style="display:inline-block;margin-right:8px;font-size:11px;background:#fdf2f8;padding:2px 6px;border-radius:4px;">'+p.periodo+': '+restanteNoPeriodo+'/'+disponivelNoPeriodo+'d</span>';});
+  // ═════ CORREÇÃO: Cards pequenos ═════
+  let periodosHtml='';
+  periodosFerias.forEach(p=>{
+    const usadoNoPeriodo=usos.filter(u=>u.tipo==='ferias'&&u.periodo===p.periodo).reduce((s,u)=>s+(u.dias||0),0);
+    const digitadoPeloUsuario=p.total||30;
+    const restanteNoPeriodo=Math.max(0,digitadoPeloUsuario-usadoNoPeriodo);
+    periodosHtml+='<span style="display:inline-block;margin-right:8px;font-size:11px;background:#fdf2f8;padding:2px 6px;border-radius:4px;">'+p.periodo+': '+restanteNoPeriodo+'/'+totalDoPeriodo+'d</span>';
+  });
+
   const admissaoDisplay=dataAdmissao?'<div style="font-size:12px;color:var(--light);margin-bottom:12px">📅 Admissão: '+dataAdmissao+'</div>':'';
-
-  // Barras
   const percFerias=totalTextoFerias>0?Math.min(100,(restanteFerias/totalTextoFerias)*100):0;
   const percAbono=TOTAL_ABONOS>0?Math.min(100,(restanteAbono/TOTAL_ABONOS)*100):0;
   const percLicenca=TOTAL_LICENCA>0?Math.min(100,(restanteLicenca/TOTAL_LICENCA)*100):0;
