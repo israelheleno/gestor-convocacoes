@@ -143,7 +143,6 @@
     .admin-badge{display:inline-block;background:#fef3c7;color:#92400e;font-size:9px;padding:2px 6px;border-radius:4px;margin-left:6px;font-weight:700}
     .btn-ag{width:100%;padding:12px;background:var(--green);color:#fff;border:none;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;margin-top:16px;font-family:'Sora',sans-serif}
     .btn-del{width:100%;padding:11px;background:#fee2e2;color:var(--red);border:none;border-radius:10px;font-size:14px;cursor:pointer;margin-top:8px}
-    .btn-salvar-edicao-evento{width:100%;padding:10px;background:var(--blue);color:#fff;border:none;border-radius:10px;font-size:13px;cursor:pointer;margin-top:8px;font-family:'Sora',sans-serif;font-weight:600}
     .btn-criar-manual{display:flex;align-items:center;justify-content:center;gap:8px;width:auto;min-width:200px;margin:0 auto;padding:12px 24px;background:var(--orange);color:#fff;border:none;border-radius:12px;font-size:14px;cursor:pointer;font-weight:600}
     .ov-center{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:750;display:none;align-items:center;justify-content:center;padding:20px}
     .ov-center.on{display:flex}
@@ -272,8 +271,8 @@
     .trocar-btns{display:flex;gap:10px}
     .toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:#1e293b;color:#fff;padding:12px 24px;border-radius:12px;font-size:14px;z-index:999;opacity:0;transition:opacity .3s;pointer-events:none;white-space:nowrap}
     .toast.show{opacity:1}
-    #banner-instalar{display:none;background:#EFF6FF;border-bottom:1px solid #BFDBFE;padding:10px 16px;}
-    #completar-cadastro-ov{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:900;display:none;align-items:center;justify-content:center;padding:20px;}
+    #banner-instalar{display:none;background:#EFF6FF;border-bottom:1px solid #BFDBFE;padding:10px 16px}
+    #completar-cadastro-ov{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:900;display:none;align-items:center;justify-content:center;padding:20px}
     #completar-cadastro-ov.on{display:flex}
     .saldo-card{background:var(--w);border-radius:16px;padding:16px;margin-bottom:12px;box-shadow:0 2px 8px rgba(30,58,138,.06)}
     .saldo-header{display:flex;align-items:center;gap:12px;margin-bottom:10px}
@@ -344,13 +343,13 @@
   <div id="aba-convocacoes" class="aba-content"><div id="sec-apv" style="display:none;margin-bottom:16px"><div class="sec-titulo">🔔 Solicitações</div><div id="lst-apv"></div></div><div class="card"><div class="card-titulo">👥 Grupos <span class="badge" id="grp-badge">—</span></div><div id="grp-content"></div></div><div class="sec-titulo" style="margin-bottom:10px">Próxima convocação</div><div id="prox"></div><div class="sec-titulo" style="margin-top:20px">Todas <span style="font-size:12px;color:var(--light)" id="total"></span></div><div id="lst-ev"><div class="skel"></div></div></div>
   <div id="aba-ferias" class="aba-content" style="display:none"><div class="card"><div class="card-titulo">📋 Períodos do Grupo</div><button class="btn-meu-periodo" onclick="iniciarAddFerias()">+ Meu Período</button><button class="btn-para-outro" id="btn-para-outro" style="display:none" onclick="abrirSelecaoUsuario()">👤 Adicionar para outro usuário</button></div><div id="lst-ausencias"></div></div>
   <div id="aba-saldo" class="aba-content" style="display:none"><div id="saldo-container"><div class="skel"></div></div></div>
-  <div id="aba-painel" class="aba-content" style="display:none"><div class="painel-wrapper"><div class="painel-header"><div class="painel-left"><h2>📋 Painel de Convocações</h2><div class="painel-relogio"><span class="hora-texto" id="painel-hora-texto"></span></div></div><div class="painel-center"><div class="painel-status"><span class="dot"></span> Atualizando em tempo real</div></div><div class="painel-right"><div class="painel-relogio"><span class="data-texto" id="painel-data-texto"></span></div><div class="grupo-badge" id="painel-grupo-nome">—</div></div></div><div class="painel-grid" id="painel-grid"><div class="painel-vazio">Nenhuma convocação disponível no momento.</div></div><div class="painel-footer">Desenvolvido por <strong>IHC Solutions</strong> — © 2026 Gestor de Convocações — v25.5</div></div></div>
+  <div id="aba-painel" class="aba-content" style="display:none"><div class="painel-wrapper"><div class="painel-header"><div class="painel-left"><h2>📋 Painel de Convocações</h2><div class="painel-relogio"><span class="hora-texto" id="painel-hora-texto"></span></div></div><div class="painel-center"><div class="painel-status"><span class="dot"></span> Atualizando em tempo real</div></div><div class="painel-right"><div class="painel-relogio"><span class="data-texto" id="painel-data-texto"></span></div><div class="grupo-badge" id="painel-grupo-nome">—</div></div></div><div class="painel-grid" id="painel-grid"><div class="painel-vazio">Nenhuma convocação disponível no momento.</div></div><div class="painel-footer">Desenvolvido por <strong>IHC Solutions</strong> — © 2026 Gestor de Convocações — v25.6</div></div></div>
 </main>
 <button id="fab" onclick="abrirScanner()"><svg viewBox="0 0 24 24"><path d="M9 3H5a2 2 0 00-2 2v4m6-6h10a2 2 0 012 2v4M9 3v18m0 0h10a2 2 0 002-2V9M9 21H5a2 2 0 01-2-2V9m0 0h18"/></svg></button>
 <button class="btn-fab-admin" id="btn-fab-admin" onclick="abrirAdmin()">🛡️</button>
-<footer><p>Desenvolvido por <strong>IHC Solutions</strong></p><p>© 2026 Gestor de Convocações — v25.5</p></footer>
+<footer><p>Desenvolvido por <strong>IHC Solutions</strong></p><p>© 2026 Gestor de Convocações — v25.6</p></footer>
 
-<!-- Modais - Versão otimizada -->
+<!-- Modais -->
 <div class="overlay" id="mod-ev" onclick="if(event.target===this) fecharMod()"><div class="sheet"><div class="handle"></div><input type="text" class="mod-titulo-input" id="mod-tit" placeholder="Título do evento"><input type="text" class="mod-sub-input" id="mod-sub" placeholder="Data e hora"><div class="mod-sec"><h3>Convocados <span id="admin-badge-conv" style="display:none" class="admin-badge">Admin</span></h3><div id="mod-conv"></div></div><div style="display:flex;gap:8px;margin-top:16px"><button class="btn-ag" id="mod-ag" style="flex:1;margin-top:0">📅 Agenda</button><button id="mod-trocar" style="flex:1;padding:12px;background:#fff7ed;color:#c2410c;border:1.5px solid #fed7aa;border-radius:10px;font-size:14px;cursor:pointer;font-weight:600;display:none;">🔄 Trocar</button></div><button class="btn-salvar-nomes" onclick="salvarTudoEvento()" style="display:none;width:100%;padding:10px;background:var(--blue);color:#fff;border:none;border-radius:10px;font-size:13px;cursor:pointer;margin-top:8px;font-family:'Sora',sans-serif;font-weight:600" id="btn-salvar-tudo">💾 Salvar</button><button class="btn-del" id="mod-del" style="display:none">🗑 Excluir</button><button class="btn-cancel" style="margin-top:10px;width:100%" onclick="fecharMod()">Fechar</button></div></div>
 <div id="trocar-ov"><div class="trocar-box"><h3>🔄 Trocar escala</h3><p id="trocar-desc"></p><div class="trocar-membros" id="trocar-lista"></div><div class="trocar-btns"><button class="btn-cancel" onclick="fecharTrocar()">Cancelar</button><button class="btn-salvar" style="background:#c2410c" id="trocar-confirmar">Confirmar</button></div></div></div>
 <div class="ov-center" id="ferias-consent-ov"><div class="box-center"><h3>Registrar Período</h3><p id="ferias-consent-desc">Registrar férias, licença ou abono.</p><div class="btns-row"><button class="btn-cancel" onclick="document.getElementById('ferias-consent-ov').classList.remove('on')">Cancelar</button><button class="btn-salvar" onclick="abrirFormFerias()">Continuar</button></div></div></div>
@@ -384,15 +383,12 @@ let notifAtual=null,filaNotifs=[],listaAusencias=[],membroEditando=null;
 let toastTimeout,usuarioSelecionadoFerias=null,usuariosGrupo=[];
 let painelListener=null,painelCache=[],painelTimer=null,timersRolagem=[],relogioTimer=null;
 let nomesManuais=[],nomesSelecionados=[];
-const loadingScreen=document.getElementById('loading-screen');
-const loadingMsg=document.getElementById('loading-msg');
-const loadingError=document.getElementById('loading-error');
-const btnRecarregar=document.getElementById('btn-recarregar');
+const loadingScreen=document.getElementById('loading-screen'),loadingMsg=document.getElementById('loading-msg'),loadingError=document.getElementById('loading-error'),btnRecarregar=document.getElementById('btn-recarregar');
 function showError(msg){loadingMsg.textContent='Erro ao carregar';loadingError.textContent=msg;loadingError.style.display='block';btnRecarregar.style.display='block';document.querySelector('#loading-screen .spinner').style.display='none';}
 let authResolvido=false;
-const SEGURANCA_TIMEOUT=setTimeout(()=>{if(!authResolvido){authResolvido=true;showError('Tempo limite. Recarregue a página.');}},8000);
+const SEGURANCA_TIMEOUT=setTimeout(()=>{if(!authResolvido){authResolvido=true;showError('Tempo limite.');}},8000);
 const userAtual=auth.currentUser;
-if(userAtual){authResolvido=true;clearTimeout(SEGURANCA_TIMEOUT);loadingMsg.textContent='Carregando seus dados...';carregarUsuario(userAtual);}
+if(userAtual){authResolvido=true;clearTimeout(SEGURANCA_TIMEOUT);loadingMsg.textContent='Carregando...';carregarUsuario(userAtual);}
 else{loadingMsg.textContent='Verificando autenticação...';auth.onAuthStateChanged(user=>{if(authResolvido)return;authResolvido=true;clearTimeout(SEGURANCA_TIMEOUT);if(!user){window.location.replace('login.html');return;}carregarUsuario(user);});}
 async function carregarUsuario(user){try{const snap=await db.collection('usuarios').doc(user.uid).get();if(!snap.exists){window.location.replace('login.html');return;}eu={uid:user.uid,...snap.data()};document.getElementById('h-user').textContent=eu.nome_completo+' · '+eu.cargo;await migrarGruposSeNecessario();const snap2=await db.collection('usuarios').doc(user.uid).get();eu={uid:user.uid,...snap2.data()};gruposUsuario=eu.grupos||[];if(gruposUsuario.length>0){grupoAtivo=gruposUsuario[0];grupoId=grupoAtivo.id;eu.is_admin=grupoAtivo.is_admin;}document.getElementById('btn-fab-admin').classList.toggle('on',eu.is_admin);document.getElementById('btn-para-outro').style.display=eu.is_admin?'block':'none';document.getElementById('btn-criar-manual-scan').style.display=eu.is_admin?'flex':'none';loadingScreen.style.display='none';verificarInstalacao();iniciarNotificacoes();renderizarCardGrupos();if(grupoId){carregarEventos();verificarAprovacoes();verificarNotificacoesPendentes();iniciarVerificacaoLembretes();}else{document.getElementById('lst-ev').innerHTML='<p style="color:var(--light);padding:20px;text-align:center">Entre em um grupo para ver convocações.</p>';document.getElementById('prox').innerHTML='<div class="card-vazio">Entre em um grupo para ver suas convocações.</div>';}verificarCadastroCompleto();limparEventosAntigos();}catch(err){console.error(err);showError('Erro ao carregar dados.');}}
 function mostrarToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');clearTimeout(toastTimeout);toastTimeout=setTimeout(()=>t.classList.remove('show'),2500);}
@@ -461,13 +457,12 @@ function abrirFormFerias(){document.getElementById('ferias-consent-ov').classLis
 function calcularDataTermino(){const iniVal=document.getElementById('ferias-ini').value;const dias=parseInt(document.getElementById('ferias-dias').value)||1;if(iniVal&&dias>0){const dt=new Date(iniVal+"T12:00:00");dt.setDate(dt.getDate()+dias-1);document.getElementById('ferias-fim').value=dt.toISOString().split('T')[0];}}
 async function salvarFerias(){const tipo=document.getElementById('ferias-tipo').value;const periodo=tipo==='ferias'?document.getElementById('ferias-periodo-select').value:document.getElementById('ferias-periodo-text').value.trim();const dias=parseInt(document.getElementById('ferias-dias').value)||1;const iniStr=document.getElementById('ferias-ini').value;const fimStr=document.getElementById('ferias-fim').value;const erroEl=document.getElementById('ferias-erro');if(!periodo||!iniStr||!fimStr){erroEl.textContent='⚠️ Preencha todos os campos';erroEl.style.display='block';return;}const uidDestino=usuarioSelecionadoFerias?usuarioSelecionadoFerias.uid:eu.uid;const nomeDestino=usuarioSelecionadoFerias?usuarioSelecionadoFerias.nome_completo:eu.nome_completo;await db.collection('ausencias').add({uid:uidDestino,nome_completo:nomeDestino,grupo_id:grupoId,tipo,periodo,dias,data_inicio:iniStr,data_fim:fimStr,criado_por:eu.uid,criado_em:firebase.firestore.FieldValue.serverTimestamp()});document.getElementById('ferias-form-ov').classList.remove('on');usuarioSelecionadoFerias=null;mostrarToast("✅ Período registrado!");carregarFerias();carregarSaldo();}
 
-// ═══════════ SALDO v25.5 - CORRIGIDO ═══════════
+// ═══════════ SALDO v25.6 - CORRIGIDO ═══════════
 function parseDataBR(str){if(!str||str.trim().length<8)return null;const partes=str.split('/');if(partes.length!==3)return null;const dia=parseInt(partes[0]),mes=parseInt(partes[1])-1,ano=parseInt(partes[2]);if(isNaN(dia)||isNaN(mes)||isNaN(ano))return null;return new Date(ano,mes,dia,12,0,0);}
 function calcularProximoAniversario(dataAdmissao){const hoje=new Date();let prox=new Date(dataAdmissao);prox.setFullYear(hoje.getFullYear());if(prox<=hoje)prox.setFullYear(hoje.getFullYear()+1);return prox;}
 function calcularProximoQuinquenio(dataAdmissao){const hoje=new Date();let prox=new Date(dataAdmissao);while(prox<=hoje)prox.setFullYear(prox.getFullYear()+5);return prox;}
 
 async function carregarSaldo(){
-  console.log('🔄 carregarSaldo() chamado');
   const container=document.getElementById('saldo-container');
   container.innerHTML='<div class="skel"></div>';
   const snap=await db.collection('usuarios').doc(eu.uid).get();
@@ -477,40 +472,42 @@ async function carregarSaldo(){
   const TOTAL_ABONOS=6;
   const ausenciasSnap=await db.collection('ausencias').where('uid','==',eu.uid).get();
   const usos=ausenciasSnap.docs.map(d=>({id:d.id,...d.data()}));
-  console.log('📊 Dados do Firestore:',{saldoData,dataAdmissao,totalUsos:usos.length});
 
-  // FÉRIAS
+  // ═════ FÉRIAS ═════
   let totalFerias=0;
-  if(saldoData.ferias_disponivel!=null&&saldoData.ferias_disponivel!==undefined){totalFerias=parseInt(saldoData.ferias_disponivel)||0;}
-  else if(saldoData.ferias!=null&&saldoData.ferias!==undefined){totalFerias=parseInt(saldoData.ferias)||0;}
+  // Prioridade 1: valor manual salvo
+  if(saldoData.ferias_disponivel!=null&&saldoData.ferias_disponivel!==undefined&&String(saldoData.ferias_disponivel).trim()!==''){totalFerias=parseInt(saldoData.ferias_disponivel)||0;}
+  else if(saldoData.ferias!=null&&saldoData.ferias!==undefined&&String(saldoData.ferias).trim()!==''){totalFerias=parseInt(saldoData.ferias)||0;}
+  // Prioridade 2: soma dos períodos
+  else if(saldoData.periodos_ferias&&Array.isArray(saldoData.periodos_ferias)&&saldoData.periodos_ferias.length>0){totalFerias=saldoData.periodos_ferias.reduce((s,p)=>s+((p.total||30)-(p.vendeu||0)),0);}
+  else{totalFerias=30;}
   const usadoFerias=usos.filter(u=>u.tipo==='ferias').reduce((s,u)=>s+(parseInt(u.dias)||0),0);
   const restanteFerias=Math.max(0,totalFerias-usadoFerias);
-  console.log('🏖️ Férias:',{totalFerias,usadoFerias,restanteFerias});
 
-  // ABONOS
+  // ═════ ABONOS ═════
   let totalAbono=TOTAL_ABONOS;
-  if(saldoData.abono_disponivel!=null&&saldoData.abono_disponivel!==undefined){totalAbono=parseInt(saldoData.abono_disponivel)||0;}
-  else if(saldoData.abono!=null&&saldoData.abono!==undefined){totalAbono=parseInt(saldoData.abono)||TOTAL_ABONOS;}
+  if(saldoData.abono_disponivel!=null&&saldoData.abono_disponivel!==undefined&&String(saldoData.abono_disponivel).trim()!==''){totalAbono=parseInt(saldoData.abono_disponivel)||0;}
+  else if(saldoData.abono!=null&&saldoData.abono!==undefined&&String(saldoData.abono).trim()!==''){totalAbono=parseInt(saldoData.abono)||0;}
   const anoAtual=new Date().getFullYear();
   const usadoAbono=usos.filter(u=>u.tipo==='abono'&&new Date(u.data_inicio+'T12:00:00').getFullYear()===anoAtual).length;
   const restanteAbono=Math.max(0,totalAbono-usadoAbono);
-  console.log('⏱️ Abonos:',{totalAbono,usadoAbono,restanteAbono});
 
-  // LICENÇA
+  // ═════ LICENÇA ═════
   let totalLicenca=0;
-  if(saldoData.licenca_disponivel!=null&&saldoData.licenca_disponivel!==undefined){totalLicenca=parseInt(saldoData.licenca_disponivel)||0;}
-  else if(saldoData.licenca!=null&&saldoData.licenca!==undefined){totalLicenca=parseInt(saldoData.licenca)||0;}
+  if(saldoData.licenca_disponivel!=null&&saldoData.licenca_disponivel!==undefined&&String(saldoData.licenca_disponivel).trim()!==''){totalLicenca=parseInt(saldoData.licenca_disponivel)||0;}
+  else if(saldoData.licenca!=null&&saldoData.licenca!==undefined&&String(saldoData.licenca).trim()!==''){totalLicenca=parseInt(saldoData.licenca)||0;}
+  else if(saldoData.quinquenios&&Array.isArray(saldoData.quinquenios)&&saldoData.quinquenios.length>0){totalLicenca=saldoData.quinquenios.reduce((s,q)=>s+((q.total||90)-(q.vendeu||0)),0);}
   const usadoLicenca=usos.filter(u=>u.tipo==='licenca').reduce((s,u)=>s+(parseInt(u.dias)||0),0);
   const restanteLicenca=Math.max(0,totalLicenca-usadoLicenca);
-  console.log('🏆 Licença:',{totalLicenca,usadoLicenca,restanteLicenca});
 
+  // ═════ INFOS ═════
   let infoProxFerias='',infoQuinquenio='';
   if(dataAdmissao){const dt=parseDataBR(dataAdmissao);if(dt){const prox=calcularProximoAniversario(dt);const vendeu=saldoData.vendeu_ferias||false;infoProxFerias='📅 Próximo período: '+prox.toLocaleDateString('pt-BR')+' (+'+(vendeu?20:30)+' dias)';const proxQ=calcularProximoQuinquenio(dt);infoQuinquenio='🏆 Próximo quinquênio: '+proxQ.toLocaleDateString('pt-BR')+' (+90 dias)';}}
 
+  // ═════ BARRAS ═════
   const percFerias=totalFerias>0?Math.min(100,(restanteFerias/totalFerias)*100):0;
   const percAbono=TOTAL_ABONOS>0?Math.min(100,(restanteAbono/TOTAL_ABONOS)*100):0;
   const percLicenca=totalLicenca>0?Math.min(100,(restanteLicenca/totalLicenca)*100):0;
-  console.log('📊 Porcentagens:',{percFerias,percAbono,percLicenca});
 
   container.innerHTML=
     '<div class="card"><div class="card-titulo">💰 Meu Saldo <span class="badge">Individual</span></div>'+
@@ -520,7 +517,6 @@ async function carregarSaldo(){
     '<div class="saldo-card"><div class="saldo-header"><div class="saldo-icon licenca">🏆</div><div class="saldo-info"><div class="saldo-tipo">Licença Prêmio</div><div class="saldo-dias" style="color:#f59e0b">'+restanteLicenca+' / '+totalLicenca+' dias</div>'+(infoQuinquenio?'<div class="saldo-sub">'+infoQuinquenio+'</div>':'')+'</div></div><div class="saldo-bar"><div class="saldo-bar-fill licenca" style="width:'+percLicenca+'%"></div></div></div>'+
     '<button class="btn-ajustar-saldo" onclick="abrirAjusteSaldo()">⚙️ Ajustar</button></div>'+
     (usos.length>0?'<div class="card"><div class="card-titulo">📋 Períodos Registrados</div>'+usos.sort((a,b)=>new Date(b.data_inicio)-new Date(a.data_inicio)).map(u=>{let icone=u.tipo==='ferias'?'🏖️':(u.tipo==='licenca'?'🏆':'⏱️');return'<div class="uso-item '+u.tipo+'"><div class="uso-dias">'+(u.dias||'?')+'d</div><div class="uso-info"><div style="font-weight:600;font-size:13px">'+icone+' '+(u.periodo||u.tipo)+'</div><div class="uso-periodo">'+(u.data_inicio?new Date(u.data_inicio+'T12:00:00').toLocaleDateString('pt-BR'):'?')+' → '+(u.data_fim?new Date(u.data_fim+'T12:00:00').toLocaleDateString('pt-BR'):'?')+'</div></div></div>';}).join('')+'</div>':'');
-  console.log('✅ carregarSaldo() concluído');
 }
 
 async function abrirAjusteSaldo(){
@@ -528,9 +524,23 @@ async function abrirAjusteSaldo(){
   const data=snap.data()||{};
   const saldoData=data.saldo||{};
   document.getElementById('ajuste-admissao').value=data.data_admissao||'';
-  document.getElementById('ajuste-ferias').value=saldoData.ferias_disponivel!=null?saldoData.ferias_disponivel:(saldoData.ferias||0);
-  document.getElementById('ajuste-abono').value=saldoData.abono_disponivel!=null?saldoData.abono_disponivel:(saldoData.abono||6);
-  document.getElementById('ajuste-licenca').value=saldoData.licenca_disponivel!=null?saldoData.licenca_disponivel:(saldoData.licenca||0);
+  // Férias
+  let fv=0;
+  if(saldoData.ferias_disponivel!=null&&String(saldoData.ferias_disponivel).trim()!==''){fv=saldoData.ferias_disponivel;}
+  else if(saldoData.ferias!=null&&String(saldoData.ferias).trim()!==''){fv=saldoData.ferias;}
+  else if(saldoData.periodos_ferias&&Array.isArray(saldoData.periodos_ferias)){fv=saldoData.periodos_ferias.reduce((s,p)=>s+((p.total||30)-(p.vendeu||0)),0);}
+  document.getElementById('ajuste-ferias').value=fv||0;
+  // Abono
+  let av=6;
+  if(saldoData.abono_disponivel!=null&&String(saldoData.abono_disponivel).trim()!==''){av=saldoData.abono_disponivel;}
+  else if(saldoData.abono!=null&&String(saldoData.abono).trim()!==''){av=saldoData.abono;}
+  document.getElementById('ajuste-abono').value=av||0;
+  // Licença
+  let lv=0;
+  if(saldoData.licenca_disponivel!=null&&String(saldoData.licenca_disponivel).trim()!==''){lv=saldoData.licenca_disponivel;}
+  else if(saldoData.licenca!=null&&String(saldoData.licenca).trim()!==''){lv=saldoData.licenca;}
+  else if(saldoData.quinquenios&&Array.isArray(saldoData.quinquenios)){lv=saldoData.quinquenios.reduce((s,q)=>s+((q.total||90)-(q.vendeu||0)),0);}
+  document.getElementById('ajuste-licenca').value=lv||0;
   document.getElementById('ajuste-vende-ferias').checked=saldoData.vendeu_ferias||false;
   document.getElementById('ajuste-vende-licenca30').checked=saldoData.vendeu_licenca30||false;
   document.getElementById('ajuste-vende-licenca60').checked=saldoData.vendeu_licenca60||false;
@@ -555,7 +565,6 @@ function atualizarInfosAjuste(){
     }else{infoFerias.textContent='⚠️ Data inválida (use DD/MM/AAAA)';infoQuinquenios.textContent='⚠️ Data inválida (use DD/MM/AAAA)';}
   }else{infoFerias.textContent='Informe a data de admissão';infoQuinquenios.textContent='Informe a data de admissão';}
 }
-
 document.getElementById('ajuste-admissao').addEventListener('input',atualizarInfosAjuste);
 document.getElementById('ajuste-vende-ferias').addEventListener('change',atualizarInfosAjuste);
 
@@ -572,7 +581,7 @@ async function salvarAjusteSaldo(){
   try{await db.collection('usuarios').doc(eu.uid).update(ud);fecharAjusteSaldo();mostrarToast('✅ Saldo atualizado!');await carregarSaldo();}catch(e){console.error(e);mostrarToast('⚠️ Erro ao salvar.');}
 }
 
-// ═══════════ NOTIFICAÇÕES E TROCAS ═══════════
+// ═══════════ NOTIFICAÇÕES, TROCAS, ADMIN, PERFIL ═══════════
 function iniciarNotificacoes(){if(!('Notification' in window))return;Notification.requestPermission();}
 function enviarNotificacaoPush(titulo,corpo,tag){if(Notification.permission==='granted')new Notification(titulo,{body:corpo,tag:tag||'conv'});}
 function verificarNotificacoesPendentes(){db.collection('notificacoes').where('uid','==',eu.uid).where('respondido','==',false).onSnapshot(snap=>{const docs=snap.docs;if(!docs.length)return;snap.docChanges().forEach(async c=>{if(c.type==='added'){const n=c.doc.data();if(n.tipo==='substituicao'){enviarNotificacaoPush('🔄 Substituição','Substituindo '+n.substituindo);await c.doc.ref.update({respondido:true});carregarEventos();}}});const pen=docs.filter(d=>d.data().tipo==='confirmar'||d.data().tipo==='convocado');if(pen.length>0&&!document.getElementById('notif-ov').classList.contains('on'))mostrarProximaNotif();});}
